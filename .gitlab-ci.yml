@@ -18,6 +18,10 @@ pages:
     # Time Machine
     - mkdir -p public/time-machine
     - cp -r time-machine/* public/time-machine/
+
+    # Cloner
+    - mkdir -p public/cloner
+    - cp -r cloner/* public/cloner/
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   artifacts:

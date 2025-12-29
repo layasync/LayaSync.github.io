@@ -457,35 +457,6 @@ button:disabled {
 }
 
 /* ======================================================
-   Terminal & Logs
-   ====================================================== */
-.terminal {
-    margin-top: var(--space-xl);
-    height: 300px;
-    padding: var(--space-md);
-    background-color: #000;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    overflow-y: auto;
-    text-align: left;
-}
-
-.log-entry {
-    margin-bottom: var(--space-xs);
-    color: var(--text-secondary);
-}
-
-.log-entry.success {
-    color: var(--success);
-}
-
-.log-entry.error {
-    color: var(--error);
-}
-
-/* ======================================================
    Spinner
    ====================================================== */
 .loading-spinner {

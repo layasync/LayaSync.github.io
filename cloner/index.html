@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Cloner</title>
+    <link rel="stylesheet" href="../common/style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
+
+    <meta name="description" content="Clone your Stremio configuration from one account to another.">
+    <meta property="og:title" content="Account Cloner">
+    <meta property="og:description" content="Clone your Stremio configuration from one account to another.">
+    <meta property="og:type" content="website">
+</head>
+
+<body class="centered">
+    <!-- Header -->
+    <header class="header-section text-center">
+        <h1>Account Cloner</h1>
+        <p class="subtitle">Clone your Stremio configuration from one account to another.</p>
+    </header>
+
+    <div class="container" style="max-width: 900px;">
+        <div class="info-box" style="margin-bottom: 2rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 01-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                    clip-rule="evenodd" />
+            </svg>
+            <p>
+                We fetch the addon configuration from your <b>Source</b> account and apply it directly to your
+                <b>Destination</b> account.
+            </p>
+        </div>
+
+        <form id="clonerForm" onsubmit="return false;">
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; margin-bottom: 2rem;">
+
+                <!-- Source Account -->
+                <div class="result-box"
+                    style="display: block; margin: 0; background: rgba(30, 41, 59, 0.4); border-color: rgba(255, 255, 255, 0.1);">
+                    <div
+                        style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <!-- Source Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width: 1.75rem; height: 1.75rem; color: #3b82f6;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        <h2
+                            style="margin: 0; font-size: 1.25rem; background: none; -webkit-text-fill-color: initial; color: #f8fafc;">
+                            Source</h2>
+                    </div>
+
+                    <div class="field">
+                        <label for="sourceEmail">Email</label>
+                        <input type="email" id="sourceEmail" required placeholder="source@example.com">
+                    </div>
+
+                    <div class="field">
+                        <label for="sourcePassword">Password</label>
+                        <input type="password" id="sourcePassword" required placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- Destination Account -->
+                <div class="result-box"
+                    style="display: block; margin: 0; background: rgba(30, 41, 59, 0.4); border-color: rgba(255, 255, 255, 0.1);">
+                    <div
+                        style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <!-- Destination Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" style="width: 1.75rem; height: 1.75rem; color: #3b82f6;">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.25 21.435 5.375 5.375 0 014 19.235z" />
+                        </svg>
+                        <h2
+                            style="margin: 0; font-size: 1.25rem; background: none; -webkit-text-fill-color: initial; color: #f8fafc;">
+                            Destination</h2>
+                    </div>
+
+                    <div class="field">
+                        <label for="destEmail">Email</label>
+                        <input type="email" id="destEmail" required placeholder="dest@example.com">
+                    </div>
+
+                    <div class="field">
+                        <label for="destPassword">Password</label>
+                        <input type="password" id="destPassword" required placeholder="••••••••">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="submit" id="cloneBtn" class="primary-btn">
+                    Start Cloning Process
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Utilities -->
+    <script src="../common/utils/UIClipboard.js"></script>
+    <script src="../common/utils/NavigationSidebar.js"></script>
+    <script src="../common/utils/UIModal.js"></script>
+    <script src="../common/utils/Network.js"></script>
+
+    <!-- APIs -->
+    <script src="../common/apis/StremioAPI.js"></script>
+
+    <!-- Main Logic -->
+    <script src="js/Cloner.js"></script>
+</body>
+
+</html>
