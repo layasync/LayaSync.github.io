@@ -6,6 +6,7 @@ class NavigationSidebar {
             { name: "Home", path: "/", icon: "home" },
             { name: "QuickStart", path: "/quickstart/" },
             { name: "Time Machine", path: "/time-machine/" },
+            { name: "Cloner", path: "/cloner/" },
         ];
 
         // Map of icon names to their SVG HTML strings.
@@ -74,6 +75,7 @@ class NavigationSidebar {
                 position: fixed;
                 z-index: 1000;
                 display: flex;
+                flex-direction: column;
                 box-sizing: border-box;
                 background-color: var(--sidebar-bg);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -226,6 +228,36 @@ class NavigationSidebar {
             }
 
             /* =========================================================
+            Sidebar Footer
+            ========================================================= */
+            .sidebar-footer {
+                margin-top: auto;
+                padding-top: 1.5rem;
+                padding-left: 0.5rem;
+                font-size: 0.9rem;
+                color: #94a3b8;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .sidebar-footer div {
+                margin-bottom: 0.25rem;
+            }
+
+            .sidebar-footer a {
+                color: var(--accent);
+                text-decoration: none;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+
+            .sidebar-footer a:hover {
+                text-decoration: underline;
+                color: #fff;
+            }
+
+            /* =========================================================
             Floating Action Button (FAB)
             ========================================================= */
             #mobile-fab {
@@ -346,6 +378,7 @@ class NavigationSidebar {
         }
 
         this.sidebarElement.appendChild(navList);
+        this.createFooter();
         document.body.prepend(this.sidebarElement);
     }
 
@@ -363,6 +396,19 @@ class NavigationSidebar {
             </a>
         `;
         return li;
+    }
+
+    // Create the footer with guides link
+    createFooter() {
+        const footer = document.createElement('div');
+        footer.className = 'sidebar-footer';
+        footer.innerHTML = `
+            <div>Need help?</div>
+            <a href="https://duckkota.gitlab.io/guides/" target="_blank">
+                Check out my Guides &rarr;
+            </a>
+        `;
+        this.sidebarElement.appendChild(footer);
     }
 
     // Create the Floating Action Button (FAB) for mobile

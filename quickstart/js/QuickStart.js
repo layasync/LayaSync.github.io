@@ -68,12 +68,6 @@ class QuickStart {
         // We reference this.ui.form and "submit" to handle the submit button rather than this.ui.submitBtn
         // because doing it this way also captures when the user presses enter while focused on the form
         this.ui.form.addEventListener("submit", (e) => this.handleSubmit(e));
-
-        // Input validation listeners
-        const inputs = [this.ui.emailInput, this.ui.passwordInput, this.ui.apiKeyInput];
-        inputs.forEach(el => {
-            el.addEventListener("input", () => this.validateForm());
-        });
     }
 
     async generateRandomTmdbCredentials() {
@@ -104,13 +98,11 @@ class QuickStart {
             el.style.backgroundColor = "rgba(59, 130, 246, 0.1)";
             setTimeout(() => el.style.backgroundColor = "", 300);
         });
-        this.validateForm();
     }
 
     handleProviderChange() {
         const debridProvider = this.ui.providerSelect.value;
         this.ui.apiKeyInput.value = ""; // Clear API key
-        this.validateForm();
 
         if (!debridProvider) {
             this.ui.apiKeyInput.disabled = true;
@@ -130,19 +122,6 @@ class QuickStart {
 
         this.ui.apiKeyInput.disabled = false;
         this.ui.apiKeyInput.maxLength = config.length;
-        this.validateForm();
-    }
-
-    validateForm() {
-        const debridProvider = this.ui.providerSelect.value;
-        if (!debridProvider) {
-            this.ui.submitBtn.disabled = true;
-            return;
-        }
-        const config = this.PROVIDER_CONFIG[debridProvider];
-        const isKeyValid = this.ui.apiKeyInput.value.trim().length >= config.length;
-        const isLoginValid = this.ui.emailInput.value.trim() && this.ui.passwordInput.value;
-        this.ui.submitBtn.disabled = !(isKeyValid && isLoginValid);
     }
 
     async handleSubmit(e) {

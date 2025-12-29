@@ -59,9 +59,10 @@ body {
 }
 
 body.centered {
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding: var(--space-md);
+    padding-top: 5rem;
     box-sizing: border-box;
 }
 

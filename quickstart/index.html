@@ -27,7 +27,7 @@
 
     <!-- Main Card -->
     <div class="container">
-        <form id="setupForm" novalidate>
+        <form id="setupForm">
             <div class="field">
                 <div class="info-box">
                     <!-- Icon -->
@@ -70,7 +70,7 @@
             <div class="field">
                 <label for="apiKey">API key</label>
                 <input type="text" id="apiKey" placeholder="Select a provider first" disabled autocomplete="off"
-                    spellcheck="false" aria-describedby="helperText" />
+                    spellcheck="false" aria-describedby="helperText" required />
                 <div id="helperText" class="helper"></div>
             </div>
 
@@ -100,7 +100,7 @@
             </details>
             <!-- End Advanced Settings -->
 
-            <button id="submitBtn" type="submit" disabled>
+            <button id="submitBtn" type="submit">
                 Start Setup
             </button>
         </form>
