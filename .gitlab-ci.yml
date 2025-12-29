@@ -1,0 +1,25 @@
+stages:
+  - deploy
+  - run
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    # Frontend and styles
+    - mkdir -p public/common
+    - cp index.html public/
+    - cp -r common/* public/common/
+
+    # QuickStart
+    - mkdir -p public/quickstart
+    - cp -r quickstart/* public/quickstart/
+
+    # Time Machine
+    - mkdir -p public/time-machine
+    - cp -r time-machine/* public/time-machine/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  artifacts:
+    paths:
+      - public

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Machine</title>
+    <link rel="stylesheet" href="../common/style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
+
+    <meta name="description" content="Restore your Stremio configuration to a previous state with Time Machine.">
+    <meta property="og:title" content="Time Machine">
+    <meta property="og:description" content="Go back to when your Stremio setup was perfect.">
+    <meta property="og:type" content="website">
+</head>
+
+<body class="centered">
+    <div class="tm-container">
+        <!-- Global Header -->
+        <header class="header-section">
+            <h1>Time Machine <span class="beta-tag">BETA</span></h1>
+            <p class="subtitle">Go back to when your Stremio setup was perfect</p>
+
+            <div id="userStatus" class="hidden">
+                <!-- Populated via JS: "Logged in as... [Logout]" -->
+            </div>
+        </header>
+
+        <!-- View: Login -->
+        <div id="loginView" class="hidden">
+            <form id="loginForm" novalidate>
+                <div class="info-box">
+                    <div class="text-center w-100">
+                        <p class="mb-1">Log in to create snapshots of your current addon setup.</p>
+                        <p class="text-muted mt-1">All data is stored locally in your browser.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required autocomplete="email" placeholder="user@example.com">
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required autocomplete="current-password"
+                        placeholder="••••••••">
+                </div>
+
+                <button type="submit" id="loginBtn" class="primary-btn full-width">Login</button>
+            </form>
+        </div>
+
+        <!-- View: Dashboard -->
+        <div id="dashboardView" class="hidden">
+            <div class="action-bar">
+                <button id="createSnapshotBtn" class="primary-btn">
+                    Create Snapshot Now
+                </button>
+            </div>
+
+            <!-- Main: Timeline -->
+            <div id="timelineSection" class="timeline-section">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Utility Modules -->
+    <script src="../common/utils/Clipboard.js"></script>
+    <script src="../common/utils/NavigationSidebar.js"></script>
+    <script src="../common/apis/StremioAPI.js"></script>
+    <script src="../common/utils/Modal.js"></script>
+    <script src="../common/utils/Network.js"></script>
+    <script src="../common/apis/AIOStreamsAPI.js"></script>
+    <script src="../common/apis/AIOMetadataAPI.js"></script>
+
+    <!-- Time Machine Deep Capture Modules -->
+    <script src="js/TimeMachineStorage.js"></script>
+    <script src="js/DeepSnapshotManager.js"></script>
+    <script src="js/strategies/AIOStreamsStrategy.js"></script>
+    <script src="js/strategies/AIOMetadataStrategy.js"></script>
+
+    <!-- Time Machine Main Module -->
+    <script src="js/TimeMachine.js"></script>
+</body>
+
+</html>

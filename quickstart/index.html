@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickStart</title>
+    <link rel="stylesheet" href="../common/style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
+
+    <!-- Metadata -->
+    <meta name="description" content="Setup a Stremio account in seconds.">
+    <meta property="og:title" content="QuickStart">
+    <meta property="og:description" content="Setup a Stremio account in seconds.">
+    <meta property="og:type" content="website">
+
+</head>
+
+<body class="centered">
+
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1>QuickStart</h1>
+        <p class="subtitle">Setup a Stremio account in seconds</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="container">
+        <form id="setupForm" novalidate>
+            <div class="field">
+                <div class="info-box">
+                    <!-- Icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                    </svg>
+                    <p>
+                        Enter your email and password below. We'll <b>sign you in</b> if you already have an account, or
+                        <b>create a new account</b> for you automatically.
+                    </p>
+                </div>
+
+                <label for="email">Stremio Email</label>
+                <input type="email" id="email" placeholder="user@example.com" required autocomplete="email">
+            </div>
+
+            <div class="field">
+                <label for="password">Stremio Password</label>
+                <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+
+                <div class="auth-actions">
+                    <button type="button" id="generateCredsBtn" title="Fill with random credentials for a new account">
+                        Generate new identity
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-separator"></div>
+
+            <div class="field">
+                <label for="provider">Debrid provider</label>
+                <select id="provider" required>
+                    <option value="torbox" selected>TorBox</option>
+                    <option value="realdebrid">Real-Debrid</option>
+                </select>
+                <div id="signupLink" class="signup"></div>
+            </div>
+
+            <div class="field">
+                <label for="apiKey">API key</label>
+                <input type="text" id="apiKey" placeholder="Select a provider first" disabled autocomplete="off"
+                    spellcheck="false" aria-describedby="helperText" />
+                <div id="helperText" class="helper"></div>
+            </div>
+
+            <div class="field">
+                <label for="debridioKey">Debridio API Key (Optional)</label>
+                <input type="text" id="debridioKey" placeholder="Paste your Debridio API key here" autocomplete="off"
+                    spellcheck="false" />
+                <div class="helper">
+                    Get your Debridio API key <a href="https://debridio.com/account" target="_blank"
+                        rel="noopener">here</a>.
+                </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <details id="advancedSettings">
+                <summary>Advanced Settings</summary>
+                <div class="advanced-content">
+
+                    <!-- Host Selection -->
+                    <div class="field">
+                        <label for="aiostreamsHost">AIOStreams Host</label>
+                        <select id="aiostreamsHost">
+                            <!-- Options are populated from main.js -->
+                        </select>
+                    </div>
+                </div>
+            </details>
+            <!-- End Advanced Settings -->
+
+            <button id="submitBtn" type="submit" disabled>
+                Start Setup
+            </button>
+        </form>
+    </div>
+
+    <!-- Modules -->
+    <script src="../common/utils/Network.js"></script>
+    <script src="../common/utils/CredentialGenerator.js"></script>
+    <script src="../common/utils/Clipboard.js"></script>
+    <script src="../common/utils/NavigationSidebar.js"></script>
+    <script src="../common/utils/Modal.js"></script>
+    <script src="../common/apis/StremioAPI.js"></script>
+    <script src="../common/apis/AIOStreamsAPI.js"></script>
+    <script src="js/QuickStart.js"></script>
+
+</html>
