@@ -58,11 +58,17 @@ class AIOStreamsStrategy {
                 if (!config) {
                     throw new Error("No data returned from AIOStreams");
                 }
-
                 return { uuid, host, password, config };
             } catch (err) {
-                console.warn('Stored AIOStreams password failed, prompting user', err);
-                TimeMachineStorage.setAioPassword(uuid, null);
+                if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
+                    console.warn('Stored AIOStreams password failed (401), prompting user', err);
+                    TimeMachineStorage.setAioPassword(uuid, null);
+                } else {
+                    // For network/proxy errors, we should probably fail fast too, or at least warn specifically.
+                    // But to be safe and consistent with previous behavior (fallback to prompt), we'll just log loudly.
+                    console.warn(`Stored AIOStreams password failed to connect to ${host}: ${err.message}. Falling back to prompt user.`);
+                    TimeMachineStorage.setAioPassword(uuid, null);
+                }
             }
         }
 
@@ -93,9 +99,11 @@ class AIOStreamsStrategy {
         } catch (err) {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioPassword(uuid, null);
-                Modal.alert('Incorrect password for AIOStreams. Snapshot will save standard URL only.');
+                throw new Error('Incorrect password for AIOStreams.');
+            } else {
+                // For other errors (like 404/521 Proxy Error), identify the server
+                throw new Error(`Failed to connect to AIOStreams server (${host}): ${err.message}`);
             }
-            throw err;
         }
     }
 
