@@ -1473,3 +1473,98 @@ details[open] summary::before {
     transform: translateY(-0.15em);
     line-height: normal;
 }
+
+/* ======================================================
+   New Provider Card UI & Sections
+   ====================================================== */
+
+.section-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.section-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.provider-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.provider-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.provider-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Active State (Checked) */
+.provider-card:has(input:checked) {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.provider-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.provider-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Checkmark Indicator */
+.card-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.3);
+    color: transparent;
+    transition: all 0.2s;
+}
+
+.provider-card:has(input:checked) .card-indicator {
+    background: var(--accent);
+    color: white;
+}
+
+.card-indicator svg {
+    width: 14px;
+    height: 14px;
+}

@@ -8,7 +8,7 @@
 
 - **⚡ Instant Setup**: Go from zero to watching in under 30 seconds.
 - **🆔 Identity Generation**: Auto-generate a fresh email/password identity for privacy or testing.
-- **🔌 Debrid Integration**: Seamlessly connects with **TorBox** or **Real-Debrid** to unlock high-speed streams.
+- **🔌 Multi-Provider Support**: Seamlessly connects with **TorBox**, **Real-Debrid**, or **both simultaneously** to unlock high-speed streams.
 - **📦 Smart Addons**: Automatically installs and configures the essential addons so you don't have to hunt for them.
 - **🛡️ Auto-Retry**: Detecting valid API keys and handling transient errors automatically.
 
@@ -17,10 +17,10 @@
 [👉 Open QuickStart](https://duckkota.gitlab.io/stremio-tools/quickstart/)
 
 1.  **Enter Credentials**: Type your desired Stremio email/password, or click **Generate new identity** to create random ones.
-2.  **Select Provider**: Choose your Debrid provider (e.g., TorBox) and paste your API Key.
+2.  **Select Providers**: Choose your Debrid providers (e.g., TorBox, Real-Debrid) and paste your API Keys.
 3.  **Start Setup**: Click **Start Setup**. The tool will:
     -   Create your Stremio account (if it doesn't exist).
-    -   configure AIOStreams with your Debrid key.
+    -   configure AIOStreams with your Debrid keys.
     -   Install the addons to your account.
     -   Show you a success message with your login details.
 

@@ -58,20 +58,65 @@
 
             <div class="form-separator"></div>
 
-            <div class="field">
-                <label for="provider">Debrid provider</label>
-                <select id="provider" required>
-                    <option value="torbox" selected>TorBox</option>
-                    <option value="realdebrid">Real-Debrid</option>
-                </select>
-                <div id="signupLink" class="signup"></div>
-            </div>
+            <!-- Debrid Services Section -->
+            <div class="section-card">
+                <h3>Debrid Services</h3>
 
-            <div class="field">
-                <label for="apiKey">API key</label>
-                <input type="text" id="apiKey" placeholder="Select a provider first" disabled autocomplete="off"
-                    spellcheck="false" aria-describedby="helperText" required />
-                <div id="helperText" class="helper"></div>
+                <div class="provider-grid" id="providerGroup">
+                    <!-- TorBox Card -->
+                    <label class="provider-card">
+                        <input type="checkbox" value="torbox" hidden>
+                        <div class="card-content">
+                            <!-- Helper SVG will be added via CSS or can be inline -->
+                            <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TorBox"
+                                style="border-radius: 4px;">
+                            <span class="provider-name">TorBox</span>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+
+                    <!-- Real-Debrid Card -->
+                    <label class="provider-card">
+                        <input type="checkbox" value="realdebrid" hidden>
+                        <div class="card-content">
+                            <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="Real-Debrid">
+                            <span class="provider-name">Real-Debrid</span>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+
+                    <!-- Premiumize Card -->
+                    <label class="provider-card">
+                        <input type="checkbox" value="premiumize" hidden>
+                        <div class="card-content">
+                            <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="Premiumize">
+                            <span class="provider-name">Premiumize</span>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Dynamic Signup Links Container -->
+                <div id="signupLink" class="signup" style="margin-top: 1rem;">
+                    <!-- Inputs will be injected here by JS -->
+                </div>
+
+                <!-- Dynamic API Keys Container -->
+                <div id="apiKeysContainer" style="margin-top: 1rem;">
+                    <!-- Inputs will be injected here by JS -->
+                </div>
             </div>
 
             <div class="field">

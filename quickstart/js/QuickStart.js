@@ -11,22 +11,24 @@ class QuickStart {
                 name: "TorBox",
                 signup: "https://torbox.app/subscription?referral=7a2aa2e2-337b-4302-ab41-7ecf1caf0cf1",
                 api: "https://torbox.app/settings",
-                length: 36
             },
             realdebrid: {
                 name: "Real-Debrid",
                 signup: "https://real-debrid.com/",
                 api: "https://real-debrid.com/apitoken",
-                length: 52
+            },
+            premiumize: {
+                name: "Premiumize",
+                signup: "https://www.premiumize.me/register",
+                api: "https://www.premiumize.me/account",
             },
         };
 
         // UI References
         this.ui = {
             form: document.getElementById("setupForm"),
-            providerSelect: document.getElementById("provider"),
-            apiKeyInput: document.getElementById("apiKey"),
-            helperText: document.getElementById("helperText"),
+            providerGroup: document.getElementById("providerGroup"),
+            apiKeysContainer: document.getElementById("apiKeysContainer"),
             signupLink: document.getElementById("signupLink"),
             submitBtn: document.getElementById("submitBtn"),
             emailInput: document.getElementById("email"),
@@ -43,7 +45,8 @@ class QuickStart {
         this.attachEventListeners();
 
         // Initialize UI state
-        this.ui.providerSelect.dispatchEvent(new Event('change'));
+        // Explicitly called to match initial checkbox state
+        this.handleDebridProviderChange();
     }
 
     populateHosts() {
@@ -63,7 +66,13 @@ class QuickStart {
 
     attachEventListeners() {
         this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
-        this.ui.providerSelect.addEventListener("change", () => this.handleProviderChange());
+
+        // Listen for changes on any checkbox within the provider group
+        this.ui.providerGroup.addEventListener("change", (e) => {
+            if (e.target.type === "checkbox") {
+                this.handleDebridProviderChange();
+            }
+        });
 
         // We reference this.ui.form and "submit" to handle the submit button rather than this.ui.submitBtn
         // because doing it this way also captures when the user presses enter while focused on the form
@@ -100,28 +109,73 @@ class QuickStart {
         });
     }
 
-    handleProviderChange() {
-        const debridProvider = this.ui.providerSelect.value;
-        this.ui.apiKeyInput.value = ""; // Clear API key
+    // Get all checked debrid providers which are just the values of the checked checkboxes
+    getSelectedDebridProviders() {
+        const checkboxes = this.ui.providerGroup.querySelectorAll('input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
 
-        if (!debridProvider) {
-            this.ui.apiKeyInput.disabled = true;
-            this.ui.apiKeyInput.placeholder = "Select a provider first";
-            this.ui.helperText.textContent = "";
-            this.ui.signupLink.textContent = "";
+    // Handle debrid provider change (user interaction)
+    handleDebridProviderChange() {
+        const selectedProviders = this.getSelectedDebridProviders();
+        this.ui.apiKeysContainer.innerHTML = ""; // Clear existing inputs
+        this.ui.signupLink.innerHTML = ""; // Clear existing links
+
+        if (selectedProviders.length === 0) {
+            // Show placeholder if no provider selected
+            const placeHolder = document.createElement("div");
+            placeHolder.className = "field";
+            placeHolder.innerHTML = `
+                <label>API Key</label>
+                <input type="text" placeholder="Select at least one provider above" disabled>
+             `;
+            this.ui.apiKeysContainer.appendChild(placeHolder);
             return;
         }
 
-        // Get the information for the selected debrid provider
-        const config = this.PROVIDER_CONFIG[debridProvider];
+        // For each selected provider, create a HTML input field
+        selectedProviders.forEach(providerId => {
+            const config = this.PROVIDER_CONFIG[providerId];
+            if (!config) {
+                console.error(`No internal config found for provider: ${providerId}`);
+                return;
+            }
 
-        // Update the signup link, API key retrieval instructions, and API key input
-        this.ui.signupLink.innerHTML = `Don't have an account? <a href="${config.signup}" target="_blank" rel="noopener">Sign up here</a>.`;
-        this.ui.helperText.innerHTML = `Find your generated API Key <a href="${config.api}" target="_blank" rel="noopener">here</a>.`;
-        this.ui.apiKeyInput.placeholder = `Enter your ${config.name} API Key`;
+            const field = document.createElement("div");
+            field.className = "field";
 
-        this.ui.apiKeyInput.disabled = false;
-        this.ui.apiKeyInput.maxLength = config.length;
+            // Create title label for input field
+            const label = document.createElement("label");
+            label.textContent = `${config.name} API Key`;
+            label.htmlFor = `apiKey_${providerId}`;
+
+            // Create input field for API key
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = `apiKey_${providerId}`;
+            input.name = `apiKey_${providerId}`; // beneficial for form data handling
+            input.placeholder = `Enter your ${config.name} API Key`;
+            input.required = true;
+            input.autocomplete = "off";
+            input.spellcheck = false;
+
+            // Create helper text for getting API key
+            const helper = document.createElement("div");
+            helper.className = "helper";
+            helper.innerHTML = `Find your API Key <a href="${config.api}" target="_blank" rel="noopener">here</a>.`;
+
+            // Add the new fields to the UI
+            field.appendChild(label);
+            field.appendChild(input);
+            field.appendChild(helper);
+            this.ui.apiKeysContainer.appendChild(field);
+
+            // Add signup link for debrid provider
+            const linkDiv = document.createElement("div");
+            linkDiv.style.marginTop = "0.25rem"; // reduced margin for compact list
+            linkDiv.innerHTML = `Don't have a ${config.name} account? <a href="${config.signup}" target="_blank" rel="noopener">Sign up here</a>.`;
+            this.ui.signupLink.appendChild(linkDiv);
+        });
     }
 
     async handleSubmit(e) {
@@ -133,9 +187,23 @@ class QuickStart {
             // Gather Data
             const email = this.ui.emailInput.value.trim();
             const password = this.ui.passwordInput.value;
-            const debridProvider = this.ui.providerSelect.value;
-            const debridApiKey = this.ui.apiKeyInput.value.trim();
             const debridioKey = this.ui.debridioInput.value.trim();
+
+            // Gather API Keys from dynamic inputs
+            const providersMap = {};
+            const selectedDebridProviders = this.getSelectedDebridProviders();
+
+            selectedDebridProviders.forEach(providerId => {
+                const input = document.getElementById(`apiKey_${providerId}`);
+                if (input && input.value.trim()) {
+                    providersMap[providerId] = input.value.trim();
+                }
+            });
+
+            if (Object.keys(providersMap).length === 0) {
+                throw new Error("Please select at least one provider and enter an API key.");
+            }
+
 
             // Login to Stremio (registering a new account if needed)
             const authResult = await StremioAPI.ensureAccount(email, password);
@@ -170,7 +238,7 @@ class QuickStart {
             const selectedHost = this.ui.aiostreamsHostSelect.value;
             const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
-            const config = await AIOStreamsAPI.createConfig(debridProvider, debridApiKey, debridioKey, selectedHostName, tmdbReadToken);
+            const config = await AIOStreamsAPI.createConfig(providersMap, debridioKey, selectedHostName, tmdbReadToken);
             let manifestUrl = null;
 
             if (config) {

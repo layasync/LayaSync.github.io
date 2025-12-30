@@ -81,7 +81,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async createConfig(debridProvider, debridApiKey, debridioKey, instanceName, tmdbAccessToken) {
+    static async createConfig(providersMap, debridioKey, instanceName, tmdbAccessToken) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
@@ -101,12 +101,16 @@ class AIOStreamsAPI {
         // Disable all first
         aiostreamsConfig.services.forEach(s => { s.enabled = false; });
 
-        // Enable the user debrid provider and put in the user API key
-        const service = aiostreamsConfig.services.find(s => s.id === debridProvider);
-        if (service) {
-            service.enabled = true;
-            service.credentials = service.credentials || {};
-            service.credentials.apiKey = debridApiKey;
+        // Enable the user debrid provider(s) and put in the user API keys
+        if (providersMap && typeof providersMap === 'object') {
+            Object.entries(providersMap).forEach(([providerId, apiKey]) => {
+                const service = aiostreamsConfig.services.find(s => s.id === providerId);
+                if (service) {
+                    service.enabled = true;
+                    service.credentials = service.credentials || {};
+                    service.credentials.apiKey = apiKey;
+                }
+            });
         }
 
         // Debridio Logic

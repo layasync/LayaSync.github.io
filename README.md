@@ -8,6 +8,7 @@ A collection of utilities designed to simplify the setup and configuration of St
 
 - **QuickStart**: A streamlined wizard to set up a new Stremio account in seconds.
 - **Time Machine**: Backup and restore your Stremio addons and configuration snapshots.
+- **Cloner**: Easily clone one Stremio account to another.
 
 ## 💻 Running Locally
 
