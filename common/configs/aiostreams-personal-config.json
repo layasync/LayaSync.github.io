@@ -86,7 +86,8 @@
         "timeout": 15000,
         "resources": [
           "stream"
-        ]
+        ],
+        "mediaTypes": []
       }
     },
     {
@@ -97,8 +98,7 @@
         "name": "Torrentio",
         "timeout": 15000,
         "resources": [
-          "stream",
-          "catalog"
+          "stream"
         ],
         "providers": [],
         "useMultipleInstances": false
@@ -178,19 +178,14 @@
       }
     },
     {
-      "type": "subhero",
-      "instanceId": "6da",
+      "type": "opensubtitles",
+      "instanceId": "652",
       "enabled": true,
       "options": {
-        "name": "SubHero",
-        "timeout": 10000,
+        "name": "OpenSubtitles",
+        "timeout": 15000,
         "resources": [
           "subtitles"
-        ],
-        "languages": [
-          "en",
-          "fr",
-          "zh"
         ]
       }
     }
@@ -198,8 +193,8 @@
   "formatter": {
     "id": "custom",
     "definition": {
-      "name": "{stream.resolution::exists[\"{stream.resolution::replace('2160p', '★ 4K ')::replace('1440p', '★ QHD ')::replace('1080p', '☆ FHD ')::replace('720p', '✧ HD ')}\"||\"△ Unknown \"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾ \"||\" \"]} {stream.visualTags::~DV[\"ᵈᵛ \"||\"\"]}",
-      "description": "{stream.title::exists[\"📁 {stream.title}\"||\"\"]} {stream.year::exists[\"({stream.year})\"||\"\"]}{stream.season::>=0[\" S\"||\"\"]}{stream.season::<=9[\"0\"||\"\"]}{stream.season::>0[\"{stream.season}\"||\"\"]}{stream.episode::>=0[\" • E\"||\"\"]}{stream.episode::<=9[\"0\"||\"\"]}{stream.episode::>0[\"{stream.episode}\"||\"\"]}\n\n🔊 {stream.audioChannels::exists::or::stream.audioTags::exists[\"{stream.audioChannels::join(' ')} {stream.audioTags::join(' ')}\"||\"-\"]}\n\n🎥 {stream.quality::exists[\"{stream.quality}\"||\"-\"]} 🎞️ {stream.encode::exists[\"{stream.encode}\"||\"-\"]}\n\n📦 {stream.size::bytes} {stream.regexMatched::exists[\"{stream.regexMatched::replace('Remux T1', '🟢')::replace('Remux T2', '🟢')::replace('Remux T3', '🟢')::replace('Bluray T1', '🔵')::replace('Bluray T2', '🔵')::replace('Bluray T3', '🔵')::replace('Web T1', '🟡')::replace('Web T3', '🟡')::replace('Web T2', '🟡')::replace('Web Scene', '🟣')}\"||\"⚪\"]} {addon.name}"
+      "name": "{stream.regexMatched::exists[\"💠\"||\"\"]}\n\n{stream.resolution::exists[\"{stream.resolution::replace('2160p', '4K ')::replace('1440p', 'QHD ')::replace('1080p', 'FHD ')::replace('720p', 'HD ')}\"||\"Unk\"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾ \"||\" \"]} {stream.visualTags::~DV[\"ᵈᵛ \"||\"\"]}",
+      "description": "{stream.title::exists[\"{stream.title}\"||\"\"]} {stream.seasonEpisode::exists[\"{stream.seasonEpisode::join(' ･ ')}\"||\"{stream.year}\"]}\n\n  ⤷ {stream.audioChannels::exists::or::stream.audioTags::exists[\"{stream.audioChannels::join(' ')} {stream.audioTags::join(' ')}\"||\"-\"]}\n\n  ⤷ {stream.size::rbytes}"
     }
   },
   "preferredQualities": [
@@ -285,6 +280,7 @@
     "p2p": "single_result"
   },
   "proxy": {
+    "enabled": false,
     "id": "mediaflow",
     "proxiedAddons": [],
     "proxiedServices": []
@@ -412,40 +408,13 @@
   "excludeUncachedFromServices": [],
   "excludeUncachedFromStreamTypes": [],
   "excludedStreamExpressions": [],
-  "preferredStreamExpressions": [],
-  "dynamicAddonFetching": {
-    "enabled": true,
-    "condition": "((queryType == 'anime.series' or queryType == 'anime.movie') or queryType=='anime.series' or queryType=='anime.movie') ? (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Anime BD T1','Anime BD T2','Anime Web T1','Anime Web T2','Remux T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=5000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=8000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=10000) : (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Remux T1','Remux T2','Bluray T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=4000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=7000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=9000)"
-  },
+  "disableGroups": true,
   "groups": {
     "enabled": false,
     "groupings": [],
     "behaviour": "parallel"
   },
-  "size": {
-    "resolution": {
-      "2160p": {
-        "movies": [
-          0,
-          100000000000
-        ],
-        "series": [
-          0,
-          100000000000
-        ]
-      }
-    }
-  },
-  "hideErrors": true,
   "hideErrorsForResources": [],
-  "statistics": {
-    "enabled": false,
-    "position": "bottom",
-    "statsToShow": [
-      "addon",
-      "filter"
-    ]
-  },
   "yearMatching": {
     "enabled": false,
     "tolerance": 3,
@@ -477,46 +446,40 @@
   },
   "precacheNextEpisode": true,
   "alwaysPrecache": true,
-  "catalogModifications": [
-    {
-      "id": "3f1791b.torrentio-torbox-torrents",
-      "name": "TorBox Torrents",
-      "type": "other",
-      "enabled": true,
-      "shuffle": false,
-      "rpdb": false,
-      "hideable": true,
-      "searchable": false,
-      "addonName": "Torrentio"
-    },
-    {
-      "id": "3f1791b.torrentio-torbox-usenet",
-      "name": "TorBox Usenet",
-      "type": "other",
-      "enabled": true,
-      "shuffle": false,
-      "rpdb": false,
-      "hideable": true,
-      "searchable": false,
-      "addonName": "Torrentio"
-    },
-    {
-      "id": "3f1791b.torrentio-torbox-webdl",
-      "name": "TorBox WebDL",
-      "type": "other",
-      "enabled": true,
-      "shuffle": false,
-      "rpdb": false,
-      "hideable": true,
-      "searchable": false,
-      "addonName": "Torrentio"
+  "catalogModifications": [],
+  "statistics": {
+    "enabled": false,
+    "position": "bottom",
+    "statsToShow": [
+      "addon",
+      "filter"
+    ]
+  },
+  "preferredStreamExpressions": [],
+  "dynamicAddonFetching": {
+    "enabled": true,
+    "condition": "((queryType == 'anime.series' or queryType == 'anime.movie') or queryType=='anime.series' or queryType=='anime.movie') ? (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Anime BD T1','Anime BD T2','Anime Web T1','Anime Web T2','Remux T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=5000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=8000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=10000) : (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Remux T1','Remux T2','Bluray T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=4000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=7000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=9000)"
+  },
+  "hideErrors": true,
+  "size": {
+    "resolution": {
+      "2160p": {
+        "movies": [
+          0,
+          100000000000
+        ],
+        "series": [
+          0,
+          100000000000
+        ]
+      }
     }
-  ],
+  },
   "cacheAndPlay": {
     "streamTypes": [
       "usenet"
     ]
   },
   "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/guides/static/images/duck.png?ref_type=heads",
-  "addonDescription": "Duck Streams is a pre-configured AIOStreams setup. It makes streaming easy by doing all the hard work for you. You can find the setup guide here: https://duckkota.gitlab.io/guides/aiostreams/."
+  "addonDescription": "Duck Streams is a pre-configured AIOStreams setup. It makes streaming easy by doing all the hard work for you. You can find the setup guide here: https://duckkota.gitlab.io/guides/aiostreams/"
 }
