@@ -272,8 +272,12 @@ class QuickStart {
                     }
 
                     if (!manifestUrl) {
+                        // This can happen in one of three ways:
+                        // 1. All hosts are down/blocked (very very unlikely)
+                        // 2. The users internet connection is unstable
+                        // 3. The AIOStreams config file is bad/invalid/outdated (e.g., there is an offline addon)
                         console.error("All hosts failed:", errors);
-                        throw new Error("All AIOStreams hosts failed to configure. Please try again later or select a specific host.");
+                        throw new Error("All AIOStreams hosts failed to configure. Please check your internet connection and try again.");
                     }
                 } else {
                     // Specific host selected
