@@ -4,11 +4,11 @@
 class AIOStreamsAPI {
     static get HOSTS() {
         return {
-            Viren: "https://aiostreams.viren070.me",
             Yeb: "https://aiostreamsfortheweak.nhyira.dev",
-            Midnight: "https://aiostreamsfortheweebsstable.midnightignite.me",
             ATBP: "https://aio.atbphosting.com",
             Omni: "https://aiostreams.12312023.xyz",
+            Midnight: "https://aiostreamsfortheweebsstable.midnightignite.me",
+            Viren: "https://aiostreams.viren070.me",
             Kuu: "https://aiostreams.stremio.ru",
         };
     }
@@ -81,7 +81,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async createConfig(providersMap, debridioKey, instanceName, tmdbAccessToken) {
+    static async createConfig(providersMap, debridioKey, tmdbAccessToken) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
@@ -89,10 +89,6 @@ class AIOStreamsAPI {
         } catch (err) {
             throw new Error("Found an error loading the configuration file. Please report this to the developer.", err);
         }
-
-        // Update Addon Name based on Instance
-        // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
-        aiostreamsConfig.addonName = `${aiostreamsConfig.addonName} (${instanceName})`;
 
         // Insert TMDB Access Token
         aiostreamsConfig.tmdbAccessToken = tmdbAccessToken;

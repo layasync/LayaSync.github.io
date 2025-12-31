@@ -37,25 +37,42 @@ class Network {
             }
         }
 
-        // Construct the proxy URL. PROXY_BASE is expected to end with a query param like "?url="
-        const PROXY_BASE = "https://stremio-proxy.long-surf-c07a.workers.dev/?url=";
-        const proxyUrl = PROXY_BASE + encodeURIComponent(url);
+        // List of proxies to try in order.
+        // 1. My custom cloudflare worker proxy (preferred)
+        // 2. CorsProxy.io (fallback)
+        const PROXIES = [
+            "https://stremio-proxy.long-surf-c07a.workers.dev/?url=",
+            "https://corsproxy.io/?url="
+        ];
 
-        try {
-            // Cloudflare Worker generally supports forwarding the method and body.
-            // We pass the original options object to the proxy fetch call.
-            const resp = await fetch(proxyUrl, options);
+        let lastError = null;
 
-            if (!resp.ok) {
-                // Attempt to parse error message from JSON, fallback to status text
-                const errorBody = await resp.json().catch(() => ({}));
-                throw new Error(errorBody.error?.message || errorBody.message || `Proxy Error: ${resp.status} ${resp.statusText}`);
+        for (const proxyBase of PROXIES) {
+            const proxyUrl = proxyBase + encodeURIComponent(url);
+
+            try {
+                // Cloudflare worker proxy
+                const resp = await fetch(proxyUrl, options);
+
+                if (!resp.ok) {
+                    // Attempt to parse error message from JSON, fallback to status text
+                    const errorBody = await resp.json().catch(() => ({}));
+                    const errorMessage = errorBody.error?.message || errorBody.message || `Proxy Error: ${resp.status} ${resp.statusText}`;
+
+                    // If we get a response, the proxy is "working" and the error is from the target.
+                    throw new Error(errorMessage);
+                }
+
+                return await resp.json();
+            } catch (e) {
+                console.warn(`Proxy attempt failed for ${proxyBase}:`, e);
+                lastError = e;
+                // Continue to next proxy
             }
-
-            return await resp.json();
-        } catch (e) {
-            throw e;
         }
+
+        // If we exhausted all proxies
+        throw lastError || new Error("All proxy attempts failed.");
     }
 }
 

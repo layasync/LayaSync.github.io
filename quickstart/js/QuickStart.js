@@ -50,16 +50,23 @@ class QuickStart {
     }
 
     populateHosts() {
+        // Clear existing options
         this.ui.aiostreamsHostSelect.innerHTML = "";
+
+        // Add Auto option
+        const autoOption = document.createElement("option");
+        autoOption.value = "auto";
+        autoOption.textContent = "Auto (Recommended)";
+        autoOption.selected = true;
+        this.ui.aiostreamsHostSelect.appendChild(autoOption);
+
+        // Add the rest of the AIOStreams hosts
         Object.entries(AIOStreamsAPI.HOSTS).forEach((entry) => {
             const name = entry[0];
             const url = entry[1];
             const option = document.createElement("option");
             option.value = url;
             option.textContent = name;
-            if (name === "Yeb") {
-                option.selected = true; // Default to Yeb
-            }
             this.ui.aiostreamsHostSelect.appendChild(option);
         });
     }
@@ -235,54 +242,51 @@ class QuickStart {
 
             // AIOStreams (Always installed now)
             console.log("Generating AIOStreams manifest...");
-            const selectedHost = this.ui.aiostreamsHostSelect.value;
+            const selectedHostValue = this.ui.aiostreamsHostSelect.value;
+            // Get text from the selected option
             const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
-            const config = await AIOStreamsAPI.createConfig(providersMap, debridioKey, selectedHostName, tmdbReadToken);
+            // Prepare the config
+            const config = await AIOStreamsAPI.createConfig(providersMap, debridioKey, tmdbReadToken);
             let manifestUrl = null;
 
             if (config) {
-                console.log(`Installing AIOStreams (Host: ${selectedHost})...`);
-                try {
-                    // Attempt installation with one retry
-                    try {
-                        manifestUrl = await AIOStreamsAPI.installConfig(selectedHost, password, config);
-                    } catch (e) {
-                        console.warn("First attempt to install AIOStreams failed. Retrying one more time...");
-                        manifestUrl = await AIOStreamsAPI.installConfig(selectedHost, password, config);
-                    }
-                } catch (err) {
-                    // Retry logic for Torrentio 403
-                    if (err.message && err.message.includes("Torrentio") && err.message.includes("403")) {
-                        console.warn("Torrentio 403 Forbidden detected. Disabling Torrentio and retrying...");
-                        const torrentioPreset = config.presets.find(p => p.type === 'torrentio');
-                        if (torrentioPreset) {
-                            torrentioPreset.enabled = false;
-                            manifestUrl = await AIOStreamsAPI.installConfig(selectedHost, password, config);
-                        } else {
-                            console.error("Torrentio was blocked/down, but isn't in the config? Weird...")
-                            throw err;
+                if (selectedHostValue === 'auto') {
+                    console.log("Auto-selecting host...");
+                    // Try hosts in order: defined in AIOStreamsAPI
+                    const hosts = Object.entries(AIOStreamsAPI.HOSTS);
+
+                    const errors = [];
+                    for (const [name, url] of hosts) {
+                        try {
+                            console.log(`Attempting install on ${name}...`);
+                            manifestUrl = await this.installOnHost(url, name, config, password);
+                            if (manifestUrl) {
+                                console.log(`Successfully installed on ${name}`);
+                                break;
+                            }
+                        } catch (err) {
+                            console.warn(`Failed to install on ${name}:`, err);
+                            errors.push(`${name}: ${err.message}`);
                         }
-                    } else if (err.message && err.message.includes("Failed to fetch manifest for MediaFusion")) {
-                        console.warn("Looks like MediaFusion is down. Disabling MediaFusion and retrying...")
-                        const mediaFusionPreset = config.presets.find(p => p.type === 'mediafusion');
-                        if (mediaFusionPreset) {
-                            mediaFusionPreset.enabled = false;
-                            manifestUrl = await AIOStreamsAPI.installConfig(selectedHost, password, config);
-                        } else {
-                            console.error("MediaFusion was blocked/down, but isn't in the config? Weird...")
-                            throw err;
-                        }
-                    } else if (err.message && err.message.includes("Failed to validate TMDB API Key")) {
-                        throw new Error(`The selected AIOStreams host (${selectedHostName}) failed to validate the TMDB key. This host might be down or blocked by TMDB. Please try selecting a different host.`);
-                    } else {
-                        throw err;
                     }
+
+                    if (!manifestUrl) {
+                        console.error("All hosts failed:", errors);
+                        throw new Error("All AIOStreams hosts failed to configure. Please try again later or select a specific host.");
+                    }
+                } else {
+                    // Specific host selected
+                    console.log(`Installing AIOStreams (Host: ${selectedHostValue})...`);
+                    manifestUrl = await this.installOnHost(selectedHostValue, selectedHostName, config, password);
                 }
 
+                // If we got back a manifest URL successfully from a host, install it into the users Stremio account
                 if (manifestUrl) {
                     await StremioAPI.installAddon(authKey, manifestUrl);
                 }
+            } else {
+                throw new Error("Failed to generate AIOStreams configuration.");
             }
 
             // 6. Show Success
@@ -319,6 +323,51 @@ class QuickStart {
         } finally {
             this.ui.submitBtn.disabled = false;
             this.ui.submitBtn.textContent = "Start Setup";
+        }
+    }
+
+    // Install AIOStreams config file on a specific host
+    async installOnHost(hostUrl, hostName, baseConfig, password) {
+        // Clone config to avoid polluting the base config for other hosts
+        const config = JSON.parse(JSON.stringify(baseConfig));
+
+        try {
+            // Update Addon Name based on Instance
+            // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
+            config.addonName = `Duck Streams (${hostName})`;
+
+            // Attempt installation with one retry
+            // We do this to account for occasional timeout issues with addons
+            try {
+                return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+            } catch (e) {
+                console.warn(`First attempt to install on ${hostName} failed. Retrying...`);
+                return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+            }
+        } catch (err) {
+            // Retry logic for known upstream errors
+            if (err.message && err.message.includes("Torrentio") && err.message.includes("403")) {
+                console.warn(`Torrentio 403 on ${hostName}. Disabling Torrentio and retrying...`);
+                const torrentioPreset = config.presets.find(p => p.type === 'torrentio');
+                if (torrentioPreset) {
+                    torrentioPreset.enabled = false;
+                    return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+                }
+            } else if (err.message && err.message.includes("Failed to fetch manifest for MediaFusion")) {
+                console.warn(`MediaFusion down on ${hostName}. Disabling MediaFusion and retrying...`);
+                const mediaFusionPreset = config.presets.find(p => p.type === 'mediafusion');
+                if (mediaFusionPreset) {
+                    mediaFusionPreset.enabled = false;
+                    return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+                }
+            }
+
+            // If we get here, it's a fatal error for this host
+            if (err.message && err.message.includes("Failed to validate TMDB API Key")) {
+                throw new Error(`Host ${hostName} failed to validate TMDB key.`);
+            }
+
+            throw err;
         }
     }
 }
