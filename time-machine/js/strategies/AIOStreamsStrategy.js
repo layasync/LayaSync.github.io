@@ -40,6 +40,7 @@ class AIOStreamsStrategy {
         const uuidMatch = manifestUrl.match(/\/stremio\/([^\/]+)/);
         if (!uuidMatch) {
             // If we can't find the UUID, we can't capture the addon
+            window.reportError(new Error("AIOStreams addon detected, but could not find UUID in manifest URL: " + manifestUrl));
             return null;
         }
 
@@ -102,6 +103,7 @@ class AIOStreamsStrategy {
                 throw new Error('Incorrect password for AIOStreams.');
             } else {
                 // For other errors (like 404/521 Proxy Error), identify the server
+                window.reportError(err);
                 throw new Error(`Failed to connect to AIOStreams server (${host}): ${err.message}`);
             }
         }
@@ -142,9 +144,11 @@ class AIOStreamsStrategy {
                     return newUrl;
                 }
             } catch (createErr) {
+                window.reportError(createErr);
                 throw createErr;
             }
 
+            window.reportError(err);
             throw err;
         }
     }

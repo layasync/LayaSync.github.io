@@ -32,8 +32,7 @@ class Cloner {
         const dstPass = this.ui.inputs.destPass.value;
 
         if (srcEmail === dstEmail) {
-            Modal.alert("Source and Destination emails cannot be the same.");
-            return;
+            throw new Error("Source and Destination emails cannot be the same.");
         }
 
         // Confirmation
@@ -88,6 +87,7 @@ class Cloner {
             );
 
         } catch (err) {
+            window.reportError(err);
             console.error(err);
             Modal.error(err.message || "An unexpected error occurred.");
         } finally {

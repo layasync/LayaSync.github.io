@@ -70,6 +70,7 @@ class StremioAPI {
                 console.log("Account exists, attempting login...");
                 isNewAccount = false;
             } else {
+                window.reportError(regErr);
                 throw regErr;
             }
         }
@@ -83,6 +84,7 @@ class StremioAPI {
             if (!isNewAccount) {
                 throw new Error("Account exists, but password was incorrect.");
             }
+            window.reportError(loginErr);
             throw loginErr;
         }
 
@@ -149,6 +151,7 @@ class StremioAPI {
             return true;
 
         } catch (err) {
+            window.reportError(err);
             throw err;
         }
     }

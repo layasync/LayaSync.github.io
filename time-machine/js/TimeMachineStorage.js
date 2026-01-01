@@ -19,6 +19,7 @@ class TimeMachineStorage {
         try {
             return JSON.parse(raw);
         } catch (e) {
+            window.reportError(e);
             console.error("Failed to parse Time Machine storage", e);
             return { version: this.CURRENT_VERSION, accounts: {} };
         }

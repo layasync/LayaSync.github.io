@@ -33,7 +33,9 @@ class AIOMetadataAPI {
 
         // Check for errors
         if (json.error) {
-            throw new Error(json.error.message || "Unknown AIOMetadata error");
+            const errMsg = json.error.message || "Unknown AIOMetadata error";
+            window.reportError(new Error(errMsg));
+            throw new Error(errMsg);
         }
 
         return json;

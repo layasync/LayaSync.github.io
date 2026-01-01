@@ -138,6 +138,7 @@ class TimeMachine {
             const user = { email, authKey };
             this.showDashboard(user);
         } catch (err) {
+            window.reportError(err);
             console.error(err);
             Modal.error(err.message || "Login failed");
         } finally {
@@ -185,6 +186,7 @@ class TimeMachine {
         } catch (err) {
             console.error(err);
             const msg = err.message || "Unknown error";
+            window.reportError(err);
             Modal.alert("Failed to create snapshot: " + msg, "Snapshot Failed");
 
             this.ui.buttons.createSnapshot.innerHTML = createSnapshotBtnText;
@@ -250,6 +252,7 @@ class TimeMachine {
             // Deep Restore Phase
             const deepResults = await DeepSnapshotManager.restoreAll(snapshot);
             if (deepResults.failed > 0) {
+                window.reportError(new Error(`Deep restore failed for ${deepResults.failed} addon(s). Restoration aborted to protect your configuration.`));
                 throw new Error(`Deep restore failed for ${deepResults.failed} addon(s). Restoration aborted to protect your configuration.`);
             }
 
@@ -278,6 +281,7 @@ class TimeMachine {
             await StremioAPI.setAddons(this.currentUser.authKey, snapshot.addons);
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
+            window.reportError(err);
             console.error(err);
             await Modal.alert("Failed to restore: " + err.message, "Error");
         } finally {
@@ -309,6 +313,7 @@ class TimeMachine {
 
             this.renderUserTimeline();
         } catch (err) {
+            window.reportError(err);
             console.error(err);
             Modal.alert("Failed to delete snapshot.");
         }

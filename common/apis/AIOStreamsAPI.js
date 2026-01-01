@@ -36,7 +36,9 @@ class AIOStreamsAPI {
 
         // Check for errors
         if (json.error) {
-            throw new Error(json.error.message || "Unknown AIOStreams error");
+            const errMsg = json.error.message || "Unknown AIOStreams error";
+            window.reportError(new Error(errMsg));
+            throw new Error(errMsg);
         }
 
         return json;
@@ -85,10 +87,17 @@ class AIOStreamsAPI {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
-            aiostreamsConfig = await Network.request("../common/configs/aiostreams-personal-config.json");
+            // Force no-store to bypass browser cache
+            // This ensures we get the newest config each time
+            aiostreamsConfig = await Network.request("../common/configs/aiostreams-personal-config.json", { cache: 'no-store' });
         } catch (err) {
-            throw new Error("Found an error loading the configuration file. Please report this to the developer.", err);
+            window.reportError(err);
+            throw new Error("Found an error loading the configuration file.", err);
         }
+
+        // Note: The addon name is not set here. It's dynamically set in QuickStart.js
+        // This is because the default host, auto mode, will try all the hosts so we don't
+        // know which one will be used until this config is installed.
 
         // Insert TMDB Access Token
         aiostreamsConfig.tmdbAccessToken = tmdbAccessToken;

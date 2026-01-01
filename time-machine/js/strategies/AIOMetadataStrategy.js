@@ -101,9 +101,12 @@ class AIOMetadataStrategy {
         } catch (err) {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioMetadataPassword(uuid, null);
-                Modal.alert('Incorrect password for AIOMetadata. Snapshot will save standard URL only.');
+                throw new Error('Incorrect password for AIOMetadata.');
+            } else {
+                // For other errors (like 404/521 Proxy Error), identify the server
+                window.reportError(err);
+                throw new Error(`Failed to connect to AIOMetadata server (${host}): ${err.message}`);
             }
-            throw err;
         }
     }
 

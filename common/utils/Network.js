@@ -59,7 +59,7 @@ class Network {
                     const errorBody = await resp.json().catch(() => ({}));
                     const errorMessage = errorBody.error?.message || errorBody.message || `Proxy Error: ${resp.status} ${resp.statusText}`;
 
-                    // If we get a response, the proxy is "working" and the error is from the target.
+                    // If we get a response, the proxy is working and the error is from the target.
                     throw new Error(errorMessage);
                 }
 
@@ -72,6 +72,7 @@ class Network {
         }
 
         // If we exhausted all proxies
+        window.reportError(lastError);
         throw lastError || new Error("All proxy attempts failed.");
     }
 }

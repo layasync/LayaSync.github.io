@@ -89,7 +89,9 @@ class QuickStart {
     async generateRandomTmdbCredentials() {
         try {
             const TMDB_KEYS_URL = "tmdb-api-keys.json"; // Relative to index.html
-            const keys = await Network.request(TMDB_KEYS_URL);
+            // Force no-store to bypass browser cache
+            // This ensures we get the newest keys each time
+            const keys = await Network.request(TMDB_KEYS_URL, { cache: 'no-store' });
             if (!keys || keys.length === 0) {
                 console.warn("No TMDB keys found.");
                 return null;
@@ -98,6 +100,7 @@ class QuickStart {
             const randomEntry = keys[randomIndex];
             return randomEntry.v4ReadAccessToken;
         } catch (e) {
+            window.reportError(e);
             console.error("Failed to fetch/pick TMDB key:", e);
             return null;
         }
@@ -144,7 +147,8 @@ class QuickStart {
         selectedProviders.forEach(providerId => {
             const config = this.PROVIDER_CONFIG[providerId];
             if (!config) {
-                console.error(`No internal config found for provider: ${providerId}`);
+                window.reportError(new Error("No internal config found for provider: " + providerId));
+                console.error("No internal config found for provider: " + providerId);
                 return;
             }
 
@@ -208,9 +212,10 @@ class QuickStart {
             });
 
             if (Object.keys(providersMap).length === 0) {
+                // No need to report this error as it's a user error
+                // This pops up in the UI
                 throw new Error("Please select at least one provider and enter an API key.");
             }
-
 
             // Login to Stremio (registering a new account if needed)
             const authResult = await StremioAPI.ensureAccount(email, password);
@@ -232,12 +237,10 @@ class QuickStart {
             // Advanced Options
             // Pick random TMDB Credentials
             console.log("Picking random TMDB Credentials...");
-            let tmdbReadToken = null;
-            try {
-                tmdbReadToken = await this.generateRandomTmdbCredentials();
-            } catch (e) {
-                console.error("Failed to generate random TMDB credentials:", e);
-                Modal.alert("Failed to generate random TMDB credentials. Please try again.");
+            const tmdbReadToken = await this.generateRandomTmdbCredentials();
+            if (!tmdbReadToken) {
+                window.reportError(new Error("Failed to generate random TMDB credentials."));
+                throw new Error("Failed to generate random TMDB credentials.");
             }
 
             // AIOStreams (Always installed now)
@@ -259,15 +262,15 @@ class QuickStart {
                     const errors = [];
                     for (const [name, url] of hosts) {
                         try {
-                            console.log(`Attempting install on ${name}...`);
+                            console.log("Attempting install on " + name);
                             manifestUrl = await this.installOnHost(url, name, config, password);
                             if (manifestUrl) {
-                                console.log(`Successfully installed on ${name}`);
+                                console.log("Successfully installed on " + name);
                                 break;
                             }
                         } catch (err) {
-                            console.warn(`Failed to install on ${name}:`, err);
-                            errors.push(`${name}: ${err.message}`);
+                            console.warn("Failed to install on " + name + ":", err);
+                            errors.push(name + ": " + err.message);
                         }
                     }
 
@@ -276,7 +279,8 @@ class QuickStart {
                         // 1. All hosts are down/blocked (very very unlikely)
                         // 2. The users internet connection is unstable
                         // 3. The AIOStreams config file is bad/invalid/outdated (e.g., there is an offline addon)
-                        console.error("All hosts failed:", errors);
+                        window.reportError(new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", ")));
+                        console.error("All AIOStreams hosts failed to generate a manifest URL:", errors);
                         throw new Error("All AIOStreams hosts failed to configure. Please check your internet connection and try again.");
                     }
                 } else {
@@ -290,6 +294,7 @@ class QuickStart {
                     await StremioAPI.installAddon(authKey, manifestUrl);
                 }
             } else {
+                window.reportError(new Error("Failed to generate AIOStreams configuration json file."));
                 throw new Error("Failed to generate AIOStreams configuration.");
             }
 
@@ -322,6 +327,7 @@ class QuickStart {
             );
 
         } catch (err) {
+            window.reportError(err);
             console.error(err);
             Modal.error(err.message || "An unexpected error occurred");
         } finally {
@@ -368,9 +374,11 @@ class QuickStart {
 
             // If we get here, it's a fatal error for this host
             if (err.message && err.message.includes("Failed to validate TMDB API Key")) {
-                throw new Error(`Host ${hostName} failed to validate TMDB key.`);
+                window.reportError(new Error("Host " + hostName + " failed to validate TMDB key."));
+                throw new Error("Host " + hostName + " failed to validate TMDB key.");
             }
 
+            window.reportError(err);
             throw err;
         }
     }

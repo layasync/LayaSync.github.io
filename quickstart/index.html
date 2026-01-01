@@ -151,7 +151,13 @@
         </form>
     </div>
 
-    <!-- Modules -->
+    <!-- Web analytics and error tracking -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "da1cee1ff9f74d0d8b9c0f1a9fe3a820"}'>
+        </script>
+    <script src="../common/utils/ErrorTracking.js"></script>
+
+    <!-- Utilities -->
     <script src="../common/utils/Network.js"></script>
     <script src="../common/utils/CredentialGenerator.js"></script>
     <script src="../common/utils/UIClipboard.js"></script>
@@ -159,6 +165,8 @@
     <script src="../common/utils/UIModal.js"></script>
     <script src="../common/apis/StremioAPI.js"></script>
     <script src="../common/apis/AIOStreamsAPI.js"></script>
+
+    <!-- Modules -->
     <script src="js/QuickStart.js"></script>
 
 </html>

@@ -30,7 +30,7 @@ class DeepSnapshotManagerInternal {
             // If the addon has a deep clone strategy, capture it
             if (strategy) {
                 try {
-                    console.log(`Deep capturing addon: ${addon.manifest.name}`);
+                    console.log("Deep capturing addon: " + addon.manifest.name);
                     const state = await strategy.capture(addon);
                     if (state) {
                         deepStates[addon.transportUrl] = {
@@ -39,7 +39,8 @@ class DeepSnapshotManagerInternal {
                         };
                     }
                 } catch (err) {
-                    throw new Error(`Deep snapshot failed for ${addon.manifest.name}: ${err.message}`);
+                    window.reportError(err);
+                    throw new Error("Deep snapshot failed for " + addon.manifest.name + ": " + err.message);
                 }
             }
         }
@@ -63,14 +64,15 @@ class DeepSnapshotManagerInternal {
 
             if (strategy && entry.state) {
                 try {
-                    console.log(`Deep restoring addon: ${addonUrl} via ${strategy.id}`);
+                    console.log("Deep restoring addon: " + addonUrl + " via " + strategy.id);
                     const res = await strategy.restore(addonUrl, entry.state); // may return new URL or null
                     results.success++;
                     if (res && typeof res === 'string') {
                         results.changed[addonUrl] = res;
                     }
                 } catch (err) {
-                    console.error(`Failed to deep restore ${addonUrl}:`, err);
+                    window.reportError(err);
+                    console.error("Failed to deep restore " + addonUrl + ": " + err);
                     results.failed++;
                 }
             }
