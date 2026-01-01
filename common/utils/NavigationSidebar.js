@@ -472,11 +472,11 @@ class NavigationSidebar {
 
         // Normalize target for root
         if (targetPath === '/') {
-            return isSubDir ? '../index.html' : 'index.html';
+            return isSubDir ? '../' : './';
         }
 
         const clean = targetPath.replace(/^\/+/, '');
-        return isSubDir ? `../${clean}index.html` : `${clean}index.html`;
+        return isSubDir ? `../${clean}` : `${clean}`;
     }
 
     // Check if the given tool path matches the current page
