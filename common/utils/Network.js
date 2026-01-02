@@ -19,6 +19,26 @@ class Network {
         }
     }
 
+    // Helper to fetch with timeout
+    static async fetchWithTimeout(fetchUrl, fetchOptions, timeout = 15000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(fetchUrl, {
+                ...fetchOptions,
+                signal: controller.signal
+            });
+            clearTimeout(id);
+            return response;
+        } catch (error) {
+            clearTimeout(id);
+            if (error.name === 'AbortError') {
+                throw new Error(`Request timed out after ${timeout}ms`);
+            }
+            throw error;
+        }
+    }
+
     // Fetch data from a URL, falling back to proxy if direct fetch fails.
     static async request(url, options = {}) {
         const shouldUseProxy = this.isCrossOrigin(url) && !options.forceDirect;
@@ -26,7 +46,7 @@ class Network {
         if (!shouldUseProxy) {
             try {
                 // Try direct fetch (for local files, same-origin, or explicitly forced)
-                const resp = await fetch(url, options);
+                const resp = await this.fetchWithTimeout(url, options);
                 if (resp.ok) {
                     return await resp.json();
                 }
@@ -52,7 +72,7 @@ class Network {
 
             try {
                 // Cloudflare worker proxy
-                const resp = await fetch(proxyUrl, options);
+                const resp = await this.fetchWithTimeout(proxyUrl, options);
 
                 if (!resp.ok) {
                     // Attempt to parse error message from JSON, fallback to status text
@@ -67,13 +87,14 @@ class Network {
             } catch (e) {
                 console.warn(`Proxy attempt failed for ${proxyBase}:`, e);
                 lastError = e;
-                // Continue to next proxy
+                if (e.message.includes("timed out")) {
+                    break; // If proxy times out, don't try others, assume network issue
+                }
             }
         }
 
         // If we exhausted all proxies
-        window.reportError(lastError);
-        throw lastError || new Error("All proxy attempts failed.");
+        throw lastError;
     }
 }
 

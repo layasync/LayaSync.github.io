@@ -131,16 +131,20 @@ class TimeMachine {
 
         try {
             // Authenticate (using Stremio API)
-            const authResult = await StremioAPI.ensureAccount(email, password);
+            const authResult = await StremioAPI.login(email, password);
             const authKey = authResult.authKey;
 
             // Show the dashboard for that user
             const user = { email, authKey };
             this.showDashboard(user);
         } catch (err) {
-            window.reportError(err);
-            console.error(err);
-            Modal.error(err.message || "Login failed");
+            // Show error modal to the user
+            Modal.error(err.message);
+
+            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
+            if (!StremioAPI.isUserError(err.message)) {
+                window.sendErrorToHoneyBadger(err);
+            }
         } finally {
             this.ui.buttons.login.disabled = false;
             this.ui.buttons.login.innerHTML = loginBtnText;
@@ -184,11 +188,9 @@ class TimeMachine {
                 this.ui.buttons.createSnapshot.disabled = false;
             }, 2000);
         } catch (err) {
-            console.error(err);
-            const msg = err.message || "Unknown error";
-            window.reportError(err);
-            Modal.alert("Failed to create snapshot: " + msg, "Snapshot Failed");
-
+            Modal.error(err.message || String(err));
+            window.sendErrorToHoneyBadger(err);
+        } finally {
             this.ui.buttons.createSnapshot.innerHTML = createSnapshotBtnText;
             this.ui.buttons.createSnapshot.disabled = false;
         }
@@ -252,7 +254,6 @@ class TimeMachine {
             // Deep Restore Phase
             const deepResults = await DeepSnapshotManager.restoreAll(snapshot);
             if (deepResults.failed > 0) {
-                window.reportError(new Error(`Deep restore failed for ${deepResults.failed} addon(s). Restoration aborted to protect your configuration.`));
                 throw new Error(`Deep restore failed for ${deepResults.failed} addon(s). Restoration aborted to protect your configuration.`);
             }
 
@@ -281,9 +282,8 @@ class TimeMachine {
             await StremioAPI.setAddons(this.currentUser.authKey, snapshot.addons);
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
-            window.reportError(err);
-            console.error(err);
-            await Modal.alert("Failed to restore: " + err.message, "Error");
+            Modal.error(err.message || String(err));
+            window.sendErrorToHoneyBadger(err);
         } finally {
             if (restoreBtn) {
                 restoreBtn.innerHTML = originalText;
@@ -313,9 +313,8 @@ class TimeMachine {
 
             this.renderUserTimeline();
         } catch (err) {
-            window.reportError(err);
-            console.error(err);
-            Modal.alert("Failed to delete snapshot.");
+            Modal.error(err.message || String(err));
+            window.sendErrorToHoneyBadger(err);
         }
     }
 

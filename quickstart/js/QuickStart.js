@@ -93,16 +93,13 @@ class QuickStart {
             // This ensures we get the newest keys each time
             const keys = await Network.request(TMDB_KEYS_URL, { cache: 'no-store' });
             if (!keys || keys.length === 0) {
-                console.warn("No TMDB keys found.");
-                return null;
+                throw new Error("No TMDB keys found in the configuration file.");
             }
             const randomIndex = Math.floor(Math.random() * keys.length);
             const randomEntry = keys[randomIndex];
             return randomEntry.v4ReadAccessToken;
         } catch (e) {
-            window.reportError(e);
-            console.error("Failed to fetch/pick TMDB key:", e);
-            return null;
+            throw e;
         }
     }
 
@@ -147,8 +144,10 @@ class QuickStart {
         selectedProviders.forEach(providerId => {
             const config = this.PROVIDER_CONFIG[providerId];
             if (!config) {
-                window.reportError(new Error("No internal config found for provider: " + providerId));
-                console.error("No internal config found for provider: " + providerId);
+                // Show error modal to user and report it to Honeybadger
+                const err = new Error("No internal config found for provider: " + providerId);
+                Modal.error(err.message);
+                window.sendErrorToHoneyBadger(err);
                 return;
             }
 
@@ -212,9 +211,8 @@ class QuickStart {
             });
 
             if (Object.keys(providersMap).length === 0) {
-                // No need to report this error as it's a user error
-                // This pops up in the UI
-                throw new Error("Please select at least one provider and enter an API key.");
+                Modal.error("Please select at least one provider and enter an API key.");
+                return;
             }
 
             // Login to Stremio (registering a new account if needed)
@@ -238,10 +236,6 @@ class QuickStart {
             // Pick random TMDB Credentials
             console.log("Picking random TMDB Credentials...");
             const tmdbReadToken = await this.generateRandomTmdbCredentials();
-            if (!tmdbReadToken) {
-                window.reportError(new Error("Failed to generate random TMDB credentials."));
-                throw new Error("Failed to generate random TMDB credentials.");
-            }
 
             // AIOStreams (Always installed now)
             console.log("Generating AIOStreams manifest...");
@@ -279,9 +273,7 @@ class QuickStart {
                         // 1. All hosts are down/blocked (very very unlikely)
                         // 2. The users internet connection is unstable
                         // 3. The AIOStreams config file is bad/invalid/outdated (e.g., there is an offline addon)
-                        window.reportError(new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", ")));
-                        console.error("All AIOStreams hosts failed to generate a manifest URL:", errors);
-                        throw new Error("All AIOStreams hosts failed to configure. Please check your internet connection and try again.");
+                        throw new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", "));
                     }
                 } else {
                     // Specific host selected
@@ -294,8 +286,7 @@ class QuickStart {
                     await StremioAPI.installAddon(authKey, manifestUrl);
                 }
             } else {
-                window.reportError(new Error("Failed to generate AIOStreams configuration json file."));
-                throw new Error("Failed to generate AIOStreams configuration.");
+                throw new Error("Failed to generate AIOStreams configuration json file.");
             }
 
             // 6. Show Success
@@ -327,9 +318,13 @@ class QuickStart {
             );
 
         } catch (err) {
-            window.reportError(err);
-            console.error(err);
-            Modal.error(err.message || "An unexpected error occurred");
+            // Show error modal to user
+            Modal.error(err.message);
+
+            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
+            if (!StremioAPI.isUserError(err.message)) {
+                window.sendErrorToHoneyBadger(err);
+            }
         } finally {
             this.ui.submitBtn.disabled = false;
             this.ui.submitBtn.textContent = "Start Setup";
@@ -371,14 +366,6 @@ class QuickStart {
                     return await AIOStreamsAPI.installConfig(hostUrl, password, config);
                 }
             }
-
-            // If we get here, it's a fatal error for this host
-            if (err.message && err.message.includes("Failed to validate TMDB API Key")) {
-                window.reportError(new Error("Host " + hostName + " failed to validate TMDB key."));
-                throw new Error("Host " + hostName + " failed to validate TMDB key.");
-            }
-
-            window.reportError(err);
             throw err;
         }
     }

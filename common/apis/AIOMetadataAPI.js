@@ -33,9 +33,7 @@ class AIOMetadataAPI {
 
         // Check for errors
         if (json.error) {
-            const errMsg = json.error.message || "Unknown AIOMetadata error";
-            window.reportError(new Error(errMsg));
-            throw new Error(errMsg);
+            throw new Error(json.error.message);
         }
 
         return json;
@@ -74,7 +72,7 @@ class AIOMetadataAPI {
         if (json && json.installUrl) {
             return json.installUrl;
         }
-        return null;
+        throw new Error("API response did not contain an install URL.");
     }
 }
 

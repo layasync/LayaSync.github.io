@@ -2,6 +2,17 @@
  * StremioAPI Class
  */
 class StremioAPI {
+    // Helper to identify known user errors that shouldn't be reported to logging services
+    static isUserError(errorMessage) {
+        // List of errors that are "normal" user interactions and not system failures
+        const IGNORED = [
+            "User not found",
+            "Wrong passphrase",
+            "Incorrect password"
+        ];
+        return IGNORED.some(msg => errorMessage.includes(msg));
+    }
+
     // Generic function to call Stremio API
     static async call(endpoint, body) {
         const payload = {
@@ -9,8 +20,16 @@ class StremioAPI {
             headers: { "Content-Type": "text/plain;charset=UTF-8" },
             body: JSON.stringify(body)
         };
-        const resp = await fetch(`https://api.strem.io/api/${endpoint}`, payload);
-        return resp.json();
+
+        const json = await Network.request(`https://api.strem.io/api/${endpoint}`, {
+            ...payload
+        });
+
+        if (json.error) {
+            throw new Error(json.error.message);
+        }
+
+        return json;
     }
 
     // Login to Stremio.
@@ -21,11 +40,6 @@ class StremioAPI {
             password: password
         };
         const data = await this.call("login", body);
-
-        // If the login failed, throw an error.
-        if (data.error) {
-            throw new Error(data.error.message || "Login failed");
-        }
 
         // Return the auth key.
         return data.result.authKey;
@@ -44,11 +58,6 @@ class StremioAPI {
         };
         const data = await this.call("register", body);
 
-        // If the registration failed, throw an error.
-        if (data.error) {
-            throw new Error(data.error.message || "Registration failed");
-        }
-
         // Return the email and password.
         return { email, password };
     }
@@ -59,34 +68,23 @@ class StremioAPI {
         let isNewAccount = false;
         let authKey;
 
-        // First try to register the email and password.
+        // First try to register the email and password as a new account.
+        console.log("Attempting to register account...");
         try {
             await this.register(email, password);
             isNewAccount = true;
             console.log("Account created successfully.");
-        } catch (regErr) {
-            const errMsg = regErr.message || "";
-            if (errMsg.includes("already exists") || errMsg.includes("existingUser")) {
-                console.log("Account exists, attempting login...");
-                isNewAccount = false;
-            } else {
-                window.reportError(regErr);
-                throw regErr;
+        } catch (e) {
+            // If the account already exists, we suppress the error and proceed to login.
+            // For any other error (server down, invalid params), we throw.
+            if (!e.message.includes("already exists") && !e.message.includes("existingUser")) {
+                throw e;
             }
+            console.log("Account exists, attempting login...");
         }
 
-        // Then try to login.
-        try {
-            authKey = await this.login(email, password);
-        } catch (loginErr) {
-            // If the login failed, but it's also not a new account,
-            // then the password was incorrect. Throw an error.
-            if (!isNewAccount) {
-                throw new Error("Account exists, but password was incorrect.");
-            }
-            window.reportError(loginErr);
-            throw loginErr;
-        }
+        // We need to login to get the authKey (whether new or existing).
+        authKey = await this.login(email, password);
 
         // Return the auth key and whether the account was new.
         return { authKey, isNewAccount };
@@ -98,13 +96,12 @@ class StremioAPI {
             type: "AddonCollectionGet",
             authKey: authKey
         });
-        if (data.error) return [];
-        return data.result.addons || [];
+        return data.result.addons;
     }
 
     // Set the addons for the account.
     static async setAddons(authKey, addons) {
-        return await this.call("addonCollectionSet", {
+        const data = await this.call("addonCollectionSet", {
             type: "AddonCollectionSet",
             authKey: authKey,
             addons: addons
@@ -113,47 +110,40 @@ class StremioAPI {
 
     // Take in a manifest URL and install it to the account.
     static async installAddon(authKey, manifestUrl) {
-        try {
-            // Get current addons
-            const currentAddons = await this.getAddons(authKey);
+        // Get current addons
+        const currentAddons = await this.getAddons(authKey);
 
-            // Fetch manifest content
-            // Usage of Network (class)
-            const manifestJson = await Network.request(manifestUrl);
+        // Fetch manifest content
+        const manifestJson = await Network.request(manifestUrl);
 
-            // Construct new addon object
-            const newAddon = {
-                transportUrl: manifestUrl,
-                transportName: "http",
-                manifest: manifestJson,
-                flags: {
-                    official: false,
-                    protected: false
-                }
-            };
-
-            // Save existing addons to a new list
-            let newAddonsList = [...currentAddons];
-
-            // Search for the addon we're installing
-            const existingIndex = newAddonsList.findIndex(a => a.transportUrl === manifestUrl);
-            if (existingIndex !== -1) {
-                // If we found the addon that we're trying to install, update it.
-                newAddonsList[existingIndex] = newAddon;
-            } else {
-                // If we didn't find the addon, add it.
-                newAddonsList.push(newAddon);
+        // Construct new addon object
+        const newAddon = {
+            transportUrl: manifestUrl,
+            transportName: "http",
+            manifest: manifestJson,
+            flags: {
+                official: false,
+                protected: false
             }
+        };
 
-            // Save
-            await this.setAddons(authKey, newAddonsList);
-            console.log("Addon installed successfully");
-            return true;
+        // Save existing addons to a new list
+        let newAddonsList = [...currentAddons];
 
-        } catch (err) {
-            window.reportError(err);
-            throw err;
+        // Search for the addon we're installing
+        const existingIndex = newAddonsList.findIndex(a => a.transportUrl === manifestUrl);
+        if (existingIndex !== -1) {
+            // If we found the addon that we're trying to install, update it.
+            newAddonsList[existingIndex] = newAddon;
+        } else {
+            // If we didn't find the addon, add it.
+            newAddonsList.push(newAddon);
         }
+
+        // Save
+        await this.setAddons(authKey, newAddonsList);
+        console.log("Addon installed successfully");
+        return true;
     }
 }
 

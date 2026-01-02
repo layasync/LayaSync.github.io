@@ -104,8 +104,8 @@ class AIOMetadataStrategy {
                 throw new Error('Incorrect password for AIOMetadata.');
             } else {
                 // For other errors (like 404/521 Proxy Error), identify the server
-                window.reportError(err);
-                throw new Error(`Failed to connect to AIOMetadata server (${host}): ${err.message}`);
+                window.sendErrorToHoneyBadger(err);
+                throw new Error("Failed to connect to AIOMetadata server (" + host + "): " + err.message);
             }
         }
     }

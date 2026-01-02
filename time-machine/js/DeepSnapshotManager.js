@@ -39,7 +39,6 @@ class DeepSnapshotManagerInternal {
                         };
                     }
                 } catch (err) {
-                    window.reportError(err);
                     throw new Error("Deep snapshot failed for " + addon.manifest.name + ": " + err.message);
                 }
             }
@@ -71,7 +70,7 @@ class DeepSnapshotManagerInternal {
                         results.changed[addonUrl] = res;
                     }
                 } catch (err) {
-                    window.reportError(err);
+                    window.sendErrorToHoneyBadger(err);
                     console.error("Failed to deep restore " + addonUrl + ": " + err);
                     results.failed++;
                 }

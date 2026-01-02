@@ -32,7 +32,8 @@ class Cloner {
         const dstPass = this.ui.inputs.destPass.value;
 
         if (srcEmail === dstEmail) {
-            throw new Error("Source and Destination emails cannot be the same.");
+            Modal.error("Source and Destination emails cannot be the same.");
+            return;
         }
 
         // Confirmation
@@ -87,9 +88,13 @@ class Cloner {
             );
 
         } catch (err) {
-            window.reportError(err);
-            console.error(err);
-            Modal.error(err.message || "An unexpected error occurred.");
+            // Show error modal to the user
+            Modal.error(err.message);
+
+            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
+            if (!StremioAPI.isUserError(err.message)) {
+                window.sendErrorToHoneyBadger(err);
+            }
         } finally {
             this.setUIEnabled(true);
         }
@@ -98,18 +103,19 @@ class Cloner {
     // Freezes the UI while the process is running
     setUIEnabled(enabled) {
         this.ui.btn.disabled = !enabled;
+
         if (enabled) {
-            this.ui.btn.innerHTML = '<span class="loading-spinner"></span> Cloning...';
-            this.ui.inputs.sourceEmail.disabled = true;
-            this.ui.inputs.sourcePass.disabled = true;
-            this.ui.inputs.destEmail.disabled = true;
-            this.ui.inputs.destPass.disabled = true;
-        } else {
             this.ui.btn.innerHTML = 'Start Cloning Process';
             this.ui.inputs.sourceEmail.disabled = false;
             this.ui.inputs.sourcePass.disabled = false;
             this.ui.inputs.destEmail.disabled = false;
             this.ui.inputs.destPass.disabled = false;
+        } else {
+            this.ui.btn.innerHTML = '<span class="loading-spinner"></span> Cloning...';
+            this.ui.inputs.sourceEmail.disabled = true;
+            this.ui.inputs.sourcePass.disabled = true;
+            this.ui.inputs.destEmail.disabled = true;
+            this.ui.inputs.destPass.disabled = true;
         }
     }
 }

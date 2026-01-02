@@ -36,9 +36,7 @@ class AIOStreamsAPI {
 
         // Check for errors
         if (json.error) {
-            const errMsg = json.error.message || "Unknown AIOStreams error";
-            window.reportError(new Error(errMsg));
-            throw new Error(errMsg);
+            throw new Error(json.error.message);
         }
 
         return json;
@@ -72,14 +70,12 @@ class AIOStreamsAPI {
         };
 
         const json = await this.call(baseAIOStreamsUrl, 'POST', '/api/v1/user', payload);
-
         const newUuid = json.data && json.data.uuid;
         const encrypted = json.data && json.data.encryptedPassword;
-
         if (newUuid && encrypted) {
             return `${baseAIOStreamsUrl.replace(/\/$/, "")}/stremio/${newUuid}/${encrypted}/manifest.json`;
         }
-        return null;
+        throw new Error("API response did not contain the expected UUID and encrypted password.");
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
@@ -91,8 +87,7 @@ class AIOStreamsAPI {
             // This ensures we get the newest config each time
             aiostreamsConfig = await Network.request("../common/configs/aiostreams-personal-config.json", { cache: 'no-store' });
         } catch (err) {
-            window.reportError(err);
-            throw new Error("Found an error loading the configuration file.", err);
+            throw new Error("Found an error loading the configuration file.", { cause: err });
         }
 
         // Note: The addon name is not set here. It's dynamically set in QuickStart.js
