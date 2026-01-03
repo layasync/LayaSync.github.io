@@ -131,8 +131,7 @@ class TimeMachine {
 
         try {
             // Authenticate (using Stremio API)
-            const authResult = await StremioAPI.login(email, password);
-            const authKey = authResult.authKey;
+            const authKey = await StremioAPI.login(email, password);
 
             // Show the dashboard for that user
             const user = { email, authKey };
