@@ -36,36 +36,37 @@ class Cloner {
             return;
         }
 
-        // Confirmation
-        const confirmed = await Modal.confirm(
-            `Are you sure you want to clone from <b>${srcEmail}</b> to <b>${dstEmail}</b>?<br><br>The destination account's existing addons will be overwritten.`,
-            "Confirm Cloning"
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
         // Start Process
         this.setUIEnabled(false);
         try {
-            // Connect to Source account
-            const srcAuth = await StremioAPI.ensureAccount(srcEmail, srcPass);
+            // Login to Source account
+            await StremioAPI.login(srcEmail, srcPass);
 
             // Fetch Source Account Addons
-            const srcAddons = await StremioAPI.getAddons(srcAuth.authKey);
+            const srcAddons = await StremioAPI.getAddons();
 
-            // Connect to Destination account
-            const dstAuth = await StremioAPI.ensureAccount(dstEmail, dstPass);
+            // Confirmation
+            const confirmed = await Modal.confirm(
+                "Found <b>" + srcAddons.length + " addons</b> on the source account: <b>" + srcEmail + "</b>.<br><br>The addons on the <b>" + dstEmail + "</b> account will be overwritten.<br><br>Are you sure you want to continue?",
+                "Confirm Cloning"
+            );
+
+            if (!confirmed) {
+                this.setUIEnabled(true);
+                return;
+            }
+
+            // Connect to Destination account (registering a new account if needed)
+            const isNewAccount = await StremioAPI.ensureAccount(dstEmail, dstPass);
 
             // Save Source Account Addons to Destination
-            await StremioAPI.setAddons(dstAuth.authKey, srcAddons);
+            await StremioAPI.setAddons(srcAddons);
 
             // Show Success
             let modalMessage = "";
             let detailsHtml = "";
 
-            if (dstAuth.isNewAccount) {
+            if (isNewAccount) {
                 modalMessage = `Created a new account and cloned <b>${srcAddons.length} addons</b> to it.`;
                 detailsHtml = `
                 <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:0.5rem; margin-top:1rem; text-align:left;">

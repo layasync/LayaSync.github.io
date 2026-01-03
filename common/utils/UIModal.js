@@ -28,7 +28,13 @@ class Modal {
         if (overlay && overlay.parentNode) {
             overlay.classList.add('fade-out');
             setTimeout(() => {
-                overlay.parentNode.removeChild(overlay);
+                // Re-check existence in case it was removed during the timeout
+                // This can happen if the modal is closed while the timeout is pending
+                // There is nothing wrong with trying to remove the child, but it will send an
+                // unnecessary error to HoneyBadger
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
             }, 200);
         }
     }

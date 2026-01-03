@@ -216,18 +216,16 @@ class QuickStart {
             }
 
             // Login to Stremio (registering a new account if needed)
-            const authResult = await StremioAPI.ensureAccount(email, password);
-            const authKey = authResult.authKey;
-            const isNewAccount = authResult.isNewAccount;
+            const isNewAccount = await StremioAPI.ensureAccount(email, password);
 
             // Configure Account (Clean vs Preserve)
             if (isNewAccount) {
                 // Clean Slate for new users
                 console.log("New account: Cleaning default addons...");
-                const currentAddons = await StremioAPI.getAddons(authKey);
+                const currentAddons = await StremioAPI.getAddons();
                 const ALLOWED = ["Cinemeta"];
                 const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
-                await StremioAPI.setAddons(authKey, filteredAddons);
+                await StremioAPI.setAddons(filteredAddons);
             } else {
                 console.log("Existing account: Preserving addons...");
             }
@@ -283,7 +281,7 @@ class QuickStart {
 
                 // If we got back a manifest URL successfully from a host, install it into the users Stremio account
                 if (manifestUrl) {
-                    await StremioAPI.installAddon(authKey, manifestUrl);
+                    await StremioAPI.installAddon(manifestUrl);
                 }
             } else {
                 throw new Error("Failed to generate AIOStreams configuration json file.");

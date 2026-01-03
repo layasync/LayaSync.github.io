@@ -6,7 +6,7 @@
 class TimeMachine {
     constructor() {
         // Variables to keep track of state
-        this.currentUser = null;
+        this.currentUserEmail = null;
         this.activeSnapshotId = null;
 
         // Define references to the UI elements
@@ -71,14 +71,14 @@ class TimeMachine {
 
     // Show the login view
     showLogin() {
-        this.currentUser = null;
+        this.currentUserEmail = null;
         this.updateUserStatus();
         this.showView('login');
     }
 
     // Show the dashboard view
-    showDashboard(user) {
-        this.currentUser = user;
+    showDashboard(email) {
+        this.currentUserEmail = email;
         this.updateUserStatus();
         this.showView('dashboard');
         this.renderUserTimeline();
@@ -89,7 +89,7 @@ class TimeMachine {
         const userStatus = this.ui.containers.userStatus;
 
         // If no user is logged in, hide the status
-        if (!this.currentUser) {
+        if (!this.currentUserEmail) {
             userStatus.classList.add('hidden');
             userStatus.innerHTML = '';
             return;
@@ -99,7 +99,7 @@ class TimeMachine {
         userStatus.classList.remove('hidden');
         userStatus.innerHTML = `
             <div class="user-status-pill">
-                <span>Logged in as <b>${this.currentUser.email}</b></span>
+                <span>Logged in as <b>${this.currentUserEmail}</b></span>
                 <span class="logout-link" id="logoutLink">Logout</span>
             </div>
         `;
@@ -131,11 +131,10 @@ class TimeMachine {
 
         try {
             // Authenticate (using Stremio API)
-            const authKey = await StremioAPI.login(email, password);
+            await StremioAPI.login(email, password);
 
             // Show the dashboard for that user
-            const user = { email, authKey };
-            this.showDashboard(user);
+            this.showDashboard(email);
         } catch (err) {
             // Show error modal to the user
             Modal.error(err.message);
@@ -154,7 +153,7 @@ class TimeMachine {
     async handleCreateSnapshot() {
         // If no user is logged in, do nothing
         // This should never happen because the button is disabled if no user is logged in
-        if (!this.currentUser) {
+        if (!this.currentUserEmail) {
             return;
         }
 
@@ -168,13 +167,13 @@ class TimeMachine {
 
         try {
             // Fetch Addons (using Stremio API)
-            const addons = await StremioAPI.getAddons(this.currentUser.authKey);
+            const addons = await StremioAPI.getAddons();
 
             // Deep Capture (for stateful addons like AIOStreams and AIOMetadata)
             const deepData = await DeepSnapshotManager.captureAll(addons);
 
             // Save to Storage
-            const snapshot = TimeMachineStorage.addSnapshot(this.currentUser.email, addons, "", deepData);
+            const snapshot = TimeMachineStorage.addSnapshot(this.currentUserEmail, addons, "", deepData);
 
             // Refresh View (Switch to new snapshot)
             this.activeSnapshotId = snapshot.id;
@@ -198,7 +197,7 @@ class TimeMachine {
     // When the edit snapshot note button is clicked
     async editSnapshotNote(snapshotId) {
         // Get current note from storage
-        const snapshots = TimeMachineStorage.getSnapshots(this.currentUser.email);
+        const snapshots = TimeMachineStorage.getSnapshots(this.currentUserEmail);
         const snapshot = snapshots.find(s => s.id === snapshotId);
         if (!snapshot) {
             return; // Snapshot not found
@@ -214,7 +213,7 @@ class TimeMachine {
         }
 
         // allow empty string to clear note
-        TimeMachineStorage.updateSnapshotNote(this.currentUser.email, snapshotId, newNote.trim());
+        TimeMachineStorage.updateSnapshotNote(this.currentUserEmail, snapshotId, newNote.trim());
 
         // Refresh UI
         this.renderUserTimeline();
@@ -223,7 +222,7 @@ class TimeMachine {
     // When the restore snapshot button is clicked
     async restoreSnapshot(id, btnElement) {
         // Find the snapshot to restore
-        const snapshots = TimeMachineStorage.getSnapshots(this.currentUser.email);
+        const snapshots = TimeMachineStorage.getSnapshots(this.currentUserEmail);
         const snapshot = snapshots.find(s => s.id === id);
 
         if (!snapshot) {
@@ -263,7 +262,7 @@ class TimeMachine {
             // 1. The immediate restoration (setAddons) uses the valid URL.
             // 2. Future restorations from this snapshot use the valid URL.
             if (deepResults.changed && Object.keys(deepResults.changed).length > 0) {
-                const updatedSnapshots = TimeMachineStorage.getSnapshots(this.currentUser.email);
+                const updatedSnapshots = TimeMachineStorage.getSnapshots(this.currentUserEmail);
                 const idx = updatedSnapshots.findIndex(s => s.id === snapshot.id);
                 if (idx !== -1) {
                     const addons = updatedSnapshots[idx].addons;
@@ -271,14 +270,14 @@ class TimeMachine {
                         const ai = addons.find(a => a.transportUrl === oldUrl);
                         if (ai) ai.transportUrl = newUrl;
                     });
-                    TimeMachineStorage.saveSnapshots(this.currentUser.email, updatedSnapshots);
+                    TimeMachineStorage.saveSnapshots(this.currentUserEmail, updatedSnapshots);
                     // Refresh local ref
                     snapshot.addons = updatedSnapshots[idx].addons;
                 }
             }
 
             // Standard Restore Phase
-            await StremioAPI.setAddons(this.currentUser.authKey, snapshot.addons);
+            await StremioAPI.setAddons(snapshot.addons);
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
             Modal.error(err.message || String(err));
@@ -304,7 +303,7 @@ class TimeMachine {
         }
 
         try {
-            TimeMachineStorage.deleteSnapshot(this.currentUser.email, id);
+            TimeMachineStorage.deleteSnapshot(this.currentUserEmail, id);
 
             if (this.activeSnapshotId === id) {
                 this.activeSnapshotId = null;
@@ -323,11 +322,11 @@ class TimeMachine {
 
     // Render the user timeline
     renderUserTimeline() {
-        if (!this.currentUser) {
+        if (!this.currentUserEmail) {
             console.error('No current user found.');
             return;
         }
-        const email = this.currentUser.email;
+        const email = this.currentUserEmail;
         const snapshots = TimeMachineStorage.getSnapshots(email);
         this.ui.containers.timeline.innerHTML = '';
 

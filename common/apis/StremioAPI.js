@@ -2,6 +2,9 @@
  * StremioAPI Class
  */
 class StremioAPI {
+    // Current user session (email, password, authKey)
+    static session = null;
+
     // Helper to identify known user errors that shouldn't be reported to logging services
     static isUserError(errorMessage) {
         // List of errors that are "normal" user interactions and not system failures
@@ -21,15 +24,46 @@ class StremioAPI {
             body: JSON.stringify(body)
         };
 
-        const json = await Network.request(`https://api.strem.io/api/${endpoint}`, {
-            ...payload
-        });
+        const executeRequest = async (currentBody) => {
+            const json = await Network.request(`https://api.strem.io/api/${endpoint}`, {
+                ...payload,
+                body: JSON.stringify(currentBody)
+            });
 
-        if (json.error) {
-            throw new Error(json.error.message);
+            if (json.error) {
+                throw new Error(json.error.message);
+            }
+            return json;
+        };
+
+        try {
+            return await executeRequest(body);
+        } catch (err) {
+            // If the API call throws an error, we'll end up here.
+            // If the error is that a session expired, we'll try to re-login
+            // and retry the request.
+            if (err.message.includes("Session does not exist") &&
+                endpoint !== "login" &&
+                this.session &&
+                body.authKey === this.session.authKey) {
+
+                console.warn("Session expired, attempting auto-relogin...");
+                try {
+                    // Re-login to get a fresh authKey
+                    await this.login(this.session.email, this.session.password);
+
+                    // Update the authKey in the request body
+                    const newBody = { ...body, authKey: this.session.authKey };
+
+                    // Retry request
+                    return await executeRequest(newBody);
+                } catch (retryErr) {
+                    console.error("Auto-relogin failed:", retryErr);
+                    throw err; // Throw original session error if retry fails
+                }
+            }
+            throw err;
         }
-
-        return json;
     }
 
     // Login to Stremio.
@@ -41,8 +75,12 @@ class StremioAPI {
         };
         const data = await this.call("login", body);
 
-        // Return the auth key.
-        return data.result.authKey;
+        // Store session state
+        this.session = {
+            email,
+            password,
+            authKey: data.result.authKey
+        };
     }
 
     // Register a new Stremio account.
@@ -56,17 +94,14 @@ class StremioAPI {
                 time: new Date().toISOString()
             }
         };
-        const data = await this.call("register", body);
 
-        // Return the email and password.
-        return { email, password };
+        await this.call("register", body);
     }
 
     // Ensure an account exists.
     // First by trying to register, then by logging in.
     static async ensureAccount(email, password) {
         let isNewAccount = false;
-        let authKey;
 
         // First try to register the email and password as a new account.
         console.log("Attempting to register account...");
@@ -84,34 +119,51 @@ class StremioAPI {
         }
 
         // We need to login to get the authKey (whether new or existing).
-        authKey = await this.login(email, password);
+        await this.login(email, password);
 
-        // Return the auth key and whether the account was new.
-        return { authKey, isNewAccount };
+        // Return whether the account was new.
+        return isNewAccount;
     }
 
     // Get the addons for the account.
-    static async getAddons(authKey) {
+    static async getAddons() {
+        // If no session is found, throw an error.
+        if (!this.session) {
+            throw new Error("No active session found.");
+        }
+
         const data = await this.call("addonCollectionGet", {
             type: "AddonCollectionGet",
-            authKey: authKey
+            authKey: this.session.authKey
         });
+
+        // Return the addons.
         return data.result.addons;
     }
 
     // Set the addons for the account.
-    static async setAddons(authKey, addons) {
-        const data = await this.call("addonCollectionSet", {
+    static async setAddons(addons) {
+        // If no session is found, throw an error.
+        if (!this.session) {
+            throw new Error("No active session found.");
+        }
+
+        await this.call("addonCollectionSet", {
             type: "AddonCollectionSet",
-            authKey: authKey,
+            authKey: this.session.authKey,
             addons: addons
         });
     }
 
     // Take in a manifest URL and install it to the account.
-    static async installAddon(authKey, manifestUrl) {
+    static async installAddon(manifestUrl) {
+        // If no session is found, throw an error.
+        if (!this.session) {
+            throw new Error("No active session found.");
+        }
+
         // Get current addons
-        const currentAddons = await this.getAddons(authKey);
+        const currentAddons = await this.getAddons();
 
         // Fetch manifest content
         const manifestJson = await Network.request(manifestUrl);
@@ -141,7 +193,7 @@ class StremioAPI {
         }
 
         // Save
-        await this.setAddons(authKey, newAddonsList);
+        await this.setAddons(newAddonsList);
         console.log("Addon installed successfully");
         return true;
     }
