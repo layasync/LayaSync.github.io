@@ -311,7 +311,7 @@ class QuickStart {
             }
 
             await Modal.alert(
-                `${modalMessage} ${detailsHtml} <br><br> Login to Stremio with these credentials to start watching!`,
+                `${modalMessage} ${detailsHtml} <br><br> Your Duck Streams password is the same as your Stremio password. <br><br> Login to Stremio with these credentials to start watching!`,
                 "Success! 🎉"
             );
 
