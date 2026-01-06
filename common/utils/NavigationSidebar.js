@@ -737,6 +737,13 @@ class NavigationSidebar {
 
         // Create the error object and send it to HoneyBadger
         const error = new Error("User Report: " + desc.substring(0, 50));
+
+        if (window.isErrorTrackingBlocked && window.isErrorTrackingBlocked()) {
+            this.closeReportModal();
+            Modal.error('Error reporting is currently blocked by your ad blocker.<br><br>Please temporarily disable it to report an issue.');
+            return;
+        }
+
         if (window.sendErrorToHoneyBadger) {
             window.sendErrorToHoneyBadger(error, {
                 fingerprint: uniqueId,
@@ -774,7 +781,7 @@ class NavigationSidebar {
             });
 
         } else {
-            alert('Error tracking system is not loaded. Please try again later.');
+            Modal.error('Error tracking system is not loaded yet. Please try again in a moment.');
         }
     }
 

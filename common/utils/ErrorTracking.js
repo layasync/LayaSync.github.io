@@ -7,6 +7,7 @@ class ErrorTracking {
         this.apiKey = "hbp_f6R9jIfXi40Li5ddpEf3AwislT57Ni3zLqtH";
         this.environment = "production";
         this.errorQueue = [];
+        this.isBlocked = false;
         this.init();
     }
 
@@ -21,7 +22,14 @@ class ErrorTracking {
         script.type = "text/javascript";
         script.async = true;
 
+        // When the script loads, configure Honeybadger
         script.onload = () => this.configure();
+
+        // When the script fails to load, set isBlocked to true
+        script.onerror = () => {
+            console.warn("Honeybadger script failed to load. Likely blocked by an ad blocker.");
+            this.isBlocked = true;
+        };
 
         document.head.appendChild(script);
     }
@@ -47,6 +55,8 @@ class ErrorTracking {
     exposeGlobalHelpers() {
         // Helper to safely report errors even if caught
         window.sendErrorToHoneyBadger = (err, options) => this.reportError(err, options);
+        // Helper to check if tracking is blocked
+        window.isErrorTrackingBlocked = () => this.isBlocked;
     }
 
     reportError(err, options = {}) {
