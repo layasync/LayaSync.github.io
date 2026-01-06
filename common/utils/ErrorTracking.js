@@ -36,13 +36,13 @@ class ErrorTracking {
 
     exposeGlobalHelpers() {
         // Helper to safely report errors even if caught
-        window.sendErrorToHoneyBadger = (err) => this.reportError(err);
+        window.sendErrorToHoneyBadger = (err, options) => this.reportError(err, options);
     }
 
-    reportError(err) {
+    reportError(err, options = {}) {
         if (window.Honeybadger) {
             console.error("Reporting error to Honeybadger:", err);
-            Honeybadger.notify(err);
+            Honeybadger.notify(err, options);
         } else {
             console.warn("Honeybadger not loaded yet, cannot report error:", err);
         }

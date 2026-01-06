@@ -11,25 +11,37 @@ class AIOMetadataStrategy {
 
     // Check if the addon is an AIOMetadata addon
     isMatch(addon) {
-        const url = addon.transportUrl || "";
+        if (!addon.transportUrl) {
+            return false;
+        }
+
+        // Strict URL parsing.
+        // Convert the manifest URL to a URL object to ensure it's valid.
+        const urlObj = new URL(addon.transportUrl);
+        const hostname = urlObj.hostname;
         const id = (addon.manifest && addon.manifest.id) || "";
 
         // Check 1: Use AIOMetadataAPI.HOSTS if available
         if (typeof AIOMetadataAPI !== 'undefined' && AIOMetadataAPI.HOSTS) {
             const hosts = Object.values(AIOMetadataAPI.HOSTS);
-            if (hosts.some(host => url.startsWith(host))) {
+            if (hosts.some(host => addon.transportUrl.startsWith(host))) {
                 return true;
             }
         }
 
-        // Check 2: Fallback check for URL
-        if (url.includes('aiometadata')) {
-            console.log('AIOMetadata addon detected via URL: ' + url);
+        // Check 2: Fallback check for URL Hostname
+        if (hostname.includes('aiometadata')) {
             return true;
         }
 
         // Check 3: Check ID or name
-        return id.includes('aiometadata') || (addon.manifest && addon.manifest.name && addon.manifest.name.toLowerCase().includes('aiometadata'));
+        // We also check for '/stremio/' in the URL to ensure it's a standard instance and not a wrapper.
+        // We check for /stremio/ in the URL to prevent tools like https://ratingswrapper-production.up.railway.app
+        // from being detected as an AIOMetadata addon.
+        const isAioId = id.includes('aio-metadata') || (addon.manifest && addon.manifest.name && addon.manifest.name.toLowerCase().includes('aiometadata'));
+        const hasStremioPath = urlObj.pathname.includes('/stremio/');
+
+        return isAioId && hasStremioPath;
     }
 
     // Capture AIOMetadata settings

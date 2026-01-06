@@ -11,27 +11,37 @@ class AIOStreamsStrategy {
 
     // Check if the addon is an AIOStreams addon
     isMatch(addon) {
-        const url = addon.transportUrl || "";
+        if (!addon.transportUrl) {
+            return false;
+        }
+
+        // Strict URL parsing.
+        // Convert the manifest URL to a URL object to ensure it's valid.
+        const urlObj = new URL(addon.transportUrl);
+        const hostname = urlObj.hostname;
         const id = (addon.manifest && addon.manifest.id) || "";
 
         // Check 1: Use AIOStreamsAPI.HOSTS if available
         // If the addon manifest URL starts with any of the hosts in AIOStreamsAPI.HOSTS, it is an AIOStreams addon
         if (typeof AIOStreamsAPI !== 'undefined' && AIOStreamsAPI.HOSTS) {
             const hosts = Object.values(AIOStreamsAPI.HOSTS);
-            if (hosts.some(host => url.startsWith(host))) {
+            if (hosts.some(host => addon.transportUrl.startsWith(host))) {
                 return true;
             }
         }
 
         // Check 2: This is a fallback check.
-        // If the addon URL contains 'aiostreams', it is an AIOStreams addon
-        if (url.includes('aiostreams')) {
-            console.log('AIOStreams addon detected via URL: ' + url);
+        // If the addon URL Hostname contains 'aiostreams', it is an AIOStreams addon
+        if (hostname.includes('aiostreams')) {
             return true;
         }
 
         // Check 3: If the addon ID or name contains 'aiostreams', it is an AIOStreams addon
-        return id.includes('aiostreams') || (addon.manifest && addon.manifest.name && addon.manifest.name.toLowerCase().includes('aiostreams'));
+        // We check for /stremio/ in the URL to prevent wrapped tools from being detected as an AIOStreams addon.
+        const isAioId = id.includes('aiostreams') || (addon.manifest && addon.manifest.name && addon.manifest.name.toLowerCase().includes('aiostreams'));
+        const hasStremioPath = urlObj.pathname.includes('/stremio/');
+
+        return isAioId && hasStremioPath;
     }
 
     // Capture AIOStreams settings

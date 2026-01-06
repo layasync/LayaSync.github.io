@@ -24,6 +24,7 @@ class NavigationSidebar {
         this.createSidebar();
         this.createFloatingActionButton();
         this.createOverlay();
+        this.createReportModal();
         this.attachEventListeners();
 
         // Add class to body to indicate sidebar presence
@@ -258,6 +259,196 @@ class NavigationSidebar {
             }
 
             /* =========================================================
+            Report Modal
+            ========================================================= */
+            #report-modal {
+                position: fixed;
+                inset: 0;
+                z-index: 2000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            #report-modal.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            #report-modal-backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.75);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+            }
+
+            #report-modal-content {
+                position: relative;
+                width: 100%;
+                max-width: 500px;
+                background: #0f172a;
+                border: 1px solid #334155;
+                border-radius: 1rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                overflow: hidden;
+                transform: scale(0.95);
+                transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            #report-modal.visible #report-modal-content {
+                transform: scale(1);
+            }
+
+            .report-header {
+                padding: 1.25rem;
+                border-bottom: 1px solid #1e293b;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #1e293b;
+            }
+
+            .report-header h3 {
+                margin: 0;
+                color: #f8fafc;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
+            .report-close {
+                background: transparent;
+                border: none;
+                color: #94a3b8;
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: 0.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+            }
+
+            .report-close:hover {
+                background: #334155;
+                color: #fff;
+            }
+
+            .report-body {
+                padding: 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: #cbd5e1;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .form-group input, .form-group textarea {
+                width: 100%;
+                background: #1e293b;
+                border: 1px solid #334155;
+                color: #fff;
+                padding: 0.75rem;
+                border-radius: 0.5rem;
+                font-family: inherit;
+                font-size: 0.95rem;
+                outline: none;
+                transition: border-color 0.2s;
+                resize: vertical;
+                box-sizing: border-box;
+            }
+
+            .form-group input:focus, .form-group textarea:focus {
+                border-color: #3b82f6;
+                background: #0f172a;
+            }
+
+            .form-helper {
+                font-size: 0.8rem;
+                color: #64748b;
+                margin-top: 0.4rem;
+            }
+
+            .report-footer {
+                padding: 1.25rem;
+                background: #0f172a;
+                border-top: 1px solid #1e293b;
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.75rem;
+            }
+
+            .modal-btn {
+                padding: 0.6rem 1rem;
+                border-radius: 0.5rem;
+                font-weight: 500;
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: all 0.2s;
+                border: none;
+            }
+
+            .btn-secondary {
+                background: transparent;
+                color: #94a3b8;
+            }
+
+            .btn-secondary:hover {
+                background: #1e293b;
+                color: #fff;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #3b82f6, #6366f1);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                opacity: 0.9;
+            }
+
+            .sidebar-report-btn {
+                margin-top: 1rem;
+                background: rgba(59, 130, 246, 0.1);
+                color: #60a5fa;
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                width: 100%;
+                padding: 0.75rem;
+                border-radius: 0.5rem;
+                cursor: pointer;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                transition: all 0.2s;
+                font-size: 0.9rem;
+            }
+
+            .sidebar-report-btn:hover {
+                background: rgba(59, 130, 246, 0.2);
+                border-color: rgba(59, 130, 246, 0.4);
+                color: #93c5fd;
+            }
+            
+            .sidebar-report-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* =========================================================
             Floating Action Button (FAB)
             ========================================================= */
             #mobile-fab {
@@ -403,10 +594,14 @@ class NavigationSidebar {
         const footer = document.createElement('div');
         footer.className = 'sidebar-footer';
         footer.innerHTML = `
-            <div>Need help?</div>
-            <a href="https://duckkota.gitlab.io/guides/" target="_blank">
+            <div style="margin-bottom: 0.5rem">Need help?</div>
+            <a href="https://duckkota.gitlab.io/guides/" target="_blank" style="display: block; margin-bottom: 1rem;">
                 Check out my Guides &rarr;
             </a>
+            <button id="report-issue-btn" class="sidebar-report-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                Report Issue
+            </button>
         `;
         this.sidebarElement.appendChild(footer);
     }
@@ -436,6 +631,37 @@ class NavigationSidebar {
         document.body.prepend(this.overlayElement);
     }
 
+    // Create the Report Issue Modal
+    createReportModal() {
+        this.reportModal = document.createElement('div');
+        this.reportModal.id = 'report-modal';
+        this.reportModal.innerHTML = `
+            <div id="report-modal-backdrop"></div>
+            <div id="report-modal-content">
+                <div class="report-header" style="padding: 1.25rem; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; background: #1e293b;">
+                    <h3>Report an Issue</h3>
+                </div>
+                <div class="report-body">
+                    <form id="report-form">
+                        <div class="form-group">
+                            <label for="report-desc">What went wrong?</label>
+                            <textarea id="report-desc" rows="4" placeholder="Please describe the issue or error you encountered.\nThe more information you provide, the faster I can fix it." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="report-contact">Contact Info (Optional)</label>
+                            <input type="text" id="report-contact" placeholder="Discord username">
+                        </div>
+                        <div class="report-footer" style="padding: 0; padding-top: 1rem; border: none; background: transparent;">
+                            <button type="button" class="modal-btn btn-secondary" id="cancel-report">Cancel</button>
+                            <button type="submit" class="modal-btn btn-primary">Submit Report</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(this.reportModal);
+    }
+
     // Attach event listeners for interactivity
     attachEventListeners() {
         // Using arrow function wrapper to preserve 'this' context, or function binding
@@ -454,6 +680,15 @@ class NavigationSidebar {
                 this.handleToggleMenu();
             }
         });
+
+        // Report Modal Listeners
+        const reportBtn = document.getElementById('report-issue-btn');
+        const cancelBtn = this.reportModal.querySelector('#cancel-report');
+        const form = this.reportModal.querySelector('#report-form');
+
+        reportBtn.addEventListener('click', () => this.openReportModal());
+        cancelBtn.addEventListener('click', () => this.closeReportModal());
+        form.addEventListener('submit', (e) => this.handleReportSubmit(e));
     }
 
     // Toggle the mobile menu state
@@ -461,6 +696,86 @@ class NavigationSidebar {
         this.sidebarElement.classList.toggle('open');
         this.fabElement.classList.toggle('open');
         this.overlayElement.classList.toggle('visible');
+    }
+
+    // Open Report Modal
+    openReportModal() {
+        this.reportModal.classList.add('visible');
+        setTimeout(() => {
+            const textarea = this.reportModal.querySelector('textarea');
+            if (textarea) textarea.focus();
+        }, 100);
+    }
+
+    // Close Report Modal
+    closeReportModal() {
+        this.reportModal.classList.remove('visible');
+        // Reset form after transition
+        setTimeout(() => {
+            const form = this.reportModal.querySelector('form');
+            if (form) form.reset();
+        }, 300);
+    }
+
+    // Handle Report Submission
+    handleReportSubmit(e) {
+        e.preventDefault();
+
+        const desc = document.getElementById('report-desc').value;
+        const contact = document.getElementById('report-contact').value;
+
+        // Create the error context
+        const context = {
+            component: 'UserReport',
+            contact: contact || 'Anonymous',
+            url: window.location.href,
+            timestamp: new Date().toISOString()
+        };
+
+        // Create a unique ID to prevent grouping in Honeybadger
+        const uniqueId = `report-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+        // Create the error object and send it to HoneyBadger
+        const error = new Error("User Report: " + desc.substring(0, 50));
+        if (window.sendErrorToHoneyBadger) {
+            window.sendErrorToHoneyBadger(error, {
+                fingerprint: uniqueId,
+                context: {
+                    ...context,
+                    fullDescription: desc
+                }
+            });
+
+            // Show success feedback
+            const content = this.reportModal.querySelector('#report-modal-content');
+            const originalHTML = content.innerHTML;
+
+            content.innerHTML = `
+                <div style="padding: 3rem; text-align: center;">
+                    <svg style="width: 64px; height: 64px; margin-bottom: 1rem; color: #10b981;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <h3 style="margin: 0; color: #f8fafc; font-size: 1.5rem;">Report Sent!</h3>
+                    <p style="color: #94a3b8; margin: 0.5rem 0 2rem;">Thanks for helping us improve.</p>
+                    <button class="modal-btn btn-primary" id="close-success">Close</button>
+                </div>
+            `;
+
+            content.querySelector('#close-success').addEventListener('click', () => {
+                this.closeReportModal();
+                // Restore form after close
+                setTimeout(() => {
+                    content.innerHTML = originalHTML;
+                    // Re-attach listeners to the restored elements
+                    const cancelBtn = content.querySelector('#cancel-report');
+                    const form = content.querySelector('#report-form');
+
+                    cancelBtn.addEventListener('click', () => this.closeReportModal());
+                    form.addEventListener('submit', (ev) => this.handleReportSubmit(ev));
+                }, 300);
+            });
+
+        } else {
+            alert('Error tracking system is not loaded. Please try again later.');
+        }
     }
 
     // Get the correct path for a link based on the current location
