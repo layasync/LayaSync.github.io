@@ -6,6 +6,7 @@ class ErrorTracking {
     constructor() {
         this.apiKey = "hbp_f6R9jIfXi40Li5ddpEf3AwislT57Ni3zLqtH";
         this.environment = "production";
+        this.errorQueue = [];
         this.init();
     }
 
@@ -16,7 +17,7 @@ class ErrorTracking {
 
     injectScript() {
         const script = document.createElement('script');
-        script.src = "//js.honeybadger.io/v6.12/honeybadger.min.js";
+        script.src = "https://js.honeybadger.io/v6.12/honeybadger.min.js";
         script.type = "text/javascript";
         script.async = true;
 
@@ -31,6 +32,15 @@ class ErrorTracking {
                 apiKey: this.apiKey,
                 environment: this.environment
             });
+
+            // Flush queued errors
+            if (this.errorQueue.length > 0) {
+                console.log(`Flushing ${this.errorQueue.length} queued errors to Honeybadger`);
+                this.errorQueue.forEach(([err, options]) => {
+                    Honeybadger.notify(err, options);
+                });
+                this.errorQueue = [];
+            }
         }
     }
 
@@ -44,7 +54,8 @@ class ErrorTracking {
             console.error("Reporting error to Honeybadger:", err);
             Honeybadger.notify(err, options);
         } else {
-            console.warn("Honeybadger not loaded yet, cannot report error:", err);
+            console.warn("Honeybadger not loaded yet, queuing error:", err);
+            this.errorQueue.push([err, options]);
         }
     }
 }
