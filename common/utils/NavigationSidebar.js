@@ -594,7 +594,7 @@ class NavigationSidebar {
         const footer = document.createElement('div');
         footer.className = 'sidebar-footer';
         footer.innerHTML = `
-            <div style="margin-bottom: 0.5rem">Need help?</div>
+            <div>Need help?</div>
             <a href="https://duckkota.gitlab.io/guides/" target="_blank" style="display: block; margin-bottom: 1rem;">
                 Check out my Guides &rarr;
             </a>
@@ -602,6 +602,11 @@ class NavigationSidebar {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
                 Report Issue
             </button>
+            <div style="margin-top: 1rem; text-align: center;">
+                <a href="https://buymeacoffee.com/duck.streams" target="_blank" style="font-size: 0.85rem; opacity: 0.7; color: #94a3b8; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.35rem;" onmouseover="this.style.opacity='1'; this.style.color='#fff';" onmouseout="this.style.opacity='0.7'; this.style.color='#94a3b8';">
+                    <span>Support Me ♡</span>
+                </a>
+            </div>
         `;
         this.sidebarElement.appendChild(footer);
     }
