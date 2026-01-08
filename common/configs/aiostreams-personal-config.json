@@ -480,6 +480,6 @@
       "usenet"
     ]
   },
-  "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/guides/static/images/duck.png?ref_type=heads",
+  "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/static/images/duck.png?ref_type=heads",
   "addonDescription": "Duck Streams is a pre-configured AIOStreams setup. It makes streaming easy by doing all the hard work for you. You can find the setup guide here: https://duckkota.gitlab.io/guides/aiostreams/"
 }
