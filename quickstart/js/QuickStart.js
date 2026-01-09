@@ -41,15 +41,22 @@ class QuickStart {
 
     // Initialize the app
     init() {
-        this.populateHosts();
-        this.attachEventListeners();
+        this.populateAIOStreamsHostsSelect();
 
-        // Initialize UI state
-        // Explicitly called to match initial checkbox state
-        this.handleDebridProviderChange();
+        // Event Listeners
+        this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
+        this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
+
+        // Listen for changes on any checkbox within the provider group
+        this.handleDebridProviderChange(); // Initialize the checkboxes to their default state
+        this.ui.providerGroup.addEventListener("change", (e) => {
+            if (e.target.type === "checkbox") {
+                this.handleDebridProviderChange();
+            }
+        });
     }
 
-    populateHosts() {
+    populateAIOStreamsHostsSelect() {
         // Clear existing options
         this.ui.aiostreamsHostSelect.innerHTML = "";
 
@@ -71,38 +78,11 @@ class QuickStart {
         });
     }
 
-    attachEventListeners() {
-        this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
 
-        // Listen for changes on any checkbox within the provider group
-        this.ui.providerGroup.addEventListener("change", (e) => {
-            if (e.target.type === "checkbox") {
-                this.handleDebridProviderChange();
-            }
-        });
+    // --- Frontend Methods ---
 
-        // We reference this.ui.form and "submit" to handle the submit button rather than this.ui.submitBtn
-        // because doing it this way also captures when the user presses enter while focused on the form
-        this.ui.form.addEventListener("submit", (e) => this.handleSubmit(e));
-    }
 
-    async generateRandomTmdbCredentials() {
-        try {
-            const TMDB_KEYS_URL = "tmdb-api-keys.json"; // Relative to index.html
-            // Force no-store to bypass browser cache
-            // This ensures we get the newest keys each time
-            const keys = await Network.request(TMDB_KEYS_URL, { cache: 'no-store' });
-            if (!keys || keys.length === 0) {
-                throw new Error("No TMDB keys found in the configuration file.");
-            }
-            const randomIndex = Math.floor(Math.random() * keys.length);
-            const randomEntry = keys[randomIndex];
-            return randomEntry.v4ReadAccessToken;
-        } catch (e) {
-            throw e;
-        }
-    }
-
+    // The user wants to generate random credentials
     handleGenerateCreds() {
         this.ui.emailInput.value = CredentialGenerator.generateRandomEmail();
         this.ui.passwordInput.value = CredentialGenerator.generateRandomPassword();
@@ -116,13 +96,7 @@ class QuickStart {
         });
     }
 
-    // Get all checked debrid providers which are just the values of the checked checkboxes
-    getSelectedDebridProviders() {
-        const checkboxes = this.ui.providerGroup.querySelectorAll('input[type="checkbox"]:checked');
-        return Array.from(checkboxes).map(cb => cb.value);
-    }
-
-    // Handle debrid provider change (user interaction)
+    // The user selected a debrid provider
     handleDebridProviderChange() {
         const selectedProviders = this.getSelectedDebridProviders();
         this.ui.apiKeysContainer.innerHTML = ""; // Clear existing inputs
@@ -147,7 +121,7 @@ class QuickStart {
                 // Show error modal to user and report it to Honeybadger
                 const err = new Error("No internal config found for provider: " + providerId);
                 Modal.error(err.message);
-                window.sendErrorToHoneyBadger(err);
+                window.handleError(err);
                 return;
             }
 
@@ -188,140 +162,80 @@ class QuickStart {
         });
     }
 
+
+    // --- Helper Methods ---
+
+
+    // Get random TMDB read access token from tmdb-api-keys.json
+    async generateRandomTmdbCredentials() {
+        let readAccessToken = "";
+
+        try {
+            const TMDB_KEYS_URL = "tmdb-api-keys.json"; // Relative to index.html
+            // Force no-store to bypass browser cache
+            // This ensures we get the newest keys each time
+            const keys = await Network.request(TMDB_KEYS_URL, { cache: 'no-store' });
+            if (!keys || keys.length === 0) {
+                // This will get caught by the catch block in handleSubmit
+                throw new Error("No TMDB keys found in the configuration file.");
+            }
+
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            const randomEntry = keys[randomIndex];
+
+            readAccessToken = randomEntry.v4ReadAccessToken;
+        } catch (err) {
+            throw err;
+        }
+
+        return readAccessToken;
+    }
+
+    // Get all checked debrid providers which are just the values of the checked checkboxes
+    getSelectedDebridProviders() {
+        const checkboxes = this.ui.providerGroup.querySelectorAll('input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+
+    // --- Backend Methods ---
+
+
     async handleSubmit(e) {
         e.preventDefault();
         this.ui.submitBtn.disabled = true;
         this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Setting up...';
 
         try {
-            // Gather Data
-            const email = this.ui.emailInput.value.trim();
-            const password = this.ui.passwordInput.value;
-            const debridioKey = this.ui.debridioInput.value.trim();
+            // 1. Gather Data
+            const formData = this.getFormData();
+            if (!formData) return; // Validation failed (modal already shown)
 
-            // Gather API Keys from dynamic inputs
-            const providersMap = {};
-            const selectedDebridProviders = this.getSelectedDebridProviders();
+            const stremioEmail = formData.email;
+            const stremioPassword = formData.password;
+            const debridioKey = formData.debridioKey;
+            const providersMap = formData.providersMap;
 
-            selectedDebridProviders.forEach(providerId => {
-                const input = document.getElementById(`apiKey_${providerId}`);
-                if (input && input.value.trim()) {
-                    providersMap[providerId] = input.value.trim();
-                }
-            });
+            // 2. Setup Stremio Account
+            const isNewAccount = await this.setupStremioAccount(stremioEmail, stremioPassword);
 
-            if (Object.keys(providersMap).length === 0) {
-                Modal.error("Please select at least one provider and enter an API key.");
-                return;
-            }
+            // 3. Create AIOStreams Manifest
+            const manifestUrl = await this.createAIOStreamsManifest(stremioPassword, providersMap, debridioKey);
 
-            // Login to Stremio (registering a new account if needed)
-            const isNewAccount = await StremioAPI.ensureAccount(email, password);
+            // 4. Install Manifest
+            await StremioAPI.installAddon(manifestUrl);
 
-            // Configure Account (Clean vs Preserve)
-            if (isNewAccount) {
-                // Clean Slate for new users
-                console.log("New account: Cleaning default addons...");
-                const currentAddons = await StremioAPI.getAddons();
-                const ALLOWED = ["Cinemeta"];
-                const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
-                await StremioAPI.setAddons(filteredAddons);
-            } else {
-                console.log("Existing account: Preserving addons...");
-            }
-
-            // Advanced Options
-            // Pick random TMDB Credentials
-            console.log("Picking random TMDB Credentials...");
-            const tmdbReadToken = await this.generateRandomTmdbCredentials();
-
-            // AIOStreams (Always installed now)
-            console.log("Generating AIOStreams manifest...");
-            const selectedHostValue = this.ui.aiostreamsHostSelect.value;
-            // Get text from the selected option
-            const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
-
-            // Prepare the config
-            const config = await AIOStreamsAPI.createConfig(providersMap, debridioKey, tmdbReadToken);
-            let manifestUrl = null;
-
-            if (config) {
-                if (selectedHostValue === 'auto') {
-                    console.log("Auto-selecting host...");
-                    // Try hosts in order: defined in AIOStreamsAPI
-                    const hosts = Object.entries(AIOStreamsAPI.HOSTS);
-
-                    const errors = [];
-                    for (const [name, url] of hosts) {
-                        try {
-                            console.log("Attempting install on " + name);
-                            manifestUrl = await this.installOnHost(url, name, config, password);
-                            if (manifestUrl) {
-                                console.log("Successfully installed on " + name);
-                                break;
-                            }
-                        } catch (err) {
-                            console.warn("Failed to install on " + name + ":", err);
-                            errors.push(name + ": " + err.message);
-                        }
-                    }
-
-                    if (!manifestUrl) {
-                        // This can happen in one of three ways:
-                        // 1. All hosts are down/blocked (very very unlikely)
-                        // 2. The users internet connection is unstable
-                        // 3. The AIOStreams config file is bad/invalid/outdated (e.g., there is an offline addon)
-                        throw new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", "));
-                    }
-                } else {
-                    // Specific host selected
-                    console.log(`Installing AIOStreams (Host: ${selectedHostValue})...`);
-                    manifestUrl = await this.installOnHost(selectedHostValue, selectedHostName, config, password);
-                }
-
-                // If we got back a manifest URL successfully from a host, install it into the users Stremio account
-                if (manifestUrl) {
-                    await StremioAPI.installAddon(manifestUrl);
-                }
-            } else {
-                throw new Error("Failed to generate AIOStreams configuration json file.");
-            }
-
-            // 6. Show Success
-            let modalMessage = "";
-            if (isNewAccount) {
-                modalMessage = `Created a <b>new account</b> and set it up.`;
-            } else {
-                modalMessage = `Updated your <b>existing account</b>.`;
-            }
-
-            let detailsHtml = '';
-            if (isNewAccount) {
-                detailsHtml = `
-                <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:0.5rem; margin-top:1rem; text-align:left;">
-                    <div style="margin-bottom:0.5rem; font-size:0.85rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">Credentials</div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
-                        <span>Email: <b style="color:#fff;">${email}</b></span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between;">
-                        <span>Password: <b style="color:#fff;">${password}</b></span>
-                    </div>
-                    <div style="font-size:0.8rem; color:#64748b; margin-top:0.5rem; font-style:italic;">Make sure to save these!</div>
-                </div>`;
-            }
-
-            await Modal.alert(
-                `${modalMessage} ${detailsHtml} <br><br> Your Duck Streams password is the same as your Stremio password. <br><br> Login to Stremio with these credentials to start watching!`,
-                "Success! 🎉"
-            );
+            // 5. Show Success
+            await this.showSuccessModal(isNewAccount, stremioEmail, stremioPassword);
 
         } catch (err) {
             // Show error modal to user
             Modal.error(err.message);
 
             // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
+            // TODO: Update AIOStreamsAPI and AIOMetadataAPI to have versions of 'isKnownUserError'
             if (!StremioAPI.isUserError(err.message)) {
-                window.sendErrorToHoneyBadger(err);
+                window.handleError(err);
             }
         } finally {
             this.ui.submitBtn.disabled = false;
@@ -329,42 +243,160 @@ class QuickStart {
         }
     }
 
+    // Get the user inputs from the form
+    getFormData() {
+        const email = this.ui.emailInput.value.trim();
+        const password = this.ui.passwordInput.value.trim();
+        const debridioKey = this.ui.debridioInput.value.trim();
+
+        // Gather API Keys from dynamic inputs
+        const providersMap = {};
+        const selectedDebridProviders = this.getSelectedDebridProviders();
+
+        selectedDebridProviders.forEach(providerId => {
+            const input = document.getElementById(`apiKey_${providerId}`);
+            if (input && input.value.trim()) {
+                providersMap[providerId] = input.value.trim();
+            }
+        });
+
+        if (Object.keys(providersMap).length === 0) {
+            Modal.error("Please select at least one provider and enter an API key.");
+            return null;
+        }
+
+        return { email, password, debridioKey, providersMap };
+    }
+
+    // Log into the user's Stremio account
+    async setupStremioAccount(email, password) {
+        // Login to Stremio (registering a new account if needed)
+        const isNewAccount = await StremioAPI.ensureAccount(email, password);
+
+        // Configure Account
+        if (isNewAccount) {
+            // Erase all default addons if the account is new
+            const currentAddons = await StremioAPI.getAddons();
+            const ALLOWED = ["Cinemeta"];
+            const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
+            await StremioAPI.setAddons(filteredAddons);
+        }
+
+        return isNewAccount;
+    }
+
+    async createAIOStreamsManifest(password, providersMap, debridioKey) {
+        // Pick random TMDB Credentials
+        const tmdbReadToken = await this.generateRandomTmdbCredentials();
+
+        const selectedHostValue = this.ui.aiostreamsHostSelect.value;
+        const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
+
+        // Prepare the config
+        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken);
+
+        let manifestUrl = null;
+        if (selectedHostValue !== 'auto') {
+            // Specific host selected
+            manifestUrl = await this.createManifest(selectedHostValue, selectedHostName, config, password);
+        } else {
+            // Auto-select host
+            // Try hosts in order: defined in AIOStreamsAPI
+            const hosts = Object.entries(AIOStreamsAPI.HOSTS);
+
+            const errors = [];
+            for (const [name, url] of hosts) {
+                try {
+                    console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
+                    manifestUrl = await this.createManifest(url, name, config, password);
+                    break; // Break if successful
+                } catch (err) {
+                    errors.push(name + ": " + err.message);
+                }
+            }
+
+            if (!manifestUrl) {
+                // This gets caught in the catch block of handleSubmit
+                throw new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", "));
+            }
+        }
+
+        return manifestUrl;
+    }
+
+    async showSuccessModal(isNewAccount, email, password) {
+        let modalMessage = "";
+        if (isNewAccount) {
+            modalMessage = `Created a <b>new account</b> and set it up.`;
+        } else {
+            modalMessage = `Updated your <b>existing account</b>.`;
+        }
+
+        let detailsHtml = '';
+        if (isNewAccount) {
+            detailsHtml = `
+            <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:0.5rem; margin-top:1rem; text-align:left;">
+                <div style="margin-bottom:0.5rem; font-size:0.85rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">Credentials</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                    <span>Email: <b style="color:#fff;">${email}</b></span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>Password: <b style="color:#fff;">${password}</b></span>
+                </div>
+                <div style="font-size:0.8rem; color:#64748b; margin-top:0.5rem; font-style:italic;">Make sure to save these!</div>
+            </div>`;
+        }
+
+        await Modal.alert(
+            `${modalMessage} ${detailsHtml} <br><br> Your Duck Streams password is the same as your Stremio password. <br><br> Login to Stremio with these credentials to start watching!`,
+            "Success! 🎉"
+        );
+    }
+
     // Install AIOStreams config file on a specific host
-    async installOnHost(hostUrl, hostName, baseConfig, password) {
-        // Clone config to avoid polluting the base config for other hosts
-        const config = JSON.parse(JSON.stringify(baseConfig));
-
+    async createManifest(hostUrl, hostName, config, password) {
         try {
-            // Update Addon Name based on Instance
-            // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
-            config.addonName = `Duck Streams (${hostName})`;
-
-            // Attempt installation with one retry
-            // We do this to account for occasional timeout issues with addons
-            try {
-                return await AIOStreamsAPI.installConfig(hostUrl, password, config);
-            } catch (e) {
-                console.warn(`First attempt to install on ${hostName} failed. Retrying...`);
-                return await AIOStreamsAPI.installConfig(hostUrl, password, config);
-            }
+            return await this.installWithRetry(hostUrl, password, config);
         } catch (err) {
-            // Retry logic for known upstream errors
-            if (err.message && err.message.includes("Torrentio") && err.message.includes("403")) {
-                console.warn(`Torrentio 403 on ${hostName}. Disabling Torrentio and retrying...`);
-                const torrentioPreset = config.presets.find(p => p.type === 'torrentio');
-                if (torrentioPreset) {
-                    torrentioPreset.enabled = false;
-                    return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+            // Handle specific upstream errors by modifying config and retrying one last time.
+            const isTorrentioError = err.message && err.message.includes("Torrentio") && err.message.includes("403");
+            const isMediaFusionError = err.message && err.message.includes("Failed to fetch manifest for MediaFusion");
+
+            if (isTorrentioError || isMediaFusionError) {
+
+                let errorPrefix = "";
+                let presetType = "";
+
+                if (isTorrentioError) {
+                    errorPrefix = `Torrentio 403 on ${hostName}`;
+                    presetType = 'torrentio';
+                } else {
+                    errorPrefix = `MediaFusion down on ${hostName}`;
+                    presetType = 'mediafusion';
                 }
-            } else if (err.message && err.message.includes("Failed to fetch manifest for MediaFusion")) {
-                console.warn(`MediaFusion down on ${hostName}. Disabling MediaFusion and retrying...`);
-                const mediaFusionPreset = config.presets.find(p => p.type === 'mediafusion');
-                if (mediaFusionPreset) {
-                    mediaFusionPreset.enabled = false;
-                    return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+
+                console.warn(errorPrefix + ". Disabling and retrying...");
+                // Find and disable the problematic preset
+                const preset = config.presets.find(p => p.type === presetType);
+                if (preset) {
+                    preset.enabled = false;
+                    // Try one last time with disabled preset
+                    return await this.installWithRetry(hostUrl, password, config);
                 }
             }
+
+            // If we can't handle it, rethrow
             throw err;
+        }
+    }
+
+    // Helper to attempt installation with a simple retry strategy
+    async installWithRetry(hostUrl, password, config) {
+        try {
+            return await AIOStreamsAPI.installConfig(hostUrl, password, config);
+        } catch (e) {
+            console.warn("First attempt to install failed. Retrying...");
+            return await AIOStreamsAPI.installConfig(hostUrl, password, config);
         }
     }
 }

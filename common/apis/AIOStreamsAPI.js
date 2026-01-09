@@ -79,50 +79,50 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async createConfig(providersMap, debridioKey, tmdbAccessToken) {
+    static async populateJSON(providersMap, debridioKey, tmdbAccessToken) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
             // Force no-store to bypass browser cache
             // This ensures we get the newest config each time
             aiostreamsConfig = await Network.request("../common/configs/aiostreams-personal-config.json", { cache: 'no-store' });
-        } catch (err) {
-            throw new Error("Found an error loading the configuration file.", { cause: err });
-        }
 
-        // Note: The addon name is not set here. It's dynamically set in QuickStart.js
-        // This is because the default host, auto mode, will try all the hosts so we don't
-        // know which one will be used until this config is installed.
+            // Note: The addon name is not set here. It's dynamically set in QuickStart.js
+            // This is because the default host, auto mode, will try all the hosts so we don't
+            // know which one will be used until this config is installed.
 
-        // Insert TMDB Access Token
-        aiostreamsConfig.tmdbAccessToken = tmdbAccessToken;
+            // Insert TMDB Access Token
+            aiostreamsConfig.tmdbAccessToken = tmdbAccessToken;
 
-        // Configure debrid providers
-        // Disable all first
-        aiostreamsConfig.services.forEach(s => { s.enabled = false; });
+            // Configure debrid providers
+            // Disable all first
+            aiostreamsConfig.services.forEach(s => { s.enabled = false; });
 
-        // Enable the user debrid provider(s) and put in the user API keys
-        if (providersMap && typeof providersMap === 'object') {
-            Object.entries(providersMap).forEach(([providerId, apiKey]) => {
-                const service = aiostreamsConfig.services.find(s => s.id === providerId);
-                if (service) {
-                    service.enabled = true;
-                    service.credentials = service.credentials || {};
-                    service.credentials.apiKey = apiKey;
-                }
-            });
-        }
-
-        // Debridio Logic
-        if (debridioKey) {
-            // If a Debridio API key is provided, add it to the Debridio addon
-            const preset = aiostreamsConfig.presets.find(p => p.type === 'debridio');
-            if (preset) {
-                preset.options.debridioApiKey = debridioKey;
+            // Enable the user debrid provider(s) and put in the user API keys
+            if (providersMap && typeof providersMap === 'object') {
+                Object.entries(providersMap).forEach(([providerId, apiKey]) => {
+                    const service = aiostreamsConfig.services.find(s => s.id === providerId);
+                    if (service) {
+                        service.enabled = true;
+                        service.credentials = service.credentials || {};
+                        service.credentials.apiKey = apiKey;
+                    }
+                });
             }
-        } else {
-            // If no Debridio API key is provided, remove the Debridio addon
-            aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'debridio');
+
+            // Debridio Logic
+            if (debridioKey) {
+                // If a Debridio API key is provided, add it to the Debridio addon
+                const preset = aiostreamsConfig.presets.find(p => p.type === 'debridio');
+                if (preset) {
+                    preset.options.debridioApiKey = debridioKey;
+                }
+            } else {
+                // If no Debridio API key is provided, remove the Debridio addon
+                aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'debridio');
+            }
+        } catch (err) {
+            throw err;
         }
 
         return aiostreamsConfig;

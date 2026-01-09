@@ -94,7 +94,7 @@ class Cloner {
 
             // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
             if (!StremioAPI.isUserError(err.message)) {
-                window.sendErrorToHoneyBadger(err);
+                window.handleError(err);
             }
         } finally {
             this.setUIEnabled(true);

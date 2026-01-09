@@ -54,12 +54,18 @@ class ErrorTracking {
 
     exposeGlobalHelpers() {
         // Helper to safely report errors even if caught
-        window.sendErrorToHoneyBadger = (err, options) => this.reportError(err, options);
+        window.handleError = (err, options) => this.handleError(err, options);
         // Helper to check if tracking is blocked
         window.isErrorTrackingBlocked = () => this.isBlocked;
     }
 
-    reportError(err, options = {}) {
+    handleError(err, options = {}) {
+        // Check if the error is a user-interaction error that should not be reported
+        if (err.isUserError === true) {
+            console.warn("Skipping Honeybadger report for user error:", err.message || err);
+            return;
+        }
+
         if (window.Honeybadger) {
             console.error("Reporting error to Honeybadger:", err);
             Honeybadger.notify(err, options);

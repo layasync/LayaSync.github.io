@@ -705,21 +705,24 @@ class NavigationSidebar {
 
     // Open Report Modal
     openReportModal() {
-        this.reportModal.classList.add('visible');
-
         // Check if error reporting is blocked
         if (window.isErrorTrackingBlocked && window.isErrorTrackingBlocked()) {
-            this.showFeedbackState({
-                iconColor: '#ef4444',
-                iconSvg: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>',
+            Modal.show({
                 title: 'Ad Blocker Detected',
                 message: 'Please temporarily disable it to report an issue.',
-                buttonText: 'Close'
+                iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+                iconColor: '#ef4444',
+                buttons: [{
+                    text: 'Close',
+                    type: 'primary',
+                    onClick: () => true
+                }]
             });
+
             return;
         }
 
-
+        this.reportModal.classList.add('visible');
         setTimeout(() => {
             const textarea = this.reportModal.querySelector('textarea');
             if (textarea) textarea.focus();
@@ -757,8 +760,8 @@ class NavigationSidebar {
         // Create the error object and send it to HoneyBadger
         const error = new Error("User Report: " + desc.substring(0, 50));
 
-        if (window.sendErrorToHoneyBadger) {
-            window.sendErrorToHoneyBadger(error, {
+        if (window.handleError) {
+            window.handleError(error, {
                 fingerprint: uniqueId,
                 context: {
                     ...context,
@@ -766,54 +769,27 @@ class NavigationSidebar {
                 }
             });
 
+            // Close the report modal first (this hides it and resets form if present)
+            this.closeReportModal();
+
             // Show success feedback
-            this.showFeedbackState({
-                iconColor: '#10b981',
-                iconSvg: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>',
+            Modal.show({
                 title: 'Report Sent!',
                 message: 'Thanks for helping me improve.',
-                buttonText: 'Close'
+                iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+                iconColor: '#10b981',
+                buttons: [{
+                    text: 'Close',
+                    type: 'primary',
+                    onClick: () => true
+                }]
             });
 
         } else {
-            this.showFeedbackState({
-                iconColor: '#ef4444',
-                iconSvg: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>',
-                title: 'Error Tracking System Not Ready',
-                message: 'Error tracking system is not loaded yet. Please try again in a moment.',
-                buttonText: 'Close'
-            });
-        }
-    }
-
-    showFeedbackState({ iconColor, iconSvg, title, message, buttonText }) {
-        const content = this.reportModal.querySelector('#report-modal-content');
-        const originalHTML = content.innerHTML;
-
-        content.innerHTML = `
-            <div style="padding: 3rem; text-align: center;">
-                <svg style="width: 64px; height: 64px; margin-bottom: 1rem; color: ${iconColor};" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    ${iconSvg}
-                </svg>
-                <h3 style="margin: 0; color: #f8fafc; font-size: 1.5rem;">${title}</h3>
-                <p style="color: #94a3b8; margin: 0.5rem 0 2rem;">${message}</p>
-                <button class="modal-btn btn-primary" id="close-feedback">${buttonText}</button>
-            </div>
-        `;
-
-        content.querySelector('#close-feedback').addEventListener('click', () => {
+            // Close the report modal first (this hides it and resets form if present)
             this.closeReportModal();
-            // Restore form after close
-            setTimeout(() => {
-                content.innerHTML = originalHTML;
-                // Re-attach listeners to the restored elements
-                const cancelBtn = content.querySelector('#cancel-report');
-                const form = content.querySelector('#report-form');
-
-                cancelBtn.addEventListener('click', () => this.closeReportModal());
-                form.addEventListener('submit', (ev) => this.handleReportSubmit(ev));
-            }, 300);
-        });
+            Modal.error('Error tracking system is not loaded yet. Please try again in a moment.');
+        }
     }
 
     // Get the correct path for a link based on the current location
