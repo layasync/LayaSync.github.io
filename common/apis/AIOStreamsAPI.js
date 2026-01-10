@@ -12,6 +12,15 @@ class AIOStreamsAPI {
         };
     }
 
+    // Helper to identify known user errors that shouldn't be reported to logging services
+    static isUserError(errorMessage) {
+        const IGNORED = [
+            "new password is too short",
+            "invalid uuid or password"
+        ];
+        return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
+    }
+
     // Generic function to call AIOStreams API
     static async call(baseUrl, method, endpoint, payload = null, queryParams = {}) {
         // Construct URL with query parameters

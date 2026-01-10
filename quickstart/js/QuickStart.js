@@ -305,7 +305,7 @@ class QuickStart {
             Modal.error(err.message);
 
             // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
-            if (!StremioAPI.isUserError(err.message)) {
+            if (!StremioAPI.isUserError(err.message) && !AIOStreamsAPI.isUserError(err.message)) {
                 window.handleError(err);
             }
         } finally {

@@ -9,11 +9,11 @@ class StremioAPI {
     static isUserError(errorMessage) {
         // List of errors that are "normal" user interactions and not system failures
         const IGNORED = [
-            "User not found",
-            "Wrong passphrase",
-            "Incorrect password"
+            "user not found",
+            "wrong passphrase",
+            "incorrect password"
         ];
-        return IGNORED.some(msg => errorMessage.includes(msg));
+        return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
     }
 
     // Generic function to call Stremio API

@@ -707,18 +707,7 @@ class NavigationSidebar {
     openReportModal() {
         // Check if error reporting is blocked
         if (window.isErrorTrackingBlocked && window.isErrorTrackingBlocked()) {
-            Modal.show({
-                title: 'Ad Blocker Detected',
-                message: 'Please temporarily disable it to report an issue.',
-                iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
-                iconColor: '#ef4444',
-                buttons: [{
-                    text: 'Close',
-                    type: 'primary',
-                    onClick: () => true
-                }]
-            });
-
+            Modal.error("Please temporarily disable it to report an issue.", "Ad Blocker Detected");
             return;
         }
 
@@ -773,17 +762,7 @@ class NavigationSidebar {
             this.closeReportModal();
 
             // Show success feedback
-            Modal.show({
-                title: 'Report Sent!',
-                message: 'Thanks for helping me improve.',
-                iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
-                iconColor: '#10b981',
-                buttons: [{
-                    text: 'Close',
-                    type: 'primary',
-                    onClick: () => true
-                }]
-            });
+            Modal.success("Thanks for helping me improve!", "Report Sent!");
 
         } else {
             // Close the report modal first (this hides it and resets form if present)
