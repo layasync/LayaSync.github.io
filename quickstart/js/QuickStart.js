@@ -309,7 +309,8 @@ class QuickStart {
             for (const [name, url] of hosts) {
                 try {
                     console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
-                    manifestUrl = await this.createManifest(url, name, config, password);
+                    // Clone config so modifications (like removing presets) don't persist to the next host
+                    manifestUrl = await this.createManifest(url, name, structuredClone(config), password);
                     break; // Break if successful
                 } catch (err) {
                     errors.push(name + ": " + err.message);
@@ -360,43 +361,47 @@ class QuickStart {
         // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
         config.addonName = `Duck Streams (${hostName})`;
 
-        try {
-            return await this.installWithRetry(hostUrl, password, config);
-        } catch (err) {
-            // Handle specific upstream errors by modifying config and retrying one last time.
-            const isTorrentioError = err.message && err.message.includes("Torrentio") && err.message.includes("403");
-            const isMediaFusionError = err.message && err.message.includes("Failed to fetch manifest for MediaFusion");
-            const isBitmagnetError = err.message && err.message.includes("Addon 'Bitmagnet' is disabled");
+        // Allow up to 3 repair attempts (for MF, Torrentio, Bitmagnet)
+        let attempts = 0;
+        const maxAttempts = 4; // 1 initial + 3 fixes
 
-            if (isTorrentioError || isMediaFusionError || isBitmagnetError) {
+        while (attempts < maxAttempts) {
+            attempts++;
+            try {
+                // Try to install
+                return await this.installWithRetry(hostUrl, password, config);
+            } catch (err) {
+                // If we've run out of attempts, throw the error
+                if (attempts >= maxAttempts) throw err;
 
-                let errorPrefix = "";
+                // Handle specific upstream errors by modifying config and retrying.
+                const isTorrentioError = err.message && err.message.includes("Torrentio");
+                const isMediaFusionError = err.message && err.message.includes("MediaFusion");
+                const isBitmagnetError = err.message && err.message.includes("Bitmagnet");
+
                 let presetType = "";
 
                 if (isTorrentioError) {
-                    errorPrefix = `Torrentio 403 on ${hostName}`;
                     presetType = 'torrentio';
                 } else if (isMediaFusionError) {
-                    errorPrefix = `MediaFusion down on ${hostName}`;
                     presetType = 'mediafusion';
                 } else if (isBitmagnetError) {
-                    errorPrefix = `Bitmagnet not configured on ${hostName}`;
                     presetType = 'bitmagnet';
                 }
 
-                console.warn(errorPrefix + ". Removing and retrying...");
+                // If we can't identify the error, or if the addon is already gone, throw
+                const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
+                if (!presetType || !hasPreset) throw err;
+
+                let errorPrefix = "";
+                if (isTorrentioError) errorPrefix = `Torrentio 403 on ${hostName}`;
+                else if (isMediaFusionError) errorPrefix = `MediaFusion down on ${hostName}`;
+                else if (isBitmagnetError) errorPrefix = `Bitmagnet not configured on ${hostName}`;
+
+                console.warn(`${errorPrefix}. Removing and retrying...`);
                 // Find and remove the problematic preset
-                const initialLength = config.presets.length;
                 config.presets = config.presets.filter(p => p.type !== presetType);
-
-                if (config.presets.length < initialLength) {
-                    // Try one last time with removed preset
-                    return await this.installWithRetry(hostUrl, password, config);
-                }
             }
-
-            // If we can't handle it, rethrow
-            throw err;
         }
     }
 
