@@ -138,6 +138,29 @@ class AIOStreamsAPI {
                 aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'newznab');
             }
 
+            // Regex imports
+            try {
+                // Fetch the regex patterns from the remote source
+                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/merged-regexes.json";
+                const regexData = await Network.request(regexUrl, { cache: 'no-store' });
+
+                // Filter out unwanted keys based on the requirements ("" and "Bad")
+                const filteredRegexPatterns = [];
+                if (regexData && typeof regexData === 'object') {
+                    for (const item of Object.values(regexData)) {
+                        if (item.name && item.name !== "" && item.name.toLowerCase() !== "bad") {
+                            filteredRegexPatterns.push(item);
+                        }
+                    }
+                }
+
+                // Apply the filtered patterns to the config
+                console.log("Regex keys after filtering:", filteredRegexPatterns);
+                aiostreamsConfig.preferredRegexPatterns = filteredRegexPatterns;
+            } catch (e) {
+                console.error("Failed to fetch or apply regex patterns:", e);
+            }
+
             // Debridio Logic
             if (debridioKey) {
                 // If a Debridio API key is provided, add it to the Debridio addon
