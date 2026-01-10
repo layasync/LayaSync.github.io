@@ -499,6 +499,7 @@ class QuickStart {
                 const isTorrentioError = err.message && err.message.includes("Torrentio");
                 const isMediaFusionError = err.message && err.message.includes("MediaFusion");
                 const isBitmagnetError = err.message && err.message.includes("Bitmagnet");
+                const isSeaDexError = err.message && err.message.includes("seadex not found");
 
                 let presetType = "";
 
@@ -508,6 +509,8 @@ class QuickStart {
                     presetType = 'mediafusion';
                 } else if (isBitmagnetError) {
                     presetType = 'bitmagnet';
+                } else if (isSeaDexError) {
+                    presetType = 'seadex';
                 }
 
                 // If we can't identify the error, or if the addon is already gone, throw
@@ -518,6 +521,7 @@ class QuickStart {
                 if (isTorrentioError) errorPrefix = `Torrentio 403 on ${hostName}`;
                 else if (isMediaFusionError) errorPrefix = `MediaFusion down on ${hostName}`;
                 else if (isBitmagnetError) errorPrefix = `Bitmagnet not configured on ${hostName}`;
+                else if (isSeaDexError) errorPrefix = `SeaDex not configured on ${hostName}`;
 
                 console.warn(`${errorPrefix}. Removing and retrying...`);
                 // Find and remove the problematic preset

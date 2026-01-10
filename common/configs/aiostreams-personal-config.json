@@ -78,6 +78,18 @@
   ],
   "presets": [
     {
+      "type": "seadex",
+      "instanceId": "ebe",
+      "enabled": true,
+      "options": {
+        "name": "SeaDex",
+        "timeout": 15000,
+        "mediaTypes": [
+          "anime"
+        ]
+      }
+    },
+    {
       "type": "debridio",
       "instanceId": "38c",
       "enabled": true,

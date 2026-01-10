@@ -8,7 +8,6 @@ class AIOStreamsAPI {
             ATBP: "https://aio.atbphosting.com",
             Omni: "https://aiostreams.12312023.xyz",
             Midnight: "https://aiostreamsfortheweebsstable.midnightignite.me",
-            Viren: "https://aiostreams.viren070.me",
             Kuu: "https://aiostreams.stremio.ru",
         };
     }
