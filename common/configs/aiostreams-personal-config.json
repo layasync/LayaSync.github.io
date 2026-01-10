@@ -91,6 +91,25 @@
       }
     },
     {
+      "type": "newznab",
+      "instanceId": "53a",
+      "enabled": true,
+      "options": {
+        "name": "Newznab",
+        "newznabUrl": "https://search-api.torbox.app/newznab",
+        "apiPath": "/api",
+        "timeout": 15000,
+        "mediaTypes": [],
+        "services": [
+          "torbox"
+        ],
+        "searchMode": "both",
+        "paginate": false,
+        "checkOwned": false,
+        "useMultipleInstances": false
+      }
+    },
+    {
       "type": "torrentio",
       "instanceId": "3f1",
       "enabled": true,
@@ -117,6 +136,18 @@
         "mediaTypes": [],
         "includeP2P": false,
         "useMultipleInstances": false
+      }
+    },
+    {
+      "type": "bitmagnet",
+      "instanceId": "1de",
+      "enabled": true,
+      "options": {
+        "name": "Bitmagnet",
+        "timeout": 15000,
+        "mediaTypes": [],
+        "useMultipleInstances": false,
+        "paginate": false
       }
     },
     {
@@ -193,8 +224,8 @@
   "formatter": {
     "id": "custom",
     "definition": {
-      "name": "{stream.regexMatched::exists[\"💠\"||\"\"]}\n\n{stream.resolution::exists[\"{stream.resolution::replace('2160p', '4K ')::replace('1440p', 'QHD ')::replace('1080p', 'FHD ')::replace('720p', 'HD ')}\"||\"Unk\"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾ \"||\" \"]} {stream.visualTags::~DV[\"ᵈᵛ \"||\"\"]}",
-      "description": "{stream.title::exists[\"{stream.title}\"||\"\"]} {stream.seasonEpisode::exists[\"{stream.seasonEpisode::join(' ･ ')}\"||\"{stream.year}\"]}\n\n  ⤷ {stream.audioChannels::exists::or::stream.audioTags::exists[\"{stream.audioChannels::join(' ')} {stream.audioTags::join(' ')}\"||\"-\"]}\n\n  ⤷ {stream.size::rbytes}"
+      "name": "{service.cached::isfalse[\"⧖\"||\"\"]}{stream.regexMatched::exists[\"◈\"||\"\"]}\n\n{stream.resolution::exists[\"{stream.resolution::replace('2160p', '4K ')::replace('1440p', 'QHD ')::replace('1080p', 'FHD ')::replace('720p', 'HD ')}\"||\"Unk\"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾ \"||\" \"]} {stream.visualTags::~DV[\"ᵈᵛ \"||\"\"]}",
+      "description": "{stream.title::exists[\"{stream.title}\"||\"\"]} {stream.seasonEpisode::exists[\"{stream.seasonEpisode::join(' ･ ')}\"||\"{stream.year}\"]}\n\n ▫ {stream.audioChannels::exists::or::stream.audioTags::exists[\"{stream.audioChannels::join(' ')} {stream.audioTags::join(' ')}\"||\"-\"]}\n\n ▫ {stream.size::rbytes}\n\n {stream.languageCodes::exists[\"▫ {stream.languageCodes::join(' · ')}\"||\"\"]}\n\n {stream.seadexBest::istrue[\"▫ ʙᴇsᴛ ʀᴇʟᴇᴀsᴇ\"||\"\"]}{stream.seadex::istrue::and::stream.seadexBest::isfalse[\"▫ ᴀʟᴛ ʙᴇsᴛ ʀᴇʟᴇᴀsᴇ\"||\"\"]}"
     }
   },
   "preferredQualities": [
@@ -236,6 +267,14 @@
   "sortCriteria": {
     "global": [
       {
+        "key": "cached",
+        "direction": "desc"
+      },
+      {
+        "key": "seadex",
+        "direction": "desc"
+      },
+      {
         "key": "regexPatterns",
         "direction": "desc"
       },
@@ -266,10 +305,12 @@
         "key": "seeders",
         "direction": "desc"
       }
-    ]
+    ],
+    "uncachedSeries": []
   },
   "deduplicator": {
     "enabled": true,
+    "excludeAddons": [],
     "multiGroupBehaviour": "aggressive",
     "keys": [
       "filename",
@@ -403,10 +444,12 @@
   "excludeCachedFromAddons": [],
   "excludeCachedFromServices": [],
   "excludeCachedFromStreamTypes": [],
-  "excludeUncached": true,
+  "excludeUncached": false,
   "excludeUncachedFromAddons": [],
   "excludeUncachedFromServices": [],
-  "excludeUncachedFromStreamTypes": [],
+  "excludeUncachedFromStreamTypes": [
+    "debrid"
+  ],
   "excludedStreamExpressions": [],
   "disableGroups": true,
   "groups": {
@@ -416,18 +459,20 @@
   },
   "hideErrorsForResources": [],
   "yearMatching": {
-    "enabled": false,
+    "enabled": true,
     "tolerance": 3,
+    "strict": false,
     "requestTypes": [],
     "addons": []
   },
   "titleMatching": {
     "mode": "exact",
-    "enabled": false,
+    "enabled": true,
     "requestTypes": [],
     "addons": []
   },
   "seasonEpisodeMatching": {
+    "enabled": true,
     "requestTypes": [],
     "addons": []
   },
@@ -476,10 +521,16 @@
     }
   },
   "cacheAndPlay": {
+    "enabled": true,
     "streamTypes": [
       "usenet"
     ]
   },
   "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/static/images/duck.png?ref_type=heads",
-  "addonDescription": "Duck Streams is a pre-configured AIOStreams setup. It makes streaming easy by doing all the hard work for you. You can find the setup guide here: https://duckkota.gitlab.io/guides/aiostreams/"
+  "addonDescription": "Duck Streams is a pre-configured AIOStreams setup. It makes streaming easy by doing all the hard work for you. You can find the setup guide here: https://duckkota.gitlab.io/guides/aiostreams/",
+  "digitalReleaseFilter": {
+    "requestTypes": [],
+    "addons": []
+  },
+  "enableSeadex": true
 }

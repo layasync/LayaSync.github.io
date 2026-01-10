@@ -293,6 +293,7 @@ class QuickStart {
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
         // Prepare the config
+        // FIXME: The config should be refreshed for every host. For example, if MF times out on one host then it should try the next host.
         const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken);
 
         let manifestUrl = null;
@@ -355,14 +356,19 @@ class QuickStart {
 
     // Install AIOStreams config file on a specific host
     async createManifest(hostUrl, hostName, config, password) {
+        // Update Addon Name based on Instance
+        // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
+        config.addonName = `Duck Streams (${hostName})`;
+
         try {
             return await this.installWithRetry(hostUrl, password, config);
         } catch (err) {
             // Handle specific upstream errors by modifying config and retrying one last time.
             const isTorrentioError = err.message && err.message.includes("Torrentio") && err.message.includes("403");
             const isMediaFusionError = err.message && err.message.includes("Failed to fetch manifest for MediaFusion");
+            const isBitmagnetError = err.message && err.message.includes("Addon 'Bitmagnet' is disabled");
 
-            if (isTorrentioError || isMediaFusionError) {
+            if (isTorrentioError || isMediaFusionError || isBitmagnetError) {
 
                 let errorPrefix = "";
                 let presetType = "";
@@ -370,17 +376,21 @@ class QuickStart {
                 if (isTorrentioError) {
                     errorPrefix = `Torrentio 403 on ${hostName}`;
                     presetType = 'torrentio';
-                } else {
+                } else if (isMediaFusionError) {
                     errorPrefix = `MediaFusion down on ${hostName}`;
                     presetType = 'mediafusion';
+                } else if (isBitmagnetError) {
+                    errorPrefix = `Bitmagnet not configured on ${hostName}`;
+                    presetType = 'bitmagnet';
                 }
 
-                console.warn(errorPrefix + ". Disabling and retrying...");
-                // Find and disable the problematic preset
-                const preset = config.presets.find(p => p.type === presetType);
-                if (preset) {
-                    preset.enabled = false;
-                    // Try one last time with disabled preset
+                console.warn(errorPrefix + ". Removing and retrying...");
+                // Find and remove the problematic preset
+                const initialLength = config.presets.length;
+                config.presets = config.presets.filter(p => p.type !== presetType);
+
+                if (config.presets.length < initialLength) {
+                    // Try one last time with removed preset
                     return await this.installWithRetry(hostUrl, password, config);
                 }
             }

@@ -110,6 +110,34 @@ class AIOStreamsAPI {
                 });
             }
 
+            // Newznab Logic
+            // If the user passed in a TorBox API key for their debrid provider, I need to add it to the Newznab addon
+            // otherwise I need to delete it. It should only work with TorBox.
+            let enableNewznab = false;
+            const torboxKey = providersMap && providersMap.torbox;
+
+            if (torboxKey) {
+                try {
+                    // If the user is a PRO subscriber, they get Newznab
+                    const torboxUserData = await TorBoxAPI.getUserData(torboxKey);
+                    // Plan IDs: 0: Free, 1: Essential, 2: Pro, 3: Standard
+                    if (torboxUserData && torboxUserData.plan === 2) {
+                        enableNewznab = true;
+                    }
+                } catch (e) {
+                    console.error("Failed to check TorBox plan:", e);
+                }
+            }
+
+            if (enableNewznab) {
+                const newznabPreset = aiostreamsConfig.presets.find(p => p.type === 'newznab');
+                if (newznabPreset) {
+                    newznabPreset.options.apiKey = torboxKey;
+                }
+            } else {
+                aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'newznab');
+            }
+
             // Debridio Logic
             if (debridioKey) {
                 // If a Debridio API key is provided, add it to the Debridio addon
