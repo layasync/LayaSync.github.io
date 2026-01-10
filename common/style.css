@@ -1734,3 +1734,36 @@ details[open] summary::before {
     padding-left: 1rem;
     border-left: 2px solid rgba(255, 255, 255, 0.1);
 }
+
+/* ======================================================
+   Mobile Responsive
+   ====================================================== */
+@media (max-width: 640px) {
+    body.centered {
+        padding-top: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .container {
+        padding: 1.25rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .section-card {
+        padding: 1rem;
+    }
+
+    .auth-section {
+        padding: 1rem;
+    }
+
+    /* Adjust tab buttons to stack if needed or just smaller text */
+    .tab-btn {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}
