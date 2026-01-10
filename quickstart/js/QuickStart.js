@@ -357,10 +357,6 @@ class QuickStart {
 
     // Install AIOStreams config file on a specific host
     async createManifest(hostUrl, hostName, config, password) {
-        // Update Addon Name based on Instance
-        // Changes "Duck Streams" to "Duck Streams (Yeb)" for example
-        config.addonName = `Duck Streams (${hostName})`;
-
         // Allow up to 3 repair attempts (for MF, Torrentio, Bitmagnet)
         let attempts = 0;
         const maxAttempts = 4; // 1 initial + 3 fixes
