@@ -502,7 +502,7 @@
     ]
   },
   "precacheNextEpisode": true,
-  "alwaysPrecache": true,
+  "alwaysPrecache": false,
   "catalogModifications": [],
   "statistics": {
     "enabled": false,
