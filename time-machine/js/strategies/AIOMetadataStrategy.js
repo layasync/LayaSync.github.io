@@ -97,7 +97,9 @@ class AIOMetadataStrategy {
 
         // If the user doesn't enter a password, abort the snapshot
         if (!input) {
-            throw new Error('Password is required for AIOMetadata deep snapshot. Snapshot aborted.');
+            const err = new Error('Password is required for AIOMetadata deep snapshot. Snapshot aborted.');
+            err.isUserError = true;
+            throw err;
         }
         password = input.trim();
 
@@ -113,11 +115,12 @@ class AIOMetadataStrategy {
         } catch (err) {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioMetadataPassword(uuid, null);
-                throw new Error('Incorrect password for AIOMetadata.');
+                const userErr = new Error('Incorrect password for AIOMetadata.');
+                userErr.isUserError = true;
+                throw userErr;
             } else {
-                // For other errors (like 404/521 Proxy Error), identify the server
-                window.sendErrorToHoneyBadger(err);
-                throw new Error("Failed to connect to AIOMetadata server (" + host + "): " + err.message);
+                // For other errors
+                throw new Error("AIOMetadata: " + err.message);
             }
         }
     }

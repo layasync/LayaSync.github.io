@@ -141,7 +141,7 @@ class TimeMachine {
 
             // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
             if (!StremioAPI.isUserError(err.message)) {
-                window.sendErrorToHoneyBadger(err);
+                window.handleError(err);
             }
         } finally {
             this.ui.buttons.login.disabled = false;
@@ -187,7 +187,7 @@ class TimeMachine {
             }, 2000);
         } catch (err) {
             Modal.error(err.message || String(err));
-            window.sendErrorToHoneyBadger(err);
+            window.handleError(err);
         } finally {
             this.ui.buttons.createSnapshot.innerHTML = createSnapshotBtnText;
             this.ui.buttons.createSnapshot.disabled = false;
@@ -251,8 +251,16 @@ class TimeMachine {
         try {
             // Deep Restore Phase
             const deepResults = await DeepSnapshotManager.restoreAll(snapshot);
-            if (deepResults.failed > 0) {
-                throw new Error(`Deep restore failed for ${deepResults.failed} addon(s). Restoration aborted to protect your configuration.`);
+
+            // Failed deep restores should be reported to HoneyBadger
+            if (deepResults.errors && deepResults.errors.length > 0) {
+                console.warn("Deep restore encountered errors.");
+                deepResults.errors.forEach(err => window.handleError(err));
+            }
+
+            // Failed deep restores should abort the restore process
+            if (deepResults.errors.length > 0) {
+                throw new Error("Deep restore failed for addon(s). Restoration aborted to protect your configuration.");
             }
 
             // If any deep restore produced new addon URLs, update snapshot addons in storage
@@ -281,7 +289,7 @@ class TimeMachine {
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
             Modal.error(err.message || String(err));
-            window.sendErrorToHoneyBadger(err);
+            window.handleError(err);
         } finally {
             if (restoreBtn) {
                 restoreBtn.innerHTML = originalText;
@@ -312,7 +320,7 @@ class TimeMachine {
             this.renderUserTimeline();
         } catch (err) {
             Modal.error(err.message || String(err));
-            window.sendErrorToHoneyBadger(err);
+            window.handleError(err);
         }
     }
 

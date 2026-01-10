@@ -93,7 +93,9 @@ class AIOStreamsStrategy {
 
         // If the user doesn't enter a password, abort the snapshot
         if (!input) {
-            throw new Error('Password is required for AIOStreams deep snapshot. Snapshot aborted.');
+            const err = new Error('Password is required for AIOStreams deep snapshot. Snapshot aborted.');
+            err.isUserError = true;
+            throw err;
         }
         password = input.trim();
 
@@ -109,7 +111,12 @@ class AIOStreamsStrategy {
         } catch (err) {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioPassword(uuid, null);
-                throw new Error('Incorrect password for AIOStreams.');
+                const userErr = new Error('Incorrect password for AIOStreams.');
+                userErr.isUserError = true;
+                throw userErr;
+            } else {
+                // For other errors
+                throw new Error("AIOStreams: " + err.message);
             }
         }
     }
@@ -121,41 +128,44 @@ class AIOStreamsStrategy {
         const password = state.password;
         const config = state.config;
 
+        // Attempt 1: Update existing configuration
         try {
             // Try to update existing user first
             const json = await AIOStreamsAPI.setConfig(host, uuid, password, config);
 
-            const newUuid = json.data && json.data.uuid;
-            const newEncrypted = json.data && json.data.encryptedPassword;
-            let newUrl = null;
+            // We have to construct the manifest URL ourselves since the API doesn't return it
+            let newManifestUrl = null;
 
-            // If we have a new UUID and encrypted password, construct the new URL
-            if (newUuid && newEncrypted) {
-                newUrl = `${host}/stremio/${newUuid}/${newEncrypted}/manifest.json`;
+            const returnedUuid = json.data && json.data.uuid;
+            const returnedEncrypted = json.data && json.data.encryptedPassword;
+            if (returnedUuid && returnedEncrypted) {
+                newManifestUrl = `${host}/stremio/${returnedUuid}/${returnedEncrypted}/manifest.json`;
             }
 
             // Return the new URL if it's different from the original
-            if (newUrl && newUrl !== addonUrl) {
-                return newUrl;
+            if (newManifestUrl && newManifestUrl !== addonUrl) {
+                return newManifestUrl;
             }
 
             return null;
-        } catch (err) {
-            console.warn("AIOStreams update failed, attempting to create new manifest...", err);
-            try {
-                // Use dedicated method for creation from raw config
-                const newUrl = await AIOStreamsAPI.installConfig(host, password, config);
-                if (newUrl) {
-                    return newUrl;
-                }
-            } catch (createErr) {
-                window.reportError(createErr);
-                throw createErr;
-            }
-
-            window.reportError(err);
-            throw err;
+        } catch (updateErr) {
+            console.warn("AIOStreams update failed, attempting to create new manifest...", updateErr);
         }
+
+        // Attempt 2: Create new configuration (if update failed)
+        try {
+            // Use dedicated method for creation from raw config
+            const newManifestUrl = await AIOStreamsAPI.installConfig(host, password, config);
+            if (newManifestUrl) {
+                return newManifestUrl;
+            }
+        } catch (createErr) {
+            // If creation also fails, we propagate the error up.
+            throw createErr;
+        }
+
+        // If we got here without returning or throwing, something unexpected happened.
+        throw new Error("AIOStreams restore failed: Unable to update or create configuration.");
     }
 }
 
