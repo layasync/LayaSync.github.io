@@ -10,9 +10,9 @@
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
 
     <!-- Metadata -->
-    <meta name="description" content="Setup a Stremio account in seconds.">
+    <meta name="description" content="Install AIOStreams in seconds.">
     <meta property="og:title" content="QuickStart">
-    <meta property="og:description" content="Setup a Stremio account in seconds.">
+    <meta property="og:description" content="Install AIOStreams in seconds.">
     <meta property="og:type" content="website">
 
 </head>
@@ -22,43 +22,83 @@
     <!-- Header Section -->
     <div class="header-section">
         <h1>QuickStart</h1>
-        <p class="subtitle">Setup a Stremio account in seconds</p>
+        <p class="subtitle">Install AIOStreams in seconds</p>
     </div>
 
     <!-- Main Card -->
     <div class="container">
         <form id="setupForm">
-            <div class="field">
-                <div class="info-box">
-                    <!-- Icon -->
-                    <svg viewBox="0 0 24 24">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                    </svg>
-                    <p>
-                        Enter your email and password below. We'll <b>sign you in</b> if you already have an account, or
-                        <b>create a new account</b> for you automatically.
-                    </p>
+            <div class="step-label">STEP 1</div>
+            <div class="auth-section">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button type="button" class="tab-btn active" data-mode="account">Stremio Account</button>
+                    <button type="button" class="tab-btn" data-mode="manifest">Manifest Only</button>
                 </div>
 
-                <label for="email">Stremio Email</label>
-                <input type="email" id="email" placeholder="user@example.com" required autocomplete="email">
-            </div>
+                <!-- Stremio Account Mode -->
+                <div id="mode-account">
+                    <div class="field">
+                        <div class="info-box">
+                            <!-- Icon -->
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                            </svg>
+                            <p>
+                                <b>Log In or Sign Up</b>
+                                <br>
+                                We'll sign you in or create a new account automatically.
+                            </p>
+                        </div>
 
-            <div class="field">
-                <label for="password">Stremio Password</label>
-                <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                        <label for="email">Stremio Email</label>
+                        <input type="email" id="email" placeholder="user@example.com" autocomplete="email">
+                    </div>
 
-                <div class="auth-actions">
-                    <button type="button" id="generateCredsBtn" title="Fill with random credentials for a new account">
-                        Generate new identity
-                    </button>
+                    <div class="field">
+                        <label for="password">Stremio Password</label>
+                        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+
+                        <div class="auth-actions">
+                            <button type="button" id="generateCredsBtn"
+                                title="Fill with random credentials for a new account">
+                                Generate new identity
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manifest Only Mode -->
+                <div id="mode-manifest" class="hidden">
+                    <div class="field">
+                        <div class="info-box">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                            </svg>
+                            <p>
+                                <b>Manual Installation</b>
+                                <br>
+                                Generates an AIOStreams URL for use in any streaming client.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="aiostreamsPassword">AIOStreams Password</label>
+                        <input type="text" id="aiostreamsPassword" placeholder="Password" autocomplete="off">
+                        <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
+                            Create a password to protect your manifest.
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-separator"></div>
+
 
             <!-- Debrid Services Section -->
+            <div class="step-label">STEP 2</div>
             <div class="section-card">
                 <h3>Debrid Services</h3>
 
@@ -67,9 +107,7 @@
                     <label class="provider-card">
                         <input type="checkbox" value="torbox" hidden>
                         <div class="card-content">
-                            <!-- Helper SVG will be added via CSS or can be inline -->
-                            <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TorBox"
-                                style="border-radius: 4px;">
+                            <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TB">
                             <span class="provider-name">TorBox</span>
                         </div>
                         <div class="card-indicator">
@@ -83,7 +121,7 @@
                     <label class="provider-card">
                         <input type="checkbox" value="realdebrid" hidden>
                         <div class="card-content">
-                            <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="Real-Debrid">
+                            <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="RD">
                             <span class="provider-name">Real-Debrid</span>
                         </div>
                         <div class="card-indicator">
@@ -97,8 +135,24 @@
                     <label class="provider-card">
                         <input type="checkbox" value="premiumize" hidden>
                         <div class="card-content">
-                            <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="Premiumize">
+                            <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="PM">
                             <span class="provider-name">Premiumize</span>
+                        </div>
+
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+
+                    <!-- AllDebrid Card -->
+                    <label class="provider-card">
+                        <input type="checkbox" value="alldebrid" hidden>
+                        <div class="card-content">
+                            <img src="https://alldebrid.com/lib/images/default/favicon.png" class="provider-icon"
+                                alt="AD">
+                            <span class="provider-name">AllDebrid</span>
                         </div>
                         <div class="card-indicator">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -119,31 +173,45 @@
                 </div>
             </div>
 
-            <div class="field">
-                <label for="debridioKey">Debridio API Key (Optional)</label>
-                <input type="text" id="debridioKey" placeholder="Paste your Debridio API key here" autocomplete="off"
-                    spellcheck="false" />
-                <div class="helper">
-                    Get your Debridio API key <a href="https://debridio.com/account" target="_blank"
-                        rel="noopener">here</a>.
-                </div>
-            </div>
 
-            <!-- Advanced Settings -->
-            <details id="advancedSettings">
-                <summary>Advanced Settings</summary>
-                <div class="advanced-content">
 
-                    <!-- Host Selection -->
-                    <div class="field">
-                        <label for="aiostreamsHost">AIOStreams Host</label>
-                        <select id="aiostreamsHost">
-                            <!-- Options are populated from main.js -->
-                        </select>
+            <!-- Footer Options -->
+            <div class="footer-options">
+                <!-- Debridio -->
+                <details>
+                    <summary>Debridio</summary>
+                    <div class="field" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                            <label for="debridioKey" style="margin-bottom:0;">Debridio API Key</label>
+                            <div style="font-size:0.75rem; color:var(--text-secondary);">
+                                <a href="https://debridio.com/account" target="_blank" rel="noopener"
+                                    style="color:var(--accent); text-decoration:none;">Get Key</a>
+                                <span style="margin: 0 6px; opacity: 0.3;">|</span>
+                                <a href="https://debridio.com/register" target="_blank" rel="noopener"
+                                    style="color:var(--accent); text-decoration:none;">Sign Up</a>
+                            </div>
+                        </div>
+                        <input type="text" id="debridioKey" placeholder="Enter your Debridio API Key" autocomplete="off"
+                            spellcheck="false" style="margin-top:0.5rem;" />
                     </div>
-                </div>
-            </details>
-            <!-- End Advanced Settings -->
+                </details>
+
+                <!-- Advanced Settings -->
+                <details id="advancedSettings">
+                    <summary>Advanced Settings</summary>
+                    <div class="advanced-content">
+                        <!-- Host Selection -->
+                        <div class="field">
+                            <label for="aiostreamsHost">AIOStreams Host</label>
+                            <select id="aiostreamsHost">
+                                <!-- Options are populated from main.js -->
+                            </select>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+            <!-- End Footer Options -->
 
             <button id="submitBtn" type="submit">
                 Start Setup

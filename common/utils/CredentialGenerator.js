@@ -119,34 +119,20 @@ class CredentialGenerator {
         return `${word}${num}`;
     }
 
-    // Generate a random password
+    // Generate a memorable random password (e.g. BlueRiverHawk123)
     static generateRandomPassword() {
-        // Define the character sets
-        const lower = "abcdefghijklmnopqrstuvwxyz";
-        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const digits = "0123456789";
-        const specials = "!@#$%^&*";
-
-        // 8 to 10 characters
-        // Ensure there is at least one character from each set
-        const length = 8 + this.randInt(3);
-        const password = [
-            lower[this.randInt(lower.length)],
-            upper[this.randInt(upper.length)],
-            digits[this.randInt(digits.length)],
-            specials[this.randInt(specials.length)]
-        ];
-
-        // Add random characters from all sets until the desired length is reached
-        const allChars = lower + upper + digits + specials;
-        while (password.length < length) {
-            password.push(allChars[this.randInt(allChars.length)]);
+        const words = [];
+        // Pick 3 random words
+        for (let i = 0; i < 3; i++) {
+            const word = this.WORDS[this.randInt(this.WORDS.length)];
+            // Capitalize first letter
+            words.push(word.charAt(0).toUpperCase() + word.slice(1));
         }
 
-        // Randomize the password
-        this.shuffle(password);
-        // Return the password
-        return password.join("");
+        // Add a random 3-digit number (100-999)
+        const num = 100 + this.randInt(900);
+
+        return words.join("") + num;
     }
 }
 

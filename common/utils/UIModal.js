@@ -205,13 +205,23 @@ class Modal {
         });
     }
 
-    static error(message) {
+    static error(message, title = "Error") {
         return this.show({
-            title: "Error",
+            title,
             message,
             iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
             iconColor: '#ef4444',
             buttons: [{ text: 'Close', type: 'primary', onClick: () => true }]
+        });
+    }
+
+    static success(message, title = "Success") {
+        return this.show({
+            title,
+            message,
+            iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+            iconColor: '#10b981',
+            buttons: [{ text: 'OK', type: 'primary', onClick: () => true }]
         });
     }
 }

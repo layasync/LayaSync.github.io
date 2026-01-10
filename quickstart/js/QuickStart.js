@@ -22,7 +22,15 @@ class QuickStart {
                 signup: "https://www.premiumize.me/register",
                 api: "https://www.premiumize.me/account",
             },
+            alldebrid: {
+                name: "AllDebrid",
+                signup: "https://alldebrid.com/?uid=3n8qa&lang=en",
+                api: "https://alldebrid.com/apikeys",
+            },
         };
+
+        // State
+        this.mode = 'account'; // 'account' or 'manifest'
 
         // UI References
         this.ui = {
@@ -31,17 +39,35 @@ class QuickStart {
             apiKeysContainer: document.getElementById("apiKeysContainer"),
             signupLink: document.getElementById("signupLink"),
             submitBtn: document.getElementById("submitBtn"),
+            // Account Mode Inputs
             emailInput: document.getElementById("email"),
             passwordInput: document.getElementById("password"),
             generateBtn: document.getElementById("generateCredsBtn"),
+            // Shared Inputs
             debridioInput: document.getElementById("debridioKey"),
             aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
+            // Mode Switching
+            tabButtons: document.querySelectorAll('.tab-btn'),
+            modeAccount: document.getElementById("mode-account"),
+            modeManifest: document.getElementById("mode-manifest"),
+            // Manifest Mode Inputs
+            aiostreamsPasswordInput: document.getElementById("aiostreamsPassword"),
         };
     }
 
     // Initialize the app
     init() {
         this.populateAIOStreamsHostsSelect();
+
+        // Initialize Clipboard
+        if (window.Clipboard) {
+            Clipboard.setup();
+        }
+
+        // Tab Event Listeners
+        this.ui.tabButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
+        });
 
         // Event Listeners
         this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
@@ -54,6 +80,30 @@ class QuickStart {
                 this.handleDebridProviderChange();
             }
         });
+    }
+
+    switchMode(mode) {
+        this.mode = mode;
+
+        // Update Tabs
+        this.ui.tabButtons.forEach(btn => {
+            if (btn.dataset.mode === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Update UI
+        if (mode === 'account') {
+            this.ui.modeManifest.classList.add('hidden');
+            this.ui.modeAccount.classList.remove('hidden');
+            this.ui.submitBtn.textContent = "Start Setup";
+        } else {
+            this.ui.modeAccount.classList.add('hidden');
+            this.ui.modeManifest.classList.remove('hidden');
+            this.ui.submitBtn.textContent = "Generate Manifest";
+        }
     }
 
     populateAIOStreamsHostsSelect() {
@@ -128,37 +178,48 @@ class QuickStart {
             const field = document.createElement("div");
             field.className = "field";
 
+            // Create header container for Label + Link
+            const header = document.createElement("div");
+            header.style.display = "flex";
+            header.style.justifyContent = "space-between";
+            header.style.alignItems = "baseline";
+
             // Create title label for input field
             const label = document.createElement("label");
             label.textContent = `${config.name} API Key`;
             label.htmlFor = `apiKey_${providerId}`;
+            label.style.marginBottom = "0"; // Remove bottom margin as header handles spacing
+
+            // Create links container (Get Key | Sign Up)
+            const linksDiv = document.createElement("div");
+            linksDiv.style.fontSize = "0.75rem";
+            linksDiv.style.color = "var(--text-secondary)";
+
+            linksDiv.innerHTML = `
+                <a href="${config.api}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Get Key</a>
+                <span style="margin: 0 6px; opacity: 0.3;">|</span>
+                <a href="${config.signup}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Sign Up</a>
+            `;
+
+            // Append to header
+            header.appendChild(label);
+            header.appendChild(linksDiv);
 
             // Create input field for API key
             const input = document.createElement("input");
             input.type = "text";
             input.id = `apiKey_${providerId}`;
+            input.style.marginTop = "0.5rem"; // Add spacing between header and input
             input.name = `apiKey_${providerId}`; // beneficial for form data handling
             input.placeholder = `Enter your ${config.name} API Key`;
             input.required = true;
             input.autocomplete = "off";
             input.spellcheck = false;
 
-            // Create helper text for getting API key
-            const helper = document.createElement("div");
-            helper.className = "helper";
-            helper.innerHTML = `Find your API Key <a href="${config.api}" target="_blank" rel="noopener">here</a>.`;
-
             // Add the new fields to the UI
-            field.appendChild(label);
+            field.appendChild(header);
             field.appendChild(input);
-            field.appendChild(helper);
             this.ui.apiKeysContainer.appendChild(field);
-
-            // Add signup link for debrid provider
-            const linkDiv = document.createElement("div");
-            linkDiv.style.marginTop = "0.25rem"; // reduced margin for compact list
-            linkDiv.innerHTML = `Don't have a ${config.name} account? <a href="${config.signup}" target="_blank" rel="noopener">Sign up here</a>.`;
-            this.ui.signupLink.appendChild(linkDiv);
         });
     }
 
@@ -204,49 +265,79 @@ class QuickStart {
     async handleSubmit(e) {
         e.preventDefault();
         this.ui.submitBtn.disabled = true;
-        this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Setting up...';
+        this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Working...';
 
         try {
             // 1. Gather Data
             const formData = this.getFormData();
             if (!formData) return; // Validation failed (modal already shown)
 
+            let isNewAccount = false;
             const stremioEmail = formData.email;
-            const stremioPassword = formData.password;
-            const debridioKey = formData.debridioKey;
+            const password = formData.password;
             const providersMap = formData.providersMap;
+            const debridioKey = formData.debridioKey;
 
-            // 2. Setup Stremio Account
-            const isNewAccount = await this.setupStremioAccount(stremioEmail, stremioPassword);
+            // 2. Setup Stremio Account (Only if mode is account)
+            if (this.mode === 'account') {
+                isNewAccount = await this.setupStremioAccount(stremioEmail, password);
+            } else {
+                // Manifest-only mode: password is already retrieved from form data
+                // No action needed here
+            }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(stremioPassword, providersMap, debridioKey);
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey);
 
-            // 4. Install Manifest
-            await StremioAPI.installAddon(manifestUrl);
+            if (this.mode === 'account') {
+                // 4. Install Manifest
+                await StremioAPI.installAddon(manifestUrl);
 
-            // 5. Show Success
-            await this.showSuccessModal(isNewAccount, stremioEmail, stremioPassword);
+                // 5. Show Success
+                await this.showSuccessModal(isNewAccount, stremioEmail, password);
+            } else {
+                // 4. Show Manifest Result
+                this.showManifestResult(manifestUrl, password);
+            }
 
         } catch (err) {
             // Show error modal to user
             Modal.error(err.message);
 
             // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
-            // TODO: Update AIOStreamsAPI and AIOMetadataAPI to have versions of 'isKnownUserError'
             if (!StremioAPI.isUserError(err.message)) {
                 window.handleError(err);
             }
         } finally {
             this.ui.submitBtn.disabled = false;
-            this.ui.submitBtn.textContent = "Start Setup";
+            this.ui.submitBtn.textContent = this.mode === 'account' ? "Start Setup" : "Generate Manifest";
         }
     }
 
     // Get the user inputs from the form
     getFormData() {
-        const email = this.ui.emailInput.value.trim();
-        const password = this.ui.passwordInput.value.trim();
+        let email = null;
+        let password = null;
+
+        // Only validate email/password in account mode
+        if (this.mode === 'account') {
+            email = this.ui.emailInput.value.trim();
+            password = this.ui.passwordInput.value.trim();
+
+            if (!email || !password) {
+                Modal.error("Please enter a Stremio email and password.");
+                return null;
+            }
+        }
+        else {
+            // Manifest mode validation
+            password = this.ui.aiostreamsPasswordInput.value.trim();
+            if (!password) {
+                Modal.error("Please enter an AIOStreams password.");
+                return null;
+            }
+        }
+
         const debridioKey = this.ui.debridioInput.value.trim();
 
         // Gather API Keys from dynamic inputs
@@ -293,7 +384,6 @@ class QuickStart {
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
         // Prepare the config
-        // FIXME: The config should be refreshed for every host. For example, if MF times out on one host then it should try the next host.
         const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken);
 
         let manifestUrl = null;
@@ -349,10 +439,45 @@ class QuickStart {
             </div>`;
         }
 
-        await Modal.alert(
+        await Modal.success(
             `${modalMessage} ${detailsHtml} <br><br> Your Duck Streams password is the same as your Stremio password. <br><br> Login to Stremio with these credentials to start watching!`,
             "Success! 🎉"
         );
+    }
+
+    async showManifestResult(url, password) {
+        const messageHtml = `
+            <div style="text-align: left;">
+                <p>AIOStreams manifest has been created successfully.</p>
+                
+                <div class="credential-group">
+                    <div class="credential-item">
+                        <div class="credential-info">
+                            <span class="credential-label">Manifest URL</span>
+                            <span id="res-url" class="credential-value" title="${url}">${url}</span>
+                        </div>
+                        <button class="copy-icon-btn" data-copy="res-url">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path></svg>
+                        </button>
+                    </div>
+                     <div class="credential-item">
+                        <div class="credential-info">
+                            <span class="credential-label">Password</span>
+                            <span id="res-pwd" class="credential-value">${password}</span>
+                        </div>
+                         <button class="copy-icon-btn" data-copy="res-pwd">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 17.929H6c-1.105 0-2-.912-2-2.036V5.036C4 3.91 4.895 3 6 3h8c1.105 0 2 .911 2 2.036v1.866m-6 .17h8c1.105 0 2 .91 2 2.035v10.857C20 21.09 19.105 22 18 22h-8c-1.105 0-2-.911-2-2.036V9.107c0-1.124.895-2.036 2-2.036z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="font-size:0.8rem; color:#94a3b8; font-style:italic;">
+                    Use the Manifest URL above to install a new addon in your streaming client.
+                </div>
+            </div>
+        `;
+
+        await Modal.success(messageHtml, "Manifest Generated 🎉");
     }
 
     // Install AIOStreams config file on a specific host

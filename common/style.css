@@ -716,11 +716,6 @@ button:disabled {
     margin-top: 2rem;
 }
 
-.form-separator {
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-    margin: 2rem 0;
-}
-
 /* ======================================================
    Advanced Settings (Details / Summary)
    ====================================================== */
@@ -1586,6 +1581,7 @@ details[open] summary::before {
     width: 24px;
     height: 24px;
     object-fit: contain;
+    border-radius: 4px;
 }
 
 .provider-name {
@@ -1614,4 +1610,127 @@ details[open] summary::before {
 .card-indicator svg {
     width: 14px;
     height: 14px;
+}
+
+/* ======================================================
+   Tabs (Segmented Control)
+   ====================================================== */
+.tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    padding: var(--space-xs);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+    position: relative;
+    gap: var(--space-xs);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+    box-shadow: none;
+}
+
+.tab-btn:hover:not(.active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: #ffffff;
+    background: var(--accent);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ======================================================
+   Auth Section (Visual Grouping)
+   ====================================================== */
+.auth-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.auth-section .tabs {
+    margin-bottom: var(--space-lg);
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    /* mixing bg */
+}
+
+/* Remove bottom margin from last elements to balance spacing */
+.auth-section .field:last-child {
+    margin-bottom: 0;
+}
+
+.auth-section .info-box:last-child {
+    margin-bottom: 0;
+}
+
+/* ======================================================
+   Step Labels
+   ====================================================== */
+.step-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    text-align: left;
+    padding-left: 2px;
+}
+
+
+/* ======================================================
+   Footer Options (Unified Optional Settings)
+   ====================================================== */
+.footer-options {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+#submitBtn {
+    margin-top: 2rem;
+}
+
+.footer-options details {
+    border: none !important;
+    margin: 0 !important;
+    background: transparent !important;
+    padding: 0;
+}
+
+.footer-options summary {
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.footer-options summary:hover {
+    color: var(--text-primary);
+}
+
+.footer-options .field {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
 }
