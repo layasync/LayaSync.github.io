@@ -1607,6 +1607,12 @@ details[open] summary::before {
     color: white;
 }
 
+.provider-card:has(input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .card-indicator svg {
     width: 14px;
     height: 14px;

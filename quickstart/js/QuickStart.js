@@ -52,6 +52,7 @@ class QuickStart {
             modeManifest: document.getElementById("mode-manifest"),
             // Manifest Mode Inputs
             aiostreamsPasswordInput: document.getElementById("aiostreamsPassword"),
+            cleanDuckStreamsCheckbox: document.getElementById("cleanDuckStreams"),
         };
     }
 
@@ -80,6 +81,9 @@ class QuickStart {
                 this.handleDebridProviderChange();
             }
         });
+
+        // Initialize UI state based on default mode
+        this.switchMode(this.mode);
     }
 
     switchMode(mode) {
@@ -98,11 +102,14 @@ class QuickStart {
         if (mode === 'account') {
             this.ui.modeManifest.classList.add('hidden');
             this.ui.modeAccount.classList.remove('hidden');
+            this.ui.cleanDuckStreamsCheckbox.disabled = false;
             this.ui.submitBtn.textContent = "Start Setup";
         } else {
             this.ui.modeAccount.classList.add('hidden');
             this.ui.modeManifest.classList.remove('hidden');
             this.ui.submitBtn.textContent = "Generate Manifest";
+            this.ui.cleanDuckStreamsCheckbox.disabled = true;
+            this.ui.cleanDuckStreamsCheckbox.checked = false;
         }
     }
 
@@ -277,10 +284,11 @@ class QuickStart {
             const password = formData.password;
             const providersMap = formData.providersMap;
             const debridioKey = formData.debridioKey;
+            const cleanupOldInstalls = formData.cleanupOldInstalls;
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
-                isNewAccount = await this.setupStremioAccount(stremioEmail, password);
+                isNewAccount = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
             } else {
                 // Manifest-only mode: password is already retrieved from form data
                 // No action needed here
@@ -339,6 +347,7 @@ class QuickStart {
         }
 
         const debridioKey = this.ui.debridioInput.value.trim();
+        const cleanupOldInstalls = this.ui.cleanDuckStreamsCheckbox.checked;
 
         // Gather API Keys from dynamic inputs
         const providersMap = {};
@@ -356,11 +365,11 @@ class QuickStart {
             return null;
         }
 
-        return { email, password, debridioKey, providersMap };
+        return { email, password, debridioKey, providersMap, cleanupOldInstalls };
     }
 
     // Log into the user's Stremio account
-    async setupStremioAccount(email, password) {
+    async setupStremioAccount(email, password, cleanupOldInstalls) {
         // Login to Stremio (registering a new account if needed)
         const isNewAccount = await StremioAPI.ensureAccount(email, password);
 
@@ -370,6 +379,11 @@ class QuickStart {
             const currentAddons = await StremioAPI.getAddons();
             const ALLOWED = ["Cinemeta"];
             const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
+            await StremioAPI.setAddons(filteredAddons);
+        } else if (cleanupOldInstalls) {
+            // User requested to clean up existing "Duck Streams" addons
+            const currentAddons = await StremioAPI.getAddons();
+            const filteredAddons = currentAddons.filter(a => !a.manifest.name.startsWith("Duck Streams"));
             await StremioAPI.setAddons(filteredAddons);
         }
 
