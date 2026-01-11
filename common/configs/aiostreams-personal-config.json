@@ -236,7 +236,7 @@
   "formatter": {
     "id": "custom",
     "definition": {
-      "name": "{stream.regexMatched::exists[\"◈\"||\"\"]}\n\n{stream.resolution::exists[\"{stream.resolution::replace('2160p', '4K ')::replace('1440p', 'QHD ')::replace('1080p', 'FHD ')::replace('720p', 'HD ')}\"||\"Unk\"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾ \"||\" \"]} {stream.visualTags::~DV[\"ᵈᵛ \"||\"\"]}",
+      "name": "{stream.seadex::istrue[\"🔶 \"||\"\"]}{stream.regexMatched::exists[\"🔷 \"||\"\"]}{stream.resolution::exists[\"{stream.resolution::replace('2160p', '4K ')::replace('1440p', 'QHD ')::replace('1080p', 'FHD ')::replace('720p', 'HD ')}\"||\"Unk\"]}{stream.visualTags::~HDR[\"ʰᵈʳ\"||\"\"]}{stream.visualTags::~HDR10+[\"⁽¹⁰⁺⁾\"||\"\"]} {stream.visualTags::~DV[\"ᵈᵛ\"||\"\"]}",
       "description": "{stream.title::exists[\"{stream.title}\"||\"\"]} {stream.seasonEpisode::exists[\"{stream.seasonEpisode::join(' ･ ')}\"||\"{stream.year}\"]}\n\n {stream.seadexBest::istrue[\"▫ ʙᴇsᴛ ʀᴇʟᴇᴀsᴇ\"||\"\"]}{stream.seadex::istrue::and::stream.seadexBest::isfalse[\"▫ ᴀʟᴛ ʙᴇsᴛ ʀᴇʟᴇᴀsᴇ\"||\"\"]}\n\n ▫ {stream.size::rbytes}\n\n {stream.audioChannels::exists::or::stream.audioTags::exists[\"▫ {stream.audioChannels::join(' ')} {stream.audioTags::join(' ')}\"||\"\"]}\n\n {stream.languageCodes::exists[\"▫ {stream.languageCodes::join(' · ')}\"||\"\"]}\n\n {stream.type::~usenet::and::service.cached::isfalse[\"▫ ᴜsᴇɴᴇᴛ\"||\"\"]}"
     }
   },
