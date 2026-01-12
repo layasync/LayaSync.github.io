@@ -83,7 +83,7 @@
       "enabled": true,
       "options": {
         "name": "SeaDex",
-        "timeout": 15000,
+        "timeout": 10000,
         "mediaTypes": [
           "anime"
         ]
@@ -95,7 +95,7 @@
       "enabled": true,
       "options": {
         "name": "Debridio",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "stream"
         ],
@@ -110,7 +110,7 @@
         "name": "Newznab",
         "newznabUrl": "https://search-api.torbox.app/newznab",
         "apiPath": "/api",
-        "timeout": 15000,
+        "timeout": 10000,
         "mediaTypes": [],
         "services": [
           "torbox"
@@ -127,7 +127,7 @@
       "enabled": true,
       "options": {
         "name": "Torrentio",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "stream"
         ],
@@ -141,7 +141,7 @@
       "enabled": true,
       "options": {
         "name": "StremThru Torz",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "stream"
         ],
@@ -156,7 +156,7 @@
       "enabled": true,
       "options": {
         "name": "Bitmagnet",
-        "timeout": 15000,
+        "timeout": 10000,
         "mediaTypes": [],
         "useMultipleInstances": false,
         "paginate": false
@@ -168,7 +168,7 @@
       "enabled": true,
       "options": {
         "name": "Comet",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "stream"
         ],
@@ -183,7 +183,7 @@
       "enabled": true,
       "options": {
         "name": "Knaben",
-        "timeout": 15000,
+        "timeout": 10000,
         "mediaTypes": [],
         "useMultipleInstances": false
       }
@@ -194,7 +194,7 @@
       "enabled": true,
       "options": {
         "name": "AnimeTosho",
-        "timeout": 15000,
+        "timeout": 10000,
         "mediaTypes": [],
         "useMultipleInstances": false
       }
@@ -205,7 +205,7 @@
       "enabled": true,
       "options": {
         "name": "MediaFusion",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "stream",
           "meta"
@@ -226,7 +226,7 @@
       "enabled": true,
       "options": {
         "name": "OpenSubtitles",
-        "timeout": 15000,
+        "timeout": 10000,
         "resources": [
           "subtitles"
         ]
@@ -515,7 +515,7 @@
   "preferredStreamExpressions": [],
   "dynamicAddonFetching": {
     "enabled": true,
-    "condition": "((queryType == 'anime.series' or queryType == 'anime.movie') or queryType=='anime.series' or queryType=='anime.movie') ? (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Anime BD T1','Anime BD T2','Anime Web T1','Anime Web T2','Remux T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=5000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=8000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=10000) : (count(resolution(regexMatched(service(cached(totalStreams),'realdebrid','torbox'),'Remux T1','Remux T2','Bluray T1'),'2160p','1080p'))>=2 or (totalTimeTaken>=4000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p'))>=4) or (totalTimeTaken>=7000 and count(resolution(service(cached(totalStreams),'realdebrid','torbox'),'2160p','1080p','720p'))>=6) or totalTimeTaken>=9000)"
+    "condition": "(queryType=='anime.series' or queryType=='anime.movie') ? (count(seadex(cached(totalStreams), 'best')) >= 1 or count(seadex(cached(totalStreams))) >= 2) : ((queryType=='movie') ? (count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Bluray T1'),'2160p','1440p','1080p'))>=2 or (totalTimeTaken>=3000 and count(resolution(regexMatched(cached(totalStreams),'Remux T3','Bluray T2','Bluray T3'),'2160p','1440p','1080p'))>=3) or (totalTimeTaken>=4000 and count(resolution(regexMatched(cached(totalStreams),'Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=4) or (totalTimeTaken>=6000 and count(resolution(cached(totalStreams),'2160p','1440p','1080p'))>=6)) : (count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Remux T3','Bluray T1','Bluray T2','Bluray T3','Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=3 or (totalTimeTaken>=6000 and count(resolution(cached(totalStreams),'2160p','1440p','1080p'))>=6)))"
   },
   "hideErrors": true,
   "size": {
