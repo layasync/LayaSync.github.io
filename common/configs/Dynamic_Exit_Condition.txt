@@ -16,18 +16,18 @@
     ? 
     (
         --- Movie Results ---
-        count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Bluray T1'),'2160p','1440p','1080p'))>=2 or 
+        (totalTimeTaken>=1500 and count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Bluray T1'),'2160p','1440p','1080p'))>=3) or 
         
-        (totalTimeTaken>=3000 and count(resolution(regexMatched(cached(totalStreams),'Remux T3','Bluray T2','Bluray T3'),'2160p','1440p','1080p'))>=3) or 
+        (totalTimeTaken>=3000 and count(resolution(regexMatched(cached(totalStreams),'Remux T3','Bluray T2','Bluray T3'),'2160p','1440p','1080p'))>=4) or 
         
-        (totalTimeTaken>=4000 and count(resolution(regexMatched(cached(totalStreams),'Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=4) or 
+        (totalTimeTaken>=4000 and count(resolution(regexMatched(cached(totalStreams),'Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=5) or 
         
-        (totalTimeTaken>=6000 and count(resolution(cached(totalStreams),'2160p','1440p','1080p'))>=6)
+        (totalTimeTaken>=6000 and count(resolution(cached(totalStreams),'2160p','1440p','1080p'))>=7)
     ) 
     : 
     (
         --- Series Results ---
-        count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Remux T3','Bluray T1','Bluray T2','Bluray T3','Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=3 or 
+        (totalTimeTaken>=2000 and count(resolution(regexMatched(cached(totalStreams),'Remux T1','Remux T2','Remux T3','Bluray T1','Bluray T2','Bluray T3','Web T1','Web T2','Web T3'),'2160p','1440p','1080p'))>=4) or 
         
         (totalTimeTaken>=6000 and count(resolution(cached(totalStreams),'2160p','1440p','1080p'))>=6)
     )
