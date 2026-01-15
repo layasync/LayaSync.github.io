@@ -156,7 +156,7 @@ class AIOStreamsAPI {
                 const filteredRegexPatterns = [];
                 if (regexData && typeof regexData === 'object') {
                     for (const item of Object.values(regexData)) {
-                        if (item.name && item.name !== "" && item.name.toLowerCase() !== "bad") {
+                        if (item.name && item.name !== "" && item.name.toLowerCase() !== "bad" && item.name.toLowerCase() !== "web scene") {
                             filteredRegexPatterns.push(item);
                         }
                     }
