@@ -603,8 +603,8 @@ class NavigationSidebar {
                 Report Issue
             </button>
             <div style="margin-top: 1rem; text-align: center;">
-                <a href="https://buymeacoffee.com/duck.streams" target="_blank" style="font-size: 0.85rem; opacity: 0.7; color: #94a3b8; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.35rem;" onmouseover="this.style.opacity='1'; this.style.color='#fff';" onmouseout="this.style.opacity='0.7'; this.style.color='#94a3b8';">
-                    <span>Support Me ♡</span>
+                 <a href="https://buymeacoffee.com/duck.streams" target="_blank" style="display: block; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width: 100%; max-width: 160px; border-radius: 0.5rem !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 </a>
             </div>
         `;
