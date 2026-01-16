@@ -403,6 +403,7 @@ class QuickStart {
         let manifestUrl = null;
         if (selectedHostValue !== 'auto') {
             // Specific host selected
+            console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
             manifestUrl = await this.createManifest(selectedHostValue, selectedHostName, config, password);
         } else {
             // Auto-select host
