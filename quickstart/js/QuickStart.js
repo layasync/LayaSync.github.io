@@ -56,6 +56,11 @@ class QuickStart {
             // Manifest Mode Inputs
             aiostreamsPasswordInput: document.getElementById("aiostreamsPassword"),
             cleanDuckStreamsCheckbox: document.getElementById("cleanDuckStreams"),
+            // Advanced Settings Modal
+            advancedModalOverlay: document.getElementById("advancedModalOverlay"),
+            advancedSettingsBtn: document.getElementById("advancedSettingsBtn"),
+            closeAdvancedModalBtn: document.getElementById("closeAdvancedModal"),
+            saveAdvancedSettingsBtn: document.getElementById("saveAdvancedSettings"),
         };
     }
 
@@ -95,6 +100,14 @@ class QuickStart {
 
         // Initialize UI state based on default mode
         this.switchMode(this.mode);
+
+        // Advanced Settings Modal Handlers
+        this.ui.advancedSettingsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.ui.advancedModalOverlay.classList.remove('hidden');
+        });
+        this.ui.closeAdvancedModalBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
+        this.ui.saveAdvancedSettingsBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
     }
 
     switchMode(mode) {

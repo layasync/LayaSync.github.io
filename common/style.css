@@ -1707,8 +1707,11 @@ details[open] summary::before {
 .footer-options {
     margin-top: 1rem;
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 #submitBtn {
@@ -1716,10 +1719,45 @@ details[open] summary::before {
 }
 
 .footer-options details {
+    flex: 1;
+    min-width: 200px;
     border: none !important;
     margin: 0 !important;
     background: transparent !important;
     padding: 0;
+}
+
+/* Advanced Settings Trigger */
+.advanced-trigger-container {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.advanced-trigger {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-decoration: underline;
+    opacity: 0.7;
+    transition: opacity var(--transition-base);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.advanced-trigger:hover {
+    opacity: 1;
+    color: var(--text-primary);
+}
+
+/* Modal Settings Cards */
+.settings-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
 }
 
 .footer-options summary {

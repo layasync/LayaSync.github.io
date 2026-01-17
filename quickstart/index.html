@@ -205,61 +205,91 @@
                     </div>
                 </details>
 
-                <!-- Advanced Settings -->
-                <details id="advancedSettings">
-                    <summary>Advanced Settings</summary>
-                    <div class="advanced-content">
-                        <!-- Host Selection -->
-                        <div class="field">
-                            <label for="aiostreamsHost">AIOStreams Host</label>
-                            <select id="aiostreamsHost">
-                                <!-- Options are populated from main.js -->
-                            </select>
-                        </div>
-
-                        <!-- Format Selection -->
-                        <div class="field">
-                            <label for="formatSelect">Formatter Style</label>
-                            <select id="formatSelect">
-                                <!-- Options are populated from JS -->
-                            </select>
-
-                            <!-- Visual Preview -->
-                            <div id="formatPreviewContainer"
-                                style="margin-top: 0.5rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid var(--border);">
-                                <img id="formatPreviewImage" src="" alt="Format Preview"
-                                    style="width: 100%; height: auto; display: block;">
-                            </div>
-                        </div>
-
-                        <!-- Cleanup Old Duck Streams Addons -->
-                        <div class="field" style="margin-bottom: 1.5rem;">
-                            <label class="provider-card">
-                                <input type="checkbox" id="cleanDuckStreams" hidden>
-                                <div class="card-content">
-                                    <div style="display: flex; flex-direction: column; gap: 0.1rem;">
-                                        <span class="provider-name">Clean "Duck Streams" addons</span>
-                                        <span style="font-size: 0.75rem; color: var(--text-secondary);">Removes old
-                                            installations</span>
-                                    </div>
-                                </div>
-                                <div class="card-indicator">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </details>
-
+                <!-- Advanced Settings Trigger -->
+                <!-- Moved to Action Bar -->
             </div>
             <!-- End Footer Options -->
 
-            <button id="submitBtn" type="submit">
+            <div class="advanced-trigger-container">
+                <a href="#" id="advancedSettingsBtn" class="advanced-trigger">
+                    Advanced Settings
+                </a>
+            </div>
+
+            <button id="submitBtn" type="submit" style="margin-top: 0;">
                 Start Setup
             </button>
         </form>
+
+        <!-- Advanced Settings (Absolute Top Right) -->
+        <!-- Removed -->
+    </div>
+
+    <!-- Advanced Settings Modal -->
+    <div id="advancedModalOverlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                <h2 style="margin:0; font-size:1.5rem; text-align:left;">Advanced Settings</h2>
+                <button type="button" id="closeAdvancedModal"
+                    style="width: auto; padding: 0.5rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; box-shadow: none;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="advanced-content" style="text-align: left;">
+                <!-- Host Selection -->
+                <div class="field settings-card">
+                    <label for="aiostreamsHost" style="margin-bottom: 0.5rem; display: block;">AIOStreams Host</label>
+                    <select id="aiostreamsHost">
+                        <!-- Options are populated from main.js -->
+                    </select>
+                </div>
+
+                <!-- Formatter Selection -->
+                <div class="field settings-card">
+                    <label for="formatSelect" style="margin-bottom: 0.5rem; display: block;">Formatter Style</label>
+                    <select id="formatSelect">
+                        <!-- Options are populated from JS -->
+                    </select>
+
+                    <!-- Visual Preview -->
+                    <div id="formatPreviewContainer"
+                        style="margin-top: 1rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid var(--border);">
+                        <img id="formatPreviewImage" src="" alt="Format Preview"
+                            style="width: 100%; height: auto; display: block;">
+                    </div>
+                </div>
+
+                <!-- Cleanup Old Duck Streams Addons -->
+                <div class="field" style="margin-bottom: 0;">
+                    <label class="provider-card">
+                        <input type="checkbox" id="cleanDuckStreams" hidden>
+                        <div class="card-content">
+                            <div style="display: flex; flex-direction: column; gap: 0.1rem;">
+                                <span class="provider-name">Clean "Duck Streams" addons</span>
+                                <span style="font-size: 0.75rem; color: var(--text-secondary);">Removes old
+                                    installations</span>
+                            </div>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button type="button" id="saveAdvancedSettings" class="primary">
+                    Done
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Web analytics and error tracking -->
