@@ -2,8 +2,6 @@
 
 **QuickStart** is the fastest way to set up a fully configured Stremio account. It handles the boring stuff—account creation, Debrid configuration, and addon installation—in a single, streamlined wizard.
 
-![QuickStart Preview](assets/quickstart_preview.jpg)
-
 ## ✨ Features
 
 - **⚡ Instant Setup**: Go from zero to watching in under 30 seconds.

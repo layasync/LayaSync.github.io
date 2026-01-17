@@ -2,8 +2,6 @@
 
 **Time Machine** is a powerful snapshot manager for your Stremio account. It allows you to instantly backup your current addon configuration, explore your history, and restore your account to any previous state with a single click.
 
-![Dashboard Preview](assets/time_machine_preview.jpg)
-
 ## ✨ Features
 
 - **📸 Instant Snapshots**: Capture your entire Stremio addon list in seconds.

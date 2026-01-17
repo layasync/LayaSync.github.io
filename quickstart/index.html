@@ -217,6 +217,21 @@
                             </select>
                         </div>
 
+                        <!-- Format Selection -->
+                        <div class="field">
+                            <label for="formatSelect">Formatter Style</label>
+                            <select id="formatSelect">
+                                <!-- Options are populated from JS -->
+                            </select>
+
+                            <!-- Visual Preview -->
+                            <div id="formatPreviewContainer"
+                                style="margin-top: 0.5rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid var(--border);">
+                                <img id="formatPreviewImage" src="" alt="Format Preview"
+                                    style="width: 100%; height: auto; display: block;">
+                            </div>
+                        </div>
+
                         <!-- Cleanup Old Duck Streams Addons -->
                         <div class="field" style="margin-bottom: 1.5rem;">
                             <label class="provider-card">

@@ -31,6 +31,7 @@ class QuickStart {
 
         // State
         this.mode = 'account'; // 'account' or 'manifest'
+        this.formatters = {}; // Will hold loaded formatter definitions
 
         // UI References
         this.ui = {
@@ -38,6 +39,8 @@ class QuickStart {
             providerGroup: document.getElementById("providerGroup"),
             apiKeysContainer: document.getElementById("apiKeysContainer"),
             signupLink: document.getElementById("signupLink"),
+            formatSelect: document.getElementById("formatSelect"),
+            formatPreviewImage: document.getElementById("formatPreviewImage"),
             submitBtn: document.getElementById("submitBtn"),
             // Account Mode Inputs
             emailInput: document.getElementById("email"),
@@ -57,22 +60,27 @@ class QuickStart {
     }
 
     // Initialize the app
-    init() {
+    async init() {
         this.populateAIOStreamsHostsSelect();
+        await this.loadFormatters(); // Load formatters from config
+
 
         // Initialize Clipboard
         if (window.Clipboard) {
             Clipboard.setup();
         }
 
-        // Tab Event Listeners
+        // Listen for tab button clicks
         this.ui.tabButtons.forEach(btn => {
             btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
         });
 
-        // Event Listeners
+        // Listen for generate button click
         this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
+
+        // Listen for submit button click
         this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
+
 
         // Listen for changes on any checkbox within the provider group
         this.handleDebridProviderChange(); // Initialize the checkboxes to their default state
@@ -81,6 +89,9 @@ class QuickStart {
                 this.handleDebridProviderChange();
             }
         });
+
+        // Listen for changes in the format select
+        this.ui.formatSelect.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
 
         // Initialize UI state based on default mode
         this.switchMode(this.mode);
@@ -133,6 +144,119 @@ class QuickStart {
             option.textContent = name;
             this.ui.aiostreamsHostSelect.appendChild(option);
         });
+    }
+
+
+    // Load formatters from the config directory
+    async loadFormatters() {
+        this.ui.formatSelect.innerHTML = '';
+
+        try {
+            // 1. Fetch the directory listing (served by python http.server)
+            const response = await fetch('config/formatters/');
+            if (!response.ok) throw new Error("Failed to load formatters directory");
+
+            // 2. Parse HTML to find folders
+            const text = await response.text();
+
+            // Regex to find links ending in / (directories) and ignoring parent directory links
+            const folderRegex = /href="([^"/]+\/)"/g;
+            const folders = [];
+            let match;
+
+            while ((match = folderRegex.exec(text)) !== null) {
+                const folderName = match[1].replace('/', ''); // Remove trailing slash
+                // Ignore . hidden files and parent directory references
+                if (!folderName.startsWith('.')) {
+                    folders.push(folderName);
+                }
+            }
+
+            // 3. Parse and Sort
+            // Expected format: "#.Name" (e.g. "1.Standard")
+            const parsedFormatters = folders.map(folder => {
+                const parts = folder.split('.');
+                let order = 999;
+                let name = folder;
+
+                if (parts.length > 1 && !isNaN(parts[0])) {
+                    order = parseInt(parts[0]);
+                    name = parts.slice(1).join('.'); // Join back in case name has dots
+                }
+
+                return {
+                    folder: folder,
+                    name: name,
+                    order: order,
+                    id: name.toLowerCase()
+                };
+            }).sort((a, b) => a.order - b.order);
+
+            // 3. Load Definitions
+            for (const item of parsedFormatters) {
+                const id = item.id;
+
+                // Create option element
+                const option = document.createElement("option");
+                option.value = id;
+                option.textContent = item.name;
+                this.ui.formatSelect.appendChild(option);
+
+                // Fetch definition
+                try {
+                    const defResponse = await fetch(`config/formatters/${item.folder}/formatter.json`);
+                    if (defResponse.ok) {
+                        const definition = await defResponse.json();
+
+                        this.formatters[id] = {
+                            id: id,
+                            name: item.name,
+                            definition: definition,
+                            image: `config/formatters/${item.folder}/preview.png`
+                        };
+                    } else {
+                        console.warn(`Failed to load formatter definition for: ${item.folder}`);
+                    }
+                } catch (err) {
+                    console.warn(`Error loading formatter ${item.folder}:`, err);
+                }
+            }
+
+            // 4. Select Default (First item)
+            if (parsedFormatters.length > 0) {
+                const firstId = parsedFormatters[0].id;
+                this.ui.formatSelect.value = firstId;
+                this.handleFormatterSelection(firstId);
+            }
+
+        } catch (err) {
+            console.error("Error initializing formatters:", err);
+        }
+    }
+
+
+    handleFormatterSelection(formatterId) {
+        const formatter = this.formatters[formatterId];
+
+        // If no valid formatter was found, return
+        if (!formatter) return;
+
+        // Update Preview Image
+        this.updateFormatPreview(formatter);
+    }
+
+    updateFormatPreview(formatter) {
+        const imagePath = formatter.image;
+
+        this.ui.formatPreviewImage.src = imagePath;
+        this.ui.formatPreviewImage.alt = `${formatter.name} Preview`;
+
+        this.ui.formatPreviewImage.onerror = () => {
+            this.ui.formatPreviewImage.style.display = 'none';
+        };
+        this.ui.formatPreviewImage.onload = () => {
+            this.ui.formatPreviewImage.style.display = 'block';
+        };
     }
 
 
@@ -285,6 +409,7 @@ class QuickStart {
             const providersMap = formData.providersMap;
             const debridioKey = formData.debridioKey;
             const cleanupOldInstalls = formData.cleanupOldInstalls;
+            const selectedFormatterId = formData.selectedFormatterId;
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
@@ -295,7 +420,7 @@ class QuickStart {
             }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey);
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId);
 
             if (this.mode === 'account') {
                 // 4. Install Manifest
@@ -349,6 +474,9 @@ class QuickStart {
         const debridioKey = this.ui.debridioInput.value.trim();
         const cleanupOldInstalls = this.ui.cleanDuckStreamsCheckbox.checked;
 
+        // Get selected formatter
+        const selectedFormatterId = this.ui.formatSelect.value;
+
         // Gather API Keys from dynamic inputs
         const providersMap = {};
         const selectedDebridProviders = this.getSelectedDebridProviders();
@@ -365,7 +493,7 @@ class QuickStart {
             return null;
         }
 
-        return { email, password, debridioKey, providersMap, cleanupOldInstalls };
+        return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId };
     }
 
     // Log into the user's Stremio account
@@ -390,15 +518,18 @@ class QuickStart {
         return isNewAccount;
     }
 
-    async createAIOStreamsManifest(password, providersMap, debridioKey) {
+    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId) {
         // Pick random TMDB Credentials
         const tmdbReadToken = await this.generateRandomTmdbCredentials();
 
         const selectedHostValue = this.ui.aiostreamsHostSelect.value;
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
+        // Get Formatter Definition
+        const formatterDefinition = this.formatters[selectedFormatterId].definition;
+
         // Prepare the config
-        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken);
+        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterDefinition);
 
         let manifestUrl = null;
         if (selectedHostValue !== 'auto') {

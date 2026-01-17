@@ -87,13 +87,13 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async populateJSON(providersMap, debridioKey, tmdbAccessToken) {
+    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterDefinition) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
             // Force no-store to bypass browser cache
             // This ensures we get the newest config each time
-            aiostreamsConfig = await Network.request("../common/configs/aiostreams-personal-config.json", { cache: 'no-store' });
+            aiostreamsConfig = await Network.request("config/aiostreams-config.json", { cache: 'no-store' });
 
             // Note: The addon name is not set here. It's dynamically set in QuickStart.js
             // This is because the default host, auto mode, will try all the hosts so we don't
@@ -145,6 +145,9 @@ class AIOStreamsAPI {
             } else {
                 aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'newznab');
             }
+
+            // Set the formatter in the config
+            aiostreamsConfig.formatter.definition = formatterDefinition;
 
             // Regex imports
             try {
