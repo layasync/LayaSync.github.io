@@ -165,25 +165,12 @@ class QuickStart {
         this.ui.formatSelect.innerHTML = '';
 
         try {
-            // 1. Fetch the directory listing (served by python http.server)
-            const response = await fetch('config/formatters/');
-            if (!response.ok) throw new Error("Failed to load formatters directory");
+            // 1. Fetch the formatter manifest
+            const response = await fetch('config/formatters/index.json');
+            if (!response.ok) throw new Error("Failed to load formatters manifest");
 
-            // 2. Parse HTML to find folders
-            const text = await response.text();
-
-            // Regex to find links ending in / (directories) and ignoring parent directory links
-            const folderRegex = /href="([^"/]+\/)"/g;
-            const folders = [];
-            let match;
-
-            while ((match = folderRegex.exec(text)) !== null) {
-                const folderName = match[1].replace('/', ''); // Remove trailing slash
-                // Ignore . hidden files and parent directory references
-                if (!folderName.startsWith('.')) {
-                    folders.push(folderName);
-                }
-            }
+            // 2. Parse JSON
+            const folders = await response.json();
 
             // 3. Parse and Sort
             // Expected format: "#.Name" (e.g. "1.Standard")
