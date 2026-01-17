@@ -602,9 +602,12 @@ class NavigationSidebar {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
                 Report Issue
             </button>
-            <div style="margin-top: 1rem; text-align: center;">
-                 <a href="https://buymeacoffee.com/duck.streams" target="_blank" style="display: block; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="width: 100%; max-width: 160px; border-radius: 0.5rem !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center;">
+                 <a href="https://buymeacoffee.com/duck.streams" target="_blank" title="Buy Me A Coffee" style="width: 50px; height: 50px; background: #FFDD00; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style="width: 32px; height: 32px;">
+                </a>
+                 <a href="https://ko-fi.com/duckstreams" target="_blank" title="Support on Ko-Fi" style="width: 50px; height: 50px; background: #29abe0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 30px; height: auto;">
                 </a>
             </div>
         `;
