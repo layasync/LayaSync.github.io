@@ -274,7 +274,8 @@
     "SCR"
   ],
   "excludedVisualTags": [
-    "3D"
+    "3D",
+    "AI"
   ],
   "sortCriteria": {
     "global": [
