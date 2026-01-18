@@ -292,6 +292,14 @@
         "direction": "desc"
       },
       {
+        "key": "resolution",
+        "direction": "desc"
+      },
+      {
+        "key": "quality",
+        "direction": "desc"
+      },
+      {
         "key": "visualTag",
         "direction": "desc"
       },
@@ -305,14 +313,6 @@
       },
       {
         "key": "size",
-        "direction": "desc"
-      },
-      {
-        "key": "quality",
-        "direction": "desc"
-      },
-      {
-        "key": "resolution",
         "direction": "desc"
       },
       {
