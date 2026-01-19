@@ -36,7 +36,22 @@
 
     <!-- Main Card -->
     <div class="container" style="padding-bottom: 1.5rem;">
-        <form id="setupForm">
+
+        <!-- Maintenance Message -->
+        <div class="info-box" style="text-align: left; margin-bottom: 1rem; border-color: var(--accent);">
+            <svg viewBox="0 0 24 24" style="color: var(--accent);">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+            <p>
+                <b>Temporarily Unavailable</b>
+                <br>
+                QuickStart is temporarily unavailable while we address an issue. We expect to have it back online soon.
+                Thank you for your patience.
+            </p>
+        </div>
+
+        <form id="setupForm" style="display: none;">
             <div class="step-label">STEP 1</div>
             <div class="auth-section">
                 <!-- Tabs -->
