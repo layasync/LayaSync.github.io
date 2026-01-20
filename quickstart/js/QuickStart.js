@@ -526,10 +526,11 @@ class QuickStart {
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
         // Get Formatter Definition
+        const formatterName = this.formatters[selectedFormatterId].name;
         const formatterDefinition = this.formatters[selectedFormatterId].definition;
 
         // Prepare the config
-        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterDefinition);
+        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterName, formatterDefinition);
 
         let manifestUrl = null;
         if (selectedHostValue !== 'auto') {

@@ -87,7 +87,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterDefinition) {
+    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterName, formatterDefinition) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
@@ -166,7 +166,11 @@ class AIOStreamsAPI {
                             const tierMatch = item.name.match(/T(\d+)$/);
                             if (tierMatch) {
                                 item.tier = parseInt(tierMatch[1], 10);
-                                item.name = `Tier ${item.tier}`;
+                                if (formatterName === "Snoak") { // This is a special case for Snoak
+                                    if (item.name.startsWith("Remux")) item.name += " 🍿";
+                                    if (item.name.startsWith("Bluray")) item.name += " 📀";
+                                    if (item.name.startsWith("Web")) item.name += " 🌐";
+                                }
                                 filteredRegexPatterns.push(item);
                             }
                         }
