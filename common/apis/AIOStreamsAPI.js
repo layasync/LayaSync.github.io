@@ -152,18 +152,28 @@ class AIOStreamsAPI {
             // Regex imports
             try {
                 // Fetch the regex patterns from the remote source
-                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/merged-regexes.json";
+                // const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/merged-regexes.json";
+                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/refs/heads/main/merged-anime-regexes.json";
                 const regexData = await Network.request(regexUrl, { cache: 'no-store' });
 
-                // Filter out unwanted keys based on the requirements ("" and "Bad")
+                // Filter out unwanted keys based on the requirements
                 const filteredRegexPatterns = [];
+
                 if (regexData && typeof regexData === 'object') {
                     for (const item of Object.values(regexData)) {
-                        if (item.name && item.name !== "" && item.name.toLowerCase() !== "bad" && item.name.toLowerCase() !== "web scene") {
-                            filteredRegexPatterns.push(item);
+                        if (item.name && !item.name.toLowerCase().startsWith("anime")) {
+                            // This check inherently filters out "", "bad" and "web scene"
+                            const tierMatch = item.name.match(/T(\d+)$/);
+                            if (tierMatch) {
+                                item.tier = parseInt(tierMatch[1], 10);
+                                item.name = `Tier ${item.tier}`;
+                                filteredRegexPatterns.push(item);
+                            }
                         }
                     }
                 }
+
+                filteredRegexPatterns.sort((a, b) => a.tier - b.tier);
 
                 // Apply the filtered patterns to the config
                 console.log("Regex keys after filtering:", filteredRegexPatterns);
