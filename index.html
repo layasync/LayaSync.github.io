@@ -1,28 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Music Card</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LayaSync Music Card</title>
+
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #111, #000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    color: white;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 360px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .cover {
+    width: 100%;
+    border-radius: 18px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin: 10px 0 4px;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 30px;
+    border: none;
+    background: #1db954;
+    color: #000;
+  }
+</style>
 </head>
 
-<body style="background:#000;color:#fff;text-align:center;font-family:sans-serif;padding:20px">
+<body>
 
-  <!-- Album Art -->
-  <img src="https://drive.usercontent.google.com/u/2/uc?id=1kl83euEnOcOuLEiySWXP3zYs1IFRRGUH&export=download" style="width:260px;border-radius:16px;margin-bottom:20px">
-    style="width:260px;border-radius:16px;margin-bottom:20px"
+<div class="card">
+
+  <!-- COVER -->
+  <img
+    src="https://upload.wikimedia.org/wikipedia/en/3/37/Lost_In_the_Fire_Gesaffelstein_Single_Cover.png"
+    class="cover"
+    alt="Cover"
   >
 
-  <!-- Title -->
-  <h2>Music Card</h2>
-  <p style="opacity:0.7">Tap Play</p>
+  <h1>Music Card</h1>
+  <p>Tap play</p>
 
-  <!-- Audio Player -->
-  <audio controls preload="auto" style="width:100%">
-    <source 
-      src="https://drive.usercontent.google.com/u/2/uc?id=1spC6zHFXXykGULp-yupUqqTeUHZNU-W3&export=download"
-      type="audio/mp3"
-    >
+  <!-- AUDIO -->
+  <audio id="player" preload="auto">
+    <source
+      src="https://drive.usercontent.google.com/u/0/uc?id=1spC6zHFXXykGULp-yupUqqTeUHZNU-W3&export=download"
+      type="audio/mpeg">
   </audio>
 
+  <button onclick="playSong()">▶ Play</button>
+
+</div>
+
+<script>
+  function playSong() {
+    const audio = document.getElementById("player");
+    audio.play().catch(() => {
+      alert("Tap play again to allow audio");
+    });
+  }
+</script>
+
 </body>
- </html>
+</html>
