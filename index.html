@@ -2,143 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Apple Music – Mini Player</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LayaSync Music Card</title>
 
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        background: linear-gradient(180deg, #0a0a0a, #111);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Arial, sans-serif;
-        color: #fff;
-    }
+  * { box-sizing: border-box; }
 
-    .player {
-        width: 330px;
-        background: #1c1c1e;
-        border-radius: 22px;
-        padding: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: white;
+  }
 
-    .cover {
-        width: 100%;
-        aspect-ratio: 1/1;
-        border-radius: 14px;
-        background-image: url("https://upload.wikimedia.org/wikipedia/en/3/37/Lost_In_the_Fire_Gesaffelstein_Single_Cover.png");
-        background-size: cover;
-        background-position: center;
-        margin-bottom: 18px;
-    }
+  .card {
+    width: 100%;
+    max-width: 360px;
+    padding: 20px;
+    text-align: center;
+  }
 
-    .title {
-        font-size: 18px;
-        font-weight: 600;
-        text-align: center;
-    }
+  .cover {
+    width: 100%;
+    border-radius: 18px;
+    margin-bottom: 16px;
+  }
 
-    .artist {
-        font-size: 14px;
-        color: #aaa;
-        text-align: center;
-        margin-top: 4px;
-        margin-bottom: 16px;
-    }
+  h1 {
+    font-size: 18px;
+    margin: 8px 0 12px;
+    opacity: 0.9;
+  }
 
-    .progress {
-        width: 100%;
-        height: 4px;
-        background: #333;
-        border-radius: 10px;
-        cursor: pointer;
-        margin-bottom: 18px;
-    }
-
-    .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: #fff;
-        border-radius: 10px;
-    }
-
-    .controls {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .play {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: #fff;
-        color: #000;
-        font-size: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: transform 0.15s ease;
-    }
-
-    .play:active {
-        transform: scale(0.94);
-    }
+  iframe {
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 12px;
+    background: #111;
+  }
 </style>
 </head>
 
 <body>
 
-<div class="player">
-    <div class="cover"></div>
+<div class="card">
 
-    <div class="title">Lost in the Fire</div>
-    <div class="artist">Gesaffelstein & The Weeknd</div>
+  <!-- COVER IMAGE -->
+  <img
+    src="https://upload.wikimedia.org/wikipedia/en/3/37/Lost_In_the_Fire_Gesaffelstein_Single_Cover.png"
+    class="cover"
+    alt="Cover"
+  >
 
-    <div class="progress" id="progress">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
+  <h1>Music Card</h1>
 
-    <div class="controls">
-        <div class="play" id="playBtn">▶</div>
-    </div>
+  <!-- GOOGLE DRIVE PLAYER (ONLY WORKING WAY WITH DRIVE) -->
+  <iframe
+    src="https://drive.google.com/file/d/1spC6zHFXXykGULp-yupUqqTeUHZNU-W3/preview"
+    allow="autoplay">
+  </iframe>
+
 </div>
-
-<audio id="audio">
-    <source src="https://drive.usercontent.google.com/u/0/uc?id=1spC6zHFXXykGULp-yupUqqTeUHZNU-W3&export=download" type="audio/mp3">
-</audio>
-
-<script>
-    const audio = document.getElementById("audio");
-    const playBtn = document.getElementById("playBtn");
-    const progress = document.getElementById("progress");
-    const progressBar = document.getElementById("progressBar");
-
-    playBtn.addEventListener("click", () => {
-        if (audio.paused) {
-            audio.play();
-            playBtn.textContent = "❚❚";
-        } else {
-            audio.pause();
-            playBtn.textContent = "▶";
-        }
-    });
-
-    audio.addEventListener("timeupdate", () => {
-        const percent = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = percent + "%";
-    });
-
-    progress.addEventListener("click", (e) => {
-        const width = progress.clientWidth;
-        const clickX = e.offsetX;
-        audio.currentTime = (clickX / width) * audio.duration;
-    });
-</script>
 
 </body>
 </html>
