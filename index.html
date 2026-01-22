@@ -112,59 +112,7 @@
     <source src="https://fine.sunproxy.net/file/YXlCSUozZDU2dmo4cnpHRCtJYmVnejRvdVZnMGVESE9wc05HdExuK3hsL2VRNHYyZHIyQjI2UkJJTFVVRCtVQWN1MUN0ak94Vnl3QStCakxTK1lmSGZMSEdKVHE2R2dHKzZaTGZtK1RWN3c9/Gesaffelstein_The_Weekend_dj_Jammer_-_Lost_In_The_Fire_Slow_d_And_Throw_d_(SkySound.cc).mp3">
   </audio>
 
-  <!-- PROGRESS -->
-  <div class="progress-container">
-    <input type="range" id="progress" value="0">
-    <div class="time">
-      <span id="current">0:00</span>
-      <span id="duration">0:00</span>
-    </div>
-  </div>
-
-  <!-- CONTROLS -->
-  <div class="controls">
-    <div class="btn">⏮</div>
-    <div class="btn play" id="playBtn">▶</div>
-    <div class="btn">⏭</div>
-  </div>
-
-</div>
-
-<script>
-  const audio = document.getElementById("audio");
-  const playBtn = document.getElementById("playBtn");
-  const progress = document.getElementById("progress");
-  const current = document.getElementById("current");
-  const duration = document.getElementById("duration");
-
-  function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s < 10 ? "0" + s : s}`;
-  }
-
-  playBtn.onclick = () => {
-    if (audio.paused) {
-      audio.play();
-      playBtn.textContent = "⏸";
-    } else {
-      audio.pause();
-      playBtn.textContent = "▶";
-    }
-  };
-
-  audio.addEventListener("timeupdate", () => {
-    progress.value = (audio.currentTime / audio.duration) * 100 || 0;
-    current.textContent = formatTime(audio.currentTime);
-    if (!isNaN(audio.duration)) {
-      duration.textContent = formatTime(audio.duration);
-    }
-  });
-
-  progress.oninput = () => {
-    audio.currentTime = (progress.value / 100) * audio.duration;
-  };
-</script>
+  
 
 </body>
 </html>
