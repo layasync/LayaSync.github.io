@@ -167,9 +167,9 @@ class AIOStreamsAPI {
                             if (tierMatch) {
                                 item.tier = parseInt(tierMatch[1], 10);
                                 if (formatterName === "Snoak") { // This is a special case for Snoak
-                                    if (item.name.startsWith("Remux")) item.name = " | 🍿" + item.tier + " ";
-                                    if (item.name.startsWith("Bluray")) item.name = " | 📀" + item.tier + " ";
-                                    if (item.name.startsWith("Web")) item.name = " | 🌐" + item.tier + " ";
+                                    if (item.name.startsWith("Remux")) item.name = "  🥇";
+                                    if (item.name.startsWith("Bluray")) item.name = "  🥈";
+                                    if (item.name.startsWith("Web")) item.name = "  🥉";
                                 }
                                 filteredRegexPatterns.push(item);
                             }
