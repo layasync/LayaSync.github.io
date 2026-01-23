@@ -166,7 +166,7 @@ class StremioAPI {
         const currentAddons = await this.getAddons();
 
         // Fetch manifest content
-        const manifestJson = await Network.request(manifestUrl);
+        const manifestJson = await Network.request(manifestUrl, { retries: 1 });
 
         // Construct new addon object
         const newAddon = {

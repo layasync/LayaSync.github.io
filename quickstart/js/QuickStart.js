@@ -166,11 +166,8 @@ class QuickStart {
 
         try {
             // 1. Fetch the formatter manifest
-            const response = await fetch('config/formatters/index.json');
-            if (!response.ok) throw new Error("Failed to load formatters manifest");
+            const folders = await Network.request('config/formatters/index.json');
 
-            // 2. Parse JSON
-            const folders = await response.json();
 
             // 3. Parse and Sort
             // Expected format: "#.Name" (e.g. "1.Standard")
@@ -204,19 +201,14 @@ class QuickStart {
 
                 // Fetch definition
                 try {
-                    const defResponse = await fetch(`config/formatters/${item.folder}/formatter.json`);
-                    if (defResponse.ok) {
-                        const definition = await defResponse.json();
+                    const definition = await Network.request(`config/formatters/${item.folder}/formatter.json`);
 
-                        this.formatters[id] = {
-                            id: id,
-                            name: item.name,
-                            definition: definition,
-                            image: `config/formatters/${item.folder}/preview.png`
-                        };
-                    } else {
-                        console.warn(`Failed to load formatter definition for: ${item.folder}`);
-                    }
+                    this.formatters[id] = {
+                        id: id,
+                        name: item.name,
+                        definition: definition,
+                        image: `config/formatters/${item.folder}/preview.png`
+                    };
                 } catch (err) {
                     console.warn(`Error loading formatter ${item.folder}:`, err);
                 }

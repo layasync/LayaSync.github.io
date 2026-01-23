@@ -20,7 +20,7 @@ class Network {
     }
 
     // Helper to fetch with timeout
-    static async fetchWithTimeout(fetchUrl, fetchOptions, timeout = 15000) {
+    static async fetchWithTimeout(fetchUrl, fetchOptions, timeout = 30000) {
         const controller = new AbortController();
         const id = setTimeout(() => controller.abort(), timeout);
         try {
@@ -41,12 +41,20 @@ class Network {
 
     // Fetch data from a URL, falling back to proxy if direct fetch fails.
     static async request(url, options = {}) {
+        // Smart Default: Retry GET requests once by default if not specified
+        if (options.retries === undefined) {
+            const method = options.method || 'GET';
+            if (method.toUpperCase() === 'GET') {
+                options.retries = 1;
+            }
+        }
+
         const shouldUseProxy = this.isCrossOrigin(url) && !options.forceDirect;
 
         if (!shouldUseProxy) {
             try {
                 // Try direct fetch (for local files, same-origin, or explicitly forced)
-                const resp = await this.fetchWithTimeout(url, options);
+                const resp = await this.fetchWithTimeout(url, options, options.timeout);
                 if (resp.ok) {
                     return await resp.json();
                 }
@@ -72,7 +80,7 @@ class Network {
 
             try {
                 // Cloudflare worker proxy
-                const resp = await this.fetchWithTimeout(proxyUrl, options);
+                const resp = await this.fetchWithTimeout(proxyUrl, options, options.timeout);
 
                 if (!resp.ok) {
                     // Attempt to parse error message from JSON, fallback to status text
@@ -91,6 +99,12 @@ class Network {
                     break; // If proxy times out, don't try others, assume network issue
                 }
             }
+        }
+
+        // Retry logic
+        if (options.retries && options.retries > 0) {
+            console.warn(`Request failed, retrying... (${options.retries} attempts left)`);
+            return await this.request(url, { ...options, retries: options.retries - 1 });
         }
 
         // If we exhausted all proxies
