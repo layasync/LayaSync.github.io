@@ -187,6 +187,9 @@ class TimeMachine {
             }, 2000);
         } catch (err) {
             Modal.error(err.message || String(err));
+            if (StremioAPI.isUserError(err.message) || AIOStreamsAPI.isUserError(err.message)) {
+                err.isUserError = true;
+            }
             window.handleError(err);
         } finally {
             this.ui.buttons.createSnapshot.innerHTML = createSnapshotBtnText;

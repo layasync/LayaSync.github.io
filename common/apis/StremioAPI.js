@@ -9,6 +9,7 @@ class StremioAPI {
     static isUserError(errorMessage) {
         // List of errors that are "normal" user interactions and not system failures
         const IGNORED = [
+            "invalid email",
             "user not found",
             "wrong passphrase",
             "incorrect password"

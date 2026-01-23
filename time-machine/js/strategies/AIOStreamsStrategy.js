@@ -116,7 +116,11 @@ class AIOStreamsStrategy {
                 throw userErr;
             } else {
                 // For other errors
-                throw new Error("AIOStreams: " + err.message);
+                const wrappedError = new Error("AIOStreams: " + err.message);
+                if (AIOStreamsAPI.isUserError(err.message)) {
+                    wrappedError.isUserError = true;
+                }
+                throw wrappedError;
             }
         }
     }
