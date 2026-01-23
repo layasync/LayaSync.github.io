@@ -16,7 +16,8 @@ class AIOStreamsAPI {
     static isUserError(errorMessage) {
         const IGNORED = [
             "new password is too short",
-            "invalid uuid or password"
+            "invalid uuid or password",
+            "all aiostreams hosts failed to generate a manifest url"
         ];
         return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
     }

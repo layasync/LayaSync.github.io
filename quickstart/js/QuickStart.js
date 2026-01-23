@@ -548,7 +548,7 @@ class QuickStart {
 
             if (!manifestUrl) {
                 // This gets caught in the catch block of handleSubmit
-                throw new Error("All AIOStreams hosts failed to generate a manifest URL: " + errors.join(", "));
+                throw new Error("All AIOStreams hosts failed to generate a manifest URL. Please wait a few minutes and try again.");
             }
         }
 
