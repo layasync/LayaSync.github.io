@@ -712,7 +712,7 @@ class NavigationSidebar {
     // Open Report Modal
     openReportModal() {
         // Check if error reporting is blocked
-        if (window.isErrorTrackingBlocked && window.isErrorTrackingBlocked()) {
+        if (window.ErrorHandler && ErrorHandler.isBlocked()) {
             Modal.error("Please temporarily disable it to report an issue.", "Ad Blocker Detected");
             return;
         }

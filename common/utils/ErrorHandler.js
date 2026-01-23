@@ -145,6 +145,13 @@ class ErrorHandler {
 
         return IGNORED_PHRASES.some(phrase => msg.includes(phrase));
     }
+
+    /**
+     * Checks if Honeybadger (error tracking) was blocked/failed to load.
+     */
+    static isBlocked() {
+        return ErrorHandler.instance ? ErrorHandler.instance.isBlocked : false;
+    }
 }
 
 // Initialize
