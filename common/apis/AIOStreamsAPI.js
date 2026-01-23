@@ -17,7 +17,8 @@ class AIOStreamsAPI {
         const IGNORED = [
             "new password is too short",
             "invalid uuid or password",
-            "all aiostreams hosts failed to generate a manifest url"
+            "all aiostreams hosts failed to generate a manifest url",
+            "failed to fetch" // A client network error, not a server error
         ];
         return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
     }
