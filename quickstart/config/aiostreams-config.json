@@ -421,7 +421,8 @@
     "mode": "exact",
     "enabled": true,
     "requestTypes": [],
-    "addons": []
+    "addons": [],
+    "similarityThreshold": 0.9
   },
   "seasonEpisodeMatching": {
     "enabled": true,
