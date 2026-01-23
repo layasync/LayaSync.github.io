@@ -15,18 +15,51 @@ class Clipboard {
             if (target) {
                 const textToCopy = (target.textContent || target.innerText).trim();
 
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    this._showFeedback(btn);
-                }).catch(err => {
-                    console.error("Failed to copy text:", err);
-                    if (window.Modal) {
-                        Modal.alert("Failed to copy text.");
-                    } else {
-                        alert("Failed to copy text.");
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        this._showFeedback(btn);
+                    }).catch(err => {
+                        console.error("Failed to copy text:", err);
+                        this._showError();
+                    });
+                } else {
+                    // Fallback for non-secure contexts
+                    try {
+                        const textArea = document.createElement("textarea");
+                        textArea.value = textToCopy;
+
+                        // Place off-screen to avoid scrolling
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-9999px";
+                        textArea.style.top = "0";
+
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+
+                        const successful = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+
+                        if (successful) {
+                            this._showFeedback(btn);
+                        } else {
+                            throw new Error("Fallback copy failed.");
+                        }
+                    } catch (err) {
+                        console.error("Fallback copy failed:", err);
+                        this._showError();
                     }
-                });
+                }
             }
         });
+    }
+
+    static _showError() {
+        if (window.Modal) {
+            Modal.alert("Failed to copy text.");
+        } else {
+            alert("Failed to copy text.");
+        }
     }
 
     static _showFeedback(btn) {
