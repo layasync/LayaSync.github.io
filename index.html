@@ -1,73 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LayaSync Music Card</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pink Music</title>
 
 <style>
-  * { box-sizing: border-box; }
+:root {
+  --pink: #ff5fa2;
+  --pink-dark: #e94b8b;
+  --bg: #0b0b0f;
+  --card: #15151d;
+  --text: #ffffff;
+  --muted: #a1a1b3;
+}
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    color: white;
-  }
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
 
-  .card {
-    width: 100%;
-    max-width: 360px;
-    padding: 20px;
-    text-align: center;
-  }
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #1a0f1f, #000);
+  color: var(--text);
+}
 
-  .cover {
-    width: 100%;
-    border-radius: 18px;
-    margin-bottom: 16px;
-  }
+/* HEADER */
+.header {
+  padding: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
 
-  h1 {
-    font-size: 18px;
-    margin: 8px 0 12px;
-    opacity: 0.9;
-  }
+/* NOW PLAYING */
+.player {
+  padding: 20px;
+}
 
-  iframe {
-    width: 100%;
-    height: 60px;
-    border: none;
-    border-radius: 12px;
-    background: #111;
-  }
+.cover {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1/1;
+  margin: auto;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--pink), #ff9fc7);
+  box-shadow: 0 20px 50px rgba(255,95,162,0.35);
+}
+
+/* SONG INFO */
+.info {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.info h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.info p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* PROGRESS */
+.progress {
+  margin: 25px 0 10px;
+}
+
+.bar {
+  height: 4px;
+  background: #2a2a35;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fill {
+  width: 0%;
+  height: 100%;
+  background: var(--pink);
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+  margin-top: 30px;
+}
+
+.btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 20px;
+}
+
+.play {
+  width: 64px;
+  height: 64px;
+  background: var(--pink);
+  font-size: 26px;
+  box-shadow: 0 10px 30px rgba(255,95,162,0.4);
+}
+
+/* BOTTOM NAV */
+.nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #0f0f14;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top: 1px solid #1f1f2a;
+}
+
+.nav span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.nav .active {
+  color: var(--pink);
+}
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="header">Listen Now</div>
 
-  <!-- COVER IMAGE -->
-  <img
-    src="https://upload.wikimedia.org/wikipedia/en/3/37/Lost_In_the_Fire_Gesaffelstein_Single_Cover.png"
-    class="cover"
-    alt="Cover"
-  >
+<div class="player">
+  <div class="cover"></div>
 
-  <h1>Music Card</h1>
+  <div class="info">
+    <h2>Pink Pulse</h2>
+    <p>LayaSync</p>
+  </div>
 
-  <!-- GOOGLE DRIVE PLAYER (ONLY WORKING WAY WITH DRIVE) -->
-  <iframe
-    src="https://drive.google.com/file/d/1spC6zHFXXykGULp-yupUqqTeUHZNU-W3/preview"
-    allow="autoplay">
-  </iframe>
+  <div class="progress">
+    <div class="bar">
+      <div class="fill" id="fill"></div>
+    </div>
+  </div>
 
+  <div class="controls">
+    <button class="btn">⏮</button>
+    <button class="btn play" id="play">▶</button>
+    <button class="btn">⏭</button>
+  </div>
 </div>
+
+<div class="nav">
+  <span class="active">Listen Now</span>
+  <span>Browse</span>
+  <span>Radio</span>
+  <span>Library</span>
+</div>
+
+<script>
+let playing = false;
+let progress = 0;
+const fill = document.getElementById("fill");
+const playBtn = document.getElementById("play");
+
+playBtn.onclick = () => {
+  playing = !playing;
+  playBtn.innerText = playing ? "⏸" : "▶";
+
+  if (playing) {
+    window.timer = setInterval(() => {
+      progress += 0.5;
+      if (progress >= 100) progress = 0;
+      fill.style.width = progress + "%";
+    }, 300);
+  } else {
+    clearInterval(window.timer);
+  }
+};
+</script>
 
 </body>
 </html>
