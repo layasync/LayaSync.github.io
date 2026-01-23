@@ -18,43 +18,52 @@
 
 <body class="centered">
     <div class="header-section">
+        <div class="mascot-wrapper">
+            <span class="mascot" role="img" aria-label="Duck mascot">🦆</span>
+        </div>
         <h1>Stremio Tools</h1>
-        <p class="subtitle">Collection of useful tools for Stremio</p>
     </div>
 
     <ul class="tool-list">
         <!-- QuickStart -->
         <li class="tool-item">
             <a href="quickstart/" class="tool-card-link">
-                <svg class="tool-icon" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                <div class="tool-content-left">
+                    <span class="tool-icon-wrapper">⚡</span>
+                    <span class="tool-title">QuickStart</span>
+                </div>
+                <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-                <span class="tool-title">QuickStart</span>
-                <div class="tool-desc">Install AIOStreams in seconds</div>
             </a>
         </li>
 
         <!-- Time Machine -->
         <li class="tool-item">
             <a href="time-machine/" class="tool-card-link">
-                <svg class="tool-icon" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8 8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                <div class="tool-content-left">
+                    <span class="tool-icon-wrapper">🕰️</span>
+                    <span class="tool-title">Time Machine</span>
+                </div>
+                <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-                <span class="tool-title">Time Machine</span>
-                <div class="tool-desc">Go back to when your Stremio setup was perfect</div>
             </a>
         </li>
 
         <!-- Cloner -->
         <li class="tool-item">
             <a href="cloner/" class="tool-card-link">
-                <svg class="tool-icon" width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                <div class="tool-content-left">
+                    <span class="tool-icon-wrapper">📋</span>
+                    <span class="tool-title">Cloner</span>
+                </div>
+                <svg class="arrow-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-                <span class="tool-title">Cloner</span>
-                <div class="tool-desc">Clone configuration between accounts</div>
             </a>
         </li>
     </ul>
@@ -64,11 +73,6 @@
         data-cf-beacon='{"token": "da1cee1ff9f74d0d8b9c0f1a9fe3a820"}'>
         </script>
     <script src="common/utils/ErrorTracking.js"></script>
-
-    <!-- Utilities -->
-    <script src="common/utils/NavigationSidebar.js"></script>
-    <script src="common/utils/UIModal.js"></script>
-
 </body>
 
 </html>

@@ -74,18 +74,13 @@
 /* ======================================================
    Base Layout
    ====================================================== */
-/* ======================================================
-   Base Layout
-   ====================================================== */
 body {
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-color);
-    background-image:
-        radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%),
-        radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
+    background-color: #0f172a;
+    /* Uniform Slate 900 */
     color: var(--text-primary);
     font-family: var(--font-main);
     line-height: 1.6;
@@ -124,20 +119,9 @@ body.centered {
     margin: 0 auto;
     padding: var(--space-xl);
     text-align: center;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
     position: relative;
     animation: zoomIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
     box-sizing: border-box;
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: var(--space-lg);
-        border-radius: var(--radius-lg);
-    }
 }
 
 h1 {
@@ -159,110 +143,140 @@ h1 {
     text-align: center;
     margin-bottom: var(--space-2xl);
     animation: fadeInDown 0.6s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
 }
 
-.subtitle {
-    margin-bottom: var(--space-xl);
-    color: var(--text-secondary);
-    text-align: center;
-    font-size: 1.125rem;
-    line-height: 1.5;
-    max-width: 500px;
-    /* Constrain width for readability */
-    margin-left: auto;
-    margin-right: auto;
-    font-weight: 400;
+.mascot-wrapper {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--space-xs);
 }
 
-/* ======================================================
-   Tool List (Landing Page)
-   ====================================================== */
+/* Subtle glow behind the mascot */
+.mascot-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(20px);
+}
+
+.mascot {
+    font-size: 4.5rem;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
 /* ======================================================
    Tool List (Landing Page)
    ====================================================== */
 .tool-list {
     list-style: none;
     padding: 0;
-    display: grid;
-    gap: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
     width: 100%;
-    max-width: 1000px;
+    max-width: 420px;
+    /* Constrain width to match design */
     margin: 0 auto;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (max-width: 480px) {
-    .tool-list {
-        grid-template-columns: 1fr;
-    }
 }
 
 .tool-item {
     position: relative;
-    background: var(--card-bg);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border-color);
-    transition: all var(--transition-base);
+    background: rgba(15, 23, 42, 0.6);
+    /* Transparent bg */
+    border-radius: 100px;
+    /* Pill shape */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Very subtle border */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
-    height: 100%;
-    box-shadow: var(--shadow-sm);
+    height: auto;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .tool-item:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow: var(--shadow-xl), var(--shadow-glow);
+    background: rgba(30, 41, 59, 0.8);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Icon Container */
+/* Tool Card Link */
 .tool-card-link {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: var(--space-xl);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
     text-decoration: none;
     color: inherit;
-    height: 100%;
+    width: 100%;
     box-sizing: border-box;
+    height: auto;
 }
 
-.tool-icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-bottom: var(--space-md);
-    color: var(--accent);
-    background: var(--accent-subtle);
-    padding: 0.5rem;
-    border-radius: var(--radius-lg);
-    transition: all var(--transition-base);
+.tool-content-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
 }
 
-.tool-item:hover .tool-icon {
-    background: var(--accent);
-    color: #fff;
-    transform: scale(1.05);
+.tool-icon-wrapper {
+    font-size: 1.25rem;
+    /* Emoji size */
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .tool-title {
     display: block;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: var(--space-xs);
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
-}
-
-.tool-card-link:hover .tool-title {
     color: #fff;
+    margin: 0;
+    letter-spacing: 0.01em;
 }
 
-.tool-desc {
-    font-size: 0.95rem;
+.arrow-icon {
+    width: 20px;
+    height: 20px;
     color: var(--text-secondary);
-    line-height: 1.5;
-    font-weight: 400;
+    opacity: 0.7;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.tool-item:hover .arrow-icon {
+    transform: translateX(4px);
+    color: #fff;
+    opacity: 1;
 }
 
 /* ======================================================
@@ -385,6 +399,12 @@ button:disabled {
     justify-content: center;
     z-index: 50;
     padding: var(--space-md);
+}
+
+@media (min-width: 769px) {
+    .modal-overlay {
+        left: var(--sidebar-width, 0px);
+    }
 }
 
 .modal-overlay:not(.hidden) {
@@ -601,45 +621,6 @@ button:disabled {
     font-size: 0.8rem;
     color: var(--text-secondary);
     border-top: 1px solid var(--border-color);
-}
-
-/* Copy Button (Icon Only) */
-.copy-icon-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.copy-icon-btn:hover {
-    background: var(--input-bg);
-    color: var(--text-primary);
-    border-color: var(--accent);
-}
-
-.copy-icon-btn.copied {
-    color: var(--success);
-    border-color: var(--success);
-    background: rgba(34, 197, 94, 0.1);
-}
-
-.copy-icon-btn svg {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
 }
 
 /* ======================================================
@@ -919,6 +900,15 @@ details[open] summary::before {
         /* Clearance for FAB */
         width: 100%;
         max-width: 100%;
+    }
+
+    .tool-list {
+        width: 100%;
+    }
+
+    .tab-btn {
+        font-size: 0.85rem;
+        padding: 0.6rem;
     }
 }
 
@@ -1636,12 +1626,6 @@ details[open] summary::before {
     margin-bottom: 2rem;
 }
 
-@media (max-width: 480px) {
-    .section-card {
-        padding: 1rem;
-    }
-}
-
 .section-card h3 {
     margin: 0 0 1rem 0;
     font-size: 0.9rem;
@@ -1714,13 +1698,6 @@ details[open] summary::before {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 480px) {
-    .tab-btn {
-        font-size: 0.85rem;
-        padding: 0.6rem;
-    }
 }
 
 .auth-actions button {
