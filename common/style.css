@@ -56,6 +56,7 @@ body {
     color: var(--text-primary);
     font-family: var(--font-main);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 body.centered {
@@ -69,6 +70,14 @@ body.centered {
 @media (min-width: 769px) {
     body.centered {
         padding-left: calc(var(--sidebar-width, 0px) + var(--space-xl));
+    }
+}
+
+@media (max-width: 768px) {
+    body.centered {
+        padding-top: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
 }
 
@@ -89,6 +98,14 @@ body.centered {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
     position: relative;
     animation: zoomIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+    }
 }
 
 h1 {
@@ -131,8 +148,14 @@ h1 {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 480px) {
+    .tool-list {
+        grid-template-columns: 1fr;
+    }
 }
 
 .tool-item {
@@ -813,6 +836,74 @@ details[open] summary::before {
 .checkbox-label input[type="checkbox"]:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* ======================================================
+   Responsive Columns (e.g. Cloner)
+   ====================================================== */
+.responsive-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .responsive-columns {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        /* Increased gap for clear separation */
+        margin-top: 1.5rem;
+    }
+
+    /* Ensure last item has clearance for FAB or bottom spacing */
+    .responsive-columns>*:last-child {
+        margin-bottom: 1rem;
+    }
+}
+
+/* ======================================================
+   Mobile Adjustments
+   ====================================================== */
+@media (max-width: 480px) {
+
+    /* Header adjustments */
+    h1 {
+        font-size: 2.2rem;
+        /* Reduce from 3rem */
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Container adjustments */
+    .container {
+        padding: 1.25rem;
+    }
+
+    /* Input Labels */
+    label {
+        font-size: 0.95rem;
+        /* Slightly larger for readability */
+        margin-bottom: 0.4rem;
+    }
+
+    /* Reduce horizontal padding on cards for more input space */
+    .result-box,
+    .section-card {
+        padding: 1rem;
+    }
+
+    /* Ensure the primary button clears the FAB */
+    #cloneBtn {
+        margin-bottom: 4rem;
+        /* Clearance for FAB */
+        width: 100%;
+        max-width: 100%;
+    }
 }
 
 /* ======================================================
@@ -1529,6 +1620,12 @@ details[open] summary::before {
     margin-bottom: 2rem;
 }
 
+@media (max-width: 480px) {
+    .section-card {
+        padding: 1rem;
+    }
+}
+
 .section-card h3 {
     margin: 0 0 1rem 0;
     font-size: 0.9rem;
@@ -1540,7 +1637,7 @@ details[open] summary::before {
 
 .provider-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
 }
 
@@ -1556,6 +1653,7 @@ details[open] summary::before {
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
+    min-height: 44px;
 }
 
 .provider-card:hover {
@@ -1570,6 +1668,52 @@ details[open] summary::before {
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent);
 }
+
+/* ======================================================
+   Tabs & Auth Mobile Optimizations
+   ====================================================== */
+.tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    padding: 4px;
+    gap: 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.75rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.tab-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 480px) {
+    .tab-btn {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+}
+
+.auth-actions button {
+    display: inline-block;
+    padding: 0.5rem;
+    /* ensure touch target */
+    font-size: 0.9rem;
+}
+
 
 .card-content {
     display: flex;

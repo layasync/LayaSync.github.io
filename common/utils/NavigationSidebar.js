@@ -46,7 +46,7 @@ class NavigationSidebar {
                 --nav-item-active: #2563eb;
 
                 /* Floating Action Button (FAB) */
-                --fab-size: 3rem;
+                --fab-size: 3.5rem;
                 --fab-bg: linear-gradient(135deg, #3b82f6, #6366f1);
                 --fab-bg-hover: linear-gradient(135deg, #2563eb, #4f46e5);
                 --fab-color: #ffffff;
@@ -79,7 +79,7 @@ class NavigationSidebar {
                 flex-direction: column;
                 box-sizing: border-box;
                 background-color: var(--sidebar-bg);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             /* Desktop Sidebar */
@@ -98,34 +98,25 @@ class NavigationSidebar {
                 }
             }
 
-            /* Mobile Popover Sidebar */
+            /* Mobile Sidebar (Off-Canvas Overlay) */
             @media (max-width: 768px) {
                 #stremio-sidebar {
-                    bottom: calc(2rem + var(--fab-size) + 1.5rem);
-                    right: 2rem;
-                    min-width: 220px;
-                    padding: 1rem;
-                    border-radius: 1.5rem;
-                    background-color: rgba(15, 23, 42, 0.95);
-                    backdrop-filter: blur(24px);
-                    border: 1px solid rgba(255, 255, 255, 0.1);
-                    box-shadow:
-                        0 20px 25px -5px rgba(0, 0, 0, 0.5),
-                        0 8px 10px -6px rgba(0, 0, 0, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-
-                    transform-origin: bottom right;
-                    transform: scale(0.9) translateY(20px);
-                    opacity: 0;
-                    pointer-events: none;
-                    visibility: hidden;
+                    top: 0;
+                    right: 0;
+                    height: 100vh;
+                    width: 280px; /* Width of the drawer */
+                    padding: 2rem 1.5rem;
+                    background-color: #0f172a;
+                    border-left: 1px solid rgba(255, 255, 255, 0.1);
+                    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                    transform: translateX(100%); /* Start hidden off-screen */
+                    visibility: visible;
+                    z-index: 2500; /* Above everything */
+                    pointer-events: auto;
                 }
 
                 #stremio-sidebar.open {
-                    transform: scale(1) translateY(0);
-                    opacity: 1;
-                    pointer-events: auto;
-                    visibility: visible;
+                    transform: translateX(0);
                 }
 
                 body.has-sidebar {
@@ -153,9 +144,11 @@ class NavigationSidebar {
                 fill: var(--accent);
             }
 
+            /* Show header on mobile too now */
             @media (max-width: 768px) {
                 .sidebar-header {
-                    display: none !important;
+                    display: flex !important;
+                    margin-top: 1rem;
                 }
             }
 
@@ -216,9 +209,10 @@ class NavigationSidebar {
             @media (max-width: 768px) {
                 .nav-link {
                     width: 100%;
-                    border-radius: 1rem;
-                    font-size: 0.95rem;
-                    color: #cbd5e1;
+                    border-radius: 0.75rem;
+                    font-size: 1rem;
+                    padding: 1rem; 
+                    /* Larger touch target */
                 }
 
                 .nav-link:hover,
@@ -264,7 +258,7 @@ class NavigationSidebar {
             #report-modal {
                 position: fixed;
                 inset: 0;
-                z-index: 2000;
+                z-index: 3000;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -453,8 +447,8 @@ class NavigationSidebar {
             ========================================================= */
             #mobile-fab {
                 position: fixed;
-                bottom: max(1.5rem, env(safe-area-inset-bottom));
-                right: max(1.5rem, env(safe-area-inset-right));
+                bottom: 1.5rem; /* Tweak for better corner placement */
+                right: 1.5rem;
                 width: var(--fab-size);
                 height: var(--fab-size);
                 border-radius: 50%;
@@ -471,6 +465,14 @@ class NavigationSidebar {
                 -webkit-tap-highlight-color: transparent;
             }
 
+            /* Handle safe areas if supported */
+            @supports (padding-bottom: env(safe-area-inset-bottom)) {
+                #mobile-fab {
+                    bottom: calc(2rem + env(safe-area-inset-bottom));
+                    right: calc(2rem + env(safe-area-inset-right));
+                }
+            }
+
             #mobile-fab:hover {
                 transform: scale(1.05);
             }
@@ -483,8 +485,8 @@ class NavigationSidebar {
                 position: absolute;
                 top: 50%;
                 left: 50%;
-                width: 24px;
-                height: 24px;
+                width: 28px;
+                height: 28px;
                 transform: translate(-50%, -50%);
                 transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 stroke: #ffffff;
@@ -526,7 +528,7 @@ class NavigationSidebar {
                     inset: 0;
                     background: rgba(0, 0, 0, 0.5);
                     backdrop-filter: blur(4px);
-                    z-index: 900;
+                    z-index: 2400; /* Below sidebar, above everything else */
                     opacity: 0;
                     pointer-events: none;
                     transition: opacity 0.3s;

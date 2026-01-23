@@ -3,16 +3,25 @@
 # Ensure we are in the script's directory
 cd "${0:h:A}"
 
-# Configuration
-PORT=3000
-URL="http://localhost:$PORT"
-
-# Function to handle cleanup on exit
-cleanup() {
-    echo "\n✨ Goodbye!"
-    exit 0
+# Function to find an available port
+find_available_port() {
+    python3 -c '
+import socket
+port = 3000
+while True:
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("", port))
+            print(port)
+            break
+    except OSError:
+        port += 1
+'
 }
-trap cleanup SIGINT
+
+# Configuration
+PORT=$(find_available_port)
+URL="http://localhost:$PORT"
 
 # Main execution
 if ! command -v python3 &> /dev/null
@@ -28,5 +37,4 @@ echo "👉 Opening $URL"
 (sleep 1 && open "$URL") &
 
 # Start the simple HTTP server
-# This works because it serves all files in the current directory (e.g., index.html)
 python3 -m http.server "$PORT"
