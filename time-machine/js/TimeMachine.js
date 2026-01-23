@@ -136,13 +136,7 @@ class TimeMachine {
             // Show the dashboard for that user
             this.showDashboard(email);
         } catch (err) {
-            // Show error modal to the user
-            Modal.error(err.message);
-
-            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
-            if (!StremioAPI.isUserError(err.message)) {
-                window.handleError(err);
-            }
+            ErrorHandler.handle(err, { method: "handleLogin" }, "Login Failed");
         } finally {
             this.ui.buttons.login.disabled = false;
             this.ui.buttons.login.innerHTML = loginBtnText;
@@ -186,11 +180,7 @@ class TimeMachine {
                 this.ui.buttons.createSnapshot.disabled = false;
             }, 2000);
         } catch (err) {
-            Modal.error(err.message || String(err));
-            if (StremioAPI.isUserError(err.message) || AIOStreamsAPI.isUserError(err.message)) {
-                err.isUserError = true;
-            }
-            window.handleError(err);
+            ErrorHandler.handle(err, { method: "handleCreateSnapshot" }, "Snapshot Failed");
         } finally {
             this.ui.buttons.createSnapshot.innerHTML = createSnapshotBtnText;
             this.ui.buttons.createSnapshot.disabled = false;
@@ -258,7 +248,7 @@ class TimeMachine {
             // Failed deep restores should be reported to HoneyBadger
             if (deepResults.errors && deepResults.errors.length > 0) {
                 console.warn("Deep restore encountered errors.");
-                deepResults.errors.forEach(err => window.handleError(err));
+                deepResults.errors.forEach(err => ErrorHandler.report(err, { method: 'restoreSnapshot_deep' }));
             }
 
             // Failed deep restores should abort the restore process
@@ -291,8 +281,7 @@ class TimeMachine {
             await StremioAPI.setAddons(snapshot.addons);
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
-            Modal.error(err.message || String(err));
-            window.handleError(err);
+            ErrorHandler.handle(err, { method: "restoreSnapshot" }, "Restore Failed");
         } finally {
             if (restoreBtn) {
                 restoreBtn.innerHTML = originalText;
@@ -322,8 +311,7 @@ class TimeMachine {
 
             this.renderUserTimeline();
         } catch (err) {
-            Modal.error(err.message || String(err));
-            window.handleError(err);
+            ErrorHandler.handle(err, { method: "deleteSnapshot" });
         }
     }
 

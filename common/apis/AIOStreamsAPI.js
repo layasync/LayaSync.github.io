@@ -12,16 +12,7 @@ class AIOStreamsAPI {
         };
     }
 
-    // Helper to identify known user errors that shouldn't be reported to logging services
-    static isUserError(errorMessage) {
-        const IGNORED = [
-            "new password is too short",
-            "invalid uuid or password",
-            "all aiostreams hosts failed to generate a manifest url",
-            "failed to fetch" // A client network error, not a server error
-        ];
-        return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
-    }
+
 
     // Generic function to call AIOStreams API
     static async call(baseUrl, method, endpoint, payload = null, queryParams = {}) {
@@ -86,6 +77,43 @@ class AIOStreamsAPI {
             return `${baseAIOStreamsUrl.replace(/\/$/, "")}/stremio/${newUuid}/${encrypted}/manifest.json`;
         }
         throw new Error("API response did not contain the expected UUID and encrypted password.");
+    }
+
+    // Install config with smart retry logic for common upstream errors
+    static async installConfigWithSmartRetry(hostUrl, hostName, config, password) {
+        let attempts = 0;
+        const maxAttempts = 4; // 1 initial + 3 fixes
+
+        while (attempts < maxAttempts) {
+            attempts++;
+            try {
+                // Try initial install
+                return await this.installConfig(hostUrl, password, config);
+            } catch (err) {
+                // If we've run out of attempts, throw the error
+                if (attempts >= maxAttempts) throw err;
+
+                // Handle specific upstream errors
+                const isTorrentioError = err.message && err.message.includes("Torrentio");
+                const isMediaFusionError = err.message && err.message.includes("MediaFusion");
+                const isBitmagnetError = err.message && err.message.includes("Bitmagnet");
+                const isSeaDexError = err.message && err.message.includes("seadex not found");
+
+                let presetType = "";
+                if (isTorrentioError) presetType = 'torrentio';
+                else if (isMediaFusionError) presetType = 'mediafusion';
+                else if (isBitmagnetError) presetType = 'bitmagnet';
+                else if (isSeaDexError) presetType = 'seadex';
+
+                // If not an identifiable/fixable error, throw immediately
+                const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
+                if (!presetType || !hasPreset) throw err;
+
+                // Log and Fix
+                console.warn(`Upstream error (${presetType}) on ${hostName}. Removing and retrying...`);
+                config.presets = config.presets.filter(p => p.type !== presetType);
+            }
+        }
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.

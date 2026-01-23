@@ -98,7 +98,6 @@ class AIOMetadataStrategy {
         // If the user doesn't enter a password, abort the snapshot
         if (!input) {
             const err = new Error('Password is required for AIOMetadata deep snapshot. Snapshot aborted.');
-            err.isUserError = true;
             throw err;
         }
         password = input.trim();
@@ -116,7 +115,6 @@ class AIOMetadataStrategy {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioMetadataPassword(uuid, null);
                 const userErr = new Error('Incorrect password for AIOMetadata.');
-                userErr.isUserError = true;
                 throw userErr;
             } else {
                 // For other errors

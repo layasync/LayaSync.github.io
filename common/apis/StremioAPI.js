@@ -5,17 +5,7 @@ class StremioAPI {
     // Current user session (email, password, authKey)
     static session = null;
 
-    // Helper to identify known user errors that shouldn't be reported to logging services
-    static isUserError(errorMessage) {
-        // List of errors that are "normal" user interactions and not system failures
-        const IGNORED = [
-            "invalid email",
-            "user not found",
-            "wrong passphrase",
-            "incorrect password"
-        ];
-        return IGNORED.some(msg => errorMessage.toLowerCase().includes(msg.toLowerCase()));
-    }
+
 
     // Generic function to call Stremio API
     static async call(endpoint, body) {

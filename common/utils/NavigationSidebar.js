@@ -754,8 +754,8 @@ class NavigationSidebar {
         // Create the error object and send it to HoneyBadger
         const error = new Error("User Report: " + desc.substring(0, 50));
 
-        if (window.handleError) {
-            window.handleError(error, {
+        if (window.ErrorHandler) {
+            ErrorHandler.report(error, {
                 fingerprint: uniqueId,
                 context: {
                     ...context,
@@ -763,14 +763,13 @@ class NavigationSidebar {
                 }
             });
 
-            // Close the report modal first (this hides it and resets form if present)
+            // Close the report modal first
             this.closeReportModal();
 
             // Show success feedback
             Modal.success("Thanks for helping me improve!", "Report Sent!");
-
         } else {
-            // Close the report modal first (this hides it and resets form if present)
+            // Fallback
             this.closeReportModal();
             Modal.error('Error tracking system is not loaded yet. Please try again in a moment.');
         }

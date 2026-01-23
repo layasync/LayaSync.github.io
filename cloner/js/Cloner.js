@@ -89,13 +89,7 @@ class Cloner {
             );
 
         } catch (err) {
-            // Show error modal to the user
-            Modal.error(err.message);
-
-            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
-            if (!StremioAPI.isUserError(err.message)) {
-                window.handleError(err);
-            }
+            ErrorHandler.handle(err, { method: "handleClone" }, "Cloning Failed");
         } finally {
             this.setUIEnabled(true);
         }

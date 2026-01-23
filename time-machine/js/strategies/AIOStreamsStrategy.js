@@ -94,7 +94,6 @@ class AIOStreamsStrategy {
         // If the user doesn't enter a password, abort the snapshot
         if (!input) {
             const err = new Error('Password is required for AIOStreams deep snapshot. Snapshot aborted.');
-            err.isUserError = true;
             throw err;
         }
         password = input.trim();
@@ -112,14 +111,10 @@ class AIOStreamsStrategy {
             if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
                 TimeMachineStorage.setAioPassword(uuid, null);
                 const userErr = new Error('Incorrect password for AIOStreams.');
-                userErr.isUserError = true;
                 throw userErr;
             } else {
                 // For other errors
                 const wrappedError = new Error("AIOStreams: " + err.message);
-                if (AIOStreamsAPI.isUserError(err.message)) {
-                    wrappedError.isUserError = true;
-                }
                 throw wrappedError;
             }
         }

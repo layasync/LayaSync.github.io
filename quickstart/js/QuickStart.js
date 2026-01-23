@@ -293,8 +293,7 @@ class QuickStart {
             if (!config) {
                 // Show error modal to user and report it to Honeybadger
                 const err = new Error("No internal config found for provider: " + providerId);
-                Modal.error(err.message);
-                window.handleError(err);
+                ErrorHandler.handle(err);
                 return;
             }
 
@@ -426,13 +425,7 @@ class QuickStart {
             }
 
         } catch (err) {
-            // Show error modal to user
-            Modal.error(err.message);
-
-            // If it's not a known user-error (wrong password, etc), send it to HoneyBadger
-            if (!StremioAPI.isUserError(err.message) && !AIOStreamsAPI.isUserError(err.message)) {
-                window.handleError(err);
-            }
+            ErrorHandler.handle(err, { method: "handleSubmit" }, "Setup Failed");
         } finally {
             this.ui.submitBtn.disabled = false;
             this.ui.submitBtn.textContent = this.mode === 'account' ? "Start Setup" : "Generate Manifest";
@@ -528,7 +521,7 @@ class QuickStart {
         if (selectedHostValue !== 'auto') {
             // Specific host selected
             console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
-            manifestUrl = await this.createManifest(selectedHostValue, selectedHostName, config, password);
+            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password);
         } else {
             // Auto-select host
             // Try hosts in order: defined in AIOStreamsAPI
@@ -539,7 +532,7 @@ class QuickStart {
                 try {
                     console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
                     // Clone config so modifications (like removing presets) don't persist to the next host
-                    manifestUrl = await this.createManifest(url, name, structuredClone(config), password);
+                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password);
                     break; // Break if successful
                 } catch (err) {
                     errors.push(name + ": " + err.message);
@@ -617,66 +610,6 @@ class QuickStart {
         `;
 
         await Modal.success(messageHtml, "Manifest Generated 🎉");
-    }
-
-    // Install AIOStreams config file on a specific host
-    async createManifest(hostUrl, hostName, config, password) {
-        // Allow up to 3 repair attempts (for MF, Torrentio, Bitmagnet)
-        let attempts = 0;
-        const maxAttempts = 4; // 1 initial + 3 fixes
-
-        while (attempts < maxAttempts) {
-            attempts++;
-            try {
-                // Try to install
-                return await this.installWithRetry(hostUrl, password, config);
-            } catch (err) {
-                // If we've run out of attempts, throw the error
-                if (attempts >= maxAttempts) throw err;
-
-                // Handle specific upstream errors by modifying config and retrying.
-                const isTorrentioError = err.message && err.message.includes("Torrentio");
-                const isMediaFusionError = err.message && err.message.includes("MediaFusion");
-                const isBitmagnetError = err.message && err.message.includes("Bitmagnet");
-                const isSeaDexError = err.message && err.message.includes("seadex not found");
-
-                let presetType = "";
-
-                if (isTorrentioError) {
-                    presetType = 'torrentio';
-                } else if (isMediaFusionError) {
-                    presetType = 'mediafusion';
-                } else if (isBitmagnetError) {
-                    presetType = 'bitmagnet';
-                } else if (isSeaDexError) {
-                    presetType = 'seadex';
-                }
-
-                // If we can't identify the error, or if the addon is already gone, throw
-                const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
-                if (!presetType || !hasPreset) throw err;
-
-                let errorPrefix = "";
-                if (isTorrentioError) errorPrefix = `Torrentio 403 on ${hostName}`;
-                else if (isMediaFusionError) errorPrefix = `MediaFusion down on ${hostName}`;
-                else if (isBitmagnetError) errorPrefix = `Bitmagnet not configured on ${hostName}`;
-                else if (isSeaDexError) errorPrefix = `SeaDex not configured on ${hostName}`;
-
-                console.warn(`${errorPrefix}. Removing and retrying...`);
-                // Find and remove the problematic preset
-                config.presets = config.presets.filter(p => p.type !== presetType);
-            }
-        }
-    }
-
-    // Helper to attempt installation with a simple retry strategy
-    async installWithRetry(hostUrl, password, config) {
-        try {
-            return await AIOStreamsAPI.installConfig(hostUrl, password, config);
-        } catch (e) {
-            console.warn("First attempt to install failed. Retrying...");
-            return await AIOStreamsAPI.installConfig(hostUrl, password, config);
-        }
     }
 }
 
