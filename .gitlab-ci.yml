@@ -15,6 +15,10 @@ pages:
     - mkdir -p public/quickstart
     - cp -r quickstart/* public/quickstart/
 
+    # CinePatch
+    - mkdir -p public/cine-patch
+    - cp -r cine-patch/* public/cine-patch/
+
     # Time Machine
     - mkdir -p public/time-machine
     - cp -r time-machine/* public/time-machine/

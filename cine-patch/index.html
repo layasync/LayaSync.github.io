@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinePatch</title>
+    <link rel="stylesheet" href="../common/style.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
+
+    <!-- Metadata -->
+    <meta name="description"
+        content="Remove search clutter and unwanted catalogs from Stremio's default Cinemeta addon.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="CinePatch | Clean Up Cinemeta">
+    <meta property="og:description"
+        content="Remove search clutter and unwanted catalogs from Stremio's default Cinemeta addon.">
+    <meta property="og:type" content="website">
+
+</head>
+
+<body class="centered">
+
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1>CinePatch</h1>
+        <p class="subtitle">Take control of your metadata</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="container" style="padding-bottom: 1.5rem;">
+        <form id="setupForm">
+            <!-- Step 1: Credentials -->
+            <div class="step-label">STEP 1</div>
+            <div class="auth-section">
+                <div class="field">
+                    <div class="info-box">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                        </svg>
+                        <p>
+                            <b>Log In</b>
+                            <br>
+                            Log in to apply patches directly to your Stremio account.
+                        </p>
+                    </div>
+
+                    <label for="email">Stremio Email</label>
+                    <input type="email" id="email" placeholder="user@example.com" autocomplete="email">
+                </div>
+
+                <div class="field">
+                    <label for="password">Stremio Password</label>
+                    <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+                </div>
+            </div>
+
+            <!-- Step 2: Select Patches -->
+            <div class="step-label" style="margin-top: 2rem;">STEP 2</div>
+            <div class="section-card">
+                <h3>Cinemeta Patches</h3>
+
+                <div class="patch-grid">
+                    <!-- Remove Search Artifacts -->
+                    <label class="provider-card">
+                        <input type="checkbox" id="patchSearch" value="search" hidden>
+                        <div class="card-content">
+                            <div class="patch-icon">🔍</div>
+                            <div class="patch-details">
+                                <span class="patch-name">Remove Search Results</span>
+                                <span class="patch-desc">Stops Cinemeta from cluttering results</span>
+                            </div>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+
+                    <!-- Remove Standard Catalogs -->
+                    <label class="provider-card">
+                        <input type="checkbox" id="patchCatalogs" value="catalogs" hidden>
+                        <div class="card-content">
+                            <div class="patch-icon">📚</div>
+                            <div class="patch-details">
+                                <span class="patch-name">Remove Home Catalogs</span>
+                                <span class="patch-desc">Removes "Popular" and "Featured" lists</span>
+                            </div>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+
+                    <!-- Remove Meta Resource -->
+                    <label class="provider-card">
+                        <input type="checkbox" id="patchMeta" value="meta" hidden>
+                        <div class="card-content">
+                            <div class="patch-icon">ℹ️</div>
+                            <div class="patch-details">
+                                <span class="patch-name">Remove Metadata</span>
+                                <span class="patch-desc">Disables Cinemeta metadata completely</span>
+                            </div>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button id="applyBtn" class="primary" style="margin-top: 2rem; width: 100%;">
+                Apply Patches
+            </button>
+
+            <div style="margin-top: 1rem; text-align: center; font-size: 0.9rem; color: #94a3b8;">
+                Uncheck everything to restore Cinemeta to default.
+            </div>
+
+            <div id="actionStatus" class="status-message hidden" style="margin-top: 1rem;"></div>
+
+        </form>
+    </div>
+
+    <!-- Web analytics and error tracking -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "da1cee1ff9f74d0d8b9c0f1a9fe3a820"}'>
+        </script>
+    <script src="../common/utils/ErrorHandler.js"></script>
+
+    <!-- Utilities -->
+    <script src="../common/utils/NavigationSidebar.js"></script>
+    <script src="../common/utils/UIModal.js"></script>
+    <script src="../common/utils/Network.js"></script>
+    <script src="../common/apis/StremioAPI.js"></script>
+
+    <!-- App Logic -->
+    <script src="js/CinePatch.js"></script>
+
+</body>
+
+</html>
