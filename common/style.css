@@ -1204,6 +1204,9 @@ details[open] summary::before {
     transform: scale(0.95);
     animation: zoomInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     color: #fff;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 2rem);
 }
 
 .simple-modal.fade-out {
@@ -1320,6 +1323,8 @@ details[open] summary::before {
     color: #94a3b8;
     font-size: 1rem;
     line-height: 1.6;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .simple-modal-footer {
