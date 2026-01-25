@@ -117,7 +117,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterName, formatterDefinition) {
+    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterName, formatterDefinition, exclude4k, excludeDolby, maxSize) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
@@ -125,12 +125,26 @@ class AIOStreamsAPI {
             // This ensures we get the newest config each time
             aiostreamsConfig = await Network.request("config/aiostreams-config.json", { cache: 'no-store' });
 
-            // Note: The addon name is not set here. It's dynamically set in QuickStart.js
-            // This is because the default host, auto mode, will try all the hosts so we don't
-            // know which one will be used until this config is installed.
-
             // Insert TMDB Access Token
             aiostreamsConfig.tmdbAccessToken = tmdbAccessToken;
+
+            if (exclude4k) {
+                aiostreamsConfig.preferredResolutions = aiostreamsConfig.preferredResolutions.filter(res => res !== "2160p");
+                aiostreamsConfig.excludedResolutions.push("2160p");
+            }
+
+            if (excludeDolby) {
+                const dvTags = aiostreamsConfig.preferredVisualTags.filter(tag => tag.includes("DV"));
+                aiostreamsConfig.preferredVisualTags = aiostreamsConfig.preferredVisualTags.filter(tag => !tag.includes("DV"));
+                aiostreamsConfig.excludedVisualTags.push(...dvTags);
+            }
+
+            if (maxSize !== "unlimited") {
+                const maxBytes = parseInt(maxSize) * 1000 * 1000 * 1000;
+                aiostreamsConfig.size.global.movies[1] = maxBytes;
+                aiostreamsConfig.size.global.series[1] = maxBytes;
+                aiostreamsConfig.size.global.anime[1] = maxBytes;
+            }
 
             // Configure debrid providers
             // Disable all first

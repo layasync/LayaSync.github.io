@@ -35,88 +35,106 @@ class QuickStart {
 
         // UI References
         this.ui = {
+            // Main View
+            viewMain: document.getElementById("view-main"),
             infoBtn: document.getElementById("infoBtn"),
             form: document.getElementById("setupForm"),
-            providerGroup: document.getElementById("providerGroup"),
-            apiKeysContainer: document.getElementById("apiKeysContainer"),
-            signupLink: document.getElementById("signupLink"),
-            formatSelect: document.getElementById("formatSelect"),
-            formatPreviewImage: document.getElementById("formatPreviewImage"),
-            submitBtn: document.getElementById("submitBtn"),
-            // Account Mode Inputs
-            emailInput: document.getElementById("email"),
-            passwordInput: document.getElementById("password"),
-            generateBtn: document.getElementById("generateCredsBtn"),
-            // Shared Inputs
-            debridioInput: document.getElementById("debridioKey"),
-            aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
+
             // Mode Switching
             tabButtons: document.querySelectorAll('.tab-btn'),
             modeAccount: document.getElementById("mode-account"),
             modeManifest: document.getElementById("mode-manifest"),
+
+            // Account Mode Inputs
+            emailInput: document.getElementById("email"),
+            passwordInput: document.getElementById("password"),
+            generateBtn: document.getElementById("generateCredsBtn"),
             // Manifest Mode Inputs
             aiostreamsPasswordInput: document.getElementById("aiostreamsPassword"),
+
+            providerGroup: document.getElementById("providerGroup"),
+            apiKeysContainer: document.getElementById("apiKeysContainer"),
+            signupLink: document.getElementById("signupLink"),
+
+            debridioInput: document.getElementById("debridioKey"),
+            submitBtn: document.getElementById("submitBtn"),
+            viewAdvancedBtn: document.getElementById("viewAdvancedBtn"),
+
+            // Advanced Settings View
+            viewAdvanced: document.getElementById("view-advanced"),
+            backToMainBtn: document.getElementById("backToMainBtn"),
+
+            sizePresets: document.querySelectorAll('.preset-btn'),
+            exclude4kCheckbox: document.getElementById("exclude4k"),
+            excludeDolbyCheckbox: document.getElementById("excludeDolby"),
+
+            aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
+            formatSelect: document.getElementById("formatSelect"),
+            formatPreviewImage: document.getElementById("formatPreviewImage"),
             cleanDuckStreamsCheckbox: document.getElementById("cleanDuckStreams"),
-            // Advanced Settings Modal
-            advancedModalOverlay: document.getElementById("advancedModalOverlay"),
-            advancedSettingsBtn: document.getElementById("advancedSettingsBtn"),
-            closeAdvancedModalBtn: document.getElementById("closeAdvancedModal"),
+
             saveAdvancedSettingsBtn: document.getElementById("saveAdvancedSettings"),
         };
     }
 
     // Initialize the app
     async init() {
+        this.switchMode(this.mode); // Initialize UI state based on default mode
+        this.handleDebridProviderChange(); // Initialize the checkboxes to their default state
+        window.Clipboard && Clipboard.setup(); // Initialize Clipboard
         this.populateAIOStreamsHostsSelect();
         await this.loadFormatters(); // Load formatters from config
 
-
-        // Initialize Clipboard
-        if (window.Clipboard) {
-            Clipboard.setup();
-        }
-
-        // Listen for tab button clicks
-        this.ui.tabButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
-        });
-
-        // Listen for generate button click
-        this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
-
-        // Listen for submit button click
-        this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
-
-
-        // Listen for changes on any checkbox within the provider group
-        this.handleDebridProviderChange(); // Initialize the checkboxes to their default state
-        this.ui.providerGroup.addEventListener("change", (e) => {
-            if (e.target.type === "checkbox") {
-                this.handleDebridProviderChange();
-            }
-        });
-
-        // Listen for changes in the format select
-        this.ui.formatSelect.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
-
-        // Initialize UI state based on default mode
-        this.switchMode(this.mode);
-
-        // Advanced Settings Modal Handlers
-        this.ui.advancedSettingsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.ui.advancedModalOverlay.classList.remove('hidden');
-        });
-        this.ui.closeAdvancedModalBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
-        this.ui.saveAdvancedSettingsBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
+        // Main view listeners
 
         // Info Button
         this.ui.infoBtn.addEventListener("click", (e) => {
             e.preventDefault();
             this.showInfoModal();
         });
+
+        // Mode change (Stremio Account vs Manifest Only)
+        this.ui.tabButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
+        });
+
+        // Generate Credentials
+        this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
+
+        // Debrid Providers
+        this.ui.providerGroup.addEventListener("change", (e) => {
+            if (e.target.type === "checkbox") {
+                this.handleDebridProviderChange();
+            }
+        });
+
+        // Submit
+        this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
+
+        // Advanced settings button
+        this.ui.viewAdvancedBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.switchView('advanced');
+        });
+
+        // ---
+
+        // Advanced view listeners
+
+        this.ui.backToMainBtn.addEventListener('click', () => this.switchView('main'));
+
+        // Max size
+        this.ui.sizePresets.forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleSizePreset(e.target));
+        });
+
+        // Formatter selection
+        this.ui.formatSelect.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
+
+        this.ui.saveAdvancedSettingsBtn.addEventListener('click', () => this.switchView('main'));
     }
 
+    // Stremio Account vs Manifest Only
     switchMode(mode) {
         this.mode = mode;
 
@@ -166,18 +184,16 @@ class QuickStart {
         });
     }
 
-
     // Load formatters from the config directory
     async loadFormatters() {
         this.ui.formatSelect.innerHTML = '';
 
         try {
-            // 1. Fetch the formatter manifest
+            // Get the formatters list
             const folders = await Network.request('config/formatters/index.json');
 
-
-            // 3. Parse and Sort
-            // Expected format: "#.Name" (e.g. "1.Standard")
+            // Parse and Sort
+            // Expected format: "#.Name" (e.g. "1.Duck")
             const parsedFormatters = folders.map(folder => {
                 const parts = folder.split('.');
                 let order = 999;
@@ -196,7 +212,7 @@ class QuickStart {
                 };
             }).sort((a, b) => a.order - b.order);
 
-            // 3. Load Definitions
+            // Load formatter.json and preview.png files
             for (const item of parsedFormatters) {
                 const id = item.id;
 
@@ -221,7 +237,7 @@ class QuickStart {
                 }
             }
 
-            // 4. Select Default (First item)
+            // Select Default (First item)
             if (parsedFormatters.length > 0) {
                 const firstId = parsedFormatters[0].id;
                 this.ui.formatSelect.value = firstId;
@@ -233,7 +249,6 @@ class QuickStart {
         }
     }
 
-
     handleFormatterSelection(formatterId) {
         const formatter = this.formatters[formatterId];
 
@@ -241,28 +256,43 @@ class QuickStart {
         if (!formatter) return;
 
         // Update Preview Image
-        this.updateFormatPreview(formatter);
-    }
-
-    updateFormatPreview(formatter) {
         const imagePath = formatter.image;
-
         this.ui.formatPreviewImage.src = imagePath;
         this.ui.formatPreviewImage.alt = `${formatter.name} Preview`;
 
-        this.ui.formatPreviewImage.onerror = () => {
-            this.ui.formatPreviewImage.style.display = 'none';
-        };
-        this.ui.formatPreviewImage.onload = () => {
-            this.ui.formatPreviewImage.style.display = 'block';
-        };
+        this.ui.formatPreviewImage.onerror = () => this.ui.formatPreviewImage.style.display = 'none';
+        this.ui.formatPreviewImage.onload = () => this.ui.formatPreviewImage.style.display = 'block';
     }
 
+    // Main vs Advanced Settings view
+    switchView(viewName) {
+        if (viewName === 'advanced') {
+            // Save current scroll position
+            this.lastScrollY = window.scrollY;
 
-    // --- Frontend Methods ---
+            this.ui.viewMain.classList.add('hidden');
+            this.ui.viewAdvanced.classList.remove('hidden');
 
+            // Always start settings at the top
+            window.scrollTo(0, 0);
+        } else {
+            this.ui.viewAdvanced.classList.add('hidden');
+            this.ui.viewMain.classList.remove('hidden');
 
-    // The user wants to generate random credentials
+            // Restore previous position or default to top
+            window.scrollTo(0, this.lastScrollY || 0);
+        }
+    }
+
+    handleSizePreset(targetBtn) {
+        // Remove active class from all
+        this.ui.sizePresets.forEach(btn => btn.classList.remove('active'));
+
+        // Add active to clicked
+        targetBtn.classList.add('active');
+    }
+
+    // Generate random email/password
     handleGenerateCreds() {
         this.ui.emailInput.value = CredentialGenerator.generateRandomEmail();
         this.ui.passwordInput.value = CredentialGenerator.generateRandomPassword();
@@ -276,7 +306,12 @@ class QuickStart {
         });
     }
 
-    // The user selected a debrid provider
+    getSelectedDebridProviders() {
+        const checkboxes = this.ui.providerGroup.querySelectorAll('input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // Handle debrid provider change
     handleDebridProviderChange() {
         const selectedProviders = this.getSelectedDebridProviders();
         this.ui.apiKeysContainer.innerHTML = ""; // Clear existing inputs
@@ -352,10 +387,6 @@ class QuickStart {
         });
     }
 
-
-    // --- Helper Methods ---
-
-
     // Get random TMDB read access token from tmdb-api-keys.json
     async generateRandomTmdbCredentials() {
         let readAccessToken = "";
@@ -381,62 +412,72 @@ class QuickStart {
         return readAccessToken;
     }
 
-    // Get all checked debrid providers which are just the values of the checked checkboxes
-    getSelectedDebridProviders() {
-        const checkboxes = this.ui.providerGroup.querySelectorAll('input[type="checkbox"]:checked');
-        return Array.from(checkboxes).map(cb => cb.value);
+    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId) {
+        const tmdbReadToken = await this.generateRandomTmdbCredentials();
+        const exclude4k = this.ui.exclude4kCheckbox.checked;
+        const excludeDolby = this.ui.excludeDolbyCheckbox.checked;
+        const maxSize = Array.from(this.ui.sizePresets).find(btn => btn.classList.contains('active'))?.dataset.value || "unlimited";
+
+        const selectedHostValue = this.ui.aiostreamsHostSelect.value;
+        const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
+
+        const formatterName = this.formatters[selectedFormatterId].name;
+        const formatterDefinition = this.formatters[selectedFormatterId].definition;
+
+        // Prepare the config
+        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterName, formatterDefinition, exclude4k, excludeDolby, maxSize);
+
+        let manifestUrl = null;
+        if (selectedHostValue !== 'auto') {
+            // Specific host selected
+            console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
+            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password);
+        } else {
+            // Auto-select host
+            // Try hosts in order: defined in AIOStreamsAPI
+            const hosts = Object.entries(AIOStreamsAPI.HOSTS);
+
+            const errors = [];
+            for (const [name, url] of hosts) {
+                try {
+                    console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
+                    // Clone config so modifications (like removing presets) don't persist to the next host
+                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password);
+                    break; // Break if successful
+                } catch (err) {
+                    errors.push(name + ": " + err.message);
+                }
+            }
+
+            if (!manifestUrl) {
+                // This gets caught in the catch block of handleSubmit
+                throw new Error("All AIOStreams hosts failed to generate a manifest URL. Please wait a few minutes and try again.");
+            }
+        }
+
+        return manifestUrl;
     }
 
+    // Log into the user's Stremio account
+    async setupStremioAccount(email, password, cleanupOldInstalls) {
+        // Login to Stremio (registering a new account if needed)
+        const isNewAccount = await StremioAPI.ensureAccount(email, password);
 
-    // --- Backend Methods ---
-
-
-    async handleSubmit(e) {
-        e.preventDefault();
-        this.ui.submitBtn.disabled = true;
-        this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Working...';
-
-        try {
-            // 1. Gather Data
-            const formData = this.getFormData();
-            if (!formData) return; // Validation failed (modal already shown)
-
-            let isNewAccount = false;
-            const stremioEmail = formData.email;
-            const password = formData.password;
-            const providersMap = formData.providersMap;
-            const debridioKey = formData.debridioKey;
-            const cleanupOldInstalls = formData.cleanupOldInstalls;
-            const selectedFormatterId = formData.selectedFormatterId;
-
-            // 2. Setup Stremio Account (Only if mode is account)
-            if (this.mode === 'account') {
-                isNewAccount = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
-            } else {
-                // Manifest-only mode: password is already retrieved from form data
-                // No action needed here
-            }
-
-            // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId);
-
-            if (this.mode === 'account') {
-                // 4. Install Manifest
-                await StremioAPI.installAddon(manifestUrl);
-
-                // 5. Show Success
-                await this.showSuccessModal(isNewAccount, stremioEmail, password);
-            } else {
-                // 4. Show Manifest Result
-                this.showManifestResult(manifestUrl, password);
-            }
-
-        } catch (err) {
-            ErrorHandler.handle(err, { method: "handleSubmit" }, "Setup Failed");
-        } finally {
-            this.ui.submitBtn.disabled = false;
-            this.ui.submitBtn.textContent = this.mode === 'account' ? "Start Setup" : "Generate Manifest";
+        // Configure Account
+        if (isNewAccount) {
+            // Erase all default addons if the account is new
+            const currentAddons = await StremioAPI.getAddons();
+            const ALLOWED = ["Cinemeta"];
+            const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
+            await StremioAPI.setAddons(filteredAddons);
+        } else if (cleanupOldInstalls) {
+            // User requested to clean up existing "Duck Streams" addons
+            const currentAddons = await StremioAPI.getAddons();
+            const filteredAddons = currentAddons.filter(a => !a.manifest.name.startsWith("Duck Streams"));
+            await StremioAPI.setAddons(filteredAddons);
         }
+
+        return isNewAccount;
     }
 
     // Get the user inputs from the form
@@ -488,71 +529,52 @@ class QuickStart {
         return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId };
     }
 
-    // Log into the user's Stremio account
-    async setupStremioAccount(email, password, cleanupOldInstalls) {
-        // Login to Stremio (registering a new account if needed)
-        const isNewAccount = await StremioAPI.ensureAccount(email, password);
+    async handleSubmit(e) {
+        e.preventDefault();
+        this.ui.submitBtn.disabled = true;
+        this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Working...';
 
-        // Configure Account
-        if (isNewAccount) {
-            // Erase all default addons if the account is new
-            const currentAddons = await StremioAPI.getAddons();
-            const ALLOWED = ["Cinemeta"];
-            const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
-            await StremioAPI.setAddons(filteredAddons);
-        } else if (cleanupOldInstalls) {
-            // User requested to clean up existing "Duck Streams" addons
-            const currentAddons = await StremioAPI.getAddons();
-            const filteredAddons = currentAddons.filter(a => !a.manifest.name.startsWith("Duck Streams"));
-            await StremioAPI.setAddons(filteredAddons);
-        }
+        try {
+            // 1. Gather Data
+            const formData = this.getFormData();
+            if (!formData) return; // Validation failed (modal already shown)
 
-        return isNewAccount;
-    }
+            let isNewAccount = false;
+            const stremioEmail = formData.email;
+            const password = formData.password;
+            const providersMap = formData.providersMap;
+            const debridioKey = formData.debridioKey;
+            const cleanupOldInstalls = formData.cleanupOldInstalls;
+            const selectedFormatterId = formData.selectedFormatterId;
 
-    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId) {
-        // Pick random TMDB Credentials
-        const tmdbReadToken = await this.generateRandomTmdbCredentials();
-
-        const selectedHostValue = this.ui.aiostreamsHostSelect.value;
-        const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
-
-        // Get Formatter Definition
-        const formatterName = this.formatters[selectedFormatterId].name;
-        const formatterDefinition = this.formatters[selectedFormatterId].definition;
-
-        // Prepare the config
-        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterName, formatterDefinition);
-
-        let manifestUrl = null;
-        if (selectedHostValue !== 'auto') {
-            // Specific host selected
-            console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
-            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password);
-        } else {
-            // Auto-select host
-            // Try hosts in order: defined in AIOStreamsAPI
-            const hosts = Object.entries(AIOStreamsAPI.HOSTS);
-
-            const errors = [];
-            for (const [name, url] of hosts) {
-                try {
-                    console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
-                    // Clone config so modifications (like removing presets) don't persist to the next host
-                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password);
-                    break; // Break if successful
-                } catch (err) {
-                    errors.push(name + ": " + err.message);
-                }
+            // 2. Setup Stremio Account (Only if mode is account)
+            if (this.mode === 'account') {
+                isNewAccount = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
+            } else {
+                // Manifest-only mode: password is already retrieved from form data
+                // No action needed here
             }
 
-            if (!manifestUrl) {
-                // This gets caught in the catch block of handleSubmit
-                throw new Error("All AIOStreams hosts failed to generate a manifest URL. Please wait a few minutes and try again.");
-            }
-        }
+            // 3. Create AIOStreams Manifest
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId);
 
-        return manifestUrl;
+            if (this.mode === 'account') {
+                // 4. Install Manifest
+                await StremioAPI.installAddon(manifestUrl);
+
+                // 5. Show Success
+                await this.showSuccessModal(isNewAccount, stremioEmail, password);
+            } else {
+                // 4. Show Manifest Result
+                this.showManifestResult(manifestUrl, password);
+            }
+
+        } catch (err) {
+            ErrorHandler.handle(err, { method: "handleSubmit" }, "Setup Failed");
+        } finally {
+            this.ui.submitBtn.disabled = false;
+            this.ui.submitBtn.textContent = this.mode === 'account' ? "Start Setup" : "Generate Manifest";
+        }
     }
 
     async showSuccessModal(isNewAccount, email, password) {

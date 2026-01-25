@@ -491,17 +491,19 @@
   },
   "hideErrors": true,
   "size": {
-    "resolution": {
-      "2160p": {
-        "movies": [
-          0,
-          100000000000
-        ],
-        "series": [
-          0,
-          100000000000
-        ]
-      }
+    "global": {
+      "movies": [
+        0,
+        100000000000
+      ],
+      "series": [
+        0,
+        100000000000
+      ],
+      "anime": [
+        0,
+        100000000000
+      ]
     }
   },
   "cacheAndPlay": {

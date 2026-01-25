@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickStart | AIOStreams - The Ultimate Stremio Addon Manager</title>
+    <title>QuickStart | AIOStreams</title>
     <link rel="stylesheet" href="../common/style.css">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
@@ -28,275 +28,333 @@
 
 <body class="centered">
 
-    <!-- Header Section -->
-    <div class="header-section">
-        <h1>QuickStart <a href="#" id="infoBtn" class="info-btn-link" aria-label="More Info"><svg viewBox="0 0 24 24"
-                    width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg></a></h1>
-        <p class="subtitle">Install AIOStreams in seconds</p>
-    </div>
+    <!-- Main View: QuickStart -->
+    <div id="view-main" class="view-section">
+        <!-- Header Section -->
+        <div class="header-section">
+            <h1>QuickStart <a href="#" id="infoBtn" class="info-btn-link" aria-label="More Info"><svg
+                        viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg></a></h1>
+            <p class="subtitle">Install AIOStreams in seconds</p>
+        </div>
 
-    <!-- Main Card -->
-    <div class="container" style="padding-bottom: 1.5rem;">
-        <form id="setupForm">
-            <div class="step-label">STEP 1</div>
-            <div class="auth-section">
-                <!-- Tabs -->
-                <div class="tabs">
-                    <button type="button" class="tab-btn active" data-mode="account">Stremio Account</button>
-                    <button type="button" class="tab-btn" data-mode="manifest">Manifest Only</button>
-                </div>
-
-                <!-- Stremio Account Mode -->
-                <div id="mode-account">
-                    <div class="field">
-                        <div class="info-box">
-                            <!-- Icon -->
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                            </svg>
-                            <p>
-                                <b>Log In or Sign Up</b>
-                                <br>
-                                We'll sign you in or create a new account automatically.
-                            </p>
-                        </div>
-
-                        <label for="email">Stremio Email</label>
-                        <input type="email" id="email" placeholder="user@example.com" autocomplete="email">
+        <!-- Main Card -->
+        <div class="container pb-3">
+            <form id="setupForm">
+                <div class="step-label">STEP 1</div>
+                <div class="auth-section">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button type="button" class="tab-btn active" data-mode="account">Stremio Account</button>
+                        <button type="button" class="tab-btn" data-mode="manifest">Manifest Only</button>
                     </div>
 
-                    <div class="field">
-                        <label for="password">Stremio Password</label>
-                        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+                    <!-- Stremio Account Mode -->
+                    <div id="mode-account">
+                        <div class="field">
+                            <div class="info-box">
+                                <!-- Icon -->
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                                </svg>
+                                <p>
+                                    <b>Log In or Sign Up</b>
+                                    <br>
+                                    We'll sign you in or create a new account automatically.
+                                </p>
+                            </div>
 
-                        <div class="auth-actions">
-                            <button type="button" id="generateCredsBtn"
-                                title="Fill with random credentials for a new account">
-                                Generate new identity
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Manifest Only Mode -->
-                <div id="mode-manifest" class="hidden">
-                    <div class="field">
-                        <div class="info-box">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                            </svg>
-                            <p>
-                                <b>Manual Installation</b>
-                                <br>
-                                Generates an AIOStreams URL for use in any streaming client.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="aiostreamsPassword">AIOStreams Password</label>
-                        <input type="text" id="aiostreamsPassword" placeholder="Password" autocomplete="off">
-                        <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
-                            Create a password to protect your manifest.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <!-- Debrid Services Section -->
-            <div class="step-label">STEP 2</div>
-            <div class="section-card">
-                <h3>Debrid Services</h3>
-
-                <div class="provider-grid" id="providerGroup">
-                    <!-- TorBox Card -->
-                    <label class="provider-card">
-                        <input type="checkbox" value="torbox" hidden>
-                        <div class="card-content">
-                            <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TB">
-                            <span class="provider-name">TorBox</span>
-                        </div>
-                        <div class="card-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
-                    </label>
-
-                    <!-- Real-Debrid Card -->
-                    <label class="provider-card">
-                        <input type="checkbox" value="realdebrid" hidden>
-                        <div class="card-content">
-                            <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="RD">
-                            <span class="provider-name">Real-Debrid</span>
-                        </div>
-                        <div class="card-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
-                    </label>
-
-                    <!-- Premiumize Card -->
-                    <label class="provider-card">
-                        <input type="checkbox" value="premiumize" hidden>
-                        <div class="card-content">
-                            <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="PM">
-                            <span class="provider-name">Premiumize</span>
+                            <label for="email">Stremio Email</label>
+                            <input type="email" id="email" placeholder="user@example.com" autocomplete="email">
                         </div>
 
-                        <div class="card-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
-                    </label>
+                        <div class="field">
+                            <label for="password">Stremio Password</label>
+                            <input type="password" id="password" placeholder="Password" autocomplete="current-password">
 
-                    <!-- AllDebrid Card -->
-                    <label class="provider-card">
-                        <input type="checkbox" value="alldebrid" hidden>
-                        <div class="card-content">
-                            <img src="https://alldebrid.com/lib/images/default/favicon.png" class="provider-icon"
-                                alt="AD">
-                            <span class="provider-name">AllDebrid</span>
-                        </div>
-                        <div class="card-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Dynamic Signup Links Container -->
-                <div id="signupLink" class="signup" style="margin-top: 1rem;">
-                    <!-- Inputs will be injected here by JS -->
-                </div>
-
-                <!-- Dynamic API Keys Container -->
-                <div id="apiKeysContainer" style="margin-top: 1rem;">
-                    <!-- Inputs will be injected here by JS -->
-                </div>
-            </div>
-
-
-
-            <!-- Footer Options -->
-            <div class="footer-options">
-                <!-- Debridio -->
-                <details>
-                    <summary>
-                        <img src="https://cdn.lb.debridio.com/site/logo.png" alt="DB"
-                            style="width:16px; height:16px; border-radius:2px;">
-                        Debridio
-                    </summary>
-                    <div class="field" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                            <label for="debridioKey" style="margin-bottom:0;">Debridio API Key</label>
-                            <div style="font-size:0.75rem; color:var(--text-secondary);">
-                                <a href="https://debridio.com/account" target="_blank" rel="noopener"
-                                    style="color:var(--accent); text-decoration:none;">Get Key</a>
-                                <span style="margin: 0 6px; opacity: 0.3;">|</span>
-                                <a href="https://debridio.com/register" target="_blank" rel="noopener"
-                                    style="color:var(--accent); text-decoration:none;">Sign Up</a>
+                            <div class="auth-actions">
+                                <button type="button" id="generateCredsBtn"
+                                    title="Fill with random credentials for a new account">
+                                    Generate new identity
+                                </button>
                             </div>
                         </div>
-                        <input type="text" id="debridioKey" placeholder="Enter your Debridio API Key" autocomplete="off"
-                            spellcheck="false" style="margin-top:0.5rem;" />
                     </div>
-                </details>
 
-                <!-- Advanced Settings Trigger -->
-                <!-- Moved to Action Bar -->
-            </div>
-            <!-- End Footer Options -->
+                    <!-- Manifest Only Mode -->
+                    <div id="mode-manifest" class="hidden">
+                        <div class="field">
+                            <div class="info-box">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                                </svg>
+                                <p>
+                                    <b>Manual Installation</b>
+                                    <br>
+                                    Generates an AIOStreams URL for use in any streaming client.
+                                </p>
+                            </div>
+                        </div>
 
-            <button id="submitBtn" type="submit" style="margin-top: 1.5rem;">
-                Start Setup
-            </button>
+                        <div class="field">
+                            <label for="aiostreamsPassword">AIOStreams Password</label>
+                            <input type="text" id="aiostreamsPassword" placeholder="Password" autocomplete="off">
+                            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
+                                Create a password to protect your manifest.
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="advanced-trigger-container" style="margin-top: 2rem; margin-bottom: 0;">
-                <a href="#" id="advancedSettingsBtn" class="advanced-trigger">
-                    Advanced Settings
-                </a>
-            </div>
-        </form>
+                <!-- Debrid Services Section -->
+                <div class="step-label">STEP 2</div>
+                <div class="section-card">
+                    <h3>Debrid Services</h3>
 
-        <!-- Advanced Settings (Absolute Top Right) -->
-        <!-- Removed -->
+                    <div class="provider-grid" id="providerGroup">
+                        <!-- TorBox Card -->
+                        <label class="provider-card">
+                            <input type="checkbox" value="torbox" hidden>
+                            <div class="card-content">
+                                <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TB">
+                                <span class="provider-name">TorBox</span>
+                            </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+
+                        <!-- Real-Debrid Card -->
+                        <label class="provider-card">
+                            <input type="checkbox" value="realdebrid" hidden>
+                            <div class="card-content">
+                                <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="RD">
+                                <span class="provider-name">Real-Debrid</span>
+                            </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+
+                        <!-- Premiumize Card -->
+                        <label class="provider-card">
+                            <input type="checkbox" value="premiumize" hidden>
+                            <div class="card-content">
+                                <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="PM">
+                                <span class="provider-name">Premiumize</span>
+                            </div>
+
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+
+                        <!-- AllDebrid Card -->
+                        <label class="provider-card">
+                            <input type="checkbox" value="alldebrid" hidden>
+                            <div class="card-content">
+                                <img src="https://alldebrid.com/lib/images/default/favicon.png" class="provider-icon"
+                                    alt="AD">
+                                <span class="provider-name">AllDebrid</span>
+                            </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Dynamic Signup Links Container -->
+                    <div id="signupLink" class="signup mt-2">
+                        <!-- Inputs will be injected here by JS -->
+                    </div>
+
+                    <!-- Dynamic API Keys Container -->
+                    <div id="apiKeysContainer" class="mt-2">
+                        <!-- Inputs will be injected here by JS -->
+                    </div>
+                </div>
+
+                <!-- Footer Options -->
+                <div class="footer-options">
+                    <!-- Debridio -->
+                    <details>
+                        <summary>
+                            <img src="https://cdn.lb.debridio.com/site/logo.png" alt="DB" class="debridio-icon">
+                            Debridio
+                        </summary>
+                        <div class="field my-1">
+                            <div class="flex-between-baseline">
+                                <label for="debridioKey" class="mb-0">Debridio API Key</label>
+                                <div class="text-caption">
+                                    <a href="https://debridio.com/account" target="_blank" rel="noopener"
+                                        class="link-clean">Get Key</a>
+                                    <span class="divider-pipe">|</span>
+                                    <a href="https://debridio.com/register" target="_blank" rel="noopener"
+                                        class="link-clean">Sign Up</a>
+                                </div>
+                            </div>
+                            <input type="text" id="debridioKey" placeholder="Enter your Debridio API Key"
+                                autocomplete="off" spellcheck="false" class="mt-1" />
+                        </div>
+                    </details>
+                </div>
+
+                <button id="submitBtn" type="submit" class="mt-3">
+                    Start Setup
+                </button>
+
+                <div class="advanced-trigger-container mt-4 mb-0">
+                    <a href="#" id="viewAdvancedBtn" class="advanced-trigger">
+                        Advanced Settings
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Advanced Settings Modal -->
-    <div id="advancedModalOverlay" class="modal-overlay hidden">
-        <div class="modal">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
-                <h2 style="margin:0; font-size:1.5rem; text-align:left;">Advanced Settings</h2>
-                <button type="button" id="closeAdvancedModal"
-                    style="width: auto; padding: 0.5rem; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; box-shadow: none;">
+    <!-- Advanced View: Settings -->
+    <div id="view-advanced" class="view-section hidden">
+        <div class="container">
+            <!-- Advanced Header -->
+            <div class="view-header">
+                <button type="button" id="backToMainBtn" class="back-btn" aria-label="Back">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
                         stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                 </button>
+                <h2>Advanced Settings</h2>
             </div>
 
-            <div class="advanced-content" style="text-align: left;">
-                <!-- Host Selection -->
-                <div class="field settings-card">
-                    <label for="aiostreamsHost" style="margin-bottom: 0.5rem; display: block;">AIOStreams Host</label>
-                    <select id="aiostreamsHost">
-                        <!-- Options are populated from main.js -->
-                    </select>
-                </div>
+            <!-- Settings Content -->
+            <div class="advanced-scroll-content">
 
-                <!-- Formatter Selection -->
-                <div class="field settings-card">
-                    <label for="formatSelect" style="margin-bottom: 0.5rem; display: block;">Formatter Style</label>
-                    <select id="formatSelect">
-                        <!-- Options are populated from JS -->
-                    </select>
+                <!-- Size Preferences -->
+                <div class="settings-group">
+                    <div class="group-header">
+                        <h3>Size Limits</h3>
+                        <p>Exclude streams larger than this size.</p>
+                    </div>
 
-                    <!-- Visual Preview -->
-                    <div id="formatPreviewContainer"
-                        style="margin-top: 1rem; border-radius: 0.25rem; overflow: hidden; border: 1px solid var(--border);">
-                        <img id="formatPreviewImage" src="" alt="Format Preview"
-                            style="width: 100%; height: auto; display: block;">
+                    <div class="size-presets">
+                        <button type="button" class="preset-btn" data-value="10">10GB</button>
+                        <button type="button" class="preset-btn" data-value="20">20GB</button>
+                        <button type="button" class="preset-btn" data-value="25">25GB</button>
+                        <button type="button" class="preset-btn" data-value="50">50GB</button>
+                        <button type="button" class="preset-btn active" data-value="unlimited">Unlimited</button>
                     </div>
                 </div>
 
-                <!-- Cleanup Old Duck Streams Addons -->
-                <div class="field" style="margin-bottom: 0;">
-                    <label class="provider-card">
-                        <input type="checkbox" id="cleanDuckStreams" hidden>
-                        <div class="card-content">
-                            <div style="display: flex; flex-direction: column; gap: 0.1rem;">
-                                <span class="provider-name">Clean "Duck Streams" addons</span>
-                                <span style="font-size: 0.75rem; color: var(--text-secondary);">Removes old
-                                    installations</span>
+                <!-- Resolution & Format -->
+                <div class="settings-group">
+                    <div class="group-header">
+                        <h3>Video Preferences</h3>
+                    </div>
+
+                    <!-- 4K Toggle -->
+                    <div class="field mb-2">
+                        <label class="provider-card">
+                            <input type="checkbox" id="exclude4k" hidden>
+                            <div class="card-content">
+                                <div class="flex-col-gap-xs">
+                                    <span class="provider-name">Exclude 4K / UHD</span>
+                                    <span class="text-caption">Removes 2160p content. Good for bandwidth saving.</span>
+                                </div>
                             </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Dolby Vision Toggle -->
+                    <div class="field mb-0">
+                        <label class="provider-card">
+                            <input type="checkbox" id="excludeDolby" hidden>
+                            <div class="card-content">
+                                <div class="flex-col-gap-xs">
+                                    <span class="provider-name">Exclude Dolby Vision</span>
+                                    <span class="text-caption">Fixes purple/green tint on unsupported screens.</span>
+                                </div>
+                            </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- System / migrated settings -->
+                <div class="settings-group">
+                    <div class="group-header">
+                        <h3>System Configuration</h3>
+                    </div>
+
+                    <!-- Host Selection -->
+                    <div class="field settings-card">
+                        <label for="aiostreamsHost" class="mb-1 d-block">AIOStreams Host</label>
+                        <select id="aiostreamsHost">
+                            <!-- Options are populated from QuickStart.js -->
+                        </select>
+                    </div>
+
+                    <!-- Formatter Selection -->
+                    <div class="field settings-card">
+                        <label for="formatSelect" class="mb-1 d-block">Formatter Style</label>
+                        <select id="formatSelect">
+                            <!-- Options are populated from QuickStart.js -->
+                        </select>
+
+                        <!-- Visual Preview -->
+                        <div id="formatPreviewContainer" class="preview-container">
+                            <img id="formatPreviewImage" src="" alt="Format Preview" class="img-fluid">
                         </div>
-                        <div class="card-indicator">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
-                    </label>
+                    </div>
+
+                    <!-- Cleanup Old Duck Streams Addons -->
+                    <div class="field mb-0">
+                        <label class="provider-card">
+                            <input type="checkbox" id="cleanDuckStreams" hidden>
+                            <div class="card-content">
+                                <div class="flex-col-gap-xs">
+                                    <span class="provider-name">Clean "Duck Streams" addons</span>
+                                    <span class="text-caption">Removes old installations</span>
+                                </div>
+                            </div>
+                            <div class="card-indicator">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
 
-            <div style="margin-top: 2rem;">
+            <!-- Sticky Action Footer -->
+            <div class="advanced-footer">
                 <button type="button" id="saveAdvancedSettings" class="primary">
-                    Done
+                    Apply Settings
                 </button>
             </div>
         </div>
