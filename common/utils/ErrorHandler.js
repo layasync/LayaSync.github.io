@@ -140,7 +140,8 @@ class ErrorHandler {
             "failed to fetch",
             "network error",
             "abort error",
-            "all aiostreams hosts failed"
+            "all aiostreams hosts failed",
+            "network connection lost"
         ];
 
         return IGNORED_PHRASES.some(phrase => msg.includes(phrase));
