@@ -688,6 +688,19 @@ button:disabled {
     opacity: 0.9;
 }
 
+.info-btn-link {
+    margin-left: 0.5rem;
+    color: var(--text-secondary);
+    vertical-align: middle;
+    display: inline-flex;
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+.info-btn-link:hover {
+    color: var(--text-primary);
+}
+
 .info-box p {
     margin: 0;
     font-size: 0.95rem;

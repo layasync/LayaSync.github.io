@@ -35,6 +35,7 @@ class QuickStart {
 
         // UI References
         this.ui = {
+            infoBtn: document.getElementById("infoBtn"),
             form: document.getElementById("setupForm"),
             providerGroup: document.getElementById("providerGroup"),
             apiKeysContainer: document.getElementById("apiKeysContainer"),
@@ -108,6 +109,12 @@ class QuickStart {
         });
         this.ui.closeAdvancedModalBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
         this.ui.saveAdvancedSettingsBtn.addEventListener('click', () => this.ui.advancedModalOverlay.classList.add('hidden'));
+
+        // Info Button
+        this.ui.infoBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.showInfoModal();
+        });
     }
 
     switchMode(mode) {
@@ -610,6 +617,28 @@ class QuickStart {
         `;
 
         await Modal.success(messageHtml, "Manifest Generated 🎉");
+    }
+
+    showInfoModal() {
+        const html = `
+        <div style="text-align: left; line-height: 1.6;">
+            <p style="margin-bottom: 1rem;">Stremio relies on four key components to create your streaming experience:</p>
+            <ul style="margin: 0 0 1.5rem 1.5rem; list-style-type: disc; color: var(--text-secondary);">
+                <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-primary);">Scrapers:</strong> Addons that find playable video links.</li>
+                <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-primary);">Catalogs:</strong> The lists you see on your home screen (e.g., "Featured").</li>
+                <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-primary);">Metadata:</strong> Details like cover art, release dates, and cast info.</li>
+                <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-primary);">Subtitles:</strong> Captions for your content.</li>
+            </ul>
+            
+            <p style="margin-bottom: 1rem;"><strong>QuickStart</strong> installs <strong>Duck Streams</strong> to handle Scrapers and Subtitles. The built-in <strong>Cinemeta</strong> addon handles your Catalogs and Metadata. Therefore, you only <strong>need</strong> Cinemeta and Duck Streams for a full setup.</p>
+            
+            <div style="background: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; padding: 10px; margin-top: 15px; border-radius: 4px;">
+                <strong>Pro Tip:</strong> For complete control, you can check out <a href="https://duckkota.gitlab.io/guides/aiometadata/" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: bold;">AIOMetadata</a>. It replaces Cinemeta to give you fully customizable catalogs and metadata.
+            </div>
+        </div>
+        `;
+
+        Modal.alert(html, "About QuickStart", "Got it");
     }
 }
 
