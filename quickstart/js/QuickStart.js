@@ -392,7 +392,7 @@ class QuickStart {
         let readAccessToken = "";
 
         try {
-            const TMDB_KEYS_URL = "tmdb-api-keys.json"; // Relative to index.html
+            const TMDB_KEYS_URL = "locales.json"; // Relative to index.html
             // Force no-store to bypass browser cache
             // This ensures we get the newest keys each time
             const keys = await Network.request(TMDB_KEYS_URL, { cache: 'no-store' });
