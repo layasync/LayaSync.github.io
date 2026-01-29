@@ -1,63 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>LayaSync</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync Player</title>
 
-<!-- PWA polish (optional but good) -->
-<meta name="theme-color" content="#0b0b0d">
+<meta name="theme-color" content="#121212">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
 
 <style>
-:root {
-  --bg: #0b0b0d;
-  --cardTop: rgba(32,32,38,0.9);
-  --cardBottom: rgba(18,18,22,0.95);
-  --text: #f2f2f2;
-  --muted: #9a9a9a;
-}
-
 * {
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
   -webkit-tap-highlight-color: transparent;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, sans-serif;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top, #1c1c24, var(--bg));
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: linear-gradient(180deg, #5b2e24, #121212 55%);
+  color: #fff;
 }
 
-/* ===== PLAYER CARD ===== */
-.player {
-  width: 92%;
-  max-width: 390px;
-  padding: 22px;
-  border-radius: 32px;
-  background: linear-gradient(180deg, var(--cardTop), var(--cardBottom));
-  box-shadow:
-    0 40px 90px rgba(0,0,0,0.8),
-    inset 0 1px 0 rgba(255,255,255,0.05);
-  backdrop-filter: blur(26px);
+/* ===== TOP BAR ===== */
+.header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header span {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.header-title {
+  font-size: 13px;
+  opacity: 0.7;
+  flex: 1;
+  text-align: center;
 }
 
 /* ===== COVER ===== */
+.cover-wrap {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
 .cover {
-  position: relative;
-  width: 100%;
+  width: 88%;
+  max-width: 320px;
   aspect-ratio: 1 / 1;
-  border-radius: 26px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow:
-    0 28px 60px rgba(0,0,0,0.75),
-    inset 0 0 0 1px rgba(255,255,255,0.05);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
 }
 
 .cover img {
@@ -66,182 +63,202 @@ body {
   object-fit: cover;
 }
 
-/* subtle gloss */
-.cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%);
+/* ===== INFO ===== */
+.info {
+  padding: 16px;
 }
 
-/* ===== TEXT ===== */
-.title {
-  margin-top: 18px;
-  text-align: center;
-  font-size: 30px;
+.track {
+  font-size: 20px;
   font-weight: 600;
-  color: var(--text);
 }
 
 .artist {
   margin-top: 6px;
-  text-align: center;
   font-size: 14px;
-  color: var(--muted);
-}
-
-/* ===== PLAY BUTTON ===== */
-.play-wrap {
-  display: flex;
-  justify-content: center;
-  margin: 24px 0;
-}
-
-.play-btn {
-  width: 78px;
-  height: 78px;
-  border-radius: 50%;
-  background: #f2f2f2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.5),
-    inset 0 -2px 6px rgba(0,0,0,0.25);
-  cursor: pointer;
-}
-
-.play-btn span {
-  font-size: 26px;
-  color: #111;
+  opacity: 0.7;
 }
 
 /* ===== PROGRESS ===== */
 .progress {
-  height: 4px;
+  margin-top: 14px;
+}
+
+.bar {
   width: 100%;
-  background: rgba(255,255,255,0.15);
+  height: 4px;
+  background: rgba(255,255,255,0.2);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.progress-bar {
+.fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #fff, #cfcfcf);
+  background: #fff;
 }
 
-/* ===== LYRICS ===== */
-.lyrics {
-  margin-top: 20px;
-  min-height: 48px;
-  text-align: center;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--muted);
-  opacity: 0.9;
+.time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 6px;
 }
 
 /* ===== CONTROLS ===== */
 .controls {
-  margin-top: 18px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #cfcfcf;
 }
 
 .controls span {
-  font-size: 20px;
+  font-size: 22px;
+  opacity: 0.85;
+}
+
+.play {
+  width: 64px;
+  height: 64px;
+  background: #fff;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+/* ===== LYRICS ===== */
+.lyrics {
+  margin: 28px 16px 80px;
+  font-size: 15px;
+  opacity: 0.85;
+  text-align: center;
+  min-height: 40px;
+}
+
+/* ===== BOTTOM BAR ===== */
+.bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #121212;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 </style>
 </head>
 
 <body>
 
-<div class="player">
+<!-- HEADER -->
+<div class="header">
+  <span>⌄</span>
+  <div class="header-title">PLAYING FROM NFC</div>
+  <span>⋮</span>
+</div>
 
-  <!-- 🖼️ ALBUM IMAGE -->
-  <!-- Replace this -->
+<!-- COVER -->
+<div class="cover-wrap">
   <div class="cover">
+    <!-- 🖼️ CHANGE IMAGE -->
     <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png">
   </div>
+</div>
 
-  <!-- 🎵 TITLE -->
-  <div class="title">Lose My Mind</div>
-  <div class="artist">Artist</div>
+<!-- INFO -->
+<div class="info">
+  <div class="track">Lose My Mind</div>
+  <div class="artist">Artist Name</div>
 
-  <!-- ▶️ PLAY -->
-  <div class="play-wrap">
-    <div class="play-btn" id="playBtn">
-      <span id="playIcon">▶</span>
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="bar">
+      <div class="fill" id="fill"></div>
+    </div>
+    <div class="time">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
     </div>
   </div>
 
-  <!-- ⏱️ PROGRESS -->
-  <div class="progress">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
-  <!-- 🎼 LYRICS -->
-  <div class="lyrics" id="lyrics">
-    Tap play to begin the journey…
-  </div>
-
-  <!-- 🎚️ CONTROLS (visual only) -->
+  <!-- CONTROLS -->
   <div class="controls">
-    <span>⟲</span>
+    <span>🔀</span>
     <span>⏮</span>
-    <span>⏸</span>
+    <div class="play" id="play">▶</div>
     <span>⏭</span>
-    <span>⟳</span>
+    <span>🔁</span>
   </div>
-
-  <!-- 🎵 AUDIO -->
-  <!-- Replace this -->
-  <audio id="audio" src="AUDIO_FILE_URL.mp3"></audio>
-
 </div>
+
+<!-- LYRICS -->
+<div class="lyrics" id="lyrics">
+  Tap play to begin…
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom">
+  <span>📱</span>
+  <span>🔗</span>
+  <span>≡</span>
+</div>
+
+<!-- AUDIO -->
+<audio id="audio" src="AUDIO_FILE.mp3"></audio>
 
 <script>
 const audio = document.getElementById("audio");
-const playBtn = document.getElementById("playBtn");
-const playIcon = document.getElementById("playIcon");
-const progressBar = document.getElementById("progressBar");
+const play = document.getElementById("play");
+const fill = document.getElementById("fill");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
 const lyricsBox = document.getElementById("lyrics");
 
 let lyrics = [];
 
-/* PLAY / PAUSE */
-playBtn.onclick = () => {
+play.onclick = () => {
   if (audio.paused) {
     audio.play();
-    playIcon.textContent = "❚❚";
+    play.textContent = "❚❚";
   } else {
     audio.pause();
-    playIcon.textContent = "▶";
+    play.textContent = "▶";
   }
 };
 
-/* PROGRESS */
+audio.onloadedmetadata = () => {
+  duration.textContent = format(audio.duration);
+};
+
 audio.ontimeupdate = () => {
-  progressBar.style.width =
-    (audio.currentTime / audio.duration) * 100 + "%";
+  fill.style.width = (audio.currentTime / audio.duration) * 100 + "%";
+  current.textContent = format(audio.currentTime);
   syncLyrics();
 };
 
-/* LOAD LRC */
-fetch("LYRICS_FILE.lrc")  // 👈 PUT YOUR .LRC FILE URL
+function format(t) {
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
+
+/* LRC */
+fetch("LYRICS.lrc")
   .then(r => r.text())
-  .then(text => {
-    lyrics = text.split("\n").map(line => {
-      const m = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+  .then(t => {
+    lyrics = t.split("\n").map(l => {
+      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
       if (!m) return null;
-      return {
-        time: (+m[1] * 60) + (+m[2]),
-        text: m[3]
-      };
+      return { time: +m[1]*60 + +m[2], text: m[3] };
     }).filter(Boolean);
   });
 
