@@ -28,7 +28,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 #seek{position:absolute;inset:0;width:100%;opacity:0}
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 
-/* THANK YOU — longer presence */
+/* THANK YOU */
 .thankyou{
   position:absolute;left:50%;top:26px;
   transform:translateX(-50%);
@@ -39,7 +39,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .thankyou.show{animation:thankFade 3.6s ease forwards}
 @keyframes thankFade{
   0%{opacity:0;transform:translateX(-50%) translateY(6px)}
-  18%{opacity:1;transform:translateX(-50%) translateY(0)}
+  18%{opacity:1}
   82%{opacity:1}
   100%{opacity:0;transform:translateX(-50%) translateY(-6px)}
 }
@@ -135,6 +135,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 let player;
 let isPlaying=false,isSeeking=false;
 let userWantsPlay=false;
+let userPaused=false;        // 🔑 NEW
 let thankShown=false;
 let knownDuration=null;
 
@@ -179,8 +180,8 @@ function onReady(){
 function onState(e){
   if(isSeeking) return;
 
-  /* never allow pause if user wants play */
-  if(e.data===YT.PlayerState.PAUSED && userWantsPlay){
+  // Auto-resume ONLY if pause was NOT user initiated
+  if(e.data===YT.PlayerState.PAUSED && userWantsPlay && !userPaused){
     player.playVideo();
     return;
   }
@@ -196,7 +197,14 @@ function onState(e){
   if(e.data===YT.PlayerState.PLAYING){
     playBtn.classList.remove("loading");
     isPlaying=true;
+    userPaused=false;        // reset
     playBtn.textContent="❚❚";
+  }
+
+  if(e.data===YT.PlayerState.PAUSED && userPaused){
+    isPlaying=false;
+    playBtn.classList.remove("loading");
+    playBtn.textContent="▶";
   }
 
   if(e.data===YT.PlayerState.ENDED){
@@ -209,9 +217,11 @@ function onState(e){
 
 playBtn.onclick=()=>{
   if(isPlaying){
+    userPaused=true;         // 🔑 mark user intent
     userWantsPlay=false;
     player.pauseVideo();
   }else{
+    userPaused=false;
     userWantsPlay=true;
     playBtn.classList.add("loading");
     player.playVideo();
