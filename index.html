@@ -1,50 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Music Card</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LayaSync</title>
+
+<!-- PWA polish (optional but good) -->
+<meta name="theme-color" content="#0b0b0d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 <style>
 :root {
   --bg: #0b0b0d;
-  --card: rgba(30,30,35,0.85);
-  --text: #f5f5f5;
-  --muted: #b5b5b5;
+  --cardTop: rgba(32,32,38,0.9);
+  --cardBottom: rgba(18,18,22,0.95);
+  --text: #f2f2f2;
+  --muted: #9a9a9a;
 }
 
 * {
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-               "Inter", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, sans-serif;
 }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top, #1b1b22, var(--bg));
   min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #1c1c24, var(--bg));
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* ===== PLAYER CARD ===== */
 .player {
   width: 92%;
-  max-width: 380px;
-  background: var(--card);
-  border-radius: 28px;
+  max-width: 390px;
   padding: 22px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  background: linear-gradient(180deg, var(--cardTop), var(--cardBottom));
+  box-shadow:
+    0 40px 90px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter: blur(26px);
 }
 
-/* ===== ALBUM ART ===== */
+/* ===== COVER ===== */
 .cover {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: 22px;
+  border-radius: 26px;
   overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  box-shadow:
+    0 28px 60px rgba(0,0,0,0.75),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .cover img {
@@ -53,34 +66,50 @@ body {
   object-fit: cover;
 }
 
+/* subtle gloss */
+.cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%);
+}
+
 /* ===== TEXT ===== */
 .title {
-  text-align: center;
   margin-top: 18px;
-  font-size: 28px;
+  text-align: center;
+  font-size: 30px;
   font-weight: 600;
   color: var(--text);
 }
 
 .artist {
-  text-align: center;
   margin-top: 6px;
+  text-align: center;
   font-size: 14px;
   color: var(--muted);
 }
 
 /* ===== PLAY BUTTON ===== */
-.play-btn {
-  width: 76px;
-  height: 76px;
-  margin: 22px auto;
-  border-radius: 50%;
-  background: #f0f0f0;
+.play-wrap {
   display: flex;
   justify-content: center;
+  margin: 24px 0;
+}
+
+.play-btn {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #f2f2f2;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.5),
+    inset 0 -2px 6px rgba(0,0,0,0.25);
   cursor: pointer;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
 }
 
 .play-btn span {
@@ -90,28 +119,28 @@ body {
 
 /* ===== PROGRESS ===== */
 .progress {
-  width: 100%;
   height: 4px;
-  background: rgba(255,255,255,0.2);
+  width: 100%;
+  background: rgba(255,255,255,0.15);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-bar {
-  width: 0%;
   height: 100%;
-  background: #fff;
+  width: 0%;
+  background: linear-gradient(90deg, #fff, #cfcfcf);
 }
 
 /* ===== LYRICS ===== */
 .lyrics {
-  margin-top: 22px;
+  margin-top: 20px;
+  min-height: 48px;
+  text-align: center;
   font-size: 13px;
   line-height: 1.7;
   color: var(--muted);
-  text-align: center;
-  min-height: 48px;
-  filter: blur(0.3px);
+  opacity: 0.9;
 }
 
 /* ===== CONTROLS ===== */
@@ -125,9 +154,7 @@ body {
 
 .controls span {
   font-size: 20px;
-  cursor: pointer;
 }
-
 </style>
 </head>
 
@@ -135,32 +162,34 @@ body {
 
 <div class="player">
 
-  <!-- 🖼️ BANNER / ALBUM IMAGE -->
-  <!-- Replace src with your album art URL -->
+  <!-- 🖼️ ALBUM IMAGE -->
+  <!-- Replace this -->
   <div class="cover">
-    <img src="BANNER_IMAGE_URL_HERE.jpg">
+    <img src="BANNER_IMAGE_URL.jpg">
   </div>
 
-  <!-- 🎵 TITLE / ARTIST -->
+  <!-- 🎵 TITLE -->
   <div class="title">Ethereal Sunset</div>
   <div class="artist">Artist Name</div>
 
-  <!-- ▶️ PLAY BUTTON -->
-  <div class="play-btn" id="playBtn">
-    <span id="playIcon">▶</span>
+  <!-- ▶️ PLAY -->
+  <div class="play-wrap">
+    <div class="play-btn" id="playBtn">
+      <span id="playIcon">▶</span>
+    </div>
   </div>
 
-  <!-- ⏱️ PROGRESS BAR -->
+  <!-- ⏱️ PROGRESS -->
   <div class="progress">
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-  <!-- 📄 LYRICS -->
+  <!-- 🎼 LYRICS -->
   <div class="lyrics" id="lyrics">
     Tap play to begin the journey…
   </div>
 
-  <!-- ⏮️ ⏯️ ⏭️ -->
+  <!-- 🎚️ CONTROLS (visual only) -->
   <div class="controls">
     <span>⟲</span>
     <span>⏮</span>
@@ -169,14 +198,13 @@ body {
     <span>⟳</span>
   </div>
 
-  <!-- 🎵 AUDIO FILE -->
-  <!-- Replace src with your MP3 / WAV link -->
-  <audio id="audio" src="AUDIO_FILE_URL_HERE.mp3"></audio>
+  <!-- 🎵 AUDIO -->
+  <!-- Replace this -->
+  <audio id="audio" src="AUDIO_FILE_URL.mp3"></audio>
 
 </div>
 
 <script>
-/* ===== AUDIO ===== */
 const audio = document.getElementById("audio");
 const playBtn = document.getElementById("playBtn");
 const playIcon = document.getElementById("playIcon");
@@ -185,7 +213,7 @@ const lyricsBox = document.getElementById("lyrics");
 
 let lyrics = [];
 
-/* ▶️ PLAY / PAUSE */
+/* PLAY / PAUSE */
 playBtn.onclick = () => {
   if (audio.paused) {
     audio.play();
@@ -196,28 +224,27 @@ playBtn.onclick = () => {
   }
 };
 
-/* ⏱️ PROGRESS UPDATE */
+/* PROGRESS */
 audio.ontimeupdate = () => {
   progressBar.style.width =
     (audio.currentTime / audio.duration) * 100 + "%";
   syncLyrics();
 };
 
-/* 📄 LOAD LRC FILE */
-fetch("LRC_FILE_URL_HERE.lrc")  // ← ADD YOUR .LRC LINK HERE
-  .then(res => res.text())
+/* LOAD LRC */
+fetch("LYRICS_FILE.lrc")  // 👈 PUT YOUR .LRC FILE URL
+  .then(r => r.text())
   .then(text => {
     lyrics = text.split("\n").map(line => {
-      const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      if (!match) return null;
+      const m = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+      if (!m) return null;
       return {
-        time: parseInt(match[1]) * 60 + parseFloat(match[2]),
-        text: match[3]
+        time: (+m[1] * 60) + (+m[2]),
+        text: m[3]
       };
     }).filter(Boolean);
   });
 
-/* 🎼 SYNC LYRICS */
 function syncLyrics() {
   for (let i = lyrics.length - 1; i >= 0; i--) {
     if (audio.currentTime >= lyrics[i].time) {
