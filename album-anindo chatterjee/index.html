@@ -22,11 +22,37 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .artist{margin-top:4px;font-size:15px;font-weight:700;opacity:.9}
 
 /* SEEK */
-.seek-wrap{margin-top:18px}
+.seek-wrap{margin-top:18px; position:relative}
 .seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
 .seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
 #seek{position:absolute;inset:0;width:100%;opacity:0}
+
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
+
+/* ONE-TIME THANK YOU (below seek bar) */
+.thankyou{
+  position:absolute;
+  left:50%;
+  top:26px;
+  transform:translateX(-50%);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.3px;
+  color:rgba(255,255,255,.9);
+  opacity:0;
+  pointer-events:none;
+}
+
+.thankyou.show{
+  animation:thankFade 2.2s ease forwards;
+}
+
+@keyframes thankFade{
+  0%{opacity:0; transform:translateX(-50%) translateY(4px)}
+  20%{opacity:1; transform:translateX(-50%) translateY(0)}
+  80%{opacity:1}
+  100%{opacity:0; transform:translateX(-50%) translateY(-4px)}
+}
 
 /* CONTROLS */
 .controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
@@ -48,7 +74,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   font-weight:900;
 }
 
-/* Loading ring */
+/* Loading ring (unchanged) */
 .play::after{
   content:"";
   position:absolute;
@@ -60,29 +86,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   opacity:0;
   pointer-events:none;
 }
-
-/* THANK YOU text */
-.play::before{
-  content:"Thank you";
-  position:absolute;
-  top:-26px;
-  left:50%;
-  transform:translateX(-50%) translateY(4px);
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:.4px;
-  color:rgba(255,255,255,.85);
-  opacity:0;
-  transition:opacity .25s ease, transform .25s ease;
-  pointer-events:none;
-}
-
 .play.loading::after{opacity:1}
-.play.loading::before{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .lyric-bar{
@@ -121,6 +125,10 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
       <div class="seek-fill" id="seekFill"></div>
       <input type="range" id="seek" min="0" max="100" value="0">
     </div>
+
+    <!-- one-time message -->
+    <div class="thankyou" id="thankyou">Thank you 🫶</div>
+
     <div class="time">
       <span id="current">0:00</span>
       <span id="duration">0:00</span>
@@ -158,6 +166,7 @@ let player;
 let isPlaying=false;
 let isSeeking=false;
 let repeatMode=0;
+let thankYouShown=false; // 🔒 one-time only
 
 const playBtn=document.getElementById("play");
 const seek=document.getElementById("seek");
@@ -166,6 +175,7 @@ const current=document.getElementById("current");
 const duration=document.getElementById("duration");
 const repeatBtn=document.getElementById("repeat");
 const repeatState=document.getElementById("repeatState");
+const thankyou=document.getElementById("thankyou");
 
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
@@ -179,8 +189,9 @@ function onYouTubeIframeAPIReady(){
 function onState(e){
   if(isSeeking) return;
 
-  if(e.data===YT.PlayerState.BUFFERING || e.data===YT.PlayerState.CUED){
-    playBtn.classList.add("loading");
+  if((e.data===YT.PlayerState.BUFFERING || e.data===YT.PlayerState.CUED) && !thankYouShown){
+    thankYouShown=true;
+    thankyou.classList.add("show");
   }
 
   if(e.data===YT.PlayerState.PLAYING){
