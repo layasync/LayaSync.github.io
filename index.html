@@ -252,7 +252,7 @@ function format(t) {
 }
 
 /* LRC */
-fetch("LYRICS.lrc")
+fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
   .then(r => r.text())
   .then(t => {
     lyrics = t.split("\n").map(l => {
