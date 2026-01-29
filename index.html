@@ -21,7 +21,7 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, #6b2f24, #121212 60%);
   color: #fff;
-  padding-bottom: 140px;
+  padding-bottom: 160px; /* space for lyrics bar + nav bar */
 }
 
 /* HEADER */
@@ -140,12 +140,15 @@ body {
   font-weight: 900;
 }
 
-/* LYRICS MINI PLAYER (ROUNDED) */
+/* LYRICS MINI PLAYER (LOCKED STYLE, MOVED UP) */
 .lyric-bar {
   position: fixed;
   left: 16px;
   right: 16px;
-  bottom: 16px;
+
+  /* 👇 key fix: lifted above nav bar */
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 24px);
+
   padding: 16px 20px;
   background: linear-gradient(
     180deg,
