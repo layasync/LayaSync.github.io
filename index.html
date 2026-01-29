@@ -7,26 +7,29 @@
 
 <meta name="theme-color" content="#121212">
 
+<!-- ROBOTO FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+
 <style>
 * {
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+  font-family: 'Roboto', sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
+  min-height: 100vh;
   background: linear-gradient(180deg, #6b2f24, #121212 60%);
   color: #fff;
-  min-height: 100vh;
 }
 
 /* ===== HEADER ===== */
 .header {
   text-align: center;
   padding: 14px 0;
-  font-weight: 800;
-  letter-spacing: 0.6px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
 }
 
 /* ===== COVER ===== */
@@ -40,9 +43,9 @@ body {
   width: 88%;
   max-width: 320px;
   aspect-ratio: 1/1;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  box-shadow: 0 22px 60px rgba(0,0,0,0.75);
 }
 
 .cover img {
@@ -58,7 +61,7 @@ body {
 
 .track {
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .artist {
@@ -68,17 +71,33 @@ body {
   opacity: 0.9;
 }
 
-/* ===== SEEK ===== */
+/* ===== SEEK BAR ===== */
 .seek-wrap {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
-#seek {
+.seek-track {
+  position: relative;
   width: 100%;
-  -webkit-appearance: none;
   height: 4px;
   background: rgba(255,255,255,0.25);
   border-radius: 2px;
+}
+
+.seek-fill {
+  position: absolute;
+  height: 100%;
+  width: 0%;
+  background: #fff;
+  border-radius: 2px;
+}
+
+#seek {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 #seek::-webkit-slider-thumb {
@@ -87,30 +106,29 @@ body {
   height: 14px;
   background: #fff;
   border-radius: 50%;
-  margin-top: -5px;
 }
 
 .time {
   display: flex;
   justify-content: space-between;
+  margin-top: 6px;
   font-size: 12px;
   font-weight: 700;
   opacity: 0.85;
-  margin-top: 6px;
 }
 
 /* ===== CONTROLS ===== */
 .controls {
-  margin-top: 22px;
+  margin-top: 26px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .icon-btn {
   width: 26px;
   height: 26px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .icon-btn.active {
@@ -118,34 +136,35 @@ body {
 }
 
 .play {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
+  width: 72px;
+  height: 72px;
   background: #fff;
   color: #000;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
 }
 
-/* ===== LYRICS BAR ===== */
-.lyric-bar {
+/* ===== LYRICS OVERLAY BAR ===== */
+.lyric-overlay {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
-  padding: 18px 16px 28px;
+  bottom: 0;
+  padding: 20px 16px 30px;
   background: linear-gradient(
     to top,
-    rgba(18,18,18,0.98),
-    rgba(18,18,18,0.85),
-    transparent
+    rgba(22,22,22,0.98),
+    rgba(22,22,22,0.92),
+    rgba(22,22,22,0.75)
   );
   text-align: center;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
+  color: #fff;
 }
 </style>
 </head>
@@ -164,31 +183,36 @@ body {
   <div class="track">Lose My Mind</div>
   <div class="artist">Don Toliver, Doja Cat</div>
 
+  <!-- SEEK -->
   <div class="seek-wrap">
-    <input type="range" id="seek" min="0" max="100" value="0">
+    <div class="seek-track">
+      <div class="seek-fill" id="seekFill"></div>
+      <input type="range" id="seek" min="0" max="100" value="0">
+    </div>
     <div class="time">
       <span id="current">0:00</span>
       <span id="duration">0:00</span>
     </div>
   </div>
 
+  <!-- CONTROLS -->
   <div class="controls">
-    <!-- shuffle -->
+    <!-- Shuffle -->
     <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
     </svg>
 
     <div class="play" id="play">▶</div>
 
-    <!-- repeat -->
+    <!-- Repeat -->
     <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
     </svg>
   </div>
 </div>
 
-<!-- LYRICS OVERLAY BAR -->
-<div class="lyric-bar" id="lyrics">
+<!-- LYRICS OVERLAY -->
+<div class="lyric-overlay" id="lyrics">
   Tap play to begin…
 </div>
 
@@ -198,6 +222,7 @@ body {
 const audio = document.getElementById("audio");
 const play = document.getElementById("play");
 const seek = document.getElementById("seek");
+const seekFill = document.getElementById("seekFill");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const lyricsBox = document.getElementById("lyrics");
@@ -205,7 +230,7 @@ const repeatBtn = document.getElementById("repeat");
 
 let lyrics = [];
 
-/* play */
+/* PLAY */
 play.onclick = () => {
   if (audio.paused) {
     audio.play();
@@ -216,13 +241,15 @@ play.onclick = () => {
   }
 };
 
-/* time */
+/* TIME */
 audio.onloadedmetadata = () => {
   duration.textContent = format(audio.duration);
 };
 
 audio.ontimeupdate = () => {
-  seek.value = (audio.currentTime / audio.duration) * 100;
+  const p = (audio.currentTime / audio.duration) * 100;
+  seek.value = p;
+  seekFill.style.width = p + "%";
   current.textContent = format(audio.currentTime);
   syncLyrics();
 };
@@ -231,13 +258,13 @@ seek.oninput = () => {
   audio.currentTime = (seek.value / 100) * audio.duration;
 };
 
-/* repeat */
+/* REPEAT */
 repeatBtn.onclick = () => {
   audio.loop = !audio.loop;
   repeatBtn.classList.toggle("active", audio.loop);
 };
 
-/* lyrics */
+/* LYRICS */
 fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
 .then(r => r.text())
 .then(t => {
