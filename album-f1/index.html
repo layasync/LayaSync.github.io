@@ -72,7 +72,7 @@ body {
   opacity: 0.9;
 }
 
-/* SEEK BAR */
+/* SEEK */
 .seek-wrap {
   margin-top: 18px;
 }
@@ -251,7 +251,6 @@ const repeatState = document.getElementById("repeatState");
 const seek = document.getElementById("seek");
 const seekFill = document.getElementById("seekFill");
 const lyricsBox = document.getElementById("lyrics");
-
 const titleEl = document.getElementById("trackTitle");
 const artistEl = document.getElementById("trackArtist");
 const coverImg = document.getElementById("coverImg");
@@ -260,17 +259,32 @@ const duration = document.getElementById("duration");
 
 function loadTrack(i) {
   const t = album[i];
+
+  audio.pause();
+  audio.currentTime = 0;
+
+  playBtn.textContent = "▶";
+  seek.value = 0;
+  seekFill.style.width = "0%";
+  current.textContent = "0:00";
+  duration.textContent = "0:00";
+
   audio.src = t.audio;
   titleEl.textContent = t.title;
   artistEl.textContent = t.artist;
   coverImg.src = t.cover;
+
+  lyrics = [];
   lyricsBox.textContent = "Loading lyrics…";
-  fetch(t.lrc).then(r => r.text()).then(text => {
-    lyrics = text.split("\n").map(l => {
-      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      return m ? { time:+m[1]*60+ +m[2], text:m[3] } : null;
-    }).filter(Boolean);
-  });
+
+  fetch(t.lrc)
+    .then(r => r.text())
+    .then(text => {
+      lyrics = text.split("\n").map(l => {
+        const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+        return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
+      }).filter(Boolean);
+    });
 }
 
 loadTrack(index);
@@ -309,12 +323,11 @@ repeatBtn.onclick = () => {
 };
 
 audio.onended = () => {
-  if (repeatMode === 1 || shuffleOn) {
-    nextBtn.onclick();
-  }
+  if (repeatMode === 1 || shuffleOn) nextBtn.onclick();
 };
 
 audio.ontimeupdate = () => {
+  if (!audio.duration) return;
   const p = audio.currentTime / audio.duration * 100;
   seek.value = p;
   seekFill.style.width = p + "%";
