@@ -51,6 +51,7 @@ class QuickStart {
             generateBtn: document.getElementById("generateCredsBtn"),
             // Manifest Mode Inputs
             aiostreamsPasswordInput: document.getElementById("aiostreamsPassword"),
+            compatibilityModeSelect: document.getElementById("compatibilityMode"),
 
             providerGroup: document.getElementById("providerGroup"),
             apiKeysContainer: document.getElementById("apiKeysContainer"),
@@ -111,6 +112,9 @@ class QuickStart {
         // Submit
         this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
 
+        // Platform Change
+        this.ui.compatibilityModeSelect.addEventListener("change", (e) => this.handleCompatibilityModeChange(e.target.value));
+
         // Advanced settings button
         this.ui.viewAdvancedBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -159,6 +163,21 @@ class QuickStart {
             this.ui.submitBtn.textContent = "Generate Manifest";
             this.ui.cleanDuckStreamsCheckbox.disabled = true;
             this.ui.cleanDuckStreamsCheckbox.checked = false;
+        }
+    }
+
+    handleCompatibilityModeChange(compatibilityMode) {
+        if (compatibilityMode === 'stremio') {
+            if (this.defaultFormatterId && this.formatters[this.defaultFormatterId]) {
+                this.ui.formatSelect.value = this.defaultFormatterId;
+                this.handleFormatterSelection(this.defaultFormatterId);
+            }
+        }
+        if (compatibilityMode === 'chilllink') {
+            if (this.formatters['chillio']) {
+                this.ui.formatSelect.value = 'chillio';
+                this.handleFormatterSelection('chillio');
+            }
         }
     }
 
@@ -240,6 +259,7 @@ class QuickStart {
             // Select Default (First item)
             if (parsedFormatters.length > 0) {
                 const firstId = parsedFormatters[0].id;
+                this.defaultFormatterId = firstId;
                 this.ui.formatSelect.value = firstId;
                 this.handleFormatterSelection(firstId);
             }
@@ -412,7 +432,7 @@ class QuickStart {
         return readAccessToken;
     }
 
-    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId) {
+    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode) {
         const tmdbReadToken = await this.generateRandomTmdbCredentials();
         const exclude4k = this.ui.exclude4kCheckbox.checked;
         const excludeDolby = this.ui.excludeDolbyCheckbox.checked;
@@ -431,7 +451,7 @@ class QuickStart {
         if (selectedHostValue !== 'auto') {
             // Specific host selected
             console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
-            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password);
+            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password, compatibilityMode);
         } else {
             // Auto-select host
             // Try hosts in order: defined in AIOStreamsAPI
@@ -442,7 +462,7 @@ class QuickStart {
                 try {
                     console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
                     // Clone config so modifications (like removing presets) don't persist to the next host
-                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password);
+                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password, compatibilityMode);
                     break; // Break if successful
                 } catch (err) {
                     errors.push(name + ": " + err.message);
@@ -504,6 +524,7 @@ class QuickStart {
             }
         }
 
+        const compatibilityMode = this.ui.compatibilityModeSelect.value;
         const debridioKey = this.ui.debridioInput.value.trim();
         const cleanupOldInstalls = this.ui.cleanDuckStreamsCheckbox.checked;
 
@@ -526,7 +547,7 @@ class QuickStart {
             return null;
         }
 
-        return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId };
+        return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId, compatibilityMode };
     }
 
     async handleSubmit(e) {
@@ -546,6 +567,7 @@ class QuickStart {
             const debridioKey = formData.debridioKey;
             const cleanupOldInstalls = formData.cleanupOldInstalls;
             const selectedFormatterId = formData.selectedFormatterId;
+            const compatibilityMode = formData.compatibilityMode;
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
@@ -556,7 +578,7 @@ class QuickStart {
             }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId);
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode);
 
             if (this.mode === 'account') {
                 // 4. Install Manifest

@@ -64,7 +64,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new user/manifest from a config object (e.g. from restore)
-    static async installConfig(baseAIOStreamsUrl, password, config) {
+    static async installConfig(baseAIOStreamsUrl, password, config, compatibilityMode = 'stremio') {
         const payload = {
             config: config,
             password: password
@@ -73,14 +73,18 @@ class AIOStreamsAPI {
         const json = await this.call(baseAIOStreamsUrl, 'POST', '/api/v1/user', payload);
         const newUuid = json.data && json.data.uuid;
         const encrypted = json.data && json.data.encryptedPassword;
+
         if (newUuid && encrypted) {
+            if (compatibilityMode === 'chilllink') {
+                return `${baseAIOStreamsUrl.replace(/\/$/, "")}/chilllink/${newUuid}/${encrypted}`;
+            }
             return `${baseAIOStreamsUrl.replace(/\/$/, "")}/stremio/${newUuid}/${encrypted}/manifest.json`;
         }
         throw new Error("API response did not contain the expected UUID and encrypted password.");
     }
 
     // Install config with smart retry logic for common upstream errors
-    static async installConfigWithSmartRetry(hostUrl, hostName, config, password) {
+    static async installConfigWithSmartRetry(hostUrl, hostName, config, password, compatibilityMode = 'stremio') {
         let attempts = 0;
         const maxAttempts = 4; // 1 initial + 3 fixes
 
@@ -88,7 +92,7 @@ class AIOStreamsAPI {
             attempts++;
             try {
                 // Try initial install
-                return await this.installConfig(hostUrl, password, config);
+                return await this.installConfig(hostUrl, password, config, compatibilityMode);
             } catch (err) {
                 // If we've run out of attempts, throw the error
                 if (attempts >= maxAttempts) throw err;
