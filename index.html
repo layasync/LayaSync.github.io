@@ -21,7 +21,7 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, #6b2f24, #121212 60%);
   color: #fff;
-  padding-bottom: 160px; /* space for lyrics bar + nav bar */
+  padding-bottom: 180px; /* space for lyrics bar + nav */
 }
 
 /* HEADER */
@@ -57,6 +57,7 @@ body {
 /* INFO */
 .info {
   padding: 16px;
+  padding-bottom: 80px; /* 🔥 THIS lifts the controls bar up */
 }
 
 .track {
@@ -111,7 +112,7 @@ body {
 
 /* CONTROLS */
 .controls {
-  margin-top: 32px;
+  margin-top: 36px; /* slightly more breathing room */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -140,15 +141,12 @@ body {
   font-weight: 900;
 }
 
-/* LYRICS MINI PLAYER (LOCKED STYLE, MOVED UP) */
+/* LYRICS BAR (UNCHANGED) */
 .lyric-bar {
   position: fixed;
   left: 16px;
   right: 16px;
-
-  /* 👇 key fix: lifted above nav bar */
   bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 24px);
-
   padding: 16px 20px;
   background: linear-gradient(
     180deg,
@@ -271,13 +269,11 @@ seek.oninput = () => {
   audio.currentTime = (seek.value / 100) * audio.duration;
 };
 
-/* SHUFFLE */
 shuffleBtn.onclick = () => {
   shuffleOn = !shuffleOn;
   shuffleBtn.classList.toggle("active", shuffleOn);
 };
 
-/* REPEAT */
 repeatBtn.onclick = () => {
   repeatMode = (repeatMode + 1) % 3;
   if (repeatMode === 0) {
@@ -294,7 +290,6 @@ repeatBtn.onclick = () => {
   }
 };
 
-/* LYRICS */
 fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
 .then(r => r.text())
 .then(t => {
