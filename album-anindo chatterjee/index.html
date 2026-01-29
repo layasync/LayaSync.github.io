@@ -22,14 +22,14 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .artist{margin-top:4px;font-size:15px;font-weight:700;opacity:.9}
 
 /* SEEK */
-.seek-wrap{margin-top:18px; position:relative}
+.seek-wrap{margin-top:18px;position:relative}
 .seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
 .seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
 #seek{position:absolute;inset:0;width:100%;opacity:0}
 
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 
-/* ONE-TIME THANK YOU (below seek bar) */
+/* One-time Thank You */
 .thankyou{
   position:absolute;
   left:50%;
@@ -42,16 +42,12 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   opacity:0;
   pointer-events:none;
 }
-
-.thankyou.show{
-  animation:thankFade 2.2s ease forwards;
-}
-
+.thankyou.show{animation:thankFade 2.2s ease forwards}
 @keyframes thankFade{
-  0%{opacity:0; transform:translateX(-50%) translateY(4px)}
-  20%{opacity:1; transform:translateX(-50%) translateY(0)}
+  0%{opacity:0;transform:translateX(-50%) translateY(4px)}
+  20%{opacity:1;transform:translateX(-50%) translateY(0)}
   80%{opacity:1}
-  100%{opacity:0; transform:translateX(-50%) translateY(-4px)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-4px)}
 }
 
 /* CONTROLS */
@@ -59,7 +55,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .icon-btn{width:26px;height:26px;opacity:.75}
 .icon-btn.active{opacity:1}
 
-/* PLAY BUTTON */
+/* PLAY BUTTON + LOADER */
 .play{
   position:relative;
   width:76px;
@@ -73,8 +69,6 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   font-size:30px;
   font-weight:900;
 }
-
-/* Loading ring (unchanged) */
 .play::after{
   content:"";
   position:absolute;
@@ -125,10 +119,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
       <div class="seek-fill" id="seekFill"></div>
       <input type="range" id="seek" min="0" max="100" value="0">
     </div>
-
-    <!-- one-time message -->
     <div class="thankyou" id="thankyou">Thank you 🫶</div>
-
     <div class="time">
       <span id="current">0:00</span>
       <span id="duration">0:00</span>
@@ -162,11 +153,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let player;
-let isPlaying=false;
-let isSeeking=false;
-let repeatMode=0;
-let thankYouShown=false; // 🔒 one-time only
+let player,isPlaying=false,isSeeking=false,repeatMode=0,thankYouShown=false;
 
 const playBtn=document.getElementById("play");
 const seek=document.getElementById("seek");
@@ -180,18 +167,34 @@ const thankyou=document.getElementById("thankyou");
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
     videoId:"Zz0PcNCZbBY",
-    playerVars:{playsinline:1},
-    events:{onStateChange:onState}
+    playerVars:{playsinline:1,mute:1},
+    events:{onReady:onReady,onStateChange:onState}
   });
+}
+
+function onReady(){
+  /* 🔥 warm-up prebuffer (lowest possible delay) */
+  player.playVideo();
+  const warm=setInterval(()=>{
+    if(player.getCurrentTime()>0.15){
+      player.pauseVideo();
+      player.seekTo(0,true);
+      player.unMute();
+      clearInterval(warm);
+    }
+  },50);
   setInterval(update,100);
 }
 
 function onState(e){
   if(isSeeking) return;
 
-  if((e.data===YT.PlayerState.BUFFERING || e.data===YT.PlayerState.CUED) && !thankYouShown){
-    thankYouShown=true;
-    thankyou.classList.add("show");
+  if(e.data===YT.PlayerState.BUFFERING||e.data===YT.PlayerState.CUED){
+    playBtn.classList.add("loading");
+    if(!thankYouShown){
+      thankYouShown=true;
+      thankyou.classList.add("show");
+    }
   }
 
   if(e.data===YT.PlayerState.PLAYING){
@@ -212,16 +215,13 @@ function onState(e){
   }
 }
 
-playBtn.onclick=()=>{
-  isPlaying?player.pauseVideo():player.playVideo();
-};
+playBtn.onclick=()=>isPlaying?player.pauseVideo():player.playVideo();
 
 repeatBtn.onclick=()=>{
   repeatMode=(repeatMode+1)%3;
   repeatState.textContent=repeatMode===1?".":repeatMode===2?"1":"";
 };
 
-/* SEEK */
 seek.oninput=()=>{
   isSeeking=true;
   const d=player.getDuration();
