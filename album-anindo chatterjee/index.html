@@ -9,35 +9,68 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:'Roboto',sans-serif;-webkit-tap-highlight-color:transparent}
-body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212 60%);color:#fff;padding-bottom:180px}
-.header{text-align:center;padding:14px 0;font-weight:900;letter-spacing:.8px}
+*{box-sizing:border-box;font-family:'Roboto',sans-serif}
+body{
+  margin:0;
+  min-height:100vh;
+  background:linear-gradient(180deg,#6b2f24,#121212 60%);
+  color:#fff;
+  padding-bottom:160px
+}
+.header{text-align:center;padding:14px 0;font-weight:900}
 .cover-wrap{display:flex;justify-content:center;padding:12px}
-.cover{width:88%;max-width:320px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.75)}
+.cover{
+  width:88%;
+  max-width:320px;
+  aspect-ratio:1/1;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 22px 60px rgba(0,0,0,.75)
+}
 .cover img{width:100%;height:100%;object-fit:cover}
-.info{padding:16px;padding-bottom:80px}
+.info{padding:16px}
 .track{font-size:22px;font-weight:900}
 .artist{margin-top:4px;font-size:15px;font-weight:700;opacity:.9}
-
-.seek-wrap{margin-top:18px}
-.seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
-.seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
-#seek{position:absolute;inset:0;width:100%;opacity:0}
-
-.time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
-
-.controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
-.icon-btn{width:26px;height:26px;opacity:.7}
-.icon-btn.active{opacity:1}
-.play{width:76px;height:76px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
-
+.controls{
+  margin-top:40px;
+  display:flex;
+  justify-content:center
+}
+.play{
+  width:76px;
+  height:76px;
+  background:#fff;
+  color:#000;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:900;
+  cursor:pointer;
+  user-select:none
+}
 .lyric-bar{
-position:fixed;left:16px;right:16px;
-bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);
-padding:16px 20px;
-background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));
-border-radius:18px;font-size:15px;font-weight:900;
-box-shadow:0 14px 40px rgba(0,0,0,.7)
+  position:fixed;
+  left:16px;
+  right:16px;
+  bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);
+  padding:16px 20px;
+  background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));
+  border-radius:18px;
+  font-size:15px;
+  font-weight:900;
+  text-align:center;
+  box-shadow:0 14px 40px rgba(0,0,0,.7)
+}
+
+/* hide iframe visually but keep it alive */
+#player{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none
 }
 </style>
 </head>
@@ -53,114 +86,65 @@ box-shadow:0 14px 40px rgba(0,0,0,.7)
 </div>
 
 <div class="info">
-  <div class="track">Tal Teental</div>
-  <div class="artist">LayaSync</div>
-
-  <div class="seek-wrap">
-    <div class="seek-track">
-      <div class="seek-fill" id="seekFill"></div>
-      <input type="range" id="seek" min="0" max="100" value="0">
-    </div>
-    <div class="time">
-      <span id="current">0:00</span>
-      <span id="duration">0:00</span>
-    </div>
-  </div>
+  <div class="track">Lose My Mind</div>
+  <div class="artist">Don Toliver, Doja Cat</div>
 
   <div class="controls">
-    <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
-      <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
-    </svg>
-
     <div class="play" id="playBtn">▶</div>
-
-    <svg id="loop" class="icon-btn" viewBox="0 0 24 24" fill="white">
-      <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
-    </svg>
   </div>
 </div>
 
-<div class="lyric-bar">Playing via YouTube</div>
-
-<!-- Hidden YouTube iframe -->
-<div style="width:0;height:0;overflow:hidden">
-  <div id="ytPlayer"></div>
+<div class="lyric-bar">
+  PLAYING VIA YOUTUBE
 </div>
 
+<!-- YouTube Iframe API -->
+<div id="player"></div>
 <script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
 let player;
 let isPlaying = false;
-let loopOn = false;
 
-const playBtn = document.getElementById("playBtn");
-const loopBtn = document.getElementById("loop");
-const seek = document.getElementById("seek");
-const seekFill = document.getElementById("seekFill");
-const current = document.getElementById("current");
-const duration = document.getElementById("duration");
+/* 🔧 CHANGE ONLY THIS */
+const VIDEO_ID = "Zz0PcNCZbBY";
 
-function onYouTubeIframeAPIReady(){
-  player = new YT.Player("ytPlayer",{
-    videoId:"Zz0PcNCZbBY",
-    playerVars:{controls:0,rel:0},
-    events:{
-      onStateChange:e=>{
-        if(e.data === YT.PlayerState.PLAYING){
-          isPlaying = true;
-          playBtn.textContent = "❚❚";
-        }
-        if(e.data === YT.PlayerState.PAUSED){
-          isPlaying = false;
-          playBtn.textContent = "▶";
-        }
-        if(e.data === YT.PlayerState.ENDED){
-          if(loopOn){
-            player.playVideo();
-          } else {
-            isPlaying = false;
-            playBtn.textContent = "▶";
-          }
-        }
-      }
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    videoId: VIDEO_ID,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      modestbranding: 1,
+      rel: 0
+    },
+    events: {
+      onStateChange: onPlayerStateChange
     }
   });
 }
 
-playBtn.onclick = () => {
-  if(!player) return;
-  isPlaying ? player.pauseVideo() : player.playVideo();
-};
-
-loopBtn.onclick = () => {
-  loopOn = !loopOn;
-  loopBtn.classList.toggle("active", loopOn);
-};
-
-setInterval(()=>{
-  if(!player || !isPlaying) return;
-  const cur = player.getCurrentTime();
-  const dur = player.getDuration();
-  if(!dur) return;
-
-  const p = cur / dur * 100;
-  seek.value = p;
-  seekFill.style.width = p + "%";
-  current.textContent = format(cur);
-  duration.textContent = format(dur);
-},500);
-
-seek.oninput = () => {
-  if(!player) return;
-  const dur = player.getDuration();
-  player.seekTo(seek.value/100 * dur, true);
-};
-
-function format(t){
-  const m = Math.floor(t/60);
-  const s = Math.floor(t%60).toString().padStart(2,"0");
-  return `${m}:${s}`;
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    isPlaying = true;
+    playBtn.textContent = "❚❚";
+  }
+  if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+    isPlaying = false;
+    playBtn.textContent = "▶";
+  }
 }
+
+const playBtn = document.getElementById("playBtn");
+
+playBtn.onclick = () => {
+  if (!player) return;
+  if (isPlaying) {
+    player.pauseVideo();
+  } else {
+    player.playVideo();
+  }
+};
 </script>
 
 </body>
