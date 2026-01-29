@@ -11,7 +11,6 @@
 <style>
 *{box-sizing:border-box;font-family:'Roboto',sans-serif;-webkit-tap-highlight-color:transparent}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212 60%);color:#fff;padding-bottom:180px}
-
 .header{text-align:center;padding:14px 0;font-weight:900;letter-spacing:.8px}
 
 .cover-wrap{display:flex;justify-content:center;padding:12px}
@@ -27,19 +26,14 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
 .seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
 #seek{position:absolute;inset:0;width:100%;opacity:0}
-
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 
-/* Thank you (one time) */
+/* THANK YOU */
 .thankyou{
-  position:absolute;
-  left:50%;
-  top:26px;
+  position:absolute;left:50%;top:26px;
   transform:translateX(-50%);
-  font-size:13px;
-  font-weight:700;
-  opacity:0;
-  pointer-events:none;
+  font-size:13px;font-weight:700;
+  opacity:0;pointer-events:none
 }
 .thankyou.show{animation:fadeThanks 2.2s ease forwards}
 @keyframes fadeThanks{
@@ -52,27 +46,16 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 /* CONTROLS */
 .controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
 .icon-btn{width:26px;height:26px;opacity:.75}
-.icon-btn.active{opacity:1}
 
 /* PLAY + SPINNER */
 .play{
-  position:relative;
-  width:76px;
-  height:76px;
-  background:#fff;
-  color:#000;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:900;
+  position:relative;width:76px;height:76px;
+  background:#fff;color:#000;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:900
 }
 .play::after{
-  content:"";
-  position:absolute;
-  inset:-6px;
-  border-radius:50%;
+  content:"";position:absolute;inset:-6px;border-radius:50%;
   border:3px solid rgba(255,255,255,.25);
   border-top-color:#fff;
   animation:spin 1s linear infinite;
@@ -82,15 +65,11 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .lyric-bar{
-  position:fixed;
-  left:16px;
-  right:16px;
+  position:fixed;left:16px;right:16px;
   bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);
   padding:16px 20px;
   background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));
-  border-radius:18px;
-  font-size:15px;
-  font-weight:900;
+  border-radius:18px;font-size:15px;font-weight:900;
   box-shadow:0 14px 40px rgba(0,0,0,.7)
 }
 
@@ -125,28 +104,22 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   </div>
 
   <div class="controls">
-    <!-- SHUFFLE -->
     <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
     </svg>
 
-    <!-- PREV -->
     <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M6 6h2v12H6zm3.5 6L18 6v12z"/>
     </svg>
 
-    <!-- PLAY -->
     <div class="play" id="play">▶</div>
 
-    <!-- NEXT -->
     <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
     </svg>
 
-    <!-- REPEAT -->
     <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
-      <text id="repeatState" x="12" y="16" text-anchor="middle" font-size="10" font-weight="900" fill="white"></text>
     </svg>
   </div>
 </div>
@@ -156,8 +129,11 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-let player,isPlaying=false,isSeeking=false;
-let shouldAutoPlay=false,warmUp=true,thankShown=false;
+let player;
+let isPlaying=false,isSeeking=false;
+let userInitiated=false;
+let thankShown=false;
+let warmUpDone=false;
 
 const playBtn=document.getElementById("play");
 const seek=document.getElementById("seek");
@@ -175,23 +151,25 @@ function onYouTubeIframeAPIReady(){
 }
 
 function onReady(){
+  // warm-up ONLY before user interaction
   player.playVideo();
   const warm=setInterval(()=>{
     if(player.getCurrentTime()>0.15){
       player.pauseVideo();
       player.seekTo(0,true);
       player.unMute();
-      warmUp=false;
+      warmUpDone=true;
       clearInterval(warm);
     }
   },50);
+
   setInterval(update,100);
 }
 
 function onState(e){
   if(isSeeking) return;
 
-  if(e.data===YT.PlayerState.BUFFERING||e.data===YT.PlayerState.CUED){
+  if(e.data===YT.PlayerState.BUFFERING){
     playBtn.classList.add("loading");
     if(!thankShown){
       thankShown=true;
@@ -202,30 +180,23 @@ function onState(e){
   if(e.data===YT.PlayerState.PLAYING){
     playBtn.classList.remove("loading");
     isPlaying=true;
-    shouldAutoPlay=false;
     playBtn.textContent="❚❚";
   }
 
-  if((e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.CUED)&&shouldAutoPlay&&!warmUp){
-    player.playVideo();
-  }
-
-  if(e.data===YT.PlayerState.PAUSED&&!shouldAutoPlay&&!warmUp){
-    playBtn.classList.remove("loading");
-    isPlaying=false;
-    playBtn.textContent="▶";
+  if(e.data===YT.PlayerState.PAUSED){
+    if(userInitiated){
+      player.playVideo(); // 🔥 never stop after buffer
+    } else {
+      isPlaying=false;
+      playBtn.textContent="▶";
+    }
   }
 }
 
 playBtn.onclick=()=>{
-  if(isPlaying){
-    shouldAutoPlay=false;
-    player.pauseVideo();
-  }else{
-    shouldAutoPlay=true;
-    playBtn.classList.add("loading");
-    player.playVideo();
-  }
+  userInitiated=true;     // 🔑 critical fix
+  playBtn.classList.add("loading");
+  player.playVideo();
 };
 
 /* SEEK */
@@ -246,7 +217,6 @@ seek.onchange=()=>{
 function update(){
   if(!player||!player.getDuration||isSeeking) return;
   const d=player.getDuration();
-  if(!d) return;
   const c=player.getCurrentTime();
   const p=c/d*100;
   seek.value=p;
