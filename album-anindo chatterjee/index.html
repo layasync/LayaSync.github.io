@@ -44,7 +44,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   font-weight:900;
 }
 
-/* 🔥 loading ring – NON-DESTRUCTIVE */
+/* loading ring – additive only */
 .play::after{
   content:"";
   position:absolute;
@@ -56,11 +56,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   opacity:0;
   pointer-events:none;
 }
-
-.play.loading::after{
-  opacity:1;
-}
-
+.play.loading::after{opacity:1}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .lyric-bar{
@@ -134,10 +130,16 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 <script>
 let player;
 let isPlaying=false;
-let isLocked=false;
+let isSeeking=false;
 let repeatMode=0;
 
 const playBtn=document.getElementById("play");
+const seek=document.getElementById("seek");
+const seekFill=document.getElementById("seekFill");
+const current=document.getElementById("current");
+const duration=document.getElementById("duration");
+const repeatBtn=document.getElementById("repeat");
+const repeatState=document.getElementById("repeatState");
 
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
@@ -145,35 +147,76 @@ function onYouTubeIframeAPIReady(){
     playerVars:{playsinline:1},
     events:{onStateChange:onState}
   });
+  setInterval(update,100);
 }
 
 function onState(e){
+  if(isSeeking) return;
+
   if(e.data===YT.PlayerState.BUFFERING || e.data===YT.PlayerState.CUED){
-    lock(true);
+    playBtn.classList.add("loading");
   }
 
   if(e.data===YT.PlayerState.PLAYING){
-    lock(false);
+    playBtn.classList.remove("loading");
     isPlaying=true;
     playBtn.textContent="❚❚";
   }
 
   if(e.data===YT.PlayerState.PAUSED){
-    lock(false);
+    playBtn.classList.remove("loading");
     isPlaying=false;
     playBtn.textContent="▶";
+  }
+
+  if(e.data===YT.PlayerState.ENDED && repeatMode>0){
+    player.seekTo(0,true);
+    player.playVideo();
   }
 }
 
 playBtn.onclick=()=>{
-  if(isLocked) return;
-  lock(true);
   isPlaying?player.pauseVideo():player.playVideo();
 };
 
-function lock(state){
-  isLocked=state;
-  playBtn.classList.toggle("loading",state);
+repeatBtn.onclick=()=>{
+  repeatMode=(repeatMode+1)%3;
+  repeatState.textContent=repeatMode===1?".":repeatMode===2?"1":"";
+};
+
+/* SEEK — restored exactly */
+seek.oninput=()=>{
+  isSeeking=true;
+  const d=player.getDuration();
+  if(d){
+    const t=seek.value/100*d;
+    seekFill.style.width=seek.value+"%";
+    current.textContent=format(t);
+  }
+};
+
+seek.onchange=()=>{
+  const d=player.getDuration();
+  if(d) player.seekTo(seek.value/100*d,true);
+  setTimeout(()=>isSeeking=false,120);
+};
+
+function update(){
+  if(!player||!player.getDuration||isSeeking) return;
+  const d=player.getDuration();
+  if(!d) return;
+  const c=player.getCurrentTime();
+  const p=c/d*100;
+  seek.value=p;
+  seekFill.style.width=p+"%";
+  current.textContent=format(c);
+  duration.textContent=format(d);
+}
+
+function format(t){
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
 }
 </script>
 
