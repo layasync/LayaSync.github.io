@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Album</title>
+<title>LayaSync</title>
 
 <meta name="theme-color" content="#121212">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
@@ -21,12 +21,13 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 .seek-wrap{margin-top:18px}
 .seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
 .seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
-#seek{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+#seek{position:absolute;inset:0;width:100%;opacity:0}
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 .controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
 .icon-btn{width:26px;height:26px;opacity:.75}
+.icon-btn.active{opacity:1}
 .play{width:76px;height:76px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
-.lyric-bar{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);padding:16px 20px;background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));border-radius:18px;font-size:15px;font-weight:900;color:#fff;box-shadow:0 14px 40px rgba(0,0,0,.7)}
+.lyric-bar{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);padding:16px 20px;background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));border-radius:18px;font-size:15px;font-weight:900;box-shadow:0 14px 40px rgba(0,0,0,.7)}
 </style>
 </head>
 
@@ -34,11 +35,8 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 
 <div class="header">PLAYING FROM NFC</div>
 
-<!-- 🔥🔥🔥 ALBUM DEFAULT COVER 🔥🔥🔥 -->
 <div class="cover-wrap">
-  <div class="cover">
-    <img id="coverImg" src="<<< PASTE ALBUM COVER IMAGE LINK HERE >>>">
-  </div>
+  <div class="cover"><img id="coverImg"></div>
 </div>
 
 <div class="info">
@@ -57,115 +55,103 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   </div>
 
   <div class="controls">
-    <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white">
-      <path d="M6 6h2v12H6zm3.5 6L18 6v12z"/>
-    </svg>
-
+    <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/></svg>
+    <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
     <div class="play" id="play">▶</div>
-
-    <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white">
-      <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
+    <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
+    <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
+      <text id="repeatState" x="12" y="16" text-anchor="middle" font-size="10" font-weight="900" fill="white"></text>
     </svg>
   </div>
 </div>
 
-<div class="lyric-bar" id="lyrics">Lyrics not available</div>
-
+<div class="lyric-bar" id="lyrics">Tap play to begin…</div>
 <audio id="audio"></audio>
 
 <script>
-/* 🔥🔥🔥 EDIT ONLY BELOW 🔥🔥🔥 */
+/* ===== 10 TRACK UPLOAD AREA ===== */
 const album = [
-  {
-    title: "<<< TRACK 1 TITLE >>>",
-    artist: "<<< ARTIST >>>",
-    audio: "<<< TRACK 1 AUDIO LINK >>>",
-    lrc: "<<< TRACK 1 LRC LINK (OR LEAVE EMPTY) >>>",
-    cover: "<<< TRACK 1 COVER LINK (OR LEAVE EMPTY) >>>"
-  },
-  {
-    title: "<<< TRACK 2 TITLE >>>",
-    artist: "<<< ARTIST >>>",
-    audio: "<<< TRACK 2 AUDIO LINK >>>",
-    lrc: "",
-    cover: ""
-  }
-  /* ADD UP TO 10 TRACKS */
+  { title:"TRACK 1", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 2", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 3", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 4", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 5", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 6", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 7", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 8", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 9", artist:"ARTIST", audio:"", lrc:"", cover:"" },
+  { title:"TRACK 10",artist:"ARTIST", audio:"", lrc:"", cover:"" }
 ];
-/* 🔒 DO NOT EDIT BELOW 🔒 */
 
-let index=0,lyrics=[];
-const audio=document.getElementById("audio");
-const play=document.getElementById("play");
-const prev=document.getElementById("prev");
-const next=document.getElementById("next");
-const titleEl=document.getElementById("trackTitle");
-const artistEl=document.getElementById("trackArtist");
-const coverImg=document.getElementById("coverImg");
-const seek=document.getElementById("seek");
-const seekFill=document.getElementById("seekFill");
-const current=document.getElementById("current");
-const duration=document.getElementById("duration");
-const lyricsBox=document.getElementById("lyrics");
+/* AUTO IGNORE EMPTY TRACKS */
+const tracks = album.filter(t => t.audio && t.audio.trim() !== "");
 
+/* STATE */
+let index = 0, lyrics = [], repeatMode = 0, shuffleOn = false;
+
+/* ELEMENTS */
+const audio = document.getElementById("audio"),
+playBtn=document.getElementById("play"),
+prevBtn=document.getElementById("prev"),
+nextBtn=document.getElementById("next"),
+shuffleBtn=document.getElementById("shuffle"),
+repeatBtn=document.getElementById("repeat"),
+repeatState=document.getElementById("repeatState"),
+seek=document.getElementById("seek"),
+seekFill=document.getElementById("seekFill"),
+lyricsBox=document.getElementById("lyrics"),
+titleEl=document.getElementById("trackTitle"),
+artistEl=document.getElementById("trackArtist"),
+coverImg=document.getElementById("coverImg"),
+current=document.getElementById("current"),
+duration=document.getElementById("duration");
+
+/* SYNC PLAY BUTTON */
+audio.onplay=()=>playBtn.textContent="❚❚";
+audio.onpause=()=>playBtn.textContent="▶";
+
+/* LOAD TRACK */
 function loadTrack(i){
-  const t=album[i];
-  audio.pause();
-  audio.currentTime=0;
+  const t=tracks[i];
+  audio.pause();audio.currentTime=0;
   audio.src=t.audio;
   titleEl.textContent=t.title;
   artistEl.textContent=t.artist;
-
-  if(t.cover) coverImg.src=t.cover;
-
-  lyrics=[];
-  lyricsBox.textContent="Lyrics not available";
+  coverImg.src=t.cover||"";
+  lyrics=[];lyricsBox.textContent="";
 
   if(t.lrc){
-    lyricsBox.textContent="Loading lyrics…";
-    fetch(t.lrc).then(r=>r.text()).then(text=>{
-      lyrics=text.split("\n").map(l=>{
+    fetch(t.lrc).then(r=>r.text()).then(tx=>{
+      lyrics=tx.split("\n").map(l=>{
         const m=l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-        return m?{time:+m[1]*60+ +m[2],text:m[3].trim()}:null;
+        return m?{time:+m[1]*60 + +m[2],text:m[3]}:null;
       }).filter(Boolean);
     });
   }
-
-  audio.play();
 }
+if(tracks.length) loadTrack(0);
 
-loadTrack(index);
+/* CONTROLS */
+playBtn.onclick=()=>audio.paused?audio.play():audio.pause();
+prevBtn.onclick=()=>{index=(index-1+tracks.length)%tracks.length;loadTrack(index);audio.play();}
+nextBtn.onclick=()=>{index=(index+1)%tracks.length;loadTrack(index);audio.play();}
+shuffleBtn.onclick=()=>{shuffleOn=!shuffleOn;shuffleBtn.classList.toggle("active",shuffleOn);}
+repeatBtn.onclick=()=>{repeatMode=(repeatMode+1)%3;repeatState.textContent=repeatMode===1?".":repeatMode===2?"1":"";audio.loop=repeatMode===2;}
+audio.onended=()=>{if(repeatMode===1||shuffleOn)nextBtn.onclick();}
 
-audio.addEventListener("play",()=>play.textContent="❚❚");
-audio.addEventListener("pause",()=>play.textContent="▶");
-
-play.onclick=()=>audio.paused?audio.play():audio.pause();
-prev.onclick=()=>{index=(index-1+album.length)%album.length;loadTrack(index)};
-next.onclick=()=>{index=(index+1)%album.length;loadTrack(index)};
-
+/* TIME */
 audio.ontimeupdate=()=>{
   if(!audio.duration)return;
   const p=audio.currentTime/audio.duration*100;
-  seek.value=p;
-  seekFill.style.width=p+"%";
+  seek.value=p;seekFill.style.width=p+"%";
   current.textContent=format(audio.currentTime);
   duration.textContent=format(audio.duration);
-
-  for(let i=lyrics.length-1;i>=0;i--){
-    if(audio.currentTime>=lyrics[i].time){
-      lyricsBox.textContent=lyrics[i].text;
-      break;
-    }
-  }
+  for(let i=lyrics.length-1;i>=0;i--)if(audio.currentTime>=lyrics[i].time){lyricsBox.textContent=lyrics[i].text;break;}
 };
-
 seek.oninput=()=>audio.currentTime=seek.value/100*audio.duration;
 
-function format(t){
-  const m=Math.floor(t/60);
-  const s=Math.floor(t%60).toString().padStart(2,"0");
-  return `${m}:${s}`;
-}
+function format(t){const m=Math.floor(t/60),s=Math.floor(t%60).toString().padStart(2,"0");return `${m}:${s}`;}
 </script>
 
 </body>
