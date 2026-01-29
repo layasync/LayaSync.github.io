@@ -28,17 +28,18 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 #seek{position:absolute;inset:0;width:100%;opacity:0}
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 
-/* THANK YOU */
+/* One-time Thank You */
 .thankyou{
   position:absolute;left:50%;top:26px;
   transform:translateX(-50%);
-  font-size:13px;font-weight:700;
+  font-size:13px;font-weight:700;letter-spacing:.3px;
+  color:rgba(255,255,255,.9);
   opacity:0;pointer-events:none
 }
-.thankyou.show{animation:fadeThanks 2.2s ease forwards}
-@keyframes fadeThanks{
+.thankyou.show{animation:thankFade 2.2s ease forwards}
+@keyframes thankFade{
   0%{opacity:0;transform:translateX(-50%) translateY(4px)}
-  20%{opacity:1}
+  20%{opacity:1;transform:translateX(-50%) translateY(0)}
   80%{opacity:1}
   100%{opacity:0;transform:translateX(-50%) translateY(-4px)}
 }
@@ -46,8 +47,9 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 /* CONTROLS */
 .controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
 .icon-btn{width:26px;height:26px;opacity:.75}
+.icon-btn.active{opacity:1}
 
-/* PLAY + SPINNER */
+/* PLAY + LOADER */
 .play{
   position:relative;width:76px;height:76px;
   background:#fff;color:#000;border-radius:50%;
@@ -59,7 +61,7 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   border:3px solid rgba(255,255,255,.25);
   border-top-color:#fff;
   animation:spin 1s linear infinite;
-  opacity:0;
+  opacity:0;pointer-events:none
 }
 .play.loading::after{opacity:1}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -104,22 +106,24 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
   </div>
 
   <div class="controls">
+    <!-- SHUFFLE -->
     <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
     </svg>
-
+    <!-- PREV -->
     <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M6 6h2v12H6zm3.5 6L18 6v12z"/>
     </svg>
-
+    <!-- PLAY -->
     <div class="play" id="play">▶</div>
-
+    <!-- NEXT -->
     <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
     </svg>
-
+    <!-- REPEAT -->
     <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
+      <text id="repeatState" x="12" y="16" text-anchor="middle" font-size="10" font-weight="900" fill="white"></text>
     </svg>
   </div>
 </div>
@@ -131,9 +135,8 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 <script>
 let player;
 let isPlaying=false,isSeeking=false;
-let userInitiated=false;
+let userWantsPlay=false;     // 🔑 single source of truth
 let thankShown=false;
-let warmUpDone=false;
 
 const playBtn=document.getElementById("play");
 const seek=document.getElementById("seek");
@@ -145,31 +148,22 @@ const thankyou=document.getElementById("thankyou");
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
     videoId:"Zz0PcNCZbBY",
-    playerVars:{playsinline:1,mute:1},
-    events:{onReady:onReady,onStateChange:onState}
+    playerVars:{playsinline:1},
+    events:{onStateChange:onState}
   });
-}
-
-function onReady(){
-  // warm-up ONLY before user interaction
-  player.playVideo();
-  const warm=setInterval(()=>{
-    if(player.getCurrentTime()>0.15){
-      player.pauseVideo();
-      player.seekTo(0,true);
-      player.unMute();
-      warmUpDone=true;
-      clearInterval(warm);
-    }
-  },50);
-
   setInterval(update,100);
 }
 
 function onState(e){
   if(isSeeking) return;
 
-  if(e.data===YT.PlayerState.BUFFERING){
+  // 🔥 FORCE RESUME RULE (the fix)
+  if (e.data === YT.PlayerState.PAUSED && userWantsPlay) {
+    player.playVideo();
+    return;
+  }
+
+  if(e.data===YT.PlayerState.BUFFERING || e.data===YT.PlayerState.CUED){
     playBtn.classList.add("loading");
     if(!thankShown){
       thankShown=true;
@@ -183,20 +177,22 @@ function onState(e){
     playBtn.textContent="❚❚";
   }
 
-  if(e.data===YT.PlayerState.PAUSED){
-    if(userInitiated){
-      player.playVideo(); // 🔥 never stop after buffer
-    } else {
-      isPlaying=false;
-      playBtn.textContent="▶";
-    }
+  if(e.data===YT.PlayerState.PAUSED && !userWantsPlay){
+    playBtn.classList.remove("loading");
+    isPlaying=false;
+    playBtn.textContent="▶";
   }
 }
 
 playBtn.onclick=()=>{
-  userInitiated=true;     // 🔑 critical fix
-  playBtn.classList.add("loading");
-  player.playVideo();
+  if(isPlaying){
+    userWantsPlay=false;
+    player.pauseVideo();
+  }else{
+    userWantsPlay=true;
+    playBtn.classList.add("loading");
+    player.playVideo();
+  }
 };
 
 /* SEEK */
@@ -217,6 +213,7 @@ seek.onchange=()=>{
 function update(){
   if(!player||!player.getDuration||isSeeking) return;
   const d=player.getDuration();
+  if(!d) return;
   const c=player.getCurrentTime();
   const p=c/d*100;
   seek.value=p;
