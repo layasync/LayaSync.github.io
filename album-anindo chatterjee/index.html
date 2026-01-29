@@ -28,25 +28,20 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 #seek{position:absolute;inset:0;width:100%;opacity:0}
 .time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
 
-/* THANK YOU (one time) */
+/* THANK YOU — longer presence */
 .thankyou{
-  position:absolute;
-  left:50%;
-  top:26px;
+  position:absolute;left:50%;top:26px;
   transform:translateX(-50%);
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:.3px;
+  font-size:13px;font-weight:700;letter-spacing:.3px;
   color:rgba(255,255,255,.9);
-  opacity:0;
-  pointer-events:none
+  opacity:0;pointer-events:none
 }
-.thankyou.show{animation:thankFade 2.2s ease forwards}
+.thankyou.show{animation:thankFade 3.6s ease forwards}
 @keyframes thankFade{
-  0%{opacity:0;transform:translateX(-50%) translateY(4px)}
-  20%{opacity:1}
-  80%{opacity:1}
-  100%{opacity:0;transform:translateX(-50%) translateY(-4px)}
+  0%{opacity:0;transform:translateX(-50%) translateY(6px)}
+  18%{opacity:1;transform:translateX(-50%) translateY(0)}
+  82%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) translateY(-6px)}
 }
 
 /* CONTROLS */
@@ -56,42 +51,27 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 
 /* PLAY + LOADER */
 .play{
-  position:relative;
-  width:76px;
-  height:76px;
-  background:#fff;
-  color:#000;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:900
+  position:relative;width:76px;height:76px;
+  background:#fff;color:#000;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-weight:900
 }
 .play::after{
-  content:"";
-  position:absolute;
-  inset:-6px;
-  border-radius:50%;
+  content:"";position:absolute;inset:-6px;border-radius:50%;
   border:3px solid rgba(255,255,255,.25);
   border-top-color:#fff;
   animation:spin 1s linear infinite;
-  opacity:0;
-  pointer-events:none
+  opacity:0;pointer-events:none
 }
 .play.loading::after{opacity:1}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .lyric-bar{
-  position:fixed;
-  left:16px;
-  right:16px;
+  position:fixed;left:16px;right:16px;
   bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);
   padding:16px 20px;
   background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));
-  border-radius:18px;
-  font-size:15px;
-  font-weight:900;
+  border-radius:18px;font-size:15px;font-weight:900;
   box-shadow:0 14px 40px rgba(0,0,0,.7)
 }
 
@@ -158,12 +138,22 @@ let userWantsPlay=false;
 let thankShown=false;
 let knownDuration=null;
 
+/* LOOP STATE */
+let repeatMode = 0; // 0=off, 1=repeat all, 2=repeat one
+
 const playBtn=document.getElementById("play");
 const seek=document.getElementById("seek");
 const seekFill=document.getElementById("seekFill");
 const current=document.getElementById("current");
 const durationEl=document.getElementById("duration");
 const thankyou=document.getElementById("thankyou");
+const repeatBtn=document.getElementById("repeat");
+const repeatState=document.getElementById("repeatState");
+
+repeatBtn.onclick=()=>{
+  repeatMode=(repeatMode+1)%3;
+  repeatState.textContent = repeatMode===1 ? "." : repeatMode===2 ? "1" : "";
+};
 
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
@@ -174,9 +164,7 @@ function onYouTubeIframeAPIReady(){
 }
 
 function onReady(){
-  // Load metadata ASAP without playback
   player.cueVideoById("Zz0PcNCZbBY");
-
   const poll=setInterval(()=>{
     const d=player.getDuration();
     if(d && d>0){
@@ -185,14 +173,13 @@ function onReady(){
       clearInterval(poll);
     }
   },50);
-
   setInterval(update,100);
 }
 
 function onState(e){
   if(isSeeking) return;
 
-  // 🔥 Never allow pause if user wants play
+  /* never allow pause if user wants play */
   if(e.data===YT.PlayerState.PAUSED && userWantsPlay){
     player.playVideo();
     return;
@@ -212,9 +199,11 @@ function onState(e){
     playBtn.textContent="❚❚";
   }
 
-  if(e.data===YT.PlayerState.PAUSED && !userWantsPlay){
-    isPlaying=false;
-    playBtn.textContent="▶";
+  if(e.data===YT.PlayerState.ENDED){
+    if(repeatMode===2){
+      player.seekTo(0,true);
+      player.playVideo();
+    }
   }
 }
 
