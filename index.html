@@ -11,27 +11,27 @@
 <style>
 * {
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #5b2e24, #121212 55%);
+  background: linear-gradient(180deg, #6b2f24, #121212 55%);
   color: #fff;
 }
 
-/* ===== TOP BAR ===== */
+/* ===== HEADER ===== */
 .header {
   padding: 14px 16px;
   text-align: center;
 }
 
 .header-title {
-  font-size: 18px;
-  opacity: 0.7;
-}
-  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.6px;
 }
 
 /* ===== COVER ===== */
@@ -45,9 +45,9 @@ body {
   width: 88%;
   max-width: 320px;
   aspect-ratio: 1 / 1;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.75);
 }
 
 .cover img {
@@ -62,14 +62,16 @@ body {
 }
 
 .track {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
 }
 
 .artist {
   margin-top: 6px;
-  font-size: 14px;
-  opacity: 0.7;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.85;
 }
 
 /* ===== PROGRESS ===== */
@@ -80,7 +82,7 @@ body {
 .bar {
   width: 100%;
   height: 4px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.25);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -94,14 +96,15 @@ body {
 .time {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  opacity: 0.6;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
   margin-top: 6px;
 }
 
 /* ===== CONTROLS ===== */
 .controls {
-  margin-top: 20px;
+  margin-top: 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -109,43 +112,43 @@ body {
 
 .controls span {
   font-size: 22px;
+  font-weight: 700;
+  color: #fff;
   opacity: 0.85;
 }
 
 .play {
-  width: 64px;
-  height: 64px;
+  width: 68px;
+  height: 68px;
   background: #fff;
   color: #000;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ===== SHUFFLE & REPEAT ===== */
+.control-btn {
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.control-btn.active {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 /* ===== LYRICS ===== */
 .lyrics {
-  margin: 28px 16px 80px;
+  margin: 30px 16px 40px;
   font-size: 15px;
-  opacity: 0.85;
+  font-weight: 700;
   text-align: center;
   min-height: 40px;
-}
-
-/* ===== BOTTOM BAR ===== */
-.bottom {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #121212;
-  padding: 12px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 18px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  opacity: 0.9;
 }
 </style>
 </head>
@@ -160,7 +163,6 @@ body {
 <!-- COVER -->
 <div class="cover-wrap">
   <div class="cover">
-    <!-- 🖼️ CHANGE IMAGE -->
     <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png">
   </div>
 </div>
@@ -168,7 +170,7 @@ body {
 <!-- INFO -->
 <div class="info">
   <div class="track">Lose My Mind</div>
-  <div class="artist">Artist Name</div>
+  <div class="artist">Don Toliver, Doja Cat</div>
 
   <!-- PROGRESS -->
   <div class="progress">
@@ -183,11 +185,11 @@ body {
 
   <!-- CONTROLS -->
   <div class="controls">
-    <span>🔀</span>
+    <span id="shuffle" class="control-btn">🔀</span>
     <span>⏮</span>
     <div class="play" id="play">▶</div>
     <span>⏭</span>
-    <span>🔁</span>
+    <span id="repeat" class="control-btn">🔁</span>
   </div>
 </div>
 
@@ -196,15 +198,10 @@ body {
   Tap play to begin…
 </div>
 
-<!-- BOTTOM BAR -->
-<div class="bottom">
-  <span>📱</span>
-  <span>🔗</span>
-  <span>≡</span>
-</div>
-
 <!-- AUDIO -->
-<audio id="audio" src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3"></audio>
+<audio id="audio"
+src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3">
+</audio>
 
 <script>
 const audio = document.getElementById("audio");
@@ -213,9 +210,14 @@ const fill = document.getElementById("fill");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const lyricsBox = document.getElementById("lyrics");
+const shuffleBtn = document.getElementById("shuffle");
+const repeatBtn = document.getElementById("repeat");
 
 let lyrics = [];
+let isShuffle = false;
+let isRepeat = false;
 
+/* PLAY / PAUSE */
 play.onclick = () => {
   if (audio.paused) {
     audio.play();
@@ -226,6 +228,7 @@ play.onclick = () => {
   }
 };
 
+/* META */
 audio.onloadedmetadata = () => {
   duration.textContent = format(audio.duration);
 };
@@ -236,13 +239,27 @@ audio.ontimeupdate = () => {
   syncLyrics();
 };
 
+/* SHUFFLE */
+shuffleBtn.onclick = () => {
+  isShuffle = !isShuffle;
+  shuffleBtn.classList.toggle("active", isShuffle);
+};
+
+/* REPEAT */
+repeatBtn.onclick = () => {
+  isRepeat = !isRepeat;
+  audio.loop = isRepeat;
+  repeatBtn.classList.toggle("active", isRepeat);
+};
+
+/* FORMAT TIME */
 function format(t) {
   const m = Math.floor(t / 60);
   const s = Math.floor(t % 60).toString().padStart(2,"0");
   return `${m}:${s}`;
 }
 
-/* LRC */
+/* LOAD LRC */
 fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
   .then(r => r.text())
   .then(t => {
