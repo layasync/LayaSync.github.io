@@ -188,24 +188,20 @@ body {
   </div>
 
   <div class="controls">
-    <!-- Shuffle -->
     <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
     </svg>
 
-    <!-- Prev -->
     <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M6 6h2v12H6zm3.5 6L18 6v12z"/>
     </svg>
 
     <div class="play" id="play">▶</div>
 
-    <!-- Next -->
     <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
     </svg>
 
-    <!-- Repeat -->
     <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
       <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
       <text id="repeatState" x="12" y="16" text-anchor="middle"
@@ -219,6 +215,7 @@ body {
 <audio id="audio"></audio>
 
 <script>
+/* ---------- ALBUM DATA ---------- */
 const album = [
   {
     title: "Lose My Mind",
@@ -236,11 +233,13 @@ const album = [
   }
 ];
 
+/* ---------- STATE ---------- */
 let index = 0;
 let lyrics = [];
 let repeatMode = 0;
 let shuffleOn = false;
 
+/* ---------- ELEMENTS ---------- */
 const audio = document.getElementById("audio");
 const playBtn = document.getElementById("play");
 const prevBtn = document.getElementById("prev");
@@ -257,13 +256,22 @@ const coverImg = document.getElementById("coverImg");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 
+/* ---------- CORE FIX: SYNC BUTTON WITH AUDIO ---------- */
+audio.addEventListener("play", () => {
+  playBtn.textContent = "❚❚";
+});
+
+audio.addEventListener("pause", () => {
+  playBtn.textContent = "▶";
+});
+
+/* ---------- LOAD TRACK ---------- */
 function loadTrack(i) {
   const t = album[i];
 
   audio.pause();
   audio.currentTime = 0;
 
-  playBtn.textContent = "▶";
   seek.value = 0;
   seekFill.style.width = "0%";
   current.textContent = "0:00";
@@ -289,14 +297,9 @@ function loadTrack(i) {
 
 loadTrack(index);
 
+/* ---------- CONTROLS ---------- */
 playBtn.onclick = () => {
-  if (audio.paused) {
-    audio.play();
-    playBtn.textContent = "❚❚";
-  } else {
-    audio.pause();
-    playBtn.textContent = "▶";
-  }
+  audio.paused ? audio.play() : audio.pause();
 };
 
 prevBtn.onclick = () => {
@@ -326,6 +329,7 @@ audio.onended = () => {
   if (repeatMode === 1 || shuffleOn) nextBtn.onclick();
 };
 
+/* ---------- TIME UPDATE ---------- */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
   const p = audio.currentTime / audio.duration * 100;
@@ -333,6 +337,7 @@ audio.ontimeupdate = () => {
   seekFill.style.width = p + "%";
   current.textContent = format(audio.currentTime);
   duration.textContent = format(audio.duration);
+
   for (let i = lyrics.length - 1; i >= 0; i--) {
     if (audio.currentTime >= lyrics[i].time) {
       lyricsBox.textContent = lyrics[i].text;
