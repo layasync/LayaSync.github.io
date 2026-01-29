@@ -9,69 +9,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;font-family:'Roboto',sans-serif}
-body{
-  margin:0;
-  min-height:100vh;
-  background:linear-gradient(180deg,#6b2f24,#121212 60%);
-  color:#fff;
-  padding-bottom:160px
-}
-.header{text-align:center;padding:14px 0;font-weight:900}
+*{box-sizing:border-box;font-family:'Roboto',sans-serif;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212 60%);color:#fff;padding-bottom:180px}
+.header{text-align:center;padding:14px 0;font-weight:900;letter-spacing:.8px}
 .cover-wrap{display:flex;justify-content:center;padding:12px}
-.cover{
-  width:88%;
-  max-width:320px;
-  aspect-ratio:1/1;
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 22px 60px rgba(0,0,0,.75)
-}
+.cover{width:88%;max-width:320px;aspect-ratio:1/1;border-radius:14px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.75)}
 .cover img{width:100%;height:100%;object-fit:cover}
-.info{padding:16px}
+.info{padding:16px;padding-bottom:80px}
 .track{font-size:22px;font-weight:900}
 .artist{margin-top:4px;font-size:15px;font-weight:700;opacity:.9}
-.controls{
-  margin-top:40px;
-  display:flex;
-  justify-content:center
-}
-.play{
-  width:76px;
-  height:76px;
-  background:#fff;
-  color:#000;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:900;
-  cursor:pointer;
-  user-select:none
-}
-.lyric-bar{
-  position:fixed;
-  left:16px;
-  right:16px;
-  bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);
-  padding:16px 20px;
-  background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));
-  border-radius:18px;
-  font-size:15px;
-  font-weight:900;
-  text-align:center;
-  box-shadow:0 14px 40px rgba(0,0,0,.7)
-}
-
-/* hide iframe visually but keep it alive */
-#player{
-  position:absolute;
-  width:1px;
-  height:1px;
-  opacity:0;
-  pointer-events:none
-}
+.seek-wrap{margin-top:18px}
+.seek-track{position:relative;width:100%;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
+.seek-fill{position:absolute;height:100%;width:0%;background:#fff;border-radius:2px}
+#seek{position:absolute;inset:0;width:100%;opacity:0}
+.time{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:700;opacity:.85}
+.controls{margin-top:36px;display:flex;align-items:center;justify-content:space-between}
+.icon-btn{width:26px;height:26px;opacity:.75}
+.icon-btn.active{opacity:1}
+.play{width:76px;height:76px;background:#fff;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
+.lyric-bar{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px) + 24px);padding:16px 20px;background:linear-gradient(180deg,rgba(58,34,28,.98),rgba(36,21,18,.98));border-radius:18px;font-size:15px;font-weight:900;box-shadow:0 14px 40px rgba(0,0,0,.7)}
+#player{display:none}
 </style>
 </head>
 
@@ -81,70 +38,88 @@ body{
 
 <div class="cover-wrap">
   <div class="cover">
-    <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/600x600bf-60.jpg">
+    <img id="coverImg" src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/600x600bf-60.jpg">
   </div>
 </div>
 
 <div class="info">
-  <div class="track">Lose My Mind</div>
-  <div class="artist">Don Toliver, Doja Cat</div>
+  <div class="track" id="trackTitle">YouTube Music Track</div>
+  <div class="artist" id="trackArtist">YouTube</div>
+
+  <div class="seek-wrap">
+    <div class="seek-track">
+      <div class="seek-fill" id="seekFill"></div>
+      <input type="range" id="seek" min="0" max="100" value="0">
+    </div>
+    <div class="time">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+  </div>
 
   <div class="controls">
-    <div class="play" id="playBtn">▶</div>
+    <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/></svg>
+    <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
+    <div class="play" id="play">▶</div>
+    <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white"><path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/></svg>
+    <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white"></svg>
   </div>
 </div>
 
-<div class="lyric-bar">
-  PLAYING VIA YOUTUBE
-</div>
+<div class="lyric-bar">Streaming via YouTube Music</div>
 
-<!-- YouTube Iframe API -->
 <div id="player"></div>
+
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
-let player;
-let isPlaying = false;
+let player, isPlaying=false;
+const playBtn=document.getElementById("play");
+const seek=document.getElementById("seek");
+const seekFill=document.getElementById("seekFill");
+const current=document.getElementById("current");
+const duration=document.getElementById("duration");
 
-/* 🔧 CHANGE ONLY THIS */
-const VIDEO_ID = "Zz0PcNCZbBY";
-
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    videoId: VIDEO_ID,
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      modestbranding: 1,
-      rel: 0
-    },
-    events: {
-      onStateChange: onPlayerStateChange
-    }
+function onYouTubeIframeAPIReady(){
+  player=new YT.Player("player",{
+    videoId:"Zz0PcNCZbBY",
+    playerVars:{playsinline:1},
+    events:{onReady:onReady,onStateChange:onState}
   });
 }
 
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.PLAYING) {
-    isPlaying = true;
-    playBtn.textContent = "❚❚";
-  }
-  if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-    isPlaying = false;
-    playBtn.textContent = "▶";
-  }
+function onReady(){
+  duration.textContent=format(player.getDuration());
+  setInterval(update,500);
 }
 
-const playBtn = document.getElementById("playBtn");
+function onState(e){
+  isPlaying=e.data===YT.PlayerState.PLAYING;
+  playBtn.textContent=isPlaying?"❚❚":"▶";
+}
 
-playBtn.onclick = () => {
-  if (!player) return;
-  if (isPlaying) {
-    player.pauseVideo();
-  } else {
-    player.playVideo();
-  }
+playBtn.onclick=()=>{
+  isPlaying?player.pauseVideo():player.playVideo();
 };
+
+seek.oninput=()=>{
+  const d=player.getDuration();
+  player.seekTo(seek.value/100*d,true);
+};
+
+function update(){
+  if(!player||!player.getDuration)return;
+  const c=player.getCurrentTime(),d=player.getDuration();
+  const p=c/d*100;
+  seek.value=p;seekFill.style.width=p+"%";
+  current.textContent=format(c);
+  duration.textContent=format(d);
+}
+
+function format(t){
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
 </script>
 
 </body>
