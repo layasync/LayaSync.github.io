@@ -85,76 +85,85 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 let player;
-let isPlaying = false;
-let isSeeking = false;
-let repeatMode = 0;
+let isPlaying=false;
+let isSeeking=false;
+let repeatMode=0;
 
-const playBtn = document.getElementById("play");
-const seek = document.getElementById("seek");
-const seekFill = document.getElementById("seekFill");
-const current = document.getElementById("current");
-const duration = document.getElementById("duration");
-const repeatBtn = document.getElementById("repeat");
-const repeatState = document.getElementById("repeatState");
+const playBtn=document.getElementById("play");
+const seek=document.getElementById("seek");
+const seekFill=document.getElementById("seekFill");
+const current=document.getElementById("current");
+const duration=document.getElementById("duration");
+const repeatBtn=document.getElementById("repeat");
+const repeatState=document.getElementById("repeatState");
 
 function onYouTubeIframeAPIReady(){
-  player = new YT.Player("player",{
+  player=new YT.Player("player",{
     videoId:"Zz0PcNCZbBY",
-    playerVars:{playsinline:1},
-    events:{onStateChange:onState}
+    playerVars:{playsinline:1,mute:1},
+    events:{onReady:onReady,onStateChange:onState}
   });
+}
+
+function onReady(){
+  // 🔥 pre-buffer warm-up
+  player.playVideo();
+  const warm=setInterval(()=>{
+    if(player.getCurrentTime()>0.15){
+      player.pauseVideo();
+      player.seekTo(0,true);
+      player.unMute();
+      clearInterval(warm);
+    }
+  },50);
+
   setInterval(update,100);
 }
 
 function onState(e){
-  if(isSeeking) return; // 🔒 prevent blink
-  isPlaying = e.data === YT.PlayerState.PLAYING;
-  playBtn.textContent = isPlaying ? "❚❚" : "▶";
+  if(isSeeking) return;
+  isPlaying=e.data===YT.PlayerState.PLAYING;
+  playBtn.textContent=isPlaying?"❚❚":"▶";
 
-  if(e.data === YT.PlayerState.ENDED && repeatMode > 0){
+  if(e.data===YT.PlayerState.ENDED && repeatMode>0){
     player.seekTo(0,true);
     player.playVideo();
   }
 }
 
-playBtn.onclick = () => {
-  isPlaying ? player.pauseVideo() : player.playVideo();
+playBtn.onclick=()=>isPlaying?player.pauseVideo():player.playVideo();
+
+repeatBtn.onclick=()=>{
+  repeatMode=(repeatMode+1)%3;
+  repeatState.textContent=repeatMode===1?".":repeatMode===2?"1":"";
 };
 
-repeatBtn.onclick = () => {
-  repeatMode = (repeatMode + 1) % 3;
-  repeatState.textContent =
-    repeatMode === 1 ? "." :
-    repeatMode === 2 ? "1" : "";
-};
-
-/* ZERO-BLINK SEEK */
-seek.oninput = () => {
-  isSeeking = true;
-  const d = player.getDuration();
+seek.oninput=()=>{
+  isSeeking=true;
+  const d=player.getDuration();
   if(d){
-    const t = seek.value/100*d;
-    seekFill.style.width = seek.value+"%";
-    current.textContent = format(t);
+    const t=seek.value/100*d;
+    seekFill.style.width=seek.value+"%";
+    current.textContent=format(t);
   }
 };
 
-seek.onchange = () => {
-  const d = player.getDuration();
+seek.onchange=()=>{
+  const d=player.getDuration();
   if(d) player.seekTo(seek.value/100*d,true);
-  setTimeout(()=>isSeeking=false,120); // allow YouTube to settle
+  setTimeout(()=>isSeeking=false,120);
 };
 
 function update(){
-  if(!player || !player.getDuration || isSeeking) return;
-  const d = player.getDuration();
+  if(!player||!player.getDuration||isSeeking) return;
+  const d=player.getDuration();
   if(!d) return;
-  const c = player.getCurrentTime();
-  const p = c/d*100;
-  seek.value = p;
-  seekFill.style.width = p+"%";
-  current.textContent = format(c);
-  duration.textContent = format(d);
+  const c=player.getCurrentTime();
+  const p=c/d*100;
+  seek.value=p;
+  seekFill.style.width=p+"%";
+  current.textContent=format(c);
+  duration.textContent=format(d);
 }
 
 function format(t){
