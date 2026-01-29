@@ -3,51 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Player</title>
+<title>LayaSync</title>
 
 <meta name="theme-color" content="#121212">
-<meta name="mobile-web-app-capable" content="yes">
 
 <style>
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(180deg, #6b2f24, #121212 55%);
+  background: linear-gradient(180deg, #6b2f24, #121212 60%);
   color: #fff;
+  min-height: 100vh;
 }
 
 /* ===== HEADER ===== */
 .header {
-  padding: 14px 16px;
   text-align: center;
-}
-
-.header-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  padding: 14px 0;
+  font-weight: 800;
   letter-spacing: 0.6px;
 }
 
 /* ===== COVER ===== */
 .cover-wrap {
-  padding: 16px;
   display: flex;
   justify-content: center;
+  padding: 12px;
 }
 
 .cover {
   width: 88%;
   max-width: 320px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.75);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
 }
 
 .cover img {
@@ -63,34 +58,36 @@ body {
 
 .track {
   font-size: 22px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 800;
 }
 
 .artist {
-  margin-top: 6px;
+  margin-top: 4px;
   font-size: 15px;
   font-weight: 700;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* ===== PROGRESS ===== */
-.progress {
-  margin-top: 14px;
+/* ===== SEEK ===== */
+.seek-wrap {
+  margin-top: 16px;
 }
 
-.bar {
+#seek {
   width: 100%;
+  -webkit-appearance: none;
   height: 4px;
   background: rgba(255,255,255,0.25);
   border-radius: 2px;
-  overflow: hidden;
 }
 
-.fill {
-  height: 100%;
-  width: 0%;
+#seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
   background: #fff;
+  border-radius: 50%;
+  margin-top: -5px;
 }
 
 .time {
@@ -106,118 +103,109 @@ body {
 .controls {
   margin-top: 22px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-.controls span {
-  font-size: 22px;
-  font-weight: 700;
-  color: #fff;
-  opacity: 0.85;
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  opacity: 0.8;
+}
+
+.icon-btn.active {
+  opacity: 1;
 }
 
 .play {
-  width: 68px;
-  height: 68px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
   background: #fff;
   color: #000;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 900;
 }
 
-/* ===== SHUFFLE & REPEAT ===== */
-.control-btn {
-  opacity: 0.6;
-  transition: opacity 0.2s, transform 0.2s;
-}
-
-.control-btn.active {
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-/* ===== LYRICS ===== */
-.lyrics {
-  margin: 30px 16px 40px;
-  font-size: 15px;
-  font-weight: 700;
+/* ===== LYRICS BAR ===== */
+.lyric-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 18px 16px 28px;
+  background: linear-gradient(
+    to top,
+    rgba(18,18,18,0.98),
+    rgba(18,18,18,0.85),
+    transparent
+  );
   text-align: center;
-  min-height: 40px;
-  opacity: 0.9;
+  font-size: 16px;
+  font-weight: 800;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-title">PLAYING FROM NFC</div>
-</div>
+<div class="header">PLAYING FROM NFC</div>
 
-<!-- COVER -->
 <div class="cover-wrap">
   <div class="cover">
     <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png">
   </div>
 </div>
 
-<!-- INFO -->
 <div class="info">
   <div class="track">Lose My Mind</div>
   <div class="artist">Don Toliver, Doja Cat</div>
 
-  <!-- PROGRESS -->
-  <div class="progress">
-    <div class="bar">
-      <div class="fill" id="fill"></div>
-    </div>
+  <div class="seek-wrap">
+    <input type="range" id="seek" min="0" max="100" value="0">
     <div class="time">
       <span id="current">0:00</span>
       <span id="duration">0:00</span>
     </div>
   </div>
 
-  <!-- CONTROLS -->
   <div class="controls">
-    <span id="shuffle" class="control-btn">🔀</span>
-    <span>⏮</span>
+    <!-- shuffle -->
+    <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
+    </svg>
+
     <div class="play" id="play">▶</div>
-    <span>⏭</span>
-    <span id="repeat" class="control-btn">🔂</span>
+
+    <!-- repeat -->
+    <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
+    </svg>
   </div>
 </div>
 
-<!-- LYRICS -->
-<div class="lyrics" id="lyrics">
+<!-- LYRICS OVERLAY BAR -->
+<div class="lyric-bar" id="lyrics">
   Tap play to begin…
 </div>
 
-<!-- AUDIO -->
-<audio id="audio"
-src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3">
-</audio>
+<audio id="audio" src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3"></audio>
 
 <script>
 const audio = document.getElementById("audio");
 const play = document.getElementById("play");
-const fill = document.getElementById("fill");
+const seek = document.getElementById("seek");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const lyricsBox = document.getElementById("lyrics");
-const shuffleBtn = document.getElementById("shuffle");
 const repeatBtn = document.getElementById("repeat");
 
 let lyrics = [];
-let isShuffle = false;
-let isRepeat = false;
 
-/* PLAY / PAUSE */
+/* play */
 play.onclick = () => {
   if (audio.paused) {
     audio.play();
@@ -228,47 +216,37 @@ play.onclick = () => {
   }
 };
 
-/* META */
+/* time */
 audio.onloadedmetadata = () => {
   duration.textContent = format(audio.duration);
 };
 
 audio.ontimeupdate = () => {
-  fill.style.width = (audio.currentTime / audio.duration) * 100 + "%";
+  seek.value = (audio.currentTime / audio.duration) * 100;
   current.textContent = format(audio.currentTime);
   syncLyrics();
 };
 
-/* SHUFFLE */
-shuffleBtn.onclick = () => {
-  isShuffle = !isShuffle;
-  shuffleBtn.classList.toggle("active", isShuffle);
+seek.oninput = () => {
+  audio.currentTime = (seek.value / 100) * audio.duration;
 };
 
-/* REPEAT */
+/* repeat */
 repeatBtn.onclick = () => {
-  isRepeat = !isRepeat;
-  audio.loop = isRepeat;
-  repeatBtn.classList.toggle("active", isRepeat);
+  audio.loop = !audio.loop;
+  repeatBtn.classList.toggle("active", audio.loop);
 };
 
-/* FORMAT TIME */
-function format(t) {
-  const m = Math.floor(t / 60);
-  const s = Math.floor(t % 60).toString().padStart(2,"0");
-  return `${m}:${s}`;
-}
-
-/* LOAD LRC */
+/* lyrics */
 fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
-  .then(r => r.text())
-  .then(t => {
-    lyrics = t.split("\n").map(l => {
-      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      if (!m) return null;
-      return { time: +m[1]*60 + +m[2], text: m[3] };
-    }).filter(Boolean);
-  });
+.then(r => r.text())
+.then(t => {
+  lyrics = t.split("\n").map(l => {
+    const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+    if (!m) return null;
+    return { time: +m[1]*60 + +m[2], text: m[3] };
+  }).filter(Boolean);
+});
 
 function syncLyrics() {
   for (let i = lyrics.length - 1; i >= 0; i--) {
@@ -277,6 +255,12 @@ function syncLyrics() {
       break;
     }
   }
+}
+
+function format(t) {
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2,"0");
+  return `${m}:${s}`;
 }
 </script>
 
