@@ -122,9 +122,12 @@ class ErrorHandler {
      * Determines if an error is a safe "User Error" that shouldn't be reported.
      */
     static isUserError(err) {
-        if (!err || !err.message) return false;
+        if (!err) return false;
 
-        const msg = err.message.toLowerCase();
+        const msg = (err.message || "").toLowerCase();
+        const stack = (err.stack || "").toLowerCase();
+        const errorContent = msg + stack;
+
         const IGNORED_PHRASES = [
             // Auth / StremioAPI
             "invalid email",
@@ -147,10 +150,15 @@ class ErrorHandler {
             "all aiostreams hosts failed",
             "network connection lost",
             "too many requests from this ip",
-            "trap returned falsish for property 'tronlinkparams'"
+            "trap returned falsish for property 'tronlinkparams'",
+
+            // External / Extensions (Noise reduction)
+            "webkit-masked-url", // Safari extensions
+            "moz-extension",     // Firefox extensions
+            "chrome-extension"   // Chrome extensions
         ];
 
-        return IGNORED_PHRASES.some(phrase => msg.includes(phrase));
+        return IGNORED_PHRASES.some(phrase => errorContent.includes(phrase));
     }
 
     /**
