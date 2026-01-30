@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careless Whisper – NFC Music Card</title>
+
+<meta name="theme-color" content="#0b0b0b">
+<meta name="description" content="Tap to play Careless Whisper. Limited edition NFC Music Card.">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#0b0b0b;color:#fff}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px;
+  background:radial-gradient(circle at top,#151515,#000);
+}
+.hero img{
+  width:280px;
+  border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.7);
+  margin-bottom:24px;
+}
+.hero h1{font-size:2.4rem;margin-bottom:8px}
+.hero p{color:#aaa;margin-bottom:28px}
+
+/* BUTTON */
+.btn{
+  display:inline-block;
+  padding:14px 34px;
+  border-radius:40px;
+  background:#1db954;
+  color:#000;
+  font-weight:600;
+  text-decoration:none;
+  transition:.25s;
+}
+.btn:hover{transform:scale(1.05)}
+
+/* SECTION */
+.section{
+  max-width:1100px;
+  margin:auto;
+  padding:70px 22px;
+}
+.section h2{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+/* FEATURES */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:26px;
+}
+.card{
+  background:#141414;
+  padding:26px;
+  border-radius:18px;
+  text-align:center;
+}
+.card h3{margin-bottom:10px}
+
+/* PRODUCT */
+.product{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+.product img{
+  width:100%;
+  border-radius:18px;
+}
+@media(max-width:768px){
+  .product{grid-template-columns:1fr}
+}
+
+/* PRICE */
+.price-box{
+  background:#141414;
+  padding:40px;
+  border-radius:22px;
+  text-align:center;
+}
+.price{
+  font-size:2.6rem;
+  color:#1db954;
+  margin:12px 0;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:30px;
+  color:#666;
+  font-size:.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg" alt="Careless Whisper NFC Card">
+    <h1>Careless Whisper</h1>
+    <p>Limited Edition NFC Music Card</p>
+    <a class="btn" href="https://wa.me/91XXXXXXXXXX">Buy Now</a>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section">
+  <h2>Tap. Play. Feel.</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>📱 NFC Tap</h3>
+      <p>Instant playback with one tap.</p>
+    </div>
+    <div class="card">
+      <h3>🎷 Iconic Track</h3>
+      <p>Careless Whisper, timeless forever.</p>
+    </div>
+    <div class="card">
+      <h3>🖤 Premium Card</h3>
+      <p>Matte finish, durable & collectible.</p>
+    </div>
+    <div class="card">
+      <h3>🎁 Perfect Gift</h3>
+      <p>For fans & music lovers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="section">
+  <div class="product">
+    <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg">
+    <div>
+      <h2>How it works</h2>
+      <p style="color:#aaa;margin:18px 0">
+        Tap the card on any NFC-enabled phone and instantly open the song on YouTube Music or Spotify.
+      </p>
+      <p style="color:#aaa">
+        No app. No battery. Just music.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section class="section">
+  <div class="price-box">
+    <h2>Limited Edition Drop</h2>
+    <div class="price">₹499</div>
+    <p style="color:#aaa">One card • Lifetime access</p><br>
+    <a class="btn" href="https://wa.me/91XXXXXXXXXX">Order on WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  © 2026 LayaSync • NFC Music Experience
+</footer>
+
+</body>
+</html>
