@@ -253,7 +253,9 @@ class TimeMachine {
 
             // Failed deep restores should abort the restore process
             if (deepResults.errors.length > 0) {
-                throw new Error("Deep restore failed for addon(s). Restoration aborted to protect your configuration.");
+                const error = new Error("Deep restore failed for addon(s). Restoration aborted to protect your configuration.");
+                error.debugDetails = deepResults.errors.map(e => e.message || e.toString());
+                throw error;
             }
 
             // If any deep restore produced new addon URLs, update snapshot addons in storage
@@ -281,7 +283,9 @@ class TimeMachine {
             await StremioAPI.setAddons(snapshot.addons);
             await Modal.alert("🎉 Account successfully restored!", "Success");
         } catch (err) {
-            ErrorHandler.handle(err, { method: "restoreSnapshot" }, "Restore Failed");
+            const context = { method: "restoreSnapshot" };
+            if (err.debugDetails) context.deepRestoreErrors = err.debugDetails;
+            ErrorHandler.handle(err, context, "Restore Failed");
         } finally {
             if (restoreBtn) {
                 restoreBtn.innerHTML = originalText;

@@ -12,8 +12,6 @@ class AIOStreamsAPI {
         };
     }
 
-
-
     // Generic function to call AIOStreams API
     static async call(baseUrl, method, endpoint, payload = null, queryParams = {}) {
         // Construct URL with query parameters
@@ -86,7 +84,7 @@ class AIOStreamsAPI {
     // Install config with smart retry logic for common upstream errors
     static async installConfigWithSmartRetry(hostUrl, hostName, config, password, compatibilityMode = 'stremio') {
         let attempts = 0;
-        const maxAttempts = 4; // 1 initial + 3 fixes
+        const maxAttempts = 4;
 
         while (attempts < maxAttempts) {
             attempts++;
@@ -98,10 +96,11 @@ class AIOStreamsAPI {
                 if (attempts >= maxAttempts) throw err;
 
                 // Handle specific upstream errors
-                const isTorrentioError = err.message && err.message.includes("Torrentio");
-                const isMediaFusionError = err.message && err.message.includes("MediaFusion");
-                const isBitmagnetError = err.message && err.message.includes("Bitmagnet");
-                const isSeaDexError = err.message && err.message.includes("seadex not found");
+                const errorMsg = (err.message || err.toString()).toLowerCase();
+                const isTorrentioError = errorMsg.includes("torrentio");
+                const isMediaFusionError = errorMsg.includes("mediafusion");
+                const isBitmagnetError = errorMsg.includes("bitmagnet");
+                const isSeaDexError = errorMsg.includes("seadex not found");
 
                 let presetType = "";
                 if (isTorrentioError) presetType = 'torrentio';
@@ -109,9 +108,15 @@ class AIOStreamsAPI {
                 else if (isBitmagnetError) presetType = 'bitmagnet';
                 else if (isSeaDexError) presetType = 'seadex';
 
+                // Log for debugging
+                console.log(`SmartRetry: Attempt ${attempts}/${maxAttempts}. Error: "${errorMsg}". Detected Type: "${presetType}"`);
+
                 // If not an identifiable/fixable error, throw immediately
                 const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
-                if (!presetType || !hasPreset) throw err;
+                if (!presetType || !hasPreset) {
+                    console.warn(`SmartRetry: Cannot fix error. Type: ${presetType}, HasPreset: ${hasPreset}`);
+                    throw err;
+                }
 
                 // Log and Fix
                 console.warn(`Upstream error (${presetType}) on ${hostName}. Removing and retrying...`);

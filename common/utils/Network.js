@@ -75,7 +75,8 @@ class Network {
         // 2. CorsProxy.io (fallback)
         const PROXIES = [
             "https://stremio-proxy.long-surf-c07a.workers.dev/?url=",
-            "https://corsproxy.io/?url="
+            "https://corsproxy.io/?url=",
+            "https://api.allorigins.win/raw?url="
         ];
 
         let lastError = null;
@@ -92,8 +93,14 @@ class Network {
                     const errorBody = await resp.json().catch(() => ({}));
                     const errorMessage = errorBody.error?.message || errorBody.message || `Proxy Error: ${resp.status} ${resp.statusText}`;
 
-                    // If we get a response, the proxy is working and the error is from the target.
-                    throw new Error(errorMessage);
+                    // If we get a response, is it from the proxy?
+                    // 4xx errors are almost always from the proxy -> STOP ROTATION
+                    // 5xx errors could be the proxy failing (e.g. 502 Bad Gateway) -> CONTINUE ROTATION (Try next proxy)
+                    const apiError = new Error(errorMessage);
+                    if (resp.status >= 400 && resp.status < 500) {
+                        apiError.stopRotation = true;
+                    }
+                    throw apiError;
                 }
 
                 try {
@@ -103,11 +110,13 @@ class Network {
                     throw new Error(`Failed to parse proxy response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
                 }
             } catch (e) {
+                // If it's a functional error from the API (stopRotation), rethrow immediately
+                if (e.stopRotation) {
+                    throw e;
+                }
+
                 console.warn(`Proxy attempt failed for ${proxyBase}:`, e);
                 lastError = e;
-                if (e.message.includes("timed out")) {
-                    break; // If proxy times out, don't try others, assume network issue
-                }
             }
         }
 

@@ -57,8 +57,8 @@ class ErrorHandler {
 
             if (this.errorQueue.length > 0) {
                 console.log(`Flushing ${this.errorQueue.length} queued errors to Honeybadger`);
-                this.errorQueue.forEach(({ err, options }) => {
-                    Honeybadger.notify(err, options);
+                this.errorQueue.forEach((item) => {
+                    Honeybadger.notify(item.err, item.options);
                 });
                 this.errorQueue = [];
             }
@@ -155,7 +155,9 @@ class ErrorHandler {
             // External / Extensions (Noise reduction)
             "webkit-masked-url", // Safari extensions
             "moz-extension",     // Firefox extensions
-            "chrome-extension"   // Chrome extensions
+            "chrome-extension",  // Chrome extensions
+            "<shell-plugins-site-config>",
+            "walletRouter"
         ];
 
         return IGNORED_PHRASES.some(phrase => errorContent.includes(phrase));

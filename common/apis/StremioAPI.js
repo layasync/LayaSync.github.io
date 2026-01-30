@@ -159,6 +159,14 @@ class StremioAPI {
         // Fetch manifest content
         const manifestJson = await Network.request(manifestUrl, { retries: 1 });
 
+        // Validate manifest
+        if (!manifestJson || typeof manifestJson !== 'object') {
+            throw new Error("Invalid Manifest: Response is not a valid JSON object");
+        }
+        if (!manifestJson.id || !manifestJson.version || !manifestJson.name) {
+            throw new Error(`Invalid Manifest: Missing required fields (id, version, name). Found: ${JSON.stringify(Object.keys(manifestJson))}`);
+        }
+
         // Construct new addon object
         const newAddon = {
             transportUrl: manifestUrl,
