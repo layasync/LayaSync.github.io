@@ -78,7 +78,11 @@ class ErrorHandler {
 
         if (window.Honeybadger) {
             console.error("Reporting error to Honeybadger:", errorObj);
-            Honeybadger.notify(errorObj, options);
+            try {
+                Honeybadger.notify(errorObj, options);
+            } catch (notifyErr) {
+                console.warn("Failed to report error to Honeybadger:", notifyErr);
+            }
         } else {
             console.warn("Honeybadger not loaded yet, queuing error:", errorObj);
             this.errorQueue.push({ err: errorObj, options });
@@ -141,7 +145,8 @@ class ErrorHandler {
             "network error",
             "abort error",
             "all aiostreams hosts failed",
-            "network connection lost"
+            "network connection lost",
+            "too many requests from this ip"
         ];
 
         return IGNORED_PHRASES.some(phrase => msg.includes(phrase));
