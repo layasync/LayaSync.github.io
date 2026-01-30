@@ -5,7 +5,6 @@ class NavigationSidebar {
         this.tools = [
             { name: "Home", path: "/", icon: "home" },
             { name: "QuickStart", path: "/quickstart/" },
-            { name: "CinePatch", path: "/cine-patch/" },
             { name: "Time Machine", path: "/time-machine/" },
             { name: "Cloner", path: "/cloner/" },
         ];

@@ -56,7 +56,12 @@ class Network {
                 // Try direct fetch (for local files, same-origin, or explicitly forced)
                 const resp = await this.fetchWithTimeout(url, options, options.timeout);
                 if (resp.ok) {
-                    return await resp.json();
+                    try {
+                        return await resp.json();
+                    } catch (err) {
+                        const text = await resp.text().catch(() => "Unable to read response text");
+                        throw new Error(`Failed to parse direct response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
+                    }
                 }
                 console.warn(`Direct fetch failed for ${url}: ${resp.status}`);
             } catch (e) {
@@ -91,7 +96,12 @@ class Network {
                     throw new Error(errorMessage);
                 }
 
-                return await resp.json();
+                try {
+                    return await resp.json();
+                } catch (err) {
+                    const text = await resp.text().catch(() => "Unable to read response text");
+                    throw new Error(`Failed to parse proxy response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
+                }
             } catch (e) {
                 console.warn(`Proxy attempt failed for ${proxyBase}:`, e);
                 lastError = e;
