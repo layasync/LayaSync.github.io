@@ -89,34 +89,34 @@ class QuickStart {
         // Main view listeners
 
         // Info Button
-        this.ui.infoBtn.addEventListener("click", (e) => {
+        this.ui.infoBtn?.addEventListener("click", (e) => {
             e.preventDefault();
             this.showInfoModal();
         });
 
         // Mode change (Stremio Account vs Manifest Only)
-        this.ui.tabButtons.forEach(btn => {
+        this.ui.tabButtons?.forEach(btn => {
             btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
         });
 
         // Generate Credentials
-        this.ui.generateBtn.addEventListener("click", () => this.handleGenerateCreds());
+        this.ui.generateBtn?.addEventListener("click", () => this.handleGenerateCreds());
 
         // Debrid Providers
-        this.ui.providerGroup.addEventListener("change", (e) => {
+        this.ui.providerGroup?.addEventListener("change", (e) => {
             if (e.target.type === "checkbox") {
                 this.handleDebridProviderChange();
             }
         });
 
         // Submit
-        this.ui.submitBtn.addEventListener("click", (e) => this.handleSubmit(e));
+        this.ui.submitBtn?.addEventListener("click", (e) => this.handleSubmit(e));
 
         // Platform Change
-        this.ui.compatibilityModeSelect.addEventListener("change", (e) => this.handleCompatibilityModeChange(e.target.value));
+        this.ui.compatibilityModeSelect?.addEventListener("change", (e) => this.handleCompatibilityModeChange(e.target.value));
 
         // Advanced settings button
-        this.ui.viewAdvancedBtn.addEventListener('click', (e) => {
+        this.ui.viewAdvancedBtn?.addEventListener('click', (e) => {
             e.preventDefault();
             this.switchView('advanced');
         });
@@ -125,17 +125,17 @@ class QuickStart {
 
         // Advanced view listeners
 
-        this.ui.backToMainBtn.addEventListener('click', () => this.switchView('main'));
+        this.ui.backToMainBtn?.addEventListener('click', () => this.switchView('main'));
 
         // Max size
-        this.ui.sizePresets.forEach(btn => {
+        this.ui.sizePresets?.forEach(btn => {
             btn.addEventListener('click', (e) => this.handleSizePreset(e.target));
         });
 
         // Formatter selection
-        this.ui.formatSelect.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
+        this.ui.formatSelect?.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
 
-        this.ui.saveAdvancedSettingsBtn.addEventListener('click', () => this.switchView('main'));
+        this.ui.saveAdvancedSettingsBtn?.addEventListener('click', () => this.switchView('main'));
     }
 
     // Stremio Account vs Manifest Only

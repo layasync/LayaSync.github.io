@@ -146,7 +146,8 @@ class ErrorHandler {
             "abort error",
             "all aiostreams hosts failed",
             "network connection lost",
-            "too many requests from this ip"
+            "too many requests from this ip",
+            "trap returned falsish for property 'tronlinkparams'"
         ];
 
         return IGNORED_PHRASES.some(phrase => msg.includes(phrase));
