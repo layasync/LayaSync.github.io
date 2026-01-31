@@ -1,13 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>CDN Fetch Test</title>
-</head>
-
+<html>
 <body style="background:#111;color:#0f0;font-family:monospace;padding:20px">
 
-<h2>CDN Fetch Test</h2>
+<h2>CDN Fetch Test (Fixed)</h2>
 <button onclick="run()">Test Fetch</button>
 
 <pre id="out">Waiting…</pre>
@@ -16,7 +11,7 @@
 function toCDN(url) {
   return url
     .replace("github.com/", "cdn.jsdelivr.net/gh/")
-    .replace("/raw/refs/heads/", "@main/");
+    .replace("/raw/refs/heads/", "@latest/");
 }
 
 async function run() {
