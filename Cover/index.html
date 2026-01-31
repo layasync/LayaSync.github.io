@@ -1,196 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=360, initial-scale=1.0" />
-<title>YouTube Music – Now Playing</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Music Clone</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:linear-gradient(180deg,#0f1e26 0%, #030607 80%);
-  font-family:Roboto,system-ui;
+  margin:0;
+  background:#0b141b;
   color:#fff;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
 }
-.app{
-  width:360px;
-  margin:auto;
-  padding:16px;
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:14px;
+  font-size:20px;
 }
-
-/* COVER */
 .cover{
-  margin-top:8px;
+  padding:16px;
 }
 .cover img{
   width:100%;
   border-radius:12px;
-  display:block;
 }
-
-/* TITLE */
-.meta{
-  margin-top:16px;
+.info{
+  padding:0 16px;
 }
-.meta h1{
-  font-size:20px;
+.title{
+  font-size:22px;
   font-weight:700;
 }
-.meta p{
+.artist{
+  color:#9fb3c8;
   margin-top:4px;
-  font-size:14px;
-  opacity:.75;
 }
-
-/* ACTION ROW */
 .actions{
-  margin-top:14px;
   display:flex;
-  justify-content:space-between;
+  gap:12px;
+  padding:16px;
 }
-.actions svg{
-  width:22px;
-  height:22px;
-  fill:white;
-  opacity:.85;
+.actions div{
+  background:#1b2f40;
+  padding:10px 14px;
+  border-radius:18px;
+  font-size:14px;
 }
-
-/* SEEK */
-.seek{
-  margin-top:18px;
+.progress-wrap{
+  padding:0 16px;
 }
 input[type=range]{
-  -webkit-appearance:none;
   width:100%;
-  height:3px;
-  background:#5f6d74;
-  border-radius:2px;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:white;
 }
 .time{
-  margin-top:6px;
   display:flex;
   justify-content:space-between;
   font-size:12px;
-  opacity:.7;
+  color:#9fb3c8;
 }
-
-/* CONTROLS */
 .controls{
-  margin-top:22px;
   display:flex;
+  justify-content:center;
   align-items:center;
-  justify-content:space-between;
+  gap:26px;
+  padding:26px 0 32px;
 }
-.controls svg{
-  width:26px;
-  height:26px;
-  fill:white;
+.ctrl{
+  font-size:24px;
+  opacity:.85;
 }
 .play{
   width:64px;
   height:64px;
+  background:#fff;
+  color:#000;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
+  font-size:28px;
 }
-.play svg{
-  width:34px;
-  height:34px;
-}
-.footer{
-  margin-top:18px;
-  text-align:center;
-  opacity:.6;
-  font-size:13px;
-}
+.active{opacity:1}
 </style>
 </head>
 
 <body>
-<div class="app">
 
-  <div class="cover">
-    <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/George_Michael_-_Faith.png">
-  </div>
-
-  <div class="meta">
-    <h1>Father Figure</h1>
-    <p>George Michael</p>
-  </div>
-
-  <div class="actions">
-    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"/></svg>
-    <svg viewBox="0 0 24 24"><path d="M15 3H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h9l5-5V5c0-1.1-.9-2-2-2zm-2 9H8v-2h5v2zm3-4H8V6h8v2z"/></svg>
-    <svg viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 7h18v2H3zm0 7h18v2H3z"/></svg>
-    <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
-  </div>
-
-  <div class="seek">
-    <input type="range" id="seek" value="0">
-    <div class="time">
-      <span id="cur">0:00</span>
-      <span id="dur">0:00</span>
-    </div>
-  </div>
-
-  <div class="controls">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42L17.59 5H16z"/></svg>
-    <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg>
-
-    <button class="play" id="play">
-      <svg id="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-
-    <svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
-    <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7z"/></svg>
-  </div>
-
-  <div class="footer">Your queue</div>
-
+<div class="topbar">
+  <span>⬇️</span>
+  <span>🎧 📺 ⋮</span>
 </div>
 
-<audio id="audio" src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Father%20Figure(MP3_160K).mp3"></audio>
+<div class="cover">
+  <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/file_0000000074e871f8b1ee14529973b836.png">
+</div>
+
+<div class="info">
+  <div class="title">Father Figure</div>
+  <div class="artist">George Michael</div>
+</div>
+
+<div class="actions">
+  <div>👍 2.5 lakh</div>
+  <div>💬 941</div>
+  <div>➕ Save</div>
+</div>
+
+<div class="progress-wrap">
+  <input id="seek" type="range" min="0" max="100" value="0">
+  <div class="time">
+    <span id="cur">0:00</span>
+    <span id="dur">0:00</span>
+  </div>
+</div>
+
+<div class="controls">
+  <span class="ctrl" id="shuffle">🔀</span>
+  <span class="ctrl" id="prev">⏮</span>
+  <div class="play" id="play">▶</div>
+  <span class="ctrl" id="next">⏭</span>
+  <span class="ctrl" id="repeat">🔁</span>
+</div>
+
+<audio id="audio" crossorigin="anonymous">
+  <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg">
+</audio>
 
 <script>
-const audio=document.getElementById("audio");
-const play=document.getElementById("play");
-const icon=document.getElementById("icon");
-const seek=document.getElementById("seek");
-const cur=document.getElementById("cur");
-const dur=document.getElementById("dur");
+const audio = document.getElementById("audio");
+const play = document.getElementById("play");
+const seek = document.getElementById("seek");
+const cur = document.getElementById("cur");
+const dur = document.getElementById("dur");
+const repeat = document.getElementById("repeat");
 
-play.onclick=()=>{
-  if(audio.paused){
-    audio.play();
-    icon.innerHTML='<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
-  }else{
+let repeating = false;
+
+/* PLAY / PAUSE */
+play.onclick = async () => {
+  if (audio.paused) {
+    await audio.play();
+    play.textContent = "⏸";
+  } else {
     audio.pause();
-    icon.innerHTML='<path d="M8 5v14l11-7z"/>';
+    play.textContent = "▶";
   }
 };
 
-audio.ontimeupdate=()=>{
-  seek.value=(audio.currentTime/audio.duration)*100||0;
-  cur.textContent=fmt(audio.currentTime);
+/* LOAD DURATION SAFELY */
+audio.addEventListener("canplay", () => {
+  dur.textContent = fmt(audio.duration);
+});
+
+/* TIME UPDATE */
+audio.addEventListener("timeupdate", () => {
+  if (!isNaN(audio.duration)) {
+    seek.value = (audio.currentTime / audio.duration) * 100;
+    cur.textContent = fmt(audio.currentTime);
+  }
+});
+
+/* SEEK */
+seek.addEventListener("input", () => {
+  if (!isNaN(audio.duration)) {
+    audio.currentTime = (seek.value / 100) * audio.duration;
+  }
+});
+
+/* PREV / NEXT */
+document.getElementById("prev").onclick = () => audio.currentTime = 0;
+document.getElementById("next").onclick = () => audio.currentTime = 0;
+
+/* REPEAT */
+repeat.onclick = () => {
+  repeating = !repeating;
+  audio.loop = repeating;
+  repeat.classList.toggle("active", repeating);
 };
-audio.onloadedmetadata=()=>dur.textContent=fmt(audio.duration);
-seek.oninput=()=>audio.currentTime=(seek.value/100)*audio.duration;
 
 function fmt(t){
-  let m=Math.floor(t/60);
-  let s=Math.floor(t%60).toString().padStart(2,"0");
-  return m+":"+s;
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2,"0");
+  return `${m}:${s}`;
 }
 </script>
+
 </body>
 </html>
