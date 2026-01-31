@@ -1,37 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CDN Fetch Debug</title>
+</head>
+
 <body style="background:#111;color:#0f0;font-family:monospace;padding:20px">
 
-<h2>CDN Fetch Test (Fixed)</h2>
-<button onclick="run()">Test Fetch</button>
+<h2>CDN Fetch Debug</h2>
+
+<button id="btn">Test Fetch</button>
 
 <pre id="out">Waiting…</pre>
 
 <script>
+const btn = document.getElementById("btn");
+const out = document.getElementById("out");
+
 function toCDN(url) {
   return url
     .replace("github.com/", "cdn.jsdelivr.net/gh/")
     .replace("/raw/refs/heads/", "@latest/");
 }
 
-async function run() {
+btn.addEventListener("click", async () => {
+  out.textContent = "Button clicked ✅\nConverting URL…";
+
   const raw =
 "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3";
 
   const cdn = toCDN(raw);
 
-  document.getElementById("out").textContent =
-    "Converted URL:\n" + cdn + "\n\nFetching…";
+  out.textContent += "\nCDN URL:\n" + cdn + "\n\nFetching…";
 
   try {
     const res = await fetch(cdn);
-    document.getElementById("out").textContent +=
-      "\nSUCCESS ✅\nStatus: " + res.status;
+    out.textContent += "\nSUCCESS ✅\nStatus: " + res.status;
   } catch (e) {
-    document.getElementById("out").textContent +=
-      "\nFAILED ❌\n" + e.message;
+    out.textContent += "\nFAILED ❌\n" + e.message;
   }
-}
+});
 </script>
 
 </body>
