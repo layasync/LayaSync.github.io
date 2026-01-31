@@ -69,7 +69,8 @@ class ErrorHandler {
      * Report an error to the backend (Honeybadger)
      */
     report(err, options = {}) {
-        const errorObj = (err instanceof Error) ? err : new Error(String(err));
+        const isError = err instanceof Error || (err && err.stack && err.message);
+        const errorObj = isError ? err : new Error(String(err));
 
         if (ErrorHandler.isUserError(errorObj)) {
             console.warn("Skipping Honeybadger report for user error:", errorObj.message);
