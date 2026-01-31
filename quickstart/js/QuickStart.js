@@ -407,6 +407,33 @@ class QuickStart {
         });
     }
 
+    isRecognizedDuckStreams(addon) {
+        if (!addon.manifest.name.startsWith("Duck Streams") || !addon.transportUrl) return false;
+        const isStremio = addon.transportUrl.includes("/stremio/") && addon.transportUrl.includes("/manifest.json");
+        const isChilllink = addon.transportUrl.includes("/chilllink/");
+        return isStremio || isChilllink;
+    }
+
+    async cleanUpDuckStreams(keepUuid = null) {
+        console.log("Cleaning up Duck Streams addons...");
+        const currentAddons = await StremioAPI.getAddons();
+        const filteredAddons = currentAddons.filter(a => {
+            if (this.isRecognizedDuckStreams(a)) {
+                // It is one of ours.
+                // Keep ONLY if it matches keepUuid
+                if (keepUuid && a.transportUrl.includes(keepUuid)) {
+                    return true;
+                }
+                return false; // Delete
+            }
+            return true; // Keep unrelated
+        });
+
+        if (filteredAddons.length !== currentAddons.length) {
+            await StremioAPI.setAddons(filteredAddons);
+        }
+    }
+
     // Get random TMDB read access token from tmdb-api-keys.json
     async generateRandomTmdbCredentials() {
         let readAccessToken = "";
@@ -432,7 +459,7 @@ class QuickStart {
         return readAccessToken;
     }
 
-    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode) {
+    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon) {
         const tmdbReadToken = await this.generateRandomTmdbCredentials();
         const exclude4k = this.ui.exclude4kCheckbox.checked;
         const excludeDolby = this.ui.excludeDolbyCheckbox.checked;
@@ -448,30 +475,73 @@ class QuickStart {
         const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterName, formatterDefinition, exclude4k, excludeDolby, maxSize);
 
         let manifestUrl = null;
-        if (selectedHostValue !== 'auto') {
-            // Specific host selected
-            console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
-            manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, selectedHostName, config, password, compatibilityMode);
-        } else {
-            // Auto-select host
-            // Try hosts in order: defined in AIOStreamsAPI
-            const hosts = Object.entries(AIOStreamsAPI.HOSTS);
 
-            const errors = [];
-            for (const [name, url] of hosts) {
+        // If we have an existing addon to reuse, try that first
+        if (existingAddon) {
+            // Check if user manually selected a DIFFERENT host than the one we are reusing
+            // If so, we should NOT reuse it, but instead clean it up and create new.
+            // also if the user selected 'auto', we should not reuse it, as they want the most reliable host.
+            if (existingAddon.host !== selectedHostValue) {
+                console.log(`User selected host (${selectedHostValue}) differs from existing addon host (${existingAddon.host}). Skipping reuse.`);
                 try {
-                    console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
-                    // Clone config so modifications (like removing presets) don't persist to the next host
-                    manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, name, structuredClone(config), password, compatibilityMode);
-                    break; // Break if successful
-                } catch (err) {
-                    errors.push(name + ": " + err.message);
+                    await this.cleanUpDuckStreams(null); // Delete the preserved addon
+                } catch (e) {
+                    console.warn("Failed to cleanup stale addon:", e);
+                }
+                existingAddon = null; // Disable reuse flag
+            }
+        }
+
+        if (existingAddon) {
+            console.log("Updating existing AIOStreams manifest (Host: " + existingAddon.host + ")...");
+            try {
+                manifestUrl = await AIOStreamsAPI.updateConfigWithSmartRetry(
+                    existingAddon.host,
+                    config,
+                    password,
+                    existingAddon.uuid,
+                    existingAddon.encryptedPassword,
+                    compatibilityMode
+                );
+            } catch (err) {
+                console.warn("Failed to update existing addon, falling back to new installation:", err);
+                // Fallback to normal flow: cleanup the stale addon and let the code proceed to create a new one
+                try {
+                    console.log("Cleaning up stale addon...");
+                    await this.cleanUpDuckStreams(null);
+                } catch (cleanupErr) {
+                    console.warn("Failed to cleanup stale addon:", cleanupErr);
                 }
             }
+        }
 
-            if (!manifestUrl) {
-                // This gets caught in the catch block of handleSubmit
-                throw new Error("All AIOStreams hosts failed to generate a manifest URL. Please wait a few minutes and try again.");
+        // If we didn't successfully update an existing addon, create a new one
+        if (!manifestUrl) {
+            if (selectedHostValue !== 'auto') {
+                // Specific host selected
+                console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
+                manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, config, password, compatibilityMode);
+            } else {
+                // Auto-select host
+                // Try hosts in order: defined in AIOStreamsAPI
+                const hosts = Object.entries(AIOStreamsAPI.HOSTS);
+
+                const errors = [];
+                for (const [name, url] of hosts) {
+                    try {
+                        console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
+                        // Clone config so modifications (like removing presets) don't persist to the next host
+                        manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, structuredClone(config), password, compatibilityMode);
+                        break; // Break if successful
+                    } catch (err) {
+                        errors.push(name + ": " + err.message);
+                    }
+                }
+
+                if (!manifestUrl) {
+                    // This gets caught in the catch block of handleSubmit
+                    throw new Error("All AIOStreams hosts failed to generate a manifest URL. Please wait a few minutes and try again.");
+                }
             }
         }
 
@@ -482,6 +552,7 @@ class QuickStart {
     async setupStremioAccount(email, password, cleanupOldInstalls) {
         // Login to Stremio (registering a new account if needed)
         const isNewAccount = await StremioAPI.ensureAccount(email, password);
+        let existingAddon = null;
 
         // Configure Account
         if (isNewAccount) {
@@ -490,14 +561,46 @@ class QuickStart {
             const ALLOWED = ["Cinemeta"];
             const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
             await StremioAPI.setAddons(filteredAddons);
-        } else if (cleanupOldInstalls) {
-            // User requested to clean up existing "Duck Streams" addons
-            const currentAddons = await StremioAPI.getAddons();
-            const filteredAddons = currentAddons.filter(a => !a.manifest.name.startsWith("Duck Streams"));
-            await StremioAPI.setAddons(filteredAddons);
         }
 
-        return isNewAccount;
+        if (!isNewAccount && cleanupOldInstalls) {
+            // User requested to clean up existing "Duck Streams" addons.
+            // This is a bit more complex than just deleting them all, as we need to be careful not to delete unrelated addons.
+            // Also we will try to reuse an existing Duck Streams addon if possible.
+            const currentAddons = await StremioAPI.getAddons();
+
+            // Find valid existing Duck Streams addon to reuse
+            const existingIndex = currentAddons.findIndex(a => this.isRecognizedDuckStreams(a));
+
+            if (existingIndex !== -1) {
+                const addon = currentAddons[existingIndex];
+                // Extract UUID and Host
+                // Format Stremio: https://host/stremio/uuid/encryptedPassword/manifest.json
+                // Format ChillLink: https://host/chilllink/uuid/encryptedPassword
+
+                let match = addon.transportUrl.match(/^(https?:\/\/[^\/]+)\/stremio\/([^\/]+)\/([^\/]+)\/manifest\.json$/);
+                if (!match) {
+                    match = addon.transportUrl.match(/^(https?:\/\/[^\/]+)\/chilllink\/([^\/]+)\/([^\/]+)$/);
+                }
+
+                if (match) {
+                    existingAddon = {
+                        host: match[1],
+                        uuid: match[2],
+                        encryptedPassword: match[3],
+                        transportUrl: addon.transportUrl
+                    };
+
+                    // Clean up other Duck Streams addons, keeping our reused one
+                    await this.cleanUpDuckStreams(existingAddon.uuid);
+                } else {
+                    // Fallback: Regex failed. Clean up all recognized Duck Streams addons.
+                    await this.cleanUpDuckStreams(null);
+                }
+            }
+        }
+
+        return { isNewAccount, existingAddon };
     }
 
     // Get the user inputs from the form
@@ -561,6 +664,8 @@ class QuickStart {
             if (!formData) return; // Validation failed (modal already shown)
 
             let isNewAccount = false;
+            let existingAddon = null;
+
             const stremioEmail = formData.email;
             const password = formData.password;
             const providersMap = formData.providersMap;
@@ -571,18 +676,28 @@ class QuickStart {
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
-                isNewAccount = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
+                const result = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
+                isNewAccount = result.isNewAccount;
+                existingAddon = result.existingAddon;
             } else {
                 // Manifest-only mode: password is already retrieved from form data
                 // No action needed here
             }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode);
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon);
 
             if (this.mode === 'account') {
                 // 4. Install Manifest
-                await StremioAPI.installAddon(manifestUrl);
+                // If we reused an existing addon and the URL hasn't changed, we can skip this step.
+                const shouldInstall = existingAddon?.transportUrl !== manifestUrl;
+
+                if (shouldInstall) {
+                    console.log("Installing new addon manifest...");
+                    await StremioAPI.installAddon(manifestUrl);
+                } else {
+                    console.log("Manifest URL is unchanged, skipping Stremio installation.");
+                }
 
                 // 5. Show Success
                 await this.showSuccessModal(isNewAccount, stremioEmail, password);

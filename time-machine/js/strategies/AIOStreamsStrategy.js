@@ -130,15 +130,16 @@ class AIOStreamsStrategy {
         // Attempt 1: Update existing configuration
         try {
             // Try to update existing user first
-            const json = await AIOStreamsAPI.setConfig(host, uuid, password, config);
+            const json = await AIOStreamsAPI.updateConfig(host, uuid, password, config);
+            const returnedUuid = json.data && json.data.uuid;
+            const returnedEncrypted = json.data && json.data.encryptedPassword;
 
             // We have to construct the manifest URL ourselves since the API doesn't return it
             let newManifestUrl = null;
 
-            const returnedUuid = json.data && json.data.uuid;
-            const returnedEncrypted = json.data && json.data.encryptedPassword;
             if (returnedUuid && returnedEncrypted) {
-                newManifestUrl = `${host}/stremio/${returnedUuid}/${returnedEncrypted}/manifest.json`;
+                // We default to 'stremio' compatibility mode for restored sessions
+                newManifestUrl = AIOStreamsAPI.constructManifestUrl(host, returnedUuid, returnedEncrypted, 'stremio');
             }
 
             // Return the new URL if it's different from the original
@@ -154,9 +155,10 @@ class AIOStreamsStrategy {
         // Attempt 2: Create new configuration (if update failed)
         try {
             // Use dedicated method for creation from raw config
-            const newManifestUrl = await AIOStreamsAPI.installConfig(host, password, config);
-            if (newManifestUrl) {
-                return newManifestUrl;
+            const { uuid, encryptedPassword } = await AIOStreamsAPI.installConfig(host, password, config);
+            if (uuid && encryptedPassword) {
+                // This assumes 'stremio' compatibility mode
+                return AIOStreamsAPI.constructManifestUrl(host, uuid, encryptedPassword, 'stremio');
             }
         } catch (createErr) {
             // If creation also fails, we propagate the error up.

@@ -52,7 +52,7 @@ class AIOStreamsAPI {
     }
 
     // Update the user's configuration on AIOStreams
-    static async setConfig(baseUrl, uuid, password, config) {
+    static async updateConfig(baseUrl, uuid, password, config) {
         const payload = {
             config: config,
             password: password,
@@ -62,7 +62,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new user/manifest from a config object (e.g. from restore)
-    static async installConfig(baseAIOStreamsUrl, password, config, compatibilityMode = 'stremio') {
+    static async installConfig(baseAIOStreamsUrl, password, config) {
         const payload = {
             config: config,
             password: password
@@ -73,16 +73,20 @@ class AIOStreamsAPI {
         const encrypted = json.data && json.data.encryptedPassword;
 
         if (newUuid && encrypted) {
-            if (compatibilityMode === 'chilllink') {
-                return `${baseAIOStreamsUrl.replace(/\/$/, "")}/chilllink/${newUuid}/${encrypted}`;
-            }
-            return `${baseAIOStreamsUrl.replace(/\/$/, "")}/stremio/${newUuid}/${encrypted}/manifest.json`;
+            return { uuid: newUuid, encryptedPassword: encrypted };
         }
         throw new Error("API response did not contain the expected UUID and encrypted password.");
     }
 
+    static constructManifestUrl(hostUrl, uuid, encryptedPassword, compatibilityMode) {
+        if (compatibilityMode === 'chilllink') {
+            return `${hostUrl.replace(/\/$/, "")}/chilllink/${uuid}/${encryptedPassword}`;
+        }
+        return `${hostUrl.replace(/\/$/, "")}/stremio/${uuid}/${encryptedPassword}/manifest.json`;
+    }
+
     // Install config with smart retry logic for common upstream errors
-    static async installConfigWithSmartRetry(hostUrl, hostName, config, password, compatibilityMode = 'stremio') {
+    static async installConfigWithSmartRetry(hostUrl, config, password, compatibilityMode = 'stremio') {
         let attempts = 0;
         const maxAttempts = 4;
 
@@ -90,39 +94,64 @@ class AIOStreamsAPI {
             attempts++;
             try {
                 // Try initial install
-                return await this.installConfig(hostUrl, password, config, compatibilityMode);
+                const { uuid, encryptedPassword } = await this.installConfig(hostUrl, password, config);
+                return this.constructManifestUrl(hostUrl, uuid, encryptedPassword, compatibilityMode);
             } catch (err) {
                 // If we've run out of attempts, throw the error
                 if (attempts >= maxAttempts) throw err;
 
-                // Handle specific upstream errors
-                const errorMsg = (err.message || err.toString()).toLowerCase();
-                const isTorrentioError = errorMsg.includes("torrentio");
-                const isMediaFusionError = errorMsg.includes("mediafusion");
-                const isBitmagnetError = errorMsg.includes("bitmagnet");
-                const isSeaDexError = errorMsg.includes("seadex not found");
-
-                let presetType = "";
-                if (isTorrentioError) presetType = 'torrentio';
-                else if (isMediaFusionError) presetType = 'mediafusion';
-                else if (isBitmagnetError) presetType = 'bitmagnet';
-                else if (isSeaDexError) presetType = 'seadex';
-
-                // Log for debugging
-                console.log(`SmartRetry: Attempt ${attempts}/${maxAttempts}. Error: "${errorMsg}". Detected Type: "${presetType}"`);
-
-                // If not an identifiable/fixable error, throw immediately
-                const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
-                if (!presetType || !hasPreset) {
-                    console.warn(`SmartRetry: Cannot fix error. Type: ${presetType}, HasPreset: ${hasPreset}`);
-                    throw err;
-                }
-
-                // Log and Fix
-                console.warn(`Upstream error (${presetType}) on ${hostName}. Removing and retrying...`);
-                config.presets = config.presets.filter(p => p.type !== presetType);
+                await this.handleSmartRetryError(err, config, attempts, maxAttempts);
             }
         }
+    }
+
+    // Update config with smart retry logic
+    static async updateConfigWithSmartRetry(hostUrl, config, password, uuid, textEncryptedPassword, compatibilityMode = 'stremio') {
+        let attempts = 0;
+        const maxAttempts = 4;
+
+        while (attempts < maxAttempts) {
+            attempts++;
+            try {
+                // Try update
+                await this.updateConfig(hostUrl, uuid, password, config);
+                return this.constructManifestUrl(hostUrl, uuid, textEncryptedPassword, compatibilityMode);
+            } catch (err) {
+                // If we've run out of attempts, throw the error
+                if (attempts >= maxAttempts) throw err;
+
+                await this.handleSmartRetryError(err, config, attempts, maxAttempts);
+            }
+        }
+    }
+
+    static async handleSmartRetryError(err, config, attempts, maxAttempts) {
+        // Handle specific upstream errors
+        const errorMsg = (err.message || err.toString()).toLowerCase();
+        const isTorrentioError = errorMsg.includes("torrentio");
+        const isMediaFusionError = errorMsg.includes("mediafusion");
+        const isBitmagnetError = errorMsg.includes("bitmagnet");
+        const isSeaDexError = errorMsg.includes("seadex not found");
+
+        let presetType = "";
+        if (isTorrentioError) presetType = 'torrentio';
+        else if (isMediaFusionError) presetType = 'mediafusion';
+        else if (isBitmagnetError) presetType = 'bitmagnet';
+        else if (isSeaDexError) presetType = 'seadex';
+
+        // Log for debugging
+        console.log(`SmartRetry: Attempt ${attempts}/${maxAttempts}. Error: "${errorMsg}". Detected Type: "${presetType}"`);
+
+        // If not an identifiable/fixable error, throw immediately
+        const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
+        if (!presetType || !hasPreset) {
+            console.warn(`SmartRetry: Cannot fix error. Type: ${presetType}, HasPreset: ${hasPreset}`);
+            throw err;
+        }
+
+        // Log and Fix
+        console.warn(`Upstream error (${presetType}). Removing and retrying...`);
+        config.presets = config.presets.filter(p => p.type !== presetType);
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
@@ -233,7 +262,6 @@ class AIOStreamsAPI {
                 filteredRegexPatterns.sort((a, b) => a.tier - b.tier);
 
                 // Apply the filtered patterns to the config
-                console.log("Regex keys after filtering:", filteredRegexPatterns);
                 aiostreamsConfig.preferredRegexPatterns = filteredRegexPatterns;
             } catch (e) {
                 console.error("Failed to fetch or apply regex patterns:", e);
