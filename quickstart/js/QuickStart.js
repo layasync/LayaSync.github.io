@@ -235,12 +235,6 @@ class QuickStart {
             for (const item of parsedFormatters) {
                 const id = item.id;
 
-                // Create option element
-                const option = document.createElement("option");
-                option.value = id;
-                option.textContent = item.name;
-                this.ui.formatSelect.appendChild(option);
-
                 // Fetch definition
                 try {
                     const definition = await Network.request(`config/formatters/${item.folder}/formatter.json`);
@@ -251,14 +245,20 @@ class QuickStart {
                         definition: definition,
                         image: `config/formatters/${item.folder}/preview.png`
                     };
+
+                    // Create option element
+                    const option = document.createElement("option");
+                    option.value = id;
+                    option.textContent = item.name;
+                    this.ui.formatSelect.appendChild(option);
                 } catch (err) {
                     console.warn(`Error loading formatter ${item.folder}:`, err);
                 }
             }
 
             // Select Default (First item)
-            if (parsedFormatters.length > 0) {
-                const firstId = parsedFormatters[0].id;
+            if (this.ui.formatSelect.options.length > 0) {
+                const firstId = this.ui.formatSelect.options[0].value;
                 this.defaultFormatterId = firstId;
                 this.ui.formatSelect.value = firstId;
                 this.handleFormatterSelection(firstId);
