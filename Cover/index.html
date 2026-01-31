@@ -2,462 +2,180 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Music Player Clone</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Father Figure – Player</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
 <style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    background-color: #152734;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #e0e0e0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10px 40px;
-    height: 100vh;
-    justify-content: flex-start;
-  }
-
-  /* Container */
-  .player {
-    max-width: 420px;
-    width: 100%;
-    margin-top: 10px;
-    user-select: none;
-  }
-
-  /* Header bar mimicking status bar */
-  .status-bar {
-    height: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
-    font-size: 13px;
-    color: white;
-    font-weight: 600;
-    background-color: #0e1a25;
-  }
-  .status-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .status-icons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* Top control bar */
-  .top-controls {
-    margin-top: 8px;
-    background-color: #12232c;
-    border-radius: 20px;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 4px 8px;
-  }
-  .top-controls button {
-    border: none;
-    background: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px 6px;
-    border-radius: 12px;
-  }
-  .top-controls button.active {
-    background-color: white;
-    color: #152734;
-  }
-
-
-  /* Album cover */
-  .cover-container {
-    margin: 20px auto 12px;
-    border-radius: 10px;
-    overflow: hidden;
-    max-width: 420px;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7);
-  }
-  .cover-container img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* Song info */
-  .song-info {
-    text-align: left;
-    margin: 0 6px 20px;
-  }
-  .song-title {
-    font-weight: 700;
-    font-size: 22px;
-    color: white;
-    margin: 0 0 5px 0;
-  }
-  .artist-name {
-    font-weight: 400;
-    font-size: 15px;
-    color: #a6adb4;
-    margin: 0;
-  }
-
-  /* Like/dislike/comment/save bar */
-  .actions-bar {
-    max-width: 420px;
-    background-color: #12232c;
-    border-radius: 20px;
-    display: flex;
-    gap: 12px;
-    padding: 8px 20px;
-    color: #c1c7cd;
-    font-weight: 600;
-    font-size: 14px;
-    align-items: center;
-    justify-content: flex-start;
-    margin-bottom: 24px;
-  }
-  .actions-bar > div {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .actions-bar > div.save {
-    margin-left: auto;
-  }
-  .actions-bar svg {
-    fill: currentColor;
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Progress bar container */
-  .progress-container {
-    max-width: 420px;
-    margin-bottom: 10px;
-  }
-
-  /* Progress bar */
-  input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    border-radius: 4px;
-    background: #475a69;
-    outline: none;
-    margin: 0;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    background: white;
-    cursor: pointer;
-    border-radius: 50%;
-    border: none;
-    margin-top: -4px;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    background: white;
-    cursor: pointer;
-    border-radius: 50%;
-    border: none;
-  }
-
-  /* Time labels */
-  .time-labels {
-    max-width: 420px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    font-weight: 600;
-    color: #a6adb4;
-    margin-bottom: 18px;
-  }
-
-  /* Controls controls container */
-  .controls {
-    max-width: 420px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .controls button {
-    border: none;
-    background: none;
-    color: #a6adb4;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    transition: background-color 0.3s, color 0.3s;
-    user-select: none;
-  }
-  .controls button:hover {
-    background: #ffffff44;
-    color: white;
-  }
-  .controls button.play-pause {
-    width: 60px;
-    height: 60px;
-    background: white;
-    color: #152734;
-    border-radius: 50%;
-  }
-  .controls button.play-pause:hover {
-    background: #e5e5e5;
-  }
-
-  /* Icons inline SVG fills */
-  .liked {
-    color: #1ed760;
-  }
-  
-  /* Bottom divider bar */
-  .bottom-divider {
-    width: 60px;
-    height: 6px;
-    background-color: #394757;
-    border-radius: 3px;
-    margin: 18px auto 0;
-  }
-
-  /* Subtitle below */
-  .subtitle {
-    color: #a6adb4;
-    font-weight: 600;
-    font-size: 13px;
-    text-align: center;
-    user-select: none;
-    margin-top: 10px;
-  }
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Roboto,system-ui;
+  background:linear-gradient(180deg,#17384b,#0c1b24 60%);
+  color:#fff;
+  height:100vh;
+  overflow:hidden;
+}
+.app{
+  max-width:420px;
+  margin:auto;
+  padding:16px;
+}
+.cover{
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:12px;
+  overflow:hidden;
+  margin-top:16px;
+}
+.cover img{width:100%;height:100%;object-fit:cover}
+.title{
+  margin-top:16px;
+}
+.title h1{
+  font-size:22px;
+  font-weight:700;
+}
+.title p{
+  opacity:.75;
+  font-size:14px;
+}
+.lyrics-box{
+  margin-top:14px;
+  background:rgba(255,255,255,.12);
+  border-radius:20px;
+  padding:12px;
+  height:64px;
+  overflow:hidden;
+}
+.lyrics{
+  font-size:14px;
+  line-height:20px;
+  transition:.3s;
+}
+.lyrics .active{
+  color:#fff;
+  font-weight:500;
+}
+.progress{
+  margin-top:18px;
+}
+input[type=range]{
+  width:100%;
+}
+.time{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  opacity:.7;
+}
+.controls{
+  margin-top:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.controls button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:22px;
+}
+.play{
+  width:64px;
+  height:64px;
+  background:white;
+  color:black;
+  border-radius:50%;
+  font-size:26px;
+}
 </style>
 </head>
+
 <body>
-<div class="player" role="region" aria-label="Music Player">
+<div class="app">
 
-  <!-- Header mimic -->
-  <div class="status-bar">
-    <div class="status-left">3:47</div>
-    <div class="status-icons" aria-hidden="true">
-      <!-- Wifi -->
-      <svg fill="white" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M12 18.5c.83 0 1.5.67 1.5 1.5S12.83 21.5 12 21.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5z"/></svg>
-      <!-- Signal bars -->
-      <svg fill="white" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M2 22h20V2z"/></svg>
-      <!-- Battery -->
-      <svg fill="white" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h-1V2H9v2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
-      <span style="font-size:10px; margin-left:2px;">35</span>
+  <div class="cover">
+    <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/George_Michael_-_Faith.png">
+  </div>
+
+  <div class="title">
+    <h1>Father Figure</h1>
+    <p>George Michael</p>
+  </div>
+
+  <div class="lyrics-box">
+    <div class="lyrics" id="lyrics"></div>
+  </div>
+
+  <div class="progress">
+    <input type="range" id="seek" value="0">
+    <div class="time">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
     </div>
   </div>
 
-  <!-- Top controls toggles -->
-  <div class="top-controls" role="toolbar" aria-label="Switch between audio and video">
-    <button class="active" aria-pressed="true" aria-label="Audio mode" title="Audio mode">
-      <!-- Headphone icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" style="height:18px;width:18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9v4a5 5 0 0 0 5 5h1v-9a1 1 0 1 1 2 0v9h1a5 5 0 0 0 5-5v-4a9 9 0 0 0-9-9Z"/></svg>
-    </button>
-    <button aria-pressed="false" aria-label="Video mode" title="Video mode">
-      <!-- Video camera icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" style="height:18px;width:18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M17 10.5v-3a1 1 0 0 0-1-1H6a3 3 0 0 0-3 3v5a3 3 0 0 0 3 3h10a1 1 0 0 0 1-1v-3l4 4v-11Z"/></svg>
-    </button>
+  <div class="controls">
+    <button id="shuffle">🔀</button>
+    <button id="prev">⏮</button>
+    <button class="play" id="play">⏸</button>
+    <button id="next">⏭</button>
+    <button id="repeat">🔁</button>
   </div>
 
-  <!-- Album cover -->
-  <div class="cover-container" aria-label="Album cover of Faith by George Michael">
-    <img 
-      src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/file_0000000074e871f8b1ee14529973b836.png" 
-      alt="Album cover Faith by George Michael" 
-      decoding="async" />
-  </div>
-
-  <!-- Song info -->
-  <div class="song-info">
-    <h1 class="song-title" aria-label="Song title">Father Figure</h1>
-    <p class="artist-name" aria-label="Artist name">George Michael</p>
-  </div>
-
-  <!-- Actions bar -->
-  <div class="actions-bar" role="group" aria-label="Song interaction actions">
-    <div class="like" tabindex="0" role="button" aria-pressed="false" aria-label="Like 2.5 lakh likes">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41 1 4.13 2.44H11.5c.72-1.44 2.39-2.44 4.13-2.44C20.01 4 22 6 22 8.5c0 3.78-3.4 6.87-8.55 11.55L12 21.35z"/></svg>
-      2.5 lakh
-    </div>
-    <div class="dislike" tabindex="0" role="button" aria-pressed="false" aria-label="Dislike this song">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.65l1.45 1.32C18.6 8.64 22 11.72 22 15.5c0 2.5-1.99 4.5-4.5 4.5-1.74 0-3.41-1-4.13-2.44H12.5c-.72 1.44-2.39 2.44-4.13 2.44-2.51 0-4.5-2-4.5-4.5 0-3.78 3.4-6.87 8.55-11.55L12 2.65z"/></svg>
-    </div>
-    <div class="comments" tabindex="0" role="button" aria-label="Read 941 comments">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="width:20px; height:20px;"><path d="M20 6h-2v8H8v2a1 1 0 0 1-1 1h-.4L4 19v-1H2V4h16z"/></svg>
-      941
-    </div>
-    <div class="save" tabindex="0" role="button" aria-label="Save song to playlist">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2zM15.5 8l-4 4-4-4H9l3 3 3-3z"/></svg>
-      Save
-    </div>
-  </div>
-
-  <!-- Progress bar -->
-  <div class="progress-container">
-    <input type="range" id="progress" value="0" min="0" max="100" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Song progress slider" />
-  </div>
-
-  <!-- Time labels -->
-  <div class="time-labels">
-    <span id="current-time" aria-live="polite" aria-atomic="true">3:18</span>
-    <span id="duration-time">5:37</span>
-  </div>
-
-  <!-- Controls -->
-  <div class="controls" role="group" aria-label="Audio controls">
-    <button aria-label="Shuffle" id="shuffle-btn" title="Shuffle">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M4 17h2v-1H4v-2h2v2h4c.64 0 1.3-.3 1.88-.88l2.3-2.3a.996.996 0 1 1 1.41 1.41l-2.3 2.3c-1.04 1.04-2.09.39-2.99-.5H8v1h1v1H6v1h2v-1zm16-6v1l-6 4v-3h-2v-2h2V8l6 3z"/></svg>
-    </button>
-    <button aria-label="Previous track" id="prev-btn" title="Previous">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6v12l10-6-10-6z"/></svg>
-    </button>
-    <button class="play-pause" aria-label="Pause" id="play-pause-btn" title="Pause">
-      <svg id="play-icon" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-    </button>
-    <button aria-label="Next track" id="next-btn" title="Next">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M18 6v12l-10-6 10-6z"/></svg>
-    </button>
-    <button aria-label="Repeat" id="repeat-btn" title="Repeat">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v2l3-3-3-3v2H7c-2 0-4 2-4 4s2 4 4 4v-2c-1.1 0-2-.9-2-2s.9-2 2-2zm10 10H7v-2l-3 3 3 3v-2h10c2 0 4-2 4-4s-2-4-4-4v2c1.1 0 2 .9 2 2s-.9 2-2 2z"/></svg>
-    </button>
-  </div>
-
-  <!-- Bottom divider bar -->
-  <div class="bottom-divider"></div>
-
-  <p class="subtitle" aria-label="Song subtitle">Father Figure (Official Video) mix</p>
-
-  <!-- Audio element -->
-  <audio id="audio" preload="metadata">
-    <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg" />
-    Your browser does not support the audio element.
-  </audio>
 </div>
 
+<audio id="audio" src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Father%20Figure(MP3_160K).mp3"></audio>
+
 <script>
-  const audio = document.getElementById('audio');
-  const playPauseBtn = document.getElementById('play-pause-btn');
-  const progressSlider = document.getElementById('progress');
-  const currentTimeElem = document.getElementById('current-time');
-  const durationTimeElem = document.getElementById('duration-time');
-  const playIcon = document.getElementById('play-icon');
-  const pauseIcon = document.getElementById('pause-icon');
+const audio=document.getElementById("audio")
+const playBtn=document.getElementById("play")
+const seek=document.getElementById("seek")
+const cur=document.getElementById("current")
+const dur=document.getElementById("duration")
+const lyricsEl=document.getElementById("lyrics")
 
-  // Initialize icons and times after metadata is loaded
-  audio.onloadedmetadata = () => {
-    progressSlider.max = Math.floor(audio.duration);
-    durationTimeElem.textContent = formatTime(audio.duration);
-    updateCurrentTime(audio.currentTime);
-  };
+let lyrics=[]
 
-  // Format seconds to mm:ss
-  function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  }
+fetch("https://github.com/layasync/LayaSync.github.io/raw/refs/heads/lrc/George%20Michael%20-%20Father%20Figure%20(Remastered).lrc")
+.then(r=>r.text())
+.then(t=>{
+  lyrics=t.split("\n").map(l=>{
+    let m=l.match(/\[(\d+):(\d+.\d+)\](.*)/)
+    if(!m)return null
+    return{time:+m[1]*60+ +m[2],text:m[3]}
+  }).filter(Boolean)
+  lyrics.forEach(l=>{
+    let d=document.createElement("div")
+    d.textContent=l.text
+    lyricsEl.appendChild(d)
+    l.el=d
+  })
+})
 
-  // Update time text and slider position
-  function updateCurrentTime(time) {
-    currentTimeElem.textContent = formatTime(time);
-    progressSlider.value = Math.floor(time);
-    progressSlider.setAttribute('aria-valuenow', Math.floor(time));
-  }
+playBtn.onclick=()=>{
+  if(audio.paused){audio.play();playBtn.textContent="⏸"}
+  else{audio.pause();playBtn.textContent="▶"}
+}
 
-  // Play or pause the audio
-  function togglePlayPause() {
-    if (audio.paused) {
-      audio.play();
-      playIcon.style.display = 'none';
-      pauseIcon.style.display = 'block';
-      playPauseBtn.setAttribute('aria-label', 'Pause');
-      playPauseBtn.setAttribute('title', 'Pause');
-    } else {
-      audio.pause();
-      playIcon.style.display = 'block';
-      pauseIcon.style.display = 'none';
-      playPauseBtn.setAttribute('aria-label', 'Play');
-      playPauseBtn.setAttribute('title', 'Play');
-    }
-  }
+audio.ontimeupdate=()=>{
+  seek.value=audio.currentTime/audio.duration*100
+  cur.textContent=format(audio.currentTime)
+  lyrics.forEach(l=>{
+    l.el.classList.toggle("active",audio.currentTime>=l.time)
+  })
+}
 
-  playPauseBtn.addEventListener('click', togglePlayPause);
+audio.onloadedmetadata=()=>dur.textContent=format(audio.duration)
 
-  // Update progress slider as audio plays
-  audio.ontimeupdate = () => {
-    updateCurrentTime(audio.currentTime);
-  };
+seek.oninput=()=>audio.currentTime=seek.value/100*audio.duration
 
-  // Seek audio when user interacts with slider
-  progressSlider.addEventListener('input', (e) => {
-    audio.currentTime = e.target.value;
-    updateCurrentTime(audio.currentTime);
-  });
-
-  // Initialize play/pause icon state
-  if (audio.paused) {
-    playIcon.style.display = 'block';
-    pauseIcon.style.display = 'none';
-  } else {
-    playIcon.style.display = 'none';
-    pauseIcon.style.display = 'block';
-  }
-
-  // Dummy listeners for other controls to simulate UI interaction
-  document.getElementById('shuffle-btn').addEventListener('click', () => {
-    alert('Shuffle button clicked');
-  });
-  document.getElementById('prev-btn').addEventListener('click', () => {
-    alert('Previous track button clicked');
-  });
-  document.getElementById('next-btn').addEventListener('click', () => {
-    alert('Next track button clicked');
-  });
-  document.getElementById('repeat-btn').addEventListener('click', () => {
-    alert('Repeat button clicked');
-  });
-
-  // Like, dislike, comments, save buttons toggle style and aria-pressed
-  document.querySelectorAll('.actions-bar > div').forEach(button => {
-    button.addEventListener('click', () => {
-      if (button.classList.contains('like')) {
-        const isPressed = button.getAttribute('aria-pressed') === 'true';
-        button.setAttribute('aria-pressed', !isPressed);
-        if (!isPressed) {
-          button.classList.add('liked');
-        } else {
-          button.classList.remove('liked');
-        }
-      }
-      // Other buttons can have other interaction logic if needed
-    });
-  });
+function format(t){
+  let m=Math.floor(t/60)
+  let s=Math.floor(t%60).toString().padStart(2,"0")
+  return m+":"+s
+}
 </script>
 </body>
 </html>
