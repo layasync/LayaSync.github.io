@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Father Figure – Player</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Father Figure</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 body{
   font-family:Roboto,system-ui;
-  background:linear-gradient(180deg,#17384b,#0c1b24 60%);
+  background:linear-gradient(180deg,#1b3d52 0%, #0b1a23 70%);
   color:#fff;
   height:100vh;
-  overflow:hidden;
 }
 .app{
   max-width:420px;
@@ -22,72 +21,93 @@ body{
   padding:16px;
 }
 .cover{
-  width:100%;
-  aspect-ratio:1/1;
+  margin-top:12px;
   border-radius:12px;
   overflow:hidden;
-  margin-top:16px;
 }
-.cover img{width:100%;height:100%;object-fit:cover}
-.title{
-  margin-top:16px;
+.cover img{
+  width:100%;
+  display:block;
 }
-.title h1{
+.meta{
+  margin-top:14px;
+}
+.meta h1{
   font-size:22px;
   font-weight:700;
 }
-.title p{
-  opacity:.75;
+.meta p{
   font-size:14px;
+  opacity:.7;
 }
-.lyrics-box{
-  margin-top:14px;
-  background:rgba(255,255,255,.12);
-  border-radius:20px;
-  padding:12px;
-  height:64px;
+
+/* LYRICS PILL */
+.lyrics-pill{
+  margin-top:12px;
+  height:44px;
+  background:rgba(255,255,255,.14);
+  border-radius:22px;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
   overflow:hidden;
 }
-.lyrics{
+#lyric-line{
   font-size:14px;
-  line-height:20px;
-  transition:.3s;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-.lyrics .active{
-  color:#fff;
-  font-weight:500;
-}
-.progress{
-  margin-top:18px;
-}
+
+/* SEEK */
+.seek-wrap{margin-top:16px}
 input[type=range]{
+  -webkit-appearance:none;
   width:100%;
+  height:3px;
+  background:#6e7f88;
+  border-radius:2px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:10px;
+  height:10px;
+  background:white;
+  border-radius:50%;
 }
 .time{
+  margin-top:6px;
   display:flex;
   justify-content:space-between;
   font-size:12px;
   opacity:.7;
 }
+
+/* CONTROLS */
 .controls{
   margin-top:18px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
 }
-.controls button{
-  background:none;
-  border:none;
-  color:white;
-  font-size:22px;
+.icon{
+  width:26px;
+  height:26px;
+  fill:white;
+  opacity:.85;
 }
 .play{
   width:64px;
   height:64px;
-  background:white;
-  color:black;
   border-radius:50%;
-  font-size:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.play svg{width:36px;height:36px}
+button{
+  background:none;
+  border:none;
 }
 </style>
 </head>
@@ -99,29 +119,46 @@ input[type=range]{
     <img src="https://upload.wikimedia.org/wikipedia/en/9/9a/George_Michael_-_Faith.png">
   </div>
 
-  <div class="title">
+  <div class="meta">
     <h1>Father Figure</h1>
     <p>George Michael</p>
   </div>
 
-  <div class="lyrics-box">
-    <div class="lyrics" id="lyrics"></div>
+  <div class="lyrics-pill">
+    <div id="lyric-line">…</div>
   </div>
 
-  <div class="progress">
+  <div class="seek-wrap">
     <input type="range" id="seek" value="0">
     <div class="time">
-      <span id="current">0:00</span>
-      <span id="duration">0:00</span>
+      <span id="cur">0:00</span>
+      <span id="dur">0:00</span>
     </div>
   </div>
 
   <div class="controls">
-    <button id="shuffle">🔀</button>
-    <button id="prev">⏮</button>
-    <button class="play" id="play">⏸</button>
-    <button id="next">⏭</button>
-    <button id="repeat">🔁</button>
+    <!-- shuffle -->
+    <svg class="icon" viewBox="0 0 24 24">
+      <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42L17.59 5H16zM3 5h3.59l5.7 5.71-1.41 1.41L5.17 7H3V5zm13 11h1.59l-4.29-4.29 1.42-1.42L19 14.59V13h2v5h-5v-2zM3 17v-2h2.17l3.3-3.29 1.41 1.41L6.59 17H3z"/>
+    </svg>
+
+    <!-- prev -->
+    <svg class="icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg>
+
+    <!-- play -->
+    <button class="play" id="play">
+      <svg viewBox="0 0 24 24" fill="white">
+        <path id="playIcon" d="M8 5v14l11-7z"/>
+      </svg>
+    </button>
+
+    <!-- next -->
+    <svg class="icon" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+
+    <!-- repeat -->
+    <svg class="icon" viewBox="0 0 24 24">
+      <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+    </svg>
   </div>
 
 </div>
@@ -129,52 +166,51 @@ input[type=range]{
 <audio id="audio" src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Father%20Figure(MP3_160K).mp3"></audio>
 
 <script>
-const audio=document.getElementById("audio")
-const playBtn=document.getElementById("play")
-const seek=document.getElementById("seek")
-const cur=document.getElementById("current")
-const dur=document.getElementById("duration")
-const lyricsEl=document.getElementById("lyrics")
+const audio=document.getElementById("audio");
+const play=document.getElementById("play");
+const playIcon=document.getElementById("playIcon");
+const seek=document.getElementById("seek");
+const cur=document.getElementById("cur");
+const dur=document.getElementById("dur");
+const lyricLine=document.getElementById("lyric-line");
 
-let lyrics=[]
+let lyrics=[];
 
 fetch("https://github.com/layasync/LayaSync.github.io/raw/refs/heads/lrc/George%20Michael%20-%20Father%20Figure%20(Remastered).lrc")
 .then(r=>r.text())
 .then(t=>{
   lyrics=t.split("\n").map(l=>{
-    let m=l.match(/\[(\d+):(\d+.\d+)\](.*)/)
-    if(!m)return null
-    return{time:+m[1]*60+ +m[2],text:m[3]}
-  }).filter(Boolean)
-  lyrics.forEach(l=>{
-    let d=document.createElement("div")
-    d.textContent=l.text
-    lyricsEl.appendChild(d)
-    l.el=d
-  })
-})
+    const m=l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+    if(!m)return null;
+    return{time:+m[1]*60+ +m[2],text:m[3]};
+  }).filter(Boolean);
+});
 
-playBtn.onclick=()=>{
-  if(audio.paused){audio.play();playBtn.textContent="⏸"}
-  else{audio.pause();playBtn.textContent="▶"}
-}
+play.onclick=()=>{
+  if(audio.paused){
+    audio.play();
+    playIcon.setAttribute("d","M6 19h4V5H6zm8-14v14h4V5z");
+  }else{
+    audio.pause();
+    playIcon.setAttribute("d","M8 5v14l11-7z");
+  }
+};
 
 audio.ontimeupdate=()=>{
-  seek.value=audio.currentTime/audio.duration*100
-  cur.textContent=format(audio.currentTime)
-  lyrics.forEach(l=>{
-    l.el.classList.toggle("active",audio.currentTime>=l.time)
-  })
-}
+  seek.value=(audio.currentTime/audio.duration)*100||0;
+  cur.textContent=fmt(audio.currentTime);
+  let current=lyrics[0];
+  for(let l of lyrics) if(audio.currentTime>=l.time) current=l;
+  if(current) lyricLine.textContent=current.text;
+};
 
-audio.onloadedmetadata=()=>dur.textContent=format(audio.duration)
+audio.onloadedmetadata=()=>dur.textContent=fmt(audio.duration);
+seek.oninput=()=>audio.currentTime=(seek.value/100)*audio.duration;
 
-seek.oninput=()=>audio.currentTime=seek.value/100*audio.duration
-
-function format(t){
-  let m=Math.floor(t/60)
-  let s=Math.floor(t%60).toString().padStart(2,"0")
-  return m+":"+s
+function fmt(t){
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
 }
 </script>
 </body>
