@@ -2,103 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Auto Metadata</title>
-
-<style>
-body {
-  font-family: system-ui, sans-serif;
-  background:#0f0f0f;
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-}
-.card {
-  background:#181818;
-  padding:20px;
-  border-radius:16px;
-  width:100%;
-  max-width:420px;
-}
-input, button {
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
-}
-button {
-  background:#1db954;
-  font-weight:700;
-  cursor:pointer;
-}
-.cover {
-  width:220px;
-  height:220px;
-  border-radius:14px;
-  object-fit:cover;
-  margin:12px auto;
-}
-.error { color:#ff5c5c }
-</style>
+<title>CDN Fetch Test</title>
 </head>
 
-<body>
-<div class="card">
-  <h2>🎵 LayaSync Auto Metadata</h2>
+<body style="background:#111;color:#0f0;font-family:monospace;padding:20px">
 
-  <input id="url" value="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3">
-  <button onclick="run()">Fetch Metadata</button>
+<h2>CDN Fetch Test</h2>
+<button onclick="run()">Test Fetch</button>
 
-  <div id="out"></div>
-</div>
+<pre id="out">Waiting…</pre>
 
-<script type="module">
-import { parseBlob } from "https://cdn.jsdelivr.net/npm/music-metadata-browser/+esm";
-
-function normalizeGitHubURL(url) {
-  if (!url.includes("github.com")) return url;
-
-  const match = url.match(/github\.com\/(.+?)\/(.+?)\/raw\/refs\/heads\/(.+)/);
-  if (!match) return url;
-
-  const [, user, repo, path] = match;
-  return `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/${path}`;
+<script>
+function toCDN(url) {
+  return url
+    .replace("github.com/", "cdn.jsdelivr.net/gh/")
+    .replace("/raw/refs/heads/", "@main/");
 }
 
-window.run = async () => {
-  const out = document.getElementById("out");
-  out.innerHTML = "Loading…";
+async function run() {
+  const raw =
+"https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3";
+
+  const cdn = toCDN(raw);
+
+  document.getElementById("out").textContent =
+    "Converted URL:\n" + cdn + "\n\nFetching…";
 
   try {
-    const inputURL = document.getElementById("url").value.trim();
-    const safeURL = normalizeGitHubURL(inputURL);
-
-    const res = await fetch(safeURL);
-    if (!res.ok) throw new Error("Cannot fetch audio");
-
-    const blob = await res.blob();
-    const meta = await parseBlob(blob);
-
-    let img = "<div>No Cover</div>";
-    const pic = meta.common.picture?.[0];
-    if (pic) {
-      const url = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
-      img = `<img class="cover" src="${url}">`;
-    }
-
-    out.innerHTML = `
-      ${img}
-      <p><b>Title:</b> ${meta.common.title || "Unknown"}</p>
-      <p><b>Artist:</b> ${meta.common.artist || "Unknown"}</p>
-      <p><b>Album:</b> ${meta.common.album || "Unknown"}</p>
-    `;
+    const res = await fetch(cdn);
+    document.getElementById("out").textContent +=
+      "\nSUCCESS ✅\nStatus: " + res.status;
   } catch (e) {
-    out.innerHTML = `<div class="error">❌ ${e.message}</div>`;
+    document.getElementById("out").textContent +=
+      "\nFAILED ❌\n" + e.message;
   }
-};
+}
 </script>
+
 </body>
 </html>
