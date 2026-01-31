@@ -3,162 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Metadata Test</title>
+<title>LayaSync Auto Metadata</title>
 
 <style>
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0f0f0f;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-  }
-
-  .card {
-    background: #181818;
-    padding: 20px;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  }
-
-  h1 {
-    margin: 0 0 12px;
-    font-size: 22px;
-    text-align: center;
-  }
-
-  input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-
-  button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    background: #1db954;
-    color: #000;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 15px;
-  }
-
-  button:disabled {
-    background: #555;
-    cursor: not-allowed;
-  }
-
-  .result {
-    margin-top: 18px;
-    text-align: center;
-  }
-
-  .cover {
-    width: 220px;
-    height: 220px;
-    border-radius: 14px;
-    background: #222;
-    margin: 0 auto 12px;
-    object-fit: cover;
-  }
-
-  .meta {
-    font-size: 14px;
-    line-height: 1.5;
-    opacity: 0.9;
-  }
-
-  .error {
-    color: #ff5c5c;
-    font-size: 14px;
-  }
+body {
+  font-family: system-ui, sans-serif;
+  background:#0f0f0f;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.card {
+  background:#181818;
+  padding:20px;
+  border-radius:16px;
+  width:100%;
+  max-width:420px;
+}
+input, button {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+button {
+  background:#1db954;
+  font-weight:700;
+  cursor:pointer;
+}
+.cover {
+  width:220px;
+  height:220px;
+  border-radius:14px;
+  object-fit:cover;
+  margin:12px auto;
+}
+.error { color:#ff5c5c }
 </style>
 </head>
 
 <body>
-
 <div class="card">
-  <h1>🎵 LayaSync MP3 Metadata Test</h1>
+  <h2>🎵 LayaSync Auto Metadata</h2>
 
-  <input
-    id="urlInput"
-    type="text"
-    placeholder="Paste MP3 direct link here"
-    value="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3"
-  >
+  <input id="url" value="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3">
+  <button onclick="run()">Fetch Metadata</button>
 
-  <button id="fetchBtn">Fetch Metadata</button>
-
-  <div class="result" id="result"></div>
+  <div id="out"></div>
 </div>
 
 <script type="module">
 import { parseBlob } from "https://cdn.jsdelivr.net/npm/music-metadata-browser/+esm";
 
-const btn = document.getElementById("fetchBtn");
-const result = document.getElementById("result");
+function normalizeGitHubURL(url) {
+  if (!url.includes("github.com")) return url;
 
-btn.onclick = async () => {
-  const url = document.getElementById("urlInput").value.trim();
-  if (!url) return;
+  const match = url.match(/github\.com\/(.+?)\/(.+?)\/raw\/refs\/heads\/(.+)/);
+  if (!match) return url;
 
-  btn.disabled = true;
-  btn.textContent = "Fetching...";
-  result.innerHTML = "";
+  const [, user, repo, path] = match;
+  return `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/${path}`;
+}
+
+window.run = async () => {
+  const out = document.getElementById("out");
+  out.innerHTML = "Loading…";
 
   try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch MP3");
+    const inputURL = document.getElementById("url").value.trim();
+    const safeURL = normalizeGitHubURL(inputURL);
 
-    const blob = await response.blob();
-    const metadata = await parseBlob(blob);
+    const res = await fetch(safeURL);
+    if (!res.ok) throw new Error("Cannot fetch audio");
 
-    const artist = metadata.common.artist || "Unknown Artist";
-    const title = metadata.common.title || "Unknown Title";
-    const album = metadata.common.album || "Unknown Album";
+    const blob = await res.blob();
+    const meta = await parseBlob(blob);
 
-    let coverHTML = `
-      <div class="cover" style="display:flex;align-items:center;justify-content:center;">
-        No Cover
-      </div>
-    `;
-
-    if (metadata.common.picture?.length) {
-      const pic = metadata.common.picture[0];
-      const imgURL = URL.createObjectURL(
-        new Blob([pic.data], { type: pic.format })
-      );
-      coverHTML = `<img class="cover" src="${imgURL}">`;
+    let img = "<div>No Cover</div>";
+    const pic = meta.common.picture?.[0];
+    if (pic) {
+      const url = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
+      img = `<img class="cover" src="${url}">`;
     }
 
-    result.innerHTML = `
-      ${coverHTML}
-      <div class="meta">
-        <strong>Title:</strong> ${title}<br>
-        <strong>Artist:</strong> ${artist}<br>
-        <strong>Album:</strong> ${album}
-      </div>
+    out.innerHTML = `
+      ${img}
+      <p><b>Title:</b> ${meta.common.title || "Unknown"}</p>
+      <p><b>Artist:</b> ${meta.common.artist || "Unknown"}</p>
+      <p><b>Album:</b> ${meta.common.album || "Unknown"}</p>
     `;
-
-  } catch (err) {
-    result.innerHTML = `<div class="error">❌ ${err.message}</div>`;
+  } catch (e) {
+    out.innerHTML = `<div class="error">❌ ${e.message}</div>`;
   }
-
-  btn.disabled = false;
-  btn.textContent = "Fetch Metadata";
 };
 </script>
-
 </body>
 </html>
