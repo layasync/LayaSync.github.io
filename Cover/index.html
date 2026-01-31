@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YouTube Music Clone</title>
+<title>YouTube Music Style Player</title>
 
 <style>
 body{
@@ -13,25 +13,32 @@ body{
   font-family:system-ui,-apple-system;
 }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  padding:14px;
-  font-size:18px;
+.cover{
+  padding:16px;
 }
-
-.cover{padding:16px}
 .cover img{
   width:100%;
   border-radius:14px;
 }
 
-.info{padding:0 16px}
-.title{font-size:22px;font-weight:700}
-.artist{color:#9fb3c8;margin-top:4px}
+.info{
+  padding:0 16px;
+}
+.title{
+  font-size:22px;
+  font-weight:700;
+}
+.artist{
+  font-size:15px;
+  color:#9fb3c8;
+}
 
-.progress-wrap{padding:16px}
-input[type=range]{width:100%}
+.progress{
+  padding:16px;
+}
+input[type=range]{
+  width:100%;
+}
 .time{
   display:flex;
   justify-content:space-between;
@@ -43,8 +50,8 @@ input[type=range]{width:100%}
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:28px;
-  padding:16px 0 110px;
+  gap:30px;
+  padding:10px 0 110px;
 }
 
 .play{
@@ -53,10 +60,10 @@ input[type=range]{width:100%}
   border-radius:50%;
   background:#fff;
   color:#000;
+  font-size:28px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:28px;
 }
 
 .ctrl svg{
@@ -65,9 +72,11 @@ input[type=range]{width:100%}
   fill:#fff;
   opacity:.7;
 }
-.ctrl.active svg{opacity:1}
+.ctrl.active svg{
+  opacity:1;
+}
 
-/* LYRICS OVERLAY */
+/* Lyrics bar */
 .lyrics{
   position:fixed;
   bottom:12px;
@@ -82,24 +91,17 @@ input[type=range]{width:100%}
   line-height:1.6;
 }
 
-.lyrics span{
-  display:block;
+.lyrics div{
   opacity:.35;
   transition:opacity .4s;
 }
-
-.lyrics span.active{
+.lyrics .active{
   opacity:1;
 }
 </style>
 </head>
 
 <body>
-
-<div class="topbar">
-  <span>⬇️</span>
-  <span>🎧 ⋮</span>
-</div>
 
 <div class="cover">
   <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/file_0000000074e871f8b1ee14529973b836.png">
@@ -110,7 +112,7 @@ input[type=range]{width:100%}
   <div class="artist">George Michael</div>
 </div>
 
-<div class="progress-wrap">
+<div class="progress">
   <input id="seek" type="range" min="0" max="100" value="0">
   <div class="time">
     <span id="cur">0:00</span>
@@ -120,19 +122,23 @@ input[type=range]{width:100%}
 
 <div class="controls">
   <div class="ctrl" id="shuffle">
-    <svg viewBox="0 0 24 24"><path d="M17 3h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 3zM3 5h4.5l5 5-1.4 1.4L6.5 7H3V5zm14 12h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 17zM3 17v-2h3.5l5-5 1.4 1.4-5 5H3z"/></svg>
+    <svg viewBox="0 0 24 24">
+      <path d="M17 3h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 3zM3 5h4.5l5 5-1.4 1.4L6.5 7H3V5zm14 12h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 17zM3 17v-2h3.5l5-5 1.4 1.4-5 5H3z"/>
+    </svg>
   </div>
 
   <div class="play" id="play">▶</div>
 
   <div class="ctrl" id="loop">
-    <svg viewBox="0 0 24 24"><path d="M7 7h10v4l4-4-4-4v3H5v6h2V7zm10 10H7v-4l-4 4 4 4v-3h12v-6h-2v5z"/></svg>
+    <svg viewBox="0 0 24 24">
+      <path d="M7 7h10v4l4-4-4-4v3H5v6h2V7zm10 10H7v-4l-4 4 4 4v-3h12v-6h-2v5z"/>
+    </svg>
   </div>
 </div>
 
 <div class="lyrics" id="lyrics"></div>
 
-<audio id="audio" crossorigin="anonymous">
+<audio id="audio" preload="metadata">
   <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg">
 </audio>
 
@@ -143,67 +149,73 @@ const seek = document.getElementById("seek");
 const cur = document.getElementById("cur");
 const dur = document.getElementById("dur");
 const lyricsBox = document.getElementById("lyrics");
+const loopBtn = document.getElementById("loop");
 
-let loopMode = 0; // 0 off, 1 one, 2 all
+let loopMode = 0;
 let lyrics = [];
 
-/* PLAY */
+/* Play / Pause */
 playBtn.onclick = async () => {
-  if(audio.paused){
+  if (audio.paused) {
     await audio.play();
-    playBtn.textContent="⏸";
-  }else{
+    playBtn.textContent = "⏸";
+  } else {
     audio.pause();
-    playBtn.textContent="▶";
+    playBtn.textContent = "▶";
   }
 };
 
-/* LOAD */
-audio.addEventListener("canplay",()=>{
-  dur.textContent = fmt(audio.duration);
+/* Load duration */
+audio.addEventListener("loadedmetadata", () => {
+  dur.textContent = format(audio.duration);
 });
 
-/* TIME */
-audio.ontimeupdate = ()=>{
-  seek.value = (audio.currentTime/audio.duration)*100 || 0;
-  cur.textContent = fmt(audio.currentTime);
+/* Time update */
+audio.addEventListener("timeupdate", () => {
+  seek.value = (audio.currentTime / audio.duration) * 100 || 0;
+  cur.textContent = format(audio.currentTime);
   syncLyrics();
-};
-
-seek.oninput = ()=>{
-  audio.currentTime = (seek.value/100)*audio.duration;
-};
-
-/* LOOP 3 WAY */
-document.getElementById("loop").onclick = ()=>{
-  loopMode = (loopMode+1)%3;
-  audio.loop = loopMode===1;
-};
-
-/* LYRICS */
-fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
-.then(r=>r.text())
-.then(text=>{
-  text.split("\n").forEach(l=>{
-    const m=l.match(/\[(\d+):(\d+.\d+)\](.*)/);
-    if(m) lyrics.push({t:+m[1]*60+ +m[2], txt:m[3]});
-  });
-  lyricsBox.innerHTML = lyrics.map(l=>`<span>${l.txt}</span>`).join("");
 });
 
+/* Seek */
+seek.oninput = () => {
+  audio.currentTime = (seek.value / 100) * audio.duration;
+};
+
+/* Loop 3-state */
+loopBtn.onclick = () => {
+  loopMode = (loopMode + 1) % 3;
+  audio.loop = loopMode === 1;
+  loopBtn.classList.toggle("active", loopMode !== 0);
+};
+
+/* Load LRC */
+fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
+.then(r => r.text())
+.then(text => {
+  text.split("\n").forEach(line => {
+    const m = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+    if (m) {
+      lyrics.push({ time: +m[1] * 60 + +m[2], text: m[3] });
+    }
+  });
+  lyricsBox.innerHTML = lyrics.map(l => `<div>${l.text}</div>`).join("");
+});
+
+/* Sync lyrics */
 function syncLyrics(){
-  const spans = lyricsBox.children;
-  for(let i=0;i<lyrics.length;i++){
-    spans[i].classList.toggle("active",
-      audio.currentTime >= lyrics[i].t &&
-      (!lyrics[i+1] || audio.currentTime < lyrics[i+1].t)
-    );
+  const lines = lyricsBox.children;
+  for (let i = 0; i < lyrics.length; i++) {
+    const active =
+      audio.currentTime >= lyrics[i].time &&
+      (!lyrics[i + 1] || audio.currentTime < lyrics[i + 1].time);
+    lines[i].classList.toggle("active", active);
   }
 }
 
-function fmt(t){
-  const m=Math.floor(t/60);
-  const s=Math.floor(t%60).toString().padStart(2,"0");
+function format(t){
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2,"0");
   return `${m}:${s}`;
 }
 </script>
