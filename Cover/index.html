@@ -2,44 +2,188 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>CDN Fetch Debug</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Music Clone</title>
+
+<style>
+body{
+  margin:0;
+  background:#0b141b;
+  color:#fff;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  padding:14px;
+  font-size:20px;
+}
+.cover{
+  padding:16px;
+}
+.cover img{
+  width:100%;
+  border-radius:12px;
+}
+.info{
+  padding:0 16px;
+}
+.title{
+  font-size:22px;
+  font-weight:700;
+}
+.artist{
+  color:#9fb3c8;
+  margin-top:4px;
+}
+.actions{
+  display:flex;
+  gap:12px;
+  padding:16px;
+}
+.actions div{
+  background:#1b2f40;
+  padding:10px 14px;
+  border-radius:18px;
+  font-size:14px;
+}
+.progress-wrap{
+  padding:0 16px;
+}
+input[type=range]{
+  width:100%;
+}
+.time{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:#9fb3c8;
+}
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:26px;
+  padding:26px 0 32px;
+}
+.ctrl{
+  font-size:24px;
+  opacity:.85;
+}
+.play{
+  width:64px;
+  height:64px;
+  background:#fff;
+  color:#000;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+}
+.active{opacity:1}
+</style>
 </head>
 
-<body style="background:#111;color:#0f0;font-family:monospace;padding:20px">
+<body>
 
-<h2>CDN Fetch Debug</h2>
+<div class="topbar">
+  <span>⬇️</span>
+  <span>🎧 📺 ⋮</span>
+</div>
 
-<button id="btn">Test Fetch</button>
+<div class="cover">
+  <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/file_0000000074e871f8b1ee14529973b836.png">
+</div>
 
-<pre id="out">Waiting…</pre>
+<div class="info">
+  <div class="title">Father Figure</div>
+  <div class="artist">George Michael</div>
+</div>
+
+<div class="actions">
+  <div>👍 2.5 lakh</div>
+  <div>💬 941</div>
+  <div>➕ Save</div>
+</div>
+
+<div class="progress-wrap">
+  <input id="seek" type="range" min="0" max="100" value="0">
+  <div class="time">
+    <span id="cur">0:00</span>
+    <span id="dur">0:00</span>
+  </div>
+</div>
+
+<div class="controls">
+  <span class="ctrl" id="shuffle">🔀</span>
+  <span class="ctrl" id="prev">⏮</span>
+  <div class="play" id="play">▶</div>
+  <span class="ctrl" id="next">⏭</span>
+  <span class="ctrl" id="repeat">🔁</span>
+</div>
+
+<audio id="audio" crossorigin="anonymous">
+  <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg">
+</audio>
 
 <script>
-const btn = document.getElementById("btn");
-const out = document.getElementById("out");
+const audio = document.getElementById("audio");
+const play = document.getElementById("play");
+const seek = document.getElementById("seek");
+const cur = document.getElementById("cur");
+const dur = document.getElementById("dur");
+const repeat = document.getElementById("repeat");
 
-function toCDN(url) {
-  return url
-    .replace("github.com/", "cdn.jsdelivr.net/gh/")
-    .replace("/raw/refs/heads/", "@latest/");
-}
+let repeating = false;
 
-btn.addEventListener("click", async () => {
-  out.textContent = "Button clicked ✅\nConverting URL…";
+/* PLAY / PAUSE */
+play.onclick = async () => {
+  if (audio.paused) {
+    await audio.play();
+    play.textContent = "⏸";
+  } else {
+    audio.pause();
+    play.textContent = "▶";
+  }
+};
 
-  const raw =
-"https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3";
+/* LOAD DURATION SAFELY */
+audio.addEventListener("canplay", () => {
+  dur.textContent = fmt(audio.duration);
+});
 
-  const cdn = toCDN(raw);
-
-  out.textContent += "\nCDN URL:\n" + cdn + "\n\nFetching…";
-
-  try {
-    const res = await fetch(cdn);
-    out.textContent += "\nSUCCESS ✅\nStatus: " + res.status;
-  } catch (e) {
-    out.textContent += "\nFAILED ❌\n" + e.message;
+/* TIME UPDATE */
+audio.addEventListener("timeupdate", () => {
+  if (!isNaN(audio.duration)) {
+    seek.value = (audio.currentTime / audio.duration) * 100;
+    cur.textContent = fmt(audio.currentTime);
   }
 });
+
+/* SEEK */
+seek.addEventListener("input", () => {
+  if (!isNaN(audio.duration)) {
+    audio.currentTime = (seek.value / 100) * audio.duration;
+  }
+});
+
+/* PREV / NEXT */
+document.getElementById("prev").onclick = () => audio.currentTime = 0;
+document.getElementById("next").onclick = () => audio.currentTime = 0;
+
+/* REPEAT */
+repeat.onclick = () => {
+  repeating = !repeating;
+  audio.loop = repeating;
+  repeat.classList.toggle("active", repeating);
+};
+
+function fmt(t){
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
 </script>
 
 </body>
