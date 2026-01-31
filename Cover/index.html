@@ -10,78 +10,87 @@ body{
   margin:0;
   background:#0b141b;
   color:#fff;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
+  font-family:system-ui,-apple-system;
 }
+
 .topbar{
   display:flex;
   justify-content:space-between;
   padding:14px;
-  font-size:20px;
+  font-size:18px;
 }
-.cover{
-  padding:16px;
-}
+
+.cover{padding:16px}
 .cover img{
   width:100%;
-  border-radius:12px;
+  border-radius:14px;
 }
-.info{
-  padding:0 16px;
-}
-.title{
-  font-size:22px;
-  font-weight:700;
-}
-.artist{
-  color:#9fb3c8;
-  margin-top:4px;
-}
-.actions{
-  display:flex;
-  gap:12px;
-  padding:16px;
-}
-.actions div{
-  background:#1b2f40;
-  padding:10px 14px;
-  border-radius:18px;
-  font-size:14px;
-}
-.progress-wrap{
-  padding:0 16px;
-}
-input[type=range]{
-  width:100%;
-}
+
+.info{padding:0 16px}
+.title{font-size:22px;font-weight:700}
+.artist{color:#9fb3c8;margin-top:4px}
+
+.progress-wrap{padding:16px}
+input[type=range]{width:100%}
 .time{
   display:flex;
   justify-content:space-between;
   font-size:12px;
   color:#9fb3c8;
 }
+
 .controls{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:26px;
-  padding:26px 0 32px;
+  gap:28px;
+  padding:16px 0 110px;
 }
-.ctrl{
-  font-size:24px;
-  opacity:.85;
-}
+
 .play{
   width:64px;
   height:64px;
+  border-radius:50%;
   background:#fff;
   color:#000;
-  border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:28px;
 }
-.active{opacity:1}
+
+.ctrl svg{
+  width:26px;
+  height:26px;
+  fill:#fff;
+  opacity:.7;
+}
+.ctrl.active svg{opacity:1}
+
+/* LYRICS OVERLAY */
+.lyrics{
+  position:fixed;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  width:92%;
+  background:#5b1b2d;
+  border-radius:18px;
+  padding:14px;
+  text-align:center;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.lyrics span{
+  display:block;
+  opacity:.35;
+  transition:opacity .4s;
+}
+
+.lyrics span.active{
+  opacity:1;
+}
 </style>
 </head>
 
@@ -89,7 +98,7 @@ input[type=range]{
 
 <div class="topbar">
   <span>⬇️</span>
-  <span>🎧 📺 ⋮</span>
+  <span>🎧 ⋮</span>
 </div>
 
 <div class="cover">
@@ -101,12 +110,6 @@ input[type=range]{
   <div class="artist">George Michael</div>
 </div>
 
-<div class="actions">
-  <div>👍 2.5 lakh</div>
-  <div>💬 941</div>
-  <div>➕ Save</div>
-</div>
-
 <div class="progress-wrap">
   <input id="seek" type="range" min="0" max="100" value="0">
   <div class="time">
@@ -116,12 +119,18 @@ input[type=range]{
 </div>
 
 <div class="controls">
-  <span class="ctrl" id="shuffle">🔀</span>
-  <span class="ctrl" id="prev">⏮</span>
+  <div class="ctrl" id="shuffle">
+    <svg viewBox="0 0 24 24"><path d="M17 3h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 3zM3 5h4.5l5 5-1.4 1.4L6.5 7H3V5zm14 12h4v4l-1.5-1.5-4.6 4.6-1.4-1.4 4.6-4.6L17 17zM3 17v-2h3.5l5-5 1.4 1.4-5 5H3z"/></svg>
+  </div>
+
   <div class="play" id="play">▶</div>
-  <span class="ctrl" id="next">⏭</span>
-  <span class="ctrl" id="repeat">🔁</span>
+
+  <div class="ctrl" id="loop">
+    <svg viewBox="0 0 24 24"><path d="M7 7h10v4l4-4-4-4v3H5v6h2V7zm10 10H7v-4l-4 4 4 4v-3h12v-6h-2v5z"/></svg>
+  </div>
 </div>
+
+<div class="lyrics" id="lyrics"></div>
 
 <audio id="audio" crossorigin="anonymous">
   <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg">
@@ -129,59 +138,72 @@ input[type=range]{
 
 <script>
 const audio = document.getElementById("audio");
-const play = document.getElementById("play");
+const playBtn = document.getElementById("play");
 const seek = document.getElementById("seek");
 const cur = document.getElementById("cur");
 const dur = document.getElementById("dur");
-const repeat = document.getElementById("repeat");
+const lyricsBox = document.getElementById("lyrics");
 
-let repeating = false;
+let loopMode = 0; // 0 off, 1 one, 2 all
+let lyrics = [];
 
-/* PLAY / PAUSE */
-play.onclick = async () => {
-  if (audio.paused) {
+/* PLAY */
+playBtn.onclick = async () => {
+  if(audio.paused){
     await audio.play();
-    play.textContent = "⏸";
-  } else {
+    playBtn.textContent="⏸";
+  }else{
     audio.pause();
-    play.textContent = "▶";
+    playBtn.textContent="▶";
   }
 };
 
-/* LOAD DURATION SAFELY */
-audio.addEventListener("canplay", () => {
+/* LOAD */
+audio.addEventListener("canplay",()=>{
   dur.textContent = fmt(audio.duration);
 });
 
-/* TIME UPDATE */
-audio.addEventListener("timeupdate", () => {
-  if (!isNaN(audio.duration)) {
-    seek.value = (audio.currentTime / audio.duration) * 100;
-    cur.textContent = fmt(audio.currentTime);
-  }
-});
-
-/* SEEK */
-seek.addEventListener("input", () => {
-  if (!isNaN(audio.duration)) {
-    audio.currentTime = (seek.value / 100) * audio.duration;
-  }
-});
-
-/* PREV / NEXT */
-document.getElementById("prev").onclick = () => audio.currentTime = 0;
-document.getElementById("next").onclick = () => audio.currentTime = 0;
-
-/* REPEAT */
-repeat.onclick = () => {
-  repeating = !repeating;
-  audio.loop = repeating;
-  repeat.classList.toggle("active", repeating);
+/* TIME */
+audio.ontimeupdate = ()=>{
+  seek.value = (audio.currentTime/audio.duration)*100 || 0;
+  cur.textContent = fmt(audio.currentTime);
+  syncLyrics();
 };
 
+seek.oninput = ()=>{
+  audio.currentTime = (seek.value/100)*audio.duration;
+};
+
+/* LOOP 3 WAY */
+document.getElementById("loop").onclick = ()=>{
+  loopMode = (loopMode+1)%3;
+  audio.loop = loopMode===1;
+};
+
+/* LYRICS */
+fetch("https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc")
+.then(r=>r.text())
+.then(text=>{
+  text.split("\n").forEach(l=>{
+    const m=l.match(/\[(\d+):(\d+.\d+)\](.*)/);
+    if(m) lyrics.push({t:+m[1]*60+ +m[2], txt:m[3]});
+  });
+  lyricsBox.innerHTML = lyrics.map(l=>`<span>${l.txt}</span>`).join("");
+});
+
+function syncLyrics(){
+  const spans = lyricsBox.children;
+  for(let i=0;i<lyrics.length;i++){
+    spans[i].classList.toggle("active",
+      audio.currentTime >= lyrics[i].t &&
+      (!lyrics[i+1] || audio.currentTime < lyrics[i+1].t)
+    );
+  }
+}
+
 function fmt(t){
-  const m = Math.floor(t / 60);
-  const s = Math.floor(t % 60).toString().padStart(2,"0");
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
   return `${m}:${s}`;
 }
 </script>
