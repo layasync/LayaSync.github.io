@@ -8,182 +8,212 @@
 <style>
 body{
   margin:0;
-  background:#0b141b;
+  font-family: Roboto, system-ui, sans-serif;
+  background: linear-gradient(#1f3a46, #0c1419);
   color:#fff;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
+  height:100vh;
 }
-.topbar{
+.player{
+  max-width:420px;
+  margin:auto;
+  padding:16px;
   display:flex;
-  justify-content:space-between;
-  padding:14px;
-  font-size:20px;
+  flex-direction:column;
+  height:100%;
 }
 .cover{
-  padding:16px;
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
 }
 .cover img{
   width:100%;
-  border-radius:12px;
-}
-.info{
-  padding:0 16px;
+  height:100%;
+  object-fit:cover;
 }
 .title{
-  font-size:22px;
-  font-weight:700;
+  margin-top:16px;
 }
-.artist{
-  color:#9fb3c8;
-  margin-top:4px;
+.title h1{
+  font-size:20px;
+  margin:0;
+}
+.title p{
+  margin:4px 0 0;
+  color:#b0b0b0;
+  font-size:14px;
 }
 .actions{
   display:flex;
-  gap:12px;
-  padding:16px;
+  justify-content:space-between;
+  margin:16px 0;
 }
-.actions div{
-  background:#1b2f40;
-  padding:10px 14px;
-  border-radius:18px;
-  font-size:14px;
+.action{
+  text-align:center;
+  font-size:12px;
+  color:#b0b0b0;
 }
-.progress-wrap{
-  padding:0 16px;
+.action svg{
+  width:22px;
+  height:22px;
+  fill:#fff;
+  display:block;
+  margin:0 auto 4px;
 }
-input[type=range]{
-  width:100%;
+.progress{
+  margin-top:10px;
 }
 .time{
   display:flex;
   justify-content:space-between;
   font-size:12px;
-  color:#9fb3c8;
+  color:#aaa;
+}
+input[type=range]{
+  width:100%;
+  appearance:none;
+  height:3px;
+  background:#666;
+}
+input[type=range]::-webkit-slider-thumb{
+  appearance:none;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#fff;
 }
 .controls{
+  margin-top:22px;
   display:flex;
-  justify-content:center;
   align-items:center;
-  gap:26px;
-  padding:26px 0 32px;
+  justify-content:space-between;
 }
-.ctrl{
-  font-size:24px;
-  opacity:.85;
+.controls svg{
+  width:24px;
+  height:24px;
+  fill:#fff;
 }
 .play{
   width:64px;
   height:64px;
   background:#fff;
-  color:#000;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:28px;
 }
-.active{opacity:1}
+.play svg{
+  fill:#000;
+  width:28px;
+  height:28px;
+}
+.footer{
+  margin-top:auto;
+  text-align:center;
+  color:#aaa;
+  font-size:13px;
+}
 </style>
 </head>
 
 <body>
-
-<div class="topbar">
-  <span>⬇️</span>
-  <span>🎧 📺 ⋮</span>
-</div>
+<div class="player">
 
 <div class="cover">
-  <img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/file_0000000074e871f8b1ee14529973b836.png">
+<img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/images.jpeg">
 </div>
 
-<div class="info">
-  <div class="title">Father Figure</div>
-  <div class="artist">George Michael</div>
+<div class="title">
+<h1>Father Figure</h1>
+<p>George Michael</p>
 </div>
 
 <div class="actions">
-  <div>👍 2.5 lakh</div>
-  <div>💬 941</div>
-  <div>➕ Save</div>
+<div class="action">
+<svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14 1 7.59 7.41C7.22 7.78 7 8.3 7 8.83V19c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+2.5 lakh
 </div>
 
-<div class="progress-wrap">
-  <input id="seek" type="range" min="0" max="100" value="0">
-  <div class="time">
-    <span id="cur">0:00</span>
-    <span id="dur">0:00</span>
-  </div>
+<div class="action">
+<svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22L1.14 11.27c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L10 23l6.41-6.41c.37-.37.59-.89.59-1.42V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+</div>
+
+<div class="action">
+<svg viewBox="0 0 24 24"><path d="M21 6h-18v12h14l4 4z"/></svg>
+941
+</div>
+
+<div class="action">
+<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+Save
+</div>
+</div>
+
+<div class="progress">
+<div class="time">
+<span id="current">0:00</span>
+<span id="duration">0:00</span>
+</div>
+<input type="range" id="seek" value="0">
 </div>
 
 <div class="controls">
-  <span class="ctrl" id="shuffle">🔀</span>
-  <span class="ctrl" id="prev">⏮</span>
-  <div class="play" id="play">▶</div>
-  <span class="ctrl" id="next">⏭</span>
-  <span class="ctrl" id="repeat">🔁</span>
+<svg viewBox="0 0 24 24"><path d="M17 3l-5 4v-3h-2v6l5 4v-3l5 4v-12z"/></svg>
+<svg viewBox="0 0 24 24"><path d="M6 18V6h2v12H6zm3-6l9-6v12l-9-6z"/></svg>
+
+<div class="play" id="playBtn">
+<svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
 </div>
 
-<audio id="audio" crossorigin="anonymous">
-  <source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Genie%20In%20a%20Bottle(MP3_160K).mp3" type="audio/mpeg">
+<svg viewBox="0 0 24 24"><path d="M6 6l9 6-9 6V6zm10 0h2v12h-2z"/></svg>
+<svg viewBox="0 0 24 24"><path d="M7 7h10v4l5-5-5-5v4H5v6h2zm10 10H7v-4l-5 5 5 5v-4h12v-6h-2z"/></svg>
+</div>
+
+<div class="footer">Father Figure (Remastered mix)</div>
+
+</div>
+
+<audio id="audio">
+<source src="https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Father%20Figure(MP3_160K).mp3">
 </audio>
 
 <script>
-const audio = document.getElementById("audio");
-const play = document.getElementById("play");
-const seek = document.getElementById("seek");
-const cur = document.getElementById("cur");
-const dur = document.getElementById("dur");
-const repeat = document.getElementById("repeat");
-
-let repeating = false;
-
-/* PLAY / PAUSE */
-play.onclick = async () => {
-  if (audio.paused) {
-    await audio.play();
-    play.textContent = "⏸";
-  } else {
-    audio.pause();
-    play.textContent = "▶";
-  }
-};
-
-/* LOAD DURATION SAFELY */
-audio.addEventListener("canplay", () => {
-  dur.textContent = fmt(audio.duration);
-});
-
-/* TIME UPDATE */
-audio.addEventListener("timeupdate", () => {
-  if (!isNaN(audio.duration)) {
-    seek.value = (audio.currentTime / audio.duration) * 100;
-    cur.textContent = fmt(audio.currentTime);
-  }
-});
-
-/* SEEK */
-seek.addEventListener("input", () => {
-  if (!isNaN(audio.duration)) {
-    audio.currentTime = (seek.value / 100) * audio.duration;
-  }
-});
-
-/* PREV / NEXT */
-document.getElementById("prev").onclick = () => audio.currentTime = 0;
-document.getElementById("next").onclick = () => audio.currentTime = 0;
-
-/* REPEAT */
-repeat.onclick = () => {
-  repeating = !repeating;
-  audio.loop = repeating;
-  repeat.classList.toggle("active", repeating);
-};
+const audio=document.getElementById("audio");
+const playBtn=document.getElementById("playBtn");
+const playIcon=document.getElementById("playIcon");
+const seek=document.getElementById("seek");
+const current=document.getElementById("current");
+const duration=document.getElementById("duration");
 
 function fmt(t){
-  const m = Math.floor(t / 60);
-  const s = Math.floor(t % 60).toString().padStart(2,"0");
-  return `${m}:${s}`;
+  const m=Math.floor(t/60);
+  const s=Math.floor(t%60).toString().padStart(2,"0");
+  return m+":"+s;
 }
+
+audio.onloadedmetadata=()=>{
+  seek.max=audio.duration;
+  duration.textContent=fmt(audio.duration);
+};
+
+audio.ontimeupdate=()=>{
+  seek.value=audio.currentTime;
+  current.textContent=fmt(audio.currentTime);
+};
+
+seek.oninput=()=>audio.currentTime=seek.value;
+
+playBtn.onclick=()=>{
+  if(audio.paused){
+    audio.play();
+    playIcon.innerHTML='<path d="M6 19h4V5H6zm8-14v14h4V5z"/>';
+  }else{
+    audio.pause();
+    playIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+  }
+};
 </script>
 
 </body>
