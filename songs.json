@@ -1,9 +1,9 @@
 [
   {
-    "title": "Fh",
-    "artist": "Sample Artist",
-    "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Father%20Figure(MP3_160K).mp3",
-    "lrc": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/lrc/George%20Michael%20-%20Father%20Figure%20(Remastered).lrc",
-    "cover": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/images.jpeg"
+    "title": "Lose My Mind",
+    "artist": "Don Toliver, Doja Cat",
+    "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20(MP3_160K).mp3",
+    "lrc": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind.lrc",
+    "cover": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png"
   }
 ]
