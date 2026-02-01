@@ -95,7 +95,7 @@ const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 
 /* ---------- FETCH SONGS ---------- */
-fetch("songs.json")
+fetch("https://layasync.github.io/songs.json")
   .then(r => r.json())
   .then(data => {
     album = data;
