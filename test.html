@@ -70,46 +70,87 @@ body{margin:0;min-height:100vh;background:linear-gradient(180deg,#6b2f24,#121212
 <audio id="audio"></audio>
 
 <script>
-let album=[],index=0,lyrics=[],repeatMode=0,shuffleOn=false;
-const audio=document.getElementById("audio"),
-playBtn=play,prevBtn=prev,nextBtn=next,shuffleBtn=shuffle,repeatBtn=repeat,
-repeatState=document.getElementById("repeatState"),seek=document.getElementById("seek"),
-seekFill=document.getElementById("seekFill"),lyricsBox=lyrics,
-titleEl=trackTitle,artistEl=trackArtist,coverImg=coverImg,
-current=document.getElementById("current"),duration=document.getElementById("duration");
+/* ---------- STATE ---------- */
+let album = [];
+let index = 0;
+let lyricsData = [];
+let repeatMode = 0;
+let shuffleOn = false;
 
-fetch("songs.json").then(r=>r.json()).then(d=>{album=d;loadTrack(0)});
+/* ---------- ELEMENTS ---------- */
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const shuffleBtn = document.getElementById("shuffle");
+const repeatBtn = document.getElementById("repeat");
+const repeatState = document.getElementById("repeatState");
+const seek = document.getElementById("seek");
+const seekFill = document.getElementById("seekFill");
+const lyricsBox = document.getElementById("lyrics");
+const titleEl = document.getElementById("trackTitle");
+const artistEl = document.getElementById("trackArtist");
+const coverImg = document.getElementById("coverImg");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
 
-audio.onplay=()=>playBtn.textContent="❚❚";
-audio.onpause=()=>playBtn.textContent="▶";
-
-function loadTrack(i){
-  const t=album[i];audio.src=t.audio;
-  titleEl.textContent=t.title;artistEl.textContent=t.artist;
-  coverImg.src=t.cover;lyrics=[];
-  fetch(t.lrc).then(r=>r.text()).then(txt=>{
-    lyrics=txt.split("\n").map(l=>{
-      const m=l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      return m?{time:+m[1]*60+ +m[2],text:m[3]}:null;
-    }).filter(Boolean);
+/* ---------- FETCH SONGS ---------- */
+fetch("songs.json")
+  .then(r => r.json())
+  .then(data => {
+    album = data;
+    loadTrack(0);
+  })
+  .catch(e => {
+    lyricsBox.textContent = "Failed to load songs";
+    console.error(e);
   });
+
+/* ---------- PLAYER ---------- */
+audio.onplay = () => playBtn.textContent = "❚❚";
+audio.onpause = () => playBtn.textContent = "▶";
+
+function loadTrack(i) {
+  const t = album[i];
+  audio.src = t.audio;
+  titleEl.textContent = t.title;
+  artistEl.textContent = t.artist;
+  coverImg.src = t.cover;
+
+  lyricsData = [];
+  lyricsBox.textContent = "Loading lyrics…";
+
+  fetch(t.lrc)
+    .then(r => r.text())
+    .then(txt => {
+      lyricsData = txt.split("\n").map(l => {
+        const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+        return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
+      }).filter(Boolean);
+    });
 }
 
-playBtn.onclick=()=>audio.paused?audio.play():audio.pause();
-prevBtn.onclick=()=>{index=(index-1+album.length)%album.length;loadTrack(index);audio.play()};
-nextBtn.onclick=()=>{index=(index+1)%album.length;loadTrack(index);audio.play()};
-shuffleBtn.onclick=()=>shuffleOn=!shuffleOn;
-repeatBtn.onclick=()=>{repeatMode=(repeatMode+1)%3;repeatState.textContent=repeatMode===2?"1":"";audio.loop=repeatMode===2};
+playBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
+prevBtn.onclick = () => { index=(index-1+album.length)%album.length; loadTrack(index); audio.play(); };
+nextBtn.onclick = () => { index=(index+1)%album.length; loadTrack(index); audio.play(); };
 
-audio.ontimeupdate=()=>{
-  if(!audio.duration)return;
-  const p=audio.currentTime/audio.duration*100;
-  seekFill.style.width=p+"%";seek.value=p;
-  current.textContent=format(audio.currentTime);
-  duration.textContent=format(audio.duration);
-  for(let i=lyrics.length-1;i>=0;i--)if(audio.currentTime>=lyrics[i].time){lyricsBox.textContent=lyrics[i].text;break;}
+audio.ontimeupdate = () => {
+  if (!audio.duration) return;
+  const p = audio.currentTime / audio.duration * 100;
+  seekFill.style.width = p + "%";
+  seek.value = p;
+  current.textContent = format(audio.currentTime);
+  duration.textContent = format(audio.duration);
+
+  for (let i = lyricsData.length - 1; i >= 0; i--) {
+    if (audio.currentTime >= lyricsData[i].time) {
+      lyricsBox.textContent = lyricsData[i].text;
+      break;
+    }
+  }
 };
-seek.oninput=()=>audio.currentTime=seek.value/100*audio.duration;
+
+seek.oninput = () => audio.currentTime = seek.value / 100 * audio.duration;
 function format(t){return Math.floor(t/60)+":"+Math.floor(t%60).toString().padStart(2,"0")}
 </script>
 
