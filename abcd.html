@@ -2,82 +2,141 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Simple Network Video Player</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>LayaSync IPTV Player</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
-body {
-  margin: 0;
-  background: #111;
-  color: #fff;
-  font-family: Arial, sans-serif;
+body{
+  margin:0;
+  background:#0d0d0d;
+  color:#fff;
+  font-family:Arial, sans-serif;
 }
-.container {
-  max-width: 900px;
-  margin: 20px auto;
+.top{
+  padding:10px;
+  background:#111;
 }
-input {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: none;
-  margin-bottom: 10px;
+select,input,button{
+  width:100%;
+  padding:10px;
+  margin:4px 0;
+  border:none;
+  border-radius:6px;
 }
-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: none;
-  background: #ff8800;
-  font-weight: bold;
+button{
+  background:#1e88e5;
+  font-weight:bold;
 }
-video {
-  width: 100%;
-  background: black;
-  margin-top: 10px;
+.app{
+  display:flex;
+  height:calc(100vh - 120px);
 }
+.list{
+  width:320px;
+  background:#1a1a1a;
+  overflow:auto;
+}
+.item{
+  padding:10px;
+  border-bottom:1px solid #333;
+  cursor:pointer;
+}
+.item:hover{
+  background:#333;
+}
+video{
+  flex:1;
+  background:black;
+}
+.hidden{display:none}
 </style>
 </head>
 
 <body>
-<div class="container">
-  <input id="url" placeholder="Paste video URL (.mp4 or .m3u8)">
-  <button onclick="play()">PLAY</button>
-  <video id="video" controls></video>
+
+<div class="top">
+  <select id="mode">
+    <option value="xtream">Xtream Codes</option>
+    <option value="m3u">M3U Playlist</option>
+  </select>
+
+  <div id="xtreamBox">
+    <input id="server" placeholder="http://SERVER:PORT">
+    <input id="user" placeholder="Username">
+    <input id="pass" placeholder="Password">
+    <button onclick="loadXtream()">Load Xtream</button>
+  </div>
+
+  <div id="m3uBox" class="hidden">
+    <input id="m3uurl" placeholder="M3U URL">
+    <button onclick="loadM3U()">Load M3U</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="list" id="list"></div>
+  <video id="video" controls autoplay></video>
 </div>
 
 <script>
+const API="http://localhost:3000";
 let hls;
-const video = document.getElementById("video");
 
-function play() {
-  const url = document.getElementById("url").value.trim();
-  if (!url) return;
+mode.onchange=()=>{
+  xtreamBox.classList.toggle("hidden", mode.value!=="xtream");
+  m3uBox.classList.toggle("hidden", mode.value!=="m3u");
+};
 
-  if (hls) {
-    hls.destroy();
-    hls = null;
-  }
-
-  if (url.endsWith(".m3u8")) {
-    if (Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(url);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-    } else {
-      video.src = url; // Safari
-      video.play();
-    }
-  } else {
-    video.src = url;
-    video.play();
+function play(url){
+  if(hls){hls.destroy();hls=null;}
+  if(url.endsWith(".m3u8") && Hls.isSupported()){
+    hls=new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+  }else{
+    video.src=url;
   }
 }
+
+function loadXtream(){
+  const S=server.value,U=user.value,P=pass.value;
+  fetch(`${API}/xtream?server=${S}&username=${U}&password=${P}&action=get_live_streams`)
+    .then(r=>r.json())
+    .then(data=>{
+      list.innerHTML="";
+      data.forEach(ch=>{
+        const d=document.createElement("div");
+        d.className="item";
+        d.textContent=ch.name;
+        d.onclick=()=>play(`${S}/live/${U}/${P}/${ch.stream_id}.m3u8`);
+        list.appendChild(d);
+      });
+    });
+}
+
+function loadM3U(){
+  fetch(`${API}/m3u?url=${encodeURIComponent(m3uurl.value)}`)
+    .then(r=>r.text())
+    .then(text=>{
+      list.innerHTML="";
+      const lines=text.split("\n");
+      for(let i=0;i<lines.length;i++){
+        if(lines[i].startsWith("#EXTINF")){
+          const name=lines[i].split(",")[1]||"Channel";
+          const url=lines[i+1]?.trim();
+          if(url){
+            const d=document.createElement("div");
+            d.className="item";
+            d.textContent=name;
+            d.onclick=()=>play(url);
+            list.appendChild(d);
+          }
+        }
+      }
+    });
+}
 </script>
+
 </body>
 </html>
