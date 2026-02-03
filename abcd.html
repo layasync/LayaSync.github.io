@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Web VLC – 4K HDR Network Player</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  background:#0e0e0e;
+  color:#fff;
+  font-family:system-ui,Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.player{
+  width:95%;
+  max-width:1000px;
+  background:#1a1a1a;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(0,0,0,.8);
+}
+.top{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  background:#222;
+}
+input{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  outline:none;
+}
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  background:#ff8800;
+  font-weight:bold;
+  cursor:pointer;
+}
+video{
+  width:100%;
+  background:black;
+}
+.controls{
+  display:flex;
+  gap:8px;
+  padding:10px;
+  background:#181818;
+}
+select{
+  background:#333;
+  color:#fff;
+  border:none;
+  padding:6px;
+  border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+<div class="player">
+  <div class="top">
+    <input id="url" placeholder="Paste Network Stream URL (.m3u8 / .mpd / .mp4)" />
+    <button onclick="loadStream()">PLAY</button>
+  </div>
+
+  <video id="video" controls crossorigin="anonymous"></video>
+
+  <div class="controls">
+    <select id="quality"></select>
+    <select id="audio"></select>
+  </div>
+</div>
+
+<script>
+let hls, dash;
+
+const video = document.getElementById("video");
+const quality = document.getElementById("quality");
+const audio = document.getElementById("audio");
+
+function loadStream(){
+  const url = document.getElementById("url").value.trim();
+  if(!url) return;
+
+  if(hls){ hls.destroy(); }
+  if(dash){ dash.reset(); }
+
+  if(url.endsWith(".m3u8")){
+    if(Hls.isSupported()){
+      hls = new Hls({
+        enableWorker:true,
+        capLevelToPlayerSize:false,
+        hdr:true
+      });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setupHLSControls();
+        video.play();
+      });
+    } else {
+      video.src = url;
+    }
+
+  } else if(url.endsWith(".mpd")){
+    dash = dashjs.MediaPlayer().create();
+    dash.initialize(video, url, true);
+    setupDASHControls();
+
+  } else {
+    video.src = url;
+    video.play();
+  }
+}
+
+function setupHLSControls(){
+  quality.innerHTML = "<option value='-1'>AUTO</option>";
+  hls.levels.forEach((l,i)=>{
+    quality.innerHTML += `<option value="${i}">${l.height}p</option>`;
+  });
+  quality.onchange = ()=> hls.currentLevel = quality.value;
+
+  audio.innerHTML="";
+  hls.audioTracks.forEach((a,i)=>{
+    audio.innerHTML += `<option value="${i}">${a.name}</option>`;
+  });
+  audio.onchange = ()=> hls.audioTrack = audio.value;
+}
+
+function setupDASHControls(){
+  quality.innerHTML="<option>AUTO</option>";
+  audio.innerHTML="<option>DEFAULT</option>";
+}
+</script>
+</body>
+</html>
