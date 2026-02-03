@@ -26,6 +26,9 @@ pages:
     # Cloner
     - mkdir -p public/cloner
     - cp -r cloner/* public/cloner/
+
+    # Cache Busting: Replace version placeholder with timestamp
+    - find public -type f -name "*.html" -exec sed -i "s/v=20260202/v=$(date +%s)/g" {} +
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   artifacts:
