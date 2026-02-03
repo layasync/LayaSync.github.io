@@ -1,148 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Web VLC – 4K HDR Network Player</title>
+<meta charset="UTF-8">
+<title>Simple Network Video Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  background:#0e0e0e;
-  color:#fff;
-  font-family:system-ui,Arial;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+body {
+  margin: 0;
+  background: #111;
+  color: #fff;
+  font-family: Arial, sans-serif;
 }
-.player{
-  width:95%;
-  max-width:1000px;
-  background:#1a1a1a;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 0 40px rgba(0,0,0,.8);
+.container {
+  max-width: 900px;
+  margin: 20px auto;
 }
-.top{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  background:#222;
+input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 10px;
 }
-input{
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  outline:none;
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+  background: #ff8800;
+  font-weight: bold;
 }
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:8px;
-  background:#ff8800;
-  font-weight:bold;
-  cursor:pointer;
-}
-video{
-  width:100%;
-  background:black;
-}
-.controls{
-  display:flex;
-  gap:8px;
-  padding:10px;
-  background:#181818;
-}
-select{
-  background:#333;
-  color:#fff;
-  border:none;
-  padding:6px;
-  border-radius:6px;
+video {
+  width: 100%;
+  background: black;
+  margin-top: 10px;
 }
 </style>
 </head>
 
 <body>
-<div class="player">
-  <div class="top">
-    <input id="url" placeholder="Paste Network Stream URL (.m3u8 / .mpd / .mp4)" />
-    <button onclick="loadStream()">PLAY</button>
-  </div>
-
-  <video id="video" controls crossorigin="anonymous"></video>
-
-  <div class="controls">
-    <select id="quality"></select>
-    <select id="audio"></select>
-  </div>
+<div class="container">
+  <input id="url" placeholder="Paste video URL (.mp4 or .m3u8)">
+  <button onclick="play()">PLAY</button>
+  <video id="video" controls></video>
 </div>
 
 <script>
-let hls, dash;
-
+let hls;
 const video = document.getElementById("video");
-const quality = document.getElementById("quality");
-const audio = document.getElementById("audio");
 
-function loadStream(){
+function play() {
   const url = document.getElementById("url").value.trim();
-  if(!url) return;
+  if (!url) return;
 
-  if(hls){ hls.destroy(); }
-  if(dash){ dash.reset(); }
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
 
-  if(url.endsWith(".m3u8")){
-    if(Hls.isSupported()){
-      hls = new Hls({
-        enableWorker:true,
-        capLevelToPlayerSize:false,
-        hdr:true
-      });
+  if (url.endsWith(".m3u8")) {
+    if (Hls.isSupported()) {
+      hls = new Hls();
       hls.loadSource(url);
       hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        setupHLSControls();
-        video.play();
-      });
+      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
     } else {
-      video.src = url;
+      video.src = url; // Safari
+      video.play();
     }
-
-  } else if(url.endsWith(".mpd")){
-    dash = dashjs.MediaPlayer().create();
-    dash.initialize(video, url, true);
-    setupDASHControls();
-
   } else {
     video.src = url;
     video.play();
   }
-}
-
-function setupHLSControls(){
-  quality.innerHTML = "<option value='-1'>AUTO</option>";
-  hls.levels.forEach((l,i)=>{
-    quality.innerHTML += `<option value="${i}">${l.height}p</option>`;
-  });
-  quality.onchange = ()=> hls.currentLevel = quality.value;
-
-  audio.innerHTML="";
-  hls.audioTracks.forEach((a,i)=>{
-    audio.innerHTML += `<option value="${i}">${a.name}</option>`;
-  });
-  audio.onchange = ()=> hls.audioTrack = audio.value;
-}
-
-function setupDASHControls(){
-  quality.innerHTML="<option>AUTO</option>";
-  audio.innerHTML="<option>DEFAULT</option>";
 }
 </script>
 </body>
