@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All-in-One Media Player</title>
+
+<style>
+:root {
+  --bg: #0f0f0f;
+  --panel: #181818;
+  --accent: #ff7a18;
+  --text: #ffffff;
+  --muted: #999;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.player {
+  max-width: 1000px;
+  margin: auto;
+  padding: 10px;
+}
+
+video, audio {
+  width: 100%;
+  background: black;
+  border-radius: 12px;
+}
+
+.controls {
+  background: var(--panel);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #333;
+  color: white;
+}
+
+input[type="range"] {
+  flex: 1;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+}
+
+.playlist {
+  margin-top: 10px;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.playlist div {
+  padding: 6px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+
+.playlist div:hover {
+  background: #222;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="player">
+
+  <video id="media" controls></video>
+
+  <div class="controls">
+    <div class="row">
+      <button onclick="togglePlay()">▶ / ⏸</button>
+      <button class="secondary" onclick="openFile()">📂 Open File</button>
+      <button class="secondary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+
+    <div class="row">
+      <input type="range" id="seek" value="0">
+    </div>
+
+    <div class="row">
+      <span class="small">Volume</span>
+      <input type="range" min="0" max="1" step="0.01" value="1" onchange="media.volume=this.value">
+    </div>
+
+    <div class="row">
+      <input type="text" id="url" placeholder="Paste media URL (mp4, mp3, m3u8)">
+      <button onclick="loadURL()">Load</button>
+    </div>
+  </div>
+
+  <div class="playlist" id="playlist">
+    <div class="small">Playlist</div>
+  </div>
+
+</div>
+
+<input type="file" id="file" hidden>
+
+<script>
+const media = document.getElementById("media");
+const seek = document.getElementById("seek");
+const fileInput = document.getElementById("file");
+const playlist = document.getElementById("playlist");
+
+let items = [];
+
+function togglePlay() {
+  media.paused ? media.play() : media.pause();
+}
+
+function openFile() {
+  fileInput.click();
+}
+
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+  addToPlaylist(file.name, url);
+  playItem(url);
+};
+
+function loadURL() {
+  const url = document.getElementById("url").value.trim();
+  if (!url) return;
+  addToPlaylist(url, url);
+  playItem(url);
+}
+
+function playItem(src) {
+  media.src = src;
+  media.play();
+}
+
+media.ontimeupdate = () => {
+  seek.value = (media.currentTime / media.duration) * 100 || 0;
+};
+
+seek.oninput = () => {
+  media.currentTime = (seek.value / 100) * media.duration;
+};
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    media.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+function addToPlaylist(name, src) {
+  items.push({ name, src });
+  const div = document.createElement("div");
+  div.textContent = name;
+  div.onclick = () => playItem(src);
+  playlist.appendChild(div);
+}
+</script>
+</body>
+</html>
