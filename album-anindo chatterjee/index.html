@@ -158,14 +158,14 @@ repeatBtn.onclick=()=>{
 
 function onYouTubeIframeAPIReady(){
   player=new YT.Player("player",{
-    videoId:"Zz0PcNCZbBY",
+    videoId:"iBUdfZRsq3k",
     playerVars:{playsinline:1},
     events:{onReady:onReady,onStateChange:onState}
   });
 }
 
 function onReady(){
-  player.cueVideoById("Zz0PcNCZbBY");
+  player.cueVideoById("iBUdfZRsq3k");
   const poll=setInterval(()=>{
     const d=player.getDuration();
     if(d && d>0){
