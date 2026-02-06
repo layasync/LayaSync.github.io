@@ -1,8 +1,8 @@
 /**
- * Clipboard Class
+ * UIClipboard Class
  * Handles copy-to-clipboard functionality for the application.
  */
-class Clipboard {
+class UIClipboard {
     // Sets up copy buttons globally.
     static setup() {
         document.addEventListener("click", (e) => {
@@ -83,4 +83,4 @@ class Clipboard {
     }
 }
 
-window.Clipboard = Clipboard;
+window.UIClipboard = UIClipboard;

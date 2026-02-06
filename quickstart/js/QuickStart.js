@@ -82,7 +82,7 @@ class QuickStart {
     async init() {
         this.switchMode(this.mode); // Initialize UI state based on default mode
         this.handleDebridProviderChange(); // Initialize the checkboxes to their default state
-        window.Clipboard && Clipboard.setup(); // Initialize Clipboard
+        window.UIClipboard && UIClipboard.setup(); // Initialize Clipboard
         this.populateAIOStreamsHostsSelect();
         await this.loadFormatters(); // Load formatters from config
 
