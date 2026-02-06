@@ -82,7 +82,9 @@ class Network {
         let lastError = null;
 
         for (const proxyBase of PROXIES) {
-            const proxyUrl = proxyBase + encodeURIComponent(url);
+            // Resolve relative URLs to absolute before sending to proxy
+            const absoluteUrl = new URL(url, window.location.href).href;
+            const proxyUrl = proxyBase + encodeURIComponent(absoluteUrl);
 
             try {
                 // Cloudflare worker proxy

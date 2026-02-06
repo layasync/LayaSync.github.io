@@ -237,13 +237,13 @@ class QuickStart {
 
                 // Fetch definition
                 try {
-                    const definition = await Network.request(`config/formatters/${item.folder}/formatter.json`);
+                    const definition = await Network.request(`config/formatters/${encodeURIComponent(item.folder)}/formatter.json`);
 
                     this.formatters[id] = {
                         id: id,
                         name: item.name,
                         definition: definition,
-                        image: `config/formatters/${item.folder}/preview.png`
+                        image: `config/formatters/${encodeURIComponent(item.folder)}/preview.png`
                     };
 
                     // Create option element
