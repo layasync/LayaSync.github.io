@@ -96,10 +96,20 @@ class Network {
                     const errorMessage = errorBody.error?.message || errorBody.message || `Proxy Error: ${resp.status} ${resp.statusText}`;
 
                     // If we get a response, is it from the proxy?
-                    // 4xx errors are almost always from the proxy -> STOP ROTATION
-                    // 5xx errors could be the proxy failing (e.g. 502 Bad Gateway) -> CONTINUE ROTATION (Try next proxy)
+                    // We only want to STOP ROTATION for definitive client errors where retrying won't help.
+                    // 400: Bad Request (Invalid input)
+                    // 401: Unauthorized (Auth failure, handled by StremioAPI)
+                    // 404: Not Found (Wrong endpoint)
+                    // 422: Unprocessable Entity (Validation error)
+                    //
+                    // We CONTINUE ROTATION for:
+                    // 403: Forbidden (Often WAF/Proxy blocking)
+                    // 429: Too Many Requests (Rate limiting)
+                    // 5xx: Server Errors (Proxy failure)
                     const apiError = new Error(errorMessage);
-                    if (resp.status >= 400 && resp.status < 500) {
+                    const stopRotationCodes = [400, 401, 404, 422];
+
+                    if (stopRotationCodes.includes(resp.status)) {
                         apiError.stopRotation = true;
                     }
                     throw apiError;
