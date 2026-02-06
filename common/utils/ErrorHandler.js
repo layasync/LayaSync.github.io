@@ -96,18 +96,36 @@ class ErrorHandler {
      * Handle an error by showing a modal and reporting it.
      */
     static handle(err, context = {}, customTitle = "Error") {
-        const errorObj = (err instanceof Error) ? err : new Error(String(err));
-
-        // 1. Show UI Feedback
-        if (window.Modal) {
-            Modal.error(errorObj.message, customTitle);
-        } else {
-            console.error("Detailed Error:", errorObj);
-            alert(`${customTitle}: ${errorObj.message}`);
+        // Recursion Guard
+        if (ErrorHandler.isHandlingError) {
+            console.error("Recursive error detected in ErrorHandler. Suppressing UI to prevent stack overflow.", err);
+            return;
         }
 
-        // 2. Report to Backend
-        this.report(errorObj, context);
+        ErrorHandler.isHandlingError = true;
+
+        try {
+            const errorObj = (err instanceof Error) ? err : new Error(String(err));
+
+            // 1. Show UI Feedback
+            if (window.Modal) {
+                try {
+                    Modal.error(errorObj.message, customTitle);
+                } catch (modalErr) {
+                    console.error("Failed to show error modal:", modalErr);
+                    // Fallback to native alert if Modal fails
+                    alert(`${customTitle}: ${errorObj.message}`);
+                }
+            } else {
+                console.error("Detailed Error:", errorObj);
+                alert(`${customTitle}: ${errorObj.message}`);
+            }
+
+            // 2. Report to Backend
+            this.report(errorObj, context);
+        } finally {
+            ErrorHandler.isHandlingError = false;
+        }
     }
 
     /**
