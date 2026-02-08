@@ -4,19 +4,21 @@
   "start_url": "/f11.html",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0b1a2b",
-  "theme_color": "#0b1a2b",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
   "orientation": "portrait",
   "icons": [
     {
       "src": "/Images/3182-Picsart-AiImageEnhancer(2).png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/Images/3182-Picsart-AiImageEnhancer(2).png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
