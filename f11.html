@@ -268,7 +268,7 @@ body {
 
 <script>
 /* =========================
-   GLOBAL STATE (DECLARE ONCE)
+   GLOBAL STATE
 ========================= */
 let album = [];
 let index = 0;
@@ -295,6 +295,27 @@ const coverImg = document.getElementById("coverImg");
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
+
+/* =========================
+   MEDIA SESSION (LOCKSCREEN)
+========================= */
+function updateMediaSession(track) {
+  if (!("mediaSession" in navigator)) return;
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: track.artist,
+    album: "LayaSync",
+    artwork: [
+      { src: track.cover, sizes: "512x512", type: "image/png" }
+    ]
+  });
+
+  navigator.mediaSession.setActionHandler("play", () => audio.play());
+  navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+  navigator.mediaSession.setActionHandler("previoustrack", () => prevBtn.onclick());
+  navigator.mediaSession.setActionHandler("nexttrack", () => nextBtn.onclick());
+}
 
 /* =========================
    LOAD SONG DATA (JSON)
@@ -352,6 +373,7 @@ function loadTrack(i) {
       }).filter(Boolean);
     });
 
+  updateMediaSession(t); // ✅ ANDROID NOTIFICATION / LOCKSCREEN
   renderPlaylist();
 }
 
