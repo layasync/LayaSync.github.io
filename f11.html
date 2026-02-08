@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync</title>
+
+<meta name="theme-color" content="#121212">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #6b2f24, #121212 60%);
+  color: #fff;
+  padding-bottom: 180px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  padding: 14px 0;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+/* COVER */
+.cover-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+
+.cover {
+  width: 88%;
+  max-width: 320px;
+  aspect-ratio: 1/1;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.75);
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* INFO */
+.info {
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.track {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.artist {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* SEEK */
+.seek-wrap {
+  margin-top: 18px;
+}
+
+.seek-track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 2px;
+}
+
+.seek-fill {
+  position: absolute;
+  height: 100%;
+  width: 0%;
+  background: #fff;
+  border-radius: 2px;
+}
+
+#seek {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+}
+
+.time {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+/* CONTROLS */
+.controls {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  opacity: 0.75;
+}
+
+.icon-btn.active {
+  opacity: 1;
+}
+
+.play {
+  width: 76px;
+  height: 76px;
+  background: #fff;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+/* PLAYLIST BAR (NEW) */
+.playlist-bar {
+  margin-top: 26px;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+}
+
+.playlist-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.play-card {
+  min-width: 120px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 10px;
+  scroll-snap-align: start;
+  transition: 0.25s;
+}
+
+.play-card.active {
+  background: rgba(255,255,255,0.18);
+}
+
+.play-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.play-card .title {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.play-card .artist {
+  font-size: 11px;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* LYRICS BAR */
+.lyric-bar {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 24px);
+  padding: 16px 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(58,34,28,0.98),
+    rgba(36,21,18,0.98)
+  );
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.7);
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">PLAYING FROM NFC</div>
+
+<div class="cover-wrap">
+  <div class="cover">
+    <img id="coverImg">
+  </div>
+</div>
+
+<div class="info">
+  <div class="track" id="trackTitle"></div>
+  <div class="artist" id="trackArtist"></div>
+
+  <div class="seek-wrap">
+    <div class="seek-track">
+      <div class="seek-fill" id="seekFill"></div>
+      <input type="range" id="seek" min="0" max="100" value="0">
+    </div>
+    <div class="time">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <svg id="shuffle" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42 4.3-4.29H16V3zM3 6h5l3.5 3.5-1.42 1.42L7.17 8H3V6zm5 10h5v2H8v-2zm9.59-1.59L13.3 18.7l1.42 1.42 4.29-4.3V18h2v-5h-5v2h2.59z"/>
+    </svg>
+
+    <svg id="prev" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M6 6h2v12H6zm3.5 6L18 6v12z"/>
+    </svg>
+
+    <div class="play" id="play">▶</div>
+
+    <svg id="next" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M16 6h2v12h-2zM6 6l8.5 6L6 18z"/>
+    </svg>
+
+    <svg id="repeat" class="icon-btn" viewBox="0 0 24 24" fill="white">
+      <path d="M7 7h10v3l4-4-4-4v3H7c-2.76 0-5 2.24-5 5v2h2V10c0-1.66 1.34-3 3-3zm10 10H7v-3l-4 4 4 4v-3h10c2.76 0 5-2.24 5-5v-2h-2v2c0 1.66-1.34 3-3 3z"/>
+      <text id="repeatState" x="12" y="16" text-anchor="middle"
+            font-size="10" font-weight="900" fill="white"></text>
+    </svg>
+  </div>
+
+  <!-- PLAYLIST BAR -->
+  <div class="playlist-bar" id="playlist"></div>
+</div>
+
+<div class="lyric-bar" id="lyrics">Tap play to begin…</div>
+
+<audio id="audio"></audio>
+
+<script>
+const album = [
+  {
+    title: "Lose My Mind",
+    artist: "Don Toliver, Doja Cat",
+    audio: "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3",
+    lrc: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc",
+    cover: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png"
+  },
+  {
+    title: "Just Keep Watching",
+    artist: "Tate McRae",
+    audio: "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Just%20Keep%20Watching(MP3_160K).mp3",
+    lrc: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Tate%20McRae%20-%20Just%20Keep%20Watching.lrc",
+    cover: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024.png"
+  }
+];
+
+let index = 0;
+let lyrics = [];
+let repeatMode = 0;
+let shuffleOn = false;
+
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+const shuffleBtn = document.getElementById("shuffle");
+const repeatBtn = document.getElementById("repeat");
+const repeatState = document.getElementById("repeatState");
+const seek = document.getElementById("seek");
+const seekFill = document.getElementById("seekFill");
+const lyricsBox = document.getElementById("lyrics");
+const titleEl = document.getElementById("trackTitle");
+const artistEl = document.getElementById("trackArtist");
+const coverImg = document.getElementById("coverImg");
+const current = document.getElementById("current");
+const duration = document.getElementById("duration");
+const playlistEl = document.getElementById("playlist");
+
+audio.onplay = () => playBtn.textContent = "❚❚";
+audio.onpause = () => playBtn.textContent = "▶";
+
+function loadTrack(i) {
+  const t = album[i];
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = t.audio;
+  titleEl.textContent = t.title;
+  artistEl.textContent = t.artist;
+  coverImg.src = t.cover;
+
+  lyrics = [];
+  lyricsBox.textContent = "Loading lyrics…";
+
+  fetch(t.lrc).then(r => r.text()).then(text => {
+    lyrics = text.split("\n").map(l => {
+      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+      return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
+    }).filter(Boolean);
+  });
+
+  renderPlaylist();
+}
+
+function renderPlaylist() {
+  playlistEl.innerHTML = "";
+  album.forEach((t, i) => {
+    const c = document.createElement("div");
+    c.className = "play-card" + (i === index ? " active" : "");
+    c.innerHTML = `
+      <img src="${t.cover}">
+      <div class="title">${t.title}</div>
+      <div class="artist">${t.artist}</div>
+    `;
+    c.onclick = () => {
+      index = i;
+      loadTrack(index);
+      audio.play();
+    };
+    playlistEl.appendChild(c);
+  });
+}
+
+playBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
+prevBtn.onclick = () => { index = (index - 1 + album.length) % album.length; loadTrack(index); audio.play(); };
+nextBtn.onclick = () => { index = (index + 1) % album.length; loadTrack(index); audio.play(); };
+
+audio.ontimeupdate = () => {
+  if (!audio.duration) return;
+  const p = audio.currentTime / audio.duration * 100;
+  seek.value = p;
+  seekFill.style.width = p + "%";
+  current.textContent = format(audio.currentTime);
+  duration.textContent = format(audio.duration);
+  for (let i = lyrics.length - 1; i >= 0; i--) {
+    if (audio.currentTime >= lyrics[i].time) {
+      lyricsBox.textContent = lyrics[i].text;
+      break;
+    }
+  }
+};
+
+seek.oninput = () => audio.currentTime = seek.value / 100 * audio.duration;
+function format(t){return Math.floor(t/60)+":"+Math.floor(t%60).toString().padStart(2,"0");}
+
+loadTrack(index);
+renderPlaylist();
+</script>
+
+</body>
+</html>
