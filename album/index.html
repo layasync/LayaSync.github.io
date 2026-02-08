@@ -375,7 +375,7 @@ function stopMediaResync() {
 /* =========================
    LOAD SONG DATA
 ========================= */
-fetch("https://layasync.github.io/songs.json")
+fetch("https://layasync.github.io/album/playlist.json")
   .then(r => r.json())
   .then(d => {
     album = d.tracks;
