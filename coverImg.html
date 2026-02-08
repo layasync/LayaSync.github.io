@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MP3 Cover Extractor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #121212;
+  color: white;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.box {
+  background: #1c1c1c;
+  padding: 24px;
+  border-radius: 16px;
+  text-align: center;
+  width: 90%;
+  max-width: 320px;
+}
+
+input {
+  margin-bottom: 16px;
+}
+
+img {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 12px;
+  display: none;
+}
+
+.note {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-top: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>MP3 Cover Extractor</h2>
+
+  <input type="file" id="file" accept=".mp3">
+
+  <img id="cover">
+
+  <div class="note">Select an MP3 with embedded artwork</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
+
+<script>
+const fileInput = document.getElementById("file");
+const coverImg = document.getElementById("cover");
+
+fileInput.onchange = () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  jsmediatags.read(file, {
+    onSuccess: tag => {
+      const pic = tag.tags.picture;
+      if (!pic) {
+        alert("No cover image found in this MP3");
+        return;
+      }
+
+      const bytes = new Uint8Array(pic.data);
+      const blob = new Blob([bytes], { type: pic.format });
+      const url = URL.createObjectURL(blob);
+
+      coverImg.src = url;
+      coverImg.style.display = "block";
+    },
+    onError: err => {
+      console.error(err);
+      alert("Failed to read MP3 tags");
+    }
+  });
+};
+</script>
+
+</body>
+</html>
