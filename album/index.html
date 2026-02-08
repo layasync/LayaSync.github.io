@@ -18,43 +18,6 @@
  href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
-/* =========================
-   DYNAMIC BACKGROUND
-========================= */
-.dynamic-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
-}
-
-.dynamic-bg img {
-  width: 120%;
-  height: 120%;
-  object-fit: cover;
-  filter: blur(60px) saturate(1.4);
-  opacity: 0.55;
-  transform: scale(1.1);
-  animation: bgFloat 18s ease-in-out infinite alternate;
-}
-
-/* dark overlay to keep UI readable */
-.dynamic-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at top,
-    rgba(0,0,0,0.15),
-    rgba(0,0,0,0.65)
-  );
-}
-
-/* slow cinematic movement */
-@keyframes bgFloat {
-  0%   { transform: scale(1.15) translateY(-10px); }
-  100% { transform: scale(1.25) translateY(10px); }
-}
 * {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
@@ -268,7 +231,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-  
+
 
 
 /* LYRICS BAR */
@@ -292,9 +255,6 @@ body {
 </head>
 
 <body>
-<div class="dynamic-bg">
-  <img id="bgImg">
-</div>
 
 <div class="header">PLAYING FROM NFC</div>
 
@@ -377,7 +337,6 @@ const lyricsBox = document.getElementById("lyrics");
 const titleEl = document.getElementById("trackTitle");
 const artistEl = document.getElementById("trackArtist");
 const coverImg = document.getElementById("coverImg");
-document.getElementById("bgImg").src = t.cover;
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
