@@ -490,13 +490,8 @@ function loadTrack(i) {
 
   titleEl.textContent = t.title;
   artistEl.textContent = t.artist;
-  coverImg.onload = null;
-coverImg.crossOrigin = "anonymous";
-coverImg.src = t.cover + "?cb=" + Date.now();
-coverImg.onload = () => {
-  console.log("Cover loaded, applying background");
-  applyDynamicBackground(coverImg);
-};
+  coverImg.src = t.cover;
+applyDynamicBackground(coverImg);
 
   lyrics = [];
   lyricsBox.textContent = "Loading lyrics...";
@@ -638,7 +633,12 @@ function format(t) {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js");
 }
+function applyDynamicBackground(img) {
+  console.log("🔥 applyDynamicBackground CALLED");
 
+  document.body.style.background =
+    "linear-gradient(180deg, #8b0000, #121212 65%)";
+}
 
 </script>
 
