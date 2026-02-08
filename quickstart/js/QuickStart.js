@@ -408,6 +408,11 @@ class QuickStart {
     }
 
     isRecognizedDuckStreams(addon) {
+        // Detect stale "Restoring Addon..." artifacts from AIOStreams
+        if (addon.manifest.id === 'synth-0' || addon.manifest.name === 'Restoring Addon...') {
+            return true;
+        }
+
         if (!addon.manifest.name.startsWith("Duck Streams") || !addon.transportUrl) return false;
         const isStremio = addon.transportUrl.includes("/stremio/") && addon.transportUrl.includes("/manifest.json");
         const isChilllink = addon.transportUrl.includes("/chilllink/");
@@ -420,6 +425,14 @@ class QuickStart {
         const filteredAddons = currentAddons.filter(a => {
             if (this.isRecognizedDuckStreams(a)) {
                 // It is one of ours.
+
+                // FORCE DELETE STALE ARTIFACTS
+                // We never want to keep "Restoring Addon..." as it means the install/update failed to complete
+                // or the server returned a temporary placeholder.
+                if (a.manifest.id === 'synth-0' || a.manifest.name === 'Restoring Addon...') {
+                    return false; // Always delete
+                }
+
                 // Keep ONLY if it matches keepUuid
                 if (keepUuid && a.transportUrl.includes(keepUuid)) {
                     return true;
