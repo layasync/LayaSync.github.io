@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spotify Demo – LayaSync</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  background:#121212;
+  color:#fff;
+  font-family:system-ui,Roboto,sans-serif;
+  padding:20px;
+}
+input,button{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:none;
+  font-size:15px;
+}
+button{
+  background:#1db954;
+  color:#000;
+  font-weight:900;
+}
+.card{
+  margin-top:20px;
+  background:#1e1e1e;
+  border-radius:16px;
+  padding:16px;
+}
+.cover{
+  width:100%;
+  max-width:240px;
+  border-radius:14px;
+  display:block;
+  margin:0 auto 12px;
+}
+.meta{
+  text-align:center;
+}
+.title{
+  font-weight:900;
+  font-size:18px;
+}
+.artist{
+  opacity:.8;
+  margin-top:4px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Spotify Demo Player</h2>
+
+<input id="spotifyUrl"
+  value="https://open.spotify.com/track/7J1uxwnxfQLu4APicE5Rnj"
+  placeholder="Paste Spotify track link">
+
+<button onclick="loadSpotify()">Load Track</button>
+
+<div id="result"></div>
+
+<script>
+async function loadSpotify(){
+  const url = spotifyUrl.value.trim();
+  if(!url) return;
+
+  // ---- FETCH METADATA (oEmbed) ----
+  const oembed =
+    "https://open.spotify.com/oembed?url=" +
+    encodeURIComponent(url);
+
+  const data = await fetch(oembed).then(r=>r.json());
+
+  // ---- EXTRACT DATA ----
+  const title = data.title;
+  const artist = data.author_name;
+  const cover = data.thumbnail_url;
+  const embed = data.html;
+
+  // ---- RENDER ----
+  result.innerHTML = `
+    <div class="card">
+      <img class="cover" src="${cover}">
+      <div class="meta">
+        <div class="title">${title}</div>
+        <div class="artist">${artist}</div>
+      </div>
+      <div style="margin-top:14px">
+        ${embed}
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
