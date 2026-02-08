@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LayaSync Admin</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LayaSync Hybrid Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
@@ -12,9 +12,8 @@ body {
   font-family:Roboto, system-ui, sans-serif;
   padding:20px;
 }
-h2 {
-  margin-bottom:10px;
-}
+h2 { margin-bottom:6px; }
+p { opacity:.7; font-size:13px; }
 
 input, button {
   width:100%;
@@ -39,31 +38,48 @@ pre {
   overflow:auto;
 }
 
-.cover-preview {
+.cover {
   width:100%;
   max-width:220px;
-  margin:14px auto;
+  margin:12px auto;
   display:none;
   border-radius:14px;
   box-shadow:0 10px 30px rgba(0,0,0,.6);
+}
+.small {
+  font-size:12px;
+  opacity:.6;
 }
 </style>
 </head>
 
 <body>
 
-<h2>LayaSync Admin (GitHub MP3)</h2>
+<h2>LayaSync Hybrid Admin</h2>
+<p>Local MP3 → auto metadata | GitHub MP3 → JSON | Wikipedia fallback</p>
 
-<input id="audio" placeholder="Paste GitHub RAW MP3 URL">
-<button onclick="readFromUrl()">Fetch Metadata</button>
+<hr class="small">
 
-<img id="coverPreview" class="cover-preview">
+<!-- LOCAL FILE -->
+<p class="small">1️⃣ Select MP3 (recommended)</p>
+<input type="file" id="file" accept=".mp3">
+
+<p class="small">OR</p>
+
+<!-- GITHUB URL -->
+<p class="small">2️⃣ Paste GitHub RAW MP3 URL</p>
+<input id="audio" placeholder="GitHub RAW MP3 URL">
+
+<button onclick="process()">Process MP3</button>
+
+<img id="coverPreview" class="cover">
 
 <input id="title" placeholder="Song Title">
 <input id="artist" placeholder="Artist">
 <input id="lrc" placeholder="LRC URL">
-<input id="cover" placeholder="Cover Image URL (upload extracted cover & paste link)">
+<input id="cover" placeholder="Cover Image URL">
 
+<button onclick="wikiCover()">Fetch Cover from Wikipedia</button>
 <button onclick="addSong()">Add Song</button>
 
 <pre id="output">Waiting…</pre>
@@ -73,72 +89,72 @@ pre {
 <script>
 let songs = [];
 
-/* =========================
-   READ MP3 FROM URL (CORS SAFE)
-========================= */
-async function readFromUrl() {
-  const url = audio.value.trim();
-  if (!url) {
-    alert("Paste MP3 URL first");
-    return;
-  }
-
-  title.value = "";
-  artist.value = "";
-  cover.value = "";
-  coverPreview.style.display = "none";
-
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("MP3 fetch failed");
-
-    const buffer = await res.arrayBuffer();
-
-    jsmediatags.read(new Blob([buffer]), {
-      onSuccess: tag => {
-        if (tag.tags.title) {
-          title.value = tag.tags.title;
-        }
-
-        if (tag.tags.artist) {
-          artist.value = tag.tags.artist;
-        }
-
-        const pic = tag.tags.picture;
-        if (pic) {
-          const bytes = new Uint8Array(pic.data);
-          const blob = new Blob([bytes], { type: pic.format });
-          const imgUrl = URL.createObjectURL(blob);
-
-          coverPreview.src = imgUrl;
-          coverPreview.style.display = "block";
-
-          cover.value = "UPLOAD_THIS_IMAGE_AND_PASTE_URL";
-        } else {
-          alert("No embedded cover found in this MP3");
-        }
-      },
-      onError: err => {
-        console.error(err);
-        alert("MP3 has no readable ID3 tags");
-      }
-    });
-
-  } catch (e) {
-    console.error(e);
-    alert("Failed to fetch MP3 (network / CORS issue)");
+function process() {
+  if (file.files.length) {
+    readLocal(file.files[0]);
+  } else if (audio.value.trim()) {
+    alert("GitHub MP3 detected.\nMetadata must be extracted locally.\nUsing manual / Wikipedia mode.");
+  } else {
+    alert("Select MP3 or paste GitHub URL");
   }
 }
 
-/* =========================
-   ADD SONG → JSON OUTPUT
-========================= */
-function addSong() {
-  if (!audio.value.trim()) {
-    alert("MP3 URL is required");
+/* LOCAL MP3 METADATA */
+function readLocal(mp3) {
+  jsmediatags.read(mp3, {
+    onSuccess: tag => {
+      title.value = tag.tags.title || "";
+      artist.value = tag.tags.artist || "";
+
+      const pic = tag.tags.picture;
+      if (pic) {
+        const bytes = new Uint8Array(pic.data);
+        const blob = new Blob([bytes], { type: pic.format });
+        const url = URL.createObjectURL(blob);
+
+        coverPreview.src = url;
+        coverPreview.style.display = "block";
+        cover.value = "UPLOAD_THIS_IMAGE_AND_PASTE_URL";
+      }
+    },
+    onError: () => {
+      alert("No ID3 metadata found in MP3");
+    }
+  });
+}
+
+/* WIKIPEDIA COVER FETCH */
+async function wikiCover() {
+  if (!title.value || !artist.value) {
+    alert("Title & artist required");
     return;
   }
 
+  const query = encodeURIComponent(artist.value + " " + title.value);
+  const api =
+    `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*` +
+    `&prop=pageimages&piprop=thumbnail&pithumbsize=500&titles=${query}`;
+
+  try {
+    const res = await fetch(api);
+    const data = await res.json();
+    const pages = data.query.pages;
+    const page = pages[Object.keys(pages)[0]];
+
+    if (page.thumbnail) {
+      coverPreview.src = page.thumbnail.source;
+      coverPreview.style.display = "block";
+      cover.value = page.thumbnail.source;
+    } else {
+      alert("No image found on Wikipedia");
+    }
+  } catch {
+    alert("Wikipedia fetch failed");
+  }
+}
+
+/* ADD SONG */
+function addSong() {
   const song = {
     title: title.value.trim(),
     artist: artist.value.trim(),
