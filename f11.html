@@ -275,7 +275,9 @@ let index = 0;
 let lyrics = [];
 let repeatMode = 0;
 let shuffleOn = false;
-let mediaSyncTimer = null;
+
+let mediaResyncTimer = null;
+let lastMediaSecond = -1;
 
 /* =========================
    ELEMENTS
@@ -328,18 +330,13 @@ function updateMediaSession(track) {
   });
 
   navigator.mediaSession.setActionHandler("seekto", e => {
-    if (e.fastSeek && "fastSeek" in audio) {
-      audio.fastSeek(e.seekTime);
-    } else {
-      audio.currentTime = e.seekTime;
-    }
+    audio.currentTime = e.seekTime;
     forceMediaPositionSync();
   });
 }
 
-function setMediaPosition() {
-  if (!("mediaSession" in navigator)) return;
-  if (!audio.duration || isNaN(audio.duration)) return;
+function forceMediaPositionSync() {
+  if (!navigator.mediaSession || !audio.duration) return;
 
   navigator.mediaSession.setPositionState({
     duration: audio.duration,
@@ -348,18 +345,22 @@ function setMediaPosition() {
   });
 }
 
-function forceMediaPositionSync() {
-  mediaSyncTimer = null;
-  setMediaPosition();
+/* ---- Spotify-style resync ---- */
+function startMediaResync(track) {
+  stopMediaResync();
+  mediaResyncTimer = setInterval(() => {
+    if (!audio.paused && !audio.ended) {
+      updateMediaSession(track);
+      forceMediaPositionSync();
+    }
+  }, 4000); // 4s = safe on Samsung / Chrome
 }
 
-function throttledMediaPositionSync() {
-  if (mediaSyncTimer) return;
-
-  setMediaPosition();
-  mediaSyncTimer = setTimeout(() => {
-    mediaSyncTimer = null;
-  }, 250); // 4x per second (Android-safe)
+function stopMediaResync() {
+  if (mediaResyncTimer) {
+    clearInterval(mediaResyncTimer);
+    mediaResyncTimer = null;
+  }
 }
 
 /* =========================
@@ -377,7 +378,7 @@ fetch("https://layasync.github.io/songs.json")
   });
 
 /* =========================
-   PLAYER SYNC
+   PLAYER UI SYNC
 ========================= */
 audio.onplay = () => {
   playBtn.textContent = "❚❚";
@@ -421,6 +422,7 @@ function loadTrack(i) {
   };
 
   updateMediaSession(t);
+  startMediaResync(t);
   renderPlaylist();
 }
 
@@ -487,6 +489,8 @@ repeatBtn.onclick = () => {
    END OF TRACK
 ========================= */
 audio.onended = () => {
+  stopMediaResync();
+
   if (repeatMode === 2) return;
   if (shuffleOn || repeatMode === 1) {
     index = getNextIndex();
@@ -496,7 +500,7 @@ audio.onended = () => {
 };
 
 /* =========================
-   TIME UPDATE (MASTER)
+   TIME UPDATE
 ========================= */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
@@ -515,7 +519,11 @@ audio.ontimeupdate = () => {
     }
   }
 
-  throttledMediaPositionSync();
+  const sec = Math.floor(audio.currentTime);
+  if (sec !== lastMediaSecond) {
+    lastMediaSecond = sec;
+    forceMediaPositionSync();
+  }
 };
 
 seek.oninput = () => {
