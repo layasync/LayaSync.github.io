@@ -1,7 +1,8 @@
 {
   "name": "LayaSync",
   "short_name": "LayaSync",
-  "start_url": "/",
+  "start_url": "/f11.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
@@ -13,7 +14,7 @@
       "type": "image/png"
     },
     {
-      "src": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024.png",
+      "src": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024x.png",
       "sizes": "512x512",
       "type": "image/png"
     }
