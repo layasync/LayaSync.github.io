@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>LayaSync Admin</title>
@@ -12,7 +12,9 @@ body {
   font-family:Roboto, system-ui, sans-serif;
   padding:20px;
 }
-h2 { margin-bottom:10px; }
+h2 {
+  margin-bottom:10px;
+}
 
 input, button {
   width:100%;
@@ -34,21 +36,23 @@ pre {
   padding:14px;
   border-radius:12px;
   white-space:pre-wrap;
+  overflow:auto;
 }
 
 .cover-preview {
   width:100%;
-  max-width:200px;
-  margin:12px auto;
+  max-width:220px;
+  margin:14px auto;
   display:none;
-  border-radius:12px;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
 }
 </style>
 </head>
 
 <body>
 
-<h2>LayaSync Admin Panel (GitHub MP3)</h2>
+<h2>LayaSync Admin (GitHub MP3)</h2>
 
 <input id="audio" placeholder="Paste GitHub RAW MP3 URL">
 <button onclick="readFromUrl()">Fetch Metadata</button>
@@ -58,7 +62,7 @@ pre {
 <input id="title" placeholder="Song Title">
 <input id="artist" placeholder="Artist">
 <input id="lrc" placeholder="LRC URL">
-<input id="cover" placeholder="Cover Image URL">
+<input id="cover" placeholder="Cover Image URL (upload extracted cover & paste link)">
 
 <button onclick="addSong()">Add Song</button>
 
@@ -69,50 +73,72 @@ pre {
 <script>
 let songs = [];
 
-/* READ MP3 FROM URL */
-function readFromUrl() {
+/* =========================
+   READ MP3 FROM URL (CORS SAFE)
+========================= */
+async function readFromUrl() {
   const url = audio.value.trim();
   if (!url) {
     alert("Paste MP3 URL first");
     return;
   }
 
-  jsmediatags.read(url, {
-    onSuccess: tag => {
-      /* TITLE */
-      if (tag.tags.title) {
-        title.value = tag.tags.title;
+  title.value = "";
+  artist.value = "";
+  cover.value = "";
+  coverPreview.style.display = "none";
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("MP3 fetch failed");
+
+    const buffer = await res.arrayBuffer();
+
+    jsmediatags.read(new Blob([buffer]), {
+      onSuccess: tag => {
+        if (tag.tags.title) {
+          title.value = tag.tags.title;
+        }
+
+        if (tag.tags.artist) {
+          artist.value = tag.tags.artist;
+        }
+
+        const pic = tag.tags.picture;
+        if (pic) {
+          const bytes = new Uint8Array(pic.data);
+          const blob = new Blob([bytes], { type: pic.format });
+          const imgUrl = URL.createObjectURL(blob);
+
+          coverPreview.src = imgUrl;
+          coverPreview.style.display = "block";
+
+          cover.value = "UPLOAD_THIS_IMAGE_AND_PASTE_URL";
+        } else {
+          alert("No embedded cover found in this MP3");
+        }
+      },
+      onError: err => {
+        console.error(err);
+        alert("MP3 has no readable ID3 tags");
       }
+    });
 
-      /* ARTIST */
-      if (tag.tags.artist) {
-        artist.value = tag.tags.artist;
-      }
-
-      /* COVER */
-      const pic = tag.tags.picture;
-      if (pic) {
-        const bytes = new Uint8Array(pic.data);
-        const blob = new Blob([bytes], { type: pic.format });
-        const imgUrl = URL.createObjectURL(blob);
-
-        coverPreview.src = imgUrl;
-        coverPreview.style.display = "block";
-
-        cover.value = "UPLOAD_COVER_AND_PASTE_URL";
-      } else {
-        alert("No embedded cover found");
-      }
-    },
-    onError: err => {
-      console.error(err);
-      alert("Failed to read MP3 metadata");
-    }
-  });
+  } catch (e) {
+    console.error(e);
+    alert("Failed to fetch MP3 (network / CORS issue)");
+  }
 }
 
-/* ADD SONG TO JSON */
+/* =========================
+   ADD SONG → JSON OUTPUT
+========================= */
 function addSong() {
+  if (!audio.value.trim()) {
+    alert("MP3 URL is required");
+    return;
+  }
+
   const song = {
     title: title.value.trim(),
     artist: artist.value.trim(),
