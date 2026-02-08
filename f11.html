@@ -273,10 +273,10 @@ let lyrics = [];
 let repeatMode = 0;
 let shuffleOn = false;
 
-/* LOAD PLAYLIST DATA FIRST */
+/* LOAD SONG DATA */
 fetch("https://layasync.github.io/songs.json")
   .then(res => {
-    if (!res.ok) throw new Error("playlist.json not found");
+    if (!res.ok) throw new Error("songs.json not found");
     return res.json();
   })
   .then(data => {
@@ -292,7 +292,7 @@ fetch("https://layasync.github.io/songs.json")
   .catch(err => {
     console.error(err);
     document.getElementById("lyrics").textContent =
-      "Failed to load playlist";
+      "Failed to load songs";
   });
 
 let index = 0;
