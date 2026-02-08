@@ -267,22 +267,22 @@ body {
 <audio id="audio"></audio>
 
 <script>
-const album = [
-  {
-    title: "Lose My Mind",
-    artist: "Don Toliver, Doja Cat",
-    audio: "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat)%20%5BFrom%20F1%C2%AE%20The%20Movie%5D%20%5BOfficial%20Audio%5D(MP3_160K).mp3",
-    lrc: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Don%20Toliver%20-%20Lose%20My%20Mind%20(feat.%20Doja%20Cat).lrc",
-    cover: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/016682fcf4fb252427df4fd8ad36ba9631854b04/file_0000000074e871f8b1ee14529973b836.png"
-  },
-  {
-    title: "Just Keep Watching",
-    artist: "Tate McRae",
-    audio: "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Just%20Keep%20Watching(MP3_160K).mp3",
-    lrc: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Tate%20McRae%20-%20Just%20Keep%20Watching.lrc",
-    cover: "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024.png"
-  }
-];
+let album = [];
+let index = 0;
+let lyrics = [];
+let repeatMode = 0;
+let shuffleOn = false;
+
+fetch("https://layasync.github.io/songs.json")
+  .then(res => res.json())
+  .then(data => {
+    album = data.tracks;
+    loadTrack(0);
+    renderPlaylist();
+  })
+  .catch(err => {
+    console.error("Failed to load playlist.json", err);
+  });
 
 let index = 0;
 let lyrics = [];
