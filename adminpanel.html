@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LayaSync Admin</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+body {
+  background:#121212;
+  color:#fff;
+  font-family:Roboto, system-ui, sans-serif;
+  padding:20px;
+}
+h2 { margin-bottom:10px; }
+
+input, button {
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:12px;
+  border:none;
+  font-size:15px;
+}
+
+button {
+  background:#fff;
+  color:#000;
+  font-weight:900;
+}
+
+pre {
+  background:#1e1e1e;
+  padding:14px;
+  border-radius:12px;
+  white-space:pre-wrap;
+}
+
+.cover-preview {
+  width:100%;
+  max-width:200px;
+  margin:12px auto;
+  display:none;
+  border-radius:12px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>LayaSync Admin Panel</h2>
+
+<!-- MP3 UPLOAD -->
+<input type="file" id="file" accept=".mp3">
+
+<img id="coverPreview" class="cover-preview">
+
+<input id="title" placeholder="Song Title">
+<input id="artist" placeholder="Artist">
+<input id="audio" placeholder="MP3 URL (paste after upload)">
+<input id="lrc" placeholder="LRC URL">
+<input id="cover" placeholder="Cover Image URL (auto if extracted)">
+
+<button onclick="addSong()">Add Song</button>
+
+<pre id="output">Waiting…</pre>
+
+<!-- ID3 TAG READER -->
+<script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
+
+<script>
+let songs = [];
+
+/* OPTIONAL: load existing json if hosted */
+fetch("songs.json")
+  .then(r => r.json())
+  .then(d => songs = d.tracks || d)
+  .catch(()=>{});
+
+/* FILE SELECT */
+file.onchange = () => {
+  const mp3 = file.files[0];
+  if (!mp3) return;
+
+  jsmediatags.read(mp3, {
+    onSuccess: tag => {
+      /* TITLE */
+      if (tag.tags.title) {
+        title.value = tag.tags.title;
+      }
+
+      /* ARTIST */
+      if (tag.tags.artist) {
+        artist.value = tag.tags.artist;
+      }
+
+      /* COVER IMAGE */
+      const pic = tag.tags.picture;
+      if (pic) {
+        const bytes = new Uint8Array(pic.data);
+        const blob = new Blob([bytes], { type: pic.format });
+        const url = URL.createObjectURL(blob);
+
+        coverPreview.src = url;
+        coverPreview.style.display = "block";
+
+        /* You still need to upload image somewhere
+           then paste final URL here */
+        cover.value = "UPLOAD_THIS_IMAGE_AND_PASTE_URL";
+      }
+    },
+    onError: err => {
+      alert("No ID3 data found in this MP3");
+      console.error(err);
+    }
+  });
+};
+
+/* ADD SONG */
+function addSong() {
+  const song = {
+    title: title.value.trim(),
+    artist: artist.value.trim(),
+    audio: audio.value.trim(),
+    lrc: lrc.value.trim(),
+    cover: cover.value.trim()
+  };
+
+  songs.push(song);
+
+  output.textContent = JSON.stringify(
+    { tracks: songs },
+    null,
+    2
+  );
+}
+</script>
+
+</body>
+</html>
