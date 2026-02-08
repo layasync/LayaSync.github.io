@@ -4,17 +4,17 @@
   "start_url": "/f11.html",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "background_color": "#0b1a2b",
+  "theme_color": "#0b1a2b",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024.png",
+      "src": "/Images/3182-Picsart-AiImageEnhancer(2).png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/Images/premium_1024x1024x.png",
+      "src": "/Images/3182-Picsart-AiImageEnhancer(2).png",
       "sizes": "512x512",
       "type": "image/png"
     }
