@@ -1,6 +1,7 @@
 {
   "name": "LayaSync",
   "short_name": "LayaSync",
+  "description": "LayaSync Music Player",
   "start_url": "/f11.html",
   "scope": "/",
   "display": "standalone",
