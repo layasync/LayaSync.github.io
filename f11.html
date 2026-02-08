@@ -20,7 +20,7 @@ body {
   min-height: 100vh;
   background: linear-gradient(180deg, #6b2f24, #121212 60%);
   color: #fff;
-  padding-bottom: 180px;
+  padding-bottom: 160px;
 }
 
 /* HEADER */
@@ -56,7 +56,6 @@ body {
 /* INFO */
 .info {
   padding: 16px;
-  padding-bottom: 80px;
 }
 
 .track {
@@ -139,62 +138,42 @@ body {
   font-weight: 900;
 }
 
-/* PLAYLIST BAR (NEW) */
-/* FIXED PLAYLIST OVERLAY */
-/* FIXED PLAYLIST OVERLAY — COMPACT */
-/* FIXED PLAYLIST OVERLAY — THIN STRIP */
-/* FIXED PLAYLIST OVERLAY — CLEAN STRIP */
-.playlist-bar {
-  position: fixed;
-  left: 16px;
-  right: 16px;
-
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 72px);
-
-  height: 72px;
-
+/* PLAYLIST STRIP (IN BODY, NOT OVERLAY) */
+.playlist-strip {
+  margin-top: 24px;
   display: flex;
   align-items: center;
-  justify-content: center; /* <<< IMPORTANT */
-
   gap: 12px;
-  padding: 10px 14px;
-
+  padding: 10px 12px;
   overflow-x: auto;
   overflow-y: hidden;
 
   background: linear-gradient(
     180deg,
-    rgba(42,24,20,0.96),
-    rgba(28,16,14,0.96)
+    rgba(42,24,20,0.9),
+    rgba(28,16,14,0.9)
   );
 
   border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.6);
-
+  box-shadow: 0 10px 28px rgba(0,0,0,0.5);
   scroll-snap-type: x mandatory;
 }
 
-.playlist-bar::-webkit-scrollbar {
+.playlist-strip::-webkit-scrollbar {
   display: none;
-.playlist-bar {
-  z-index: 2;
-
 }
 
 .play-card {
   min-width: 56px;
   height: 56px;
-
   background: rgba(255,255,255,0.1);
   border-radius: 12px;
   padding: 4px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  scroll-snap-align: center; /* <<< FIX */
+  scroll-snap-align: start;
+  overflow: hidden;
 }
 
 .play-card.active {
@@ -204,11 +183,10 @@ body {
 .play-card img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
   border-radius: 10px;
-  object-fit: cover;
 }
 
-/* strip mode = no text */
 .play-card .title,
 .play-card .artist {
   display: none;
@@ -219,7 +197,7 @@ body {
   position: fixed;
   left: 16px;
   right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 24px);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   padding: 16px 20px;
   background: linear-gradient(
     180deg,
@@ -230,10 +208,7 @@ body {
   font-size: 15px;
   font-weight: 900;
   box-shadow: 0 14px 40px rgba(0,0,0,0.7);
-.lyric-bar {
-  z-index: 1;
 }
-
 </style>
 </head>
 
@@ -284,10 +259,11 @@ body {
     </svg>
   </div>
 
-  <!-- PLAYLIST BAR -->
-  <div class="playlist-bar" id="playlist"></div>
-<div class="lyric-bar" id="lyrics">Tap play to begin…</div>
+  <!-- PLAYLIST STRIP -->
+  <div class="playlist-strip" id="playlist"></div>
+</div>
 
+<div class="lyric-bar" id="lyrics">Loading lyrics...</div>
 <audio id="audio"></audio>
 
 <script>
@@ -310,7 +286,7 @@ const album = [
 
 let index = 0;
 let lyrics = [];
-let repeatMode = 0; // 0 off, 1 repeat all, 2 repeat one
+let repeatMode = 0;
 let shuffleOn = false;
 
 const audio = document.getElementById("audio");
@@ -330,11 +306,9 @@ const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
 
-/* PLAY / PAUSE UI */
 audio.onplay = () => playBtn.textContent = "❚❚";
 audio.onpause = () => playBtn.textContent = "▶";
 
-/* LOAD TRACK */
 function loadTrack(i) {
   const t = album[i];
   audio.pause();
@@ -345,31 +319,24 @@ function loadTrack(i) {
   coverImg.src = t.cover;
 
   lyrics = [];
-  lyricsBox.textContent = "Loading lyrics…";
+  lyricsBox.textContent = "Loading lyrics...";
 
-  fetch(t.lrc)
-    .then(r => r.text())
-    .then(text => {
-      lyrics = text.split("\n").map(l => {
-        const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-        return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
-      }).filter(Boolean);
-    });
+  fetch(t.lrc).then(r => r.text()).then(text => {
+    lyrics = text.split("\n").map(l => {
+      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+      return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
+    }).filter(Boolean);
+  });
 
   renderPlaylist();
 }
 
-/* PLAYLIST UI */
 function renderPlaylist() {
   playlistEl.innerHTML = "";
   album.forEach((t, i) => {
     const c = document.createElement("div");
     c.className = "play-card" + (i === index ? " active" : "");
-    c.innerHTML = `
-      <img src="${t.cover}">
-      <div class="title">${t.title}</div>
-      <div class="artist">${t.artist}</div>
-    `;
+    c.innerHTML = `<img src="${t.cover}">`;
     c.onclick = () => {
       index = i;
       loadTrack(index);
@@ -379,19 +346,16 @@ function renderPlaylist() {
   });
 }
 
-/* SHUFFLE LOGIC */
 function getNextIndex() {
   if (shuffleOn && album.length > 1) {
     let n;
-    do {
-      n = Math.floor(Math.random() * album.length);
-    } while (n === index);
+    do { n = Math.floor(Math.random() * album.length); }
+    while (n === index);
     return n;
   }
   return (index + 1) % album.length;
 }
 
-/* CONTROLS */
 playBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
 
 nextBtn.onclick = () => {
@@ -417,10 +381,8 @@ repeatBtn.onclick = () => {
   audio.loop = repeatMode === 2;
 };
 
-/* SONG END */
 audio.onended = () => {
-  if (repeatMode === 2) return; // repeat one handled by loop
-
+  if (repeatMode === 2) return;
   if (shuffleOn || repeatMode === 1) {
     index = getNextIndex();
     loadTrack(index);
@@ -428,7 +390,6 @@ audio.onended = () => {
   }
 };
 
-/* TIME UPDATE */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
   const p = audio.currentTime / audio.duration * 100;
@@ -445,15 +406,12 @@ audio.ontimeupdate = () => {
   }
 };
 
-seek.oninput = () => {
-  audio.currentTime = seek.value / 100 * audio.duration;
-};
+seek.oninput = () => audio.currentTime = seek.value / 100 * audio.duration;
 
 function format(t) {
   return Math.floor(t/60) + ":" + Math.floor(t%60).toString().padStart(2,"0");
 }
 
-/* INIT */
 loadTrack(index);
 renderPlaylist();
 </script>
