@@ -198,17 +198,28 @@ body {
 
 
 
-.pl-title {
-  margin-top: 6px;
-  font-size: 12px;
+.pl-title-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 8px 10px;
+  font-size: 13px;
   font-weight: 600;
   color: #fff;
-  text-align: center;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.7),
+    rgba(0,0,0,0)
+  );
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 
 /* LYRICS BAR */
 .lyric-bar {
