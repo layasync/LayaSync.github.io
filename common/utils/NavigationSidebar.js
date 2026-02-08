@@ -6,7 +6,8 @@ class NavigationSidebar {
             { name: "Home", path: "/", icon: "home" },
             { name: "QuickStart", path: "/quickstart/" },
             { name: "Time Machine", path: "/time-machine/" },
-            { name: "Cloner", path: "/cloner/" },
+            { name: "Account Cloner", path: "/cloner/" },
+            { name: "Addon Locker", path: "/addon-locker/" },
         ];
 
         // Map of icon names to their SVG HTML strings.

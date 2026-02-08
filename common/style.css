@@ -481,7 +481,9 @@ input:disabled {
 
 .toggle-switch.loading .toggle-slider:before {
     animation: pulse 1.5s ease-in-out infinite;
-}/* ======================================================
+}
+
+/* ======================================================
    Component: Cards & Containers
    ====================================================== */
 .section-card {
@@ -1328,7 +1330,9 @@ details[open] summary::before {
     margin-bottom: var(--space-sm);
     text-align: left;
     padding-left: 2px;
-}/* ======================================================
+}
+
+/* ======================================================
    Feature: Time Machine
    ====================================================== */
 .tm-container {
@@ -2121,6 +2125,45 @@ details[open] summary::before {
     width: 100% !important;
 }
 
+.addon-control-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.control-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.addon-control-label-text {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.addon-control-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.addon-control-status.allowed {
+    color: var(--success);
+}
+
+.addon-control-status.blocked {
+    color: var(--error);
+}
+
 .control-divider {
     width: 1px;
     height: 24px;
@@ -2492,5 +2535,217 @@ details[open] summary::before {
     .tab-btn {
         padding: 0.6rem;
         font-size: 0.9rem;
+    }
+}
+
+/* ======================================================
+   Feature: Addon Locker
+   ====================================================== */
+.addon-locker-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.user-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(30, 41, 59, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 auto 2rem auto;
+    max-width: fit-content;
+}
+
+.user-status-pill b {
+    color: var(--text-primary);
+}
+
+.logout-link {
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-left: 0.75rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logout-link:hover {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+.addon-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+    align-items: start;
+}
+
+.addon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.addon-item:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.addon-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 0.75rem;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.addon-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.addon-icon-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border-radius: 0.75rem;
+}
+
+.addon-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.3;
+}
+
+.addon-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.addon-control-separator {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.addon-control-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.control-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    line-height: 1;
+}
+
+.addon-control-label-text {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0;
+}
+
+.addon-control-status {
+    font-weight: 700;
+    font-size: 0.7rem;
+    margin-left: 0;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.addon-control-status.allowed {
+    color: #86efac;
+}
+
+.addon-control-status.blocked {
+    color: #fca5a5;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .addon-list {
+        grid-template-columns: 1fr;
+    }
+
+    .addon-item {
+        flex-direction: row;
+        text-align: left;
+        padding: 1rem;
+        gap: 1rem;
+        min-height: auto;
+    }
+
+    .addon-icon,
+    .addon-icon-fallback {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.5rem;
+    }
+
+    .addon-name {
+        font-size: 1rem;
+        margin-bottom: 0;
+        flex: 1;
+    }
+
+    .addon-controls {
+        width: auto;
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        flex-direction: row;
+    }
+
+    .addon-control-status {
+        display: block;
+        font-size: 0.6rem;
     }
 }
