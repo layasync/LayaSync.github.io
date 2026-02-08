@@ -27,7 +27,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #6b2f24, #121212 60%);
+  background: transparent;
   color: #fff;
   padding-bottom: 160px;
 }
@@ -250,17 +250,26 @@ body {
   font-size: 15px;
   font-weight: 900;
   box-shadow: 0 14px 40px rgba(0,0,0,0.7);
+
+}
+#ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  background: radial-gradient(circle at top, #6b2f24, #121212 70%);
+  transition: background 1.4s ease;
 }
 </style>
 </head>
 
 <body>
+<div id="ambient-bg"></div>
 
 <div class="header">PLAYING FROM NFC</div>
 
 <div class="cover-wrap">
   <div class="cover">
-    <img id="coverImg">
+    <img id="coverImg" crossorigin="anonymous">
   </div>
 </div>
 
@@ -337,6 +346,14 @@ const lyricsBox = document.getElementById("lyrics");
 const titleEl = document.getElementById("trackTitle");
 const artistEl = document.getElementById("trackArtist");
 const coverImg = document.getElementById("coverImg");
+/* =========================
+   DYNAMIC BACKGROUND CANVAS
+========================= */
+const bgCanvas = document.createElement("canvas");
+const bgCtx = bgCanvas.getContext("2d", { willReadFrequently: true });
+
+bgCanvas.width = 64;
+bgCanvas.height = 64;
 const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
@@ -431,6 +448,31 @@ audio.onpause = () => {
   playBtn.textContent = "▶";
   forceMediaPositionSync();
 };
+function updateDynamicBackground(img) {
+  const bg = document.getElementById("ambient-bg");
+  if (!img || !bg || !img.complete) return;
+
+  const c = document.createElement("canvas");
+  const ctx = c.getContext("2d");
+  c.width = c.height = 32;
+  ctx.drawImage(img, 0, 0, 32, 32);
+
+  const d = ctx.getImageData(0, 0, 32, 32).data;
+  let r=0,g=0,b=0,n=0;
+
+  for (let i=0;i<d.length;i+=16) {
+    r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++;
+  }
+
+  r=Math.min(255,(r/n)+20);
+  g=Math.min(255,(g/n)+10);
+  b=Math.min(255,(b/n)+10);
+
+  bg.style.background =
+    `radial-gradient(circle at top,
+      rgb(${r},${g},${b}),
+      #121212 70%)`;
+}
 
 /* =========================
    LOAD TRACK
@@ -446,6 +488,9 @@ function loadTrack(i) {
   titleEl.textContent = t.title;
   artistEl.textContent = t.artist;
   coverImg.src = t.cover;
+  coverImg.onload = () => {
+  applyDynamicBackground(coverImg);
+};
 
   lyrics = [];
   lyricsBox.textContent = "Loading lyrics...";
@@ -587,6 +632,7 @@ function format(t) {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js");
 }
+
 
 </script>
 
