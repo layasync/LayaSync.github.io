@@ -297,7 +297,7 @@ const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
 
 /* =========================
-   MEDIA SESSION (LOCKSCREEN)
+   MEDIA SESSION
 ========================= */
 function updateMediaSession(track) {
   if (!("mediaSession" in navigator)) return;
@@ -315,34 +315,53 @@ function updateMediaSession(track) {
   navigator.mediaSession.setActionHandler("pause", () => audio.pause());
   navigator.mediaSession.setActionHandler("previoustrack", () => prevBtn.onclick());
   navigator.mediaSession.setActionHandler("nexttrack", () => nextBtn.onclick());
+  navigator.mediaSession.setActionHandler("seekto", e => {
+    if (e.fastSeek && "fastSeek" in audio) {
+      audio.fastSeek(e.seekTime);
+    } else {
+      audio.currentTime = e.seekTime;
+    }
+    updateMediaPosition();
+  });
+}
+
+function updateMediaPosition() {
+  if (!("mediaSession" in navigator)) return;
+  if (!audio.duration || isNaN(audio.duration)) return;
+
+  navigator.mediaSession.setPositionState({
+    duration: audio.duration,
+    playbackRate: audio.playbackRate,
+    position: audio.currentTime
+  });
 }
 
 /* =========================
-   LOAD SONG DATA (JSON)
+   LOAD SONG DATA
 ========================= */
 fetch("https://layasync.github.io/songs.json")
-  .then(res => {
-    if (!res.ok) throw new Error("songs.json not found");
-    return res.json();
-  })
-  .then(data => {
-    album = data.tracks;
-    if (!album || album.length === 0) {
-      throw new Error("Playlist empty");
-    }
+  .then(r => r.json())
+  .then(d => {
+    album = d.tracks;
     loadTrack(0);
     renderPlaylist();
   })
-  .catch(err => {
-    console.error(err);
+  .catch(() => {
     lyricsBox.textContent = "Failed to load songs";
   });
 
 /* =========================
-   PLAYER UI SYNC
+   PLAYER SYNC
 ========================= */
-audio.onplay = () => playBtn.textContent = "❚❚";
-audio.onpause = () => playBtn.textContent = "▶";
+audio.onplay = () => {
+  playBtn.textContent = "❚❚";
+  updateMediaPosition();
+};
+
+audio.onpause = () => {
+  playBtn.textContent = "▶";
+  updateMediaPosition();
+};
 
 /* =========================
    LOAD TRACK
@@ -367,18 +386,16 @@ function loadTrack(i) {
     .then(text => {
       lyrics = text.split("\n").map(l => {
         const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-        return m
-          ? { time: +m[1] * 60 + +m[2], text: m[3].trim() }
-          : null;
+        return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
       }).filter(Boolean);
     });
 
-  updateMediaSession(t); // ✅ ANDROID NOTIFICATION / LOCKSCREEN
+  updateMediaSession(t);
   renderPlaylist();
 }
 
 /* =========================
-   PLAYLIST STRIP
+   PLAYLIST
 ========================= */
 function renderPlaylist() {
   playlistEl.innerHTML = "";
@@ -396,14 +413,13 @@ function renderPlaylist() {
 }
 
 /* =========================
-   SHUFFLE / REPEAT LOGIC
+   SHUFFLE / REPEAT
 ========================= */
 function getNextIndex() {
   if (shuffleOn && album.length > 1) {
     let n;
-    do {
-      n = Math.floor(Math.random() * album.length);
-    } while (n === index);
+    do { n = Math.floor(Math.random() * album.length); }
+    while (n === index);
     return n;
   }
   return (index + 1) % album.length;
@@ -433,9 +449,7 @@ shuffleBtn.onclick = () => {
 
 repeatBtn.onclick = () => {
   repeatMode = (repeatMode + 1) % 3;
-  repeatState.textContent =
-    repeatMode === 1 ? "." :
-    repeatMode === 2 ? "1" : "";
+  repeatState.textContent = repeatMode === 1 ? "." : repeatMode === 2 ? "1" : "";
   audio.loop = repeatMode === 2;
 };
 
@@ -452,7 +466,7 @@ audio.onended = () => {
 };
 
 /* =========================
-   TIME UPDATE
+   TIME UPDATE (MASTER SYNC)
 ========================= */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
@@ -470,15 +484,18 @@ audio.ontimeupdate = () => {
       break;
     }
   }
+
+  updateMediaPosition();
 };
 
 seek.oninput = () => {
   audio.currentTime = seek.value / 100 * audio.duration;
+  updateMediaPosition();
 };
 
 function format(t) {
-  return Math.floor(t / 60) + ":" +
-    Math.floor(t % 60).toString().padStart(2, "0");
+  return Math.floor(t/60) + ":" +
+    Math.floor(t%60).toString().padStart(2,"0");
 }
 </script>
 
