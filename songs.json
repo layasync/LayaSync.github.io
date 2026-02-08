@@ -31,7 +31,17 @@
   "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Michael%20Jackson%20-%20Billie%20Jean%20(%F0%9D%99%A8%F0%9D%99%A1%F0%9D%99%A4%F0%9D%99%AC%F0%9D%99%9A%F0%9D%99%99%20%20%20%F0%9D%99%A7%F0%9D%99%9A%F0%9D%99%AB%F0%9D%99%9A%F0%9D%99%A7%F0%9D%99%97)(MP3_160K).mp3",
   "lrc": "",
   "cover": "https://cdn-images.dzcdn.net/images/cover/544862aa5be45bc82ad4ab1a14daf63a/1900x1900-000000-80-0-0.jpg"
-}
+},
+{
+  "_comment": "Added at 2026-02-08 19:41:04",
+  "tracks": [
+    {
+      "title": "I Feel It Coming",
+      "artist": "The Weeknd, Daft Punk",
+      "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/I%20Feel%20It%20Coming_spotdown.org.mp3",
+      "lrc": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/I%20Feel%20It%20Coming%20(feat.Daft%20Punk).lrc",
+      "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020c8599cbde51245c128bcea9"
+    }
 
   ]
 }
