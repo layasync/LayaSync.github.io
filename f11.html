@@ -285,7 +285,7 @@ const album = [
 
 let index = 0;
 let lyrics = [];
-let repeatMode = 0;
+let repeatMode = 0; // 0 off, 1 repeat all, 2 repeat one
 let shuffleOn = false;
 
 const audio = document.getElementById("audio");
@@ -305,9 +305,11 @@ const current = document.getElementById("current");
 const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
 
+/* PLAY / PAUSE UI */
 audio.onplay = () => playBtn.textContent = "❚❚";
 audio.onpause = () => playBtn.textContent = "▶";
 
+/* LOAD TRACK */
 function loadTrack(i) {
   const t = album[i];
   audio.pause();
@@ -320,16 +322,19 @@ function loadTrack(i) {
   lyrics = [];
   lyricsBox.textContent = "Loading lyrics…";
 
-  fetch(t.lrc).then(r => r.text()).then(text => {
-    lyrics = text.split("\n").map(l => {
-      const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-      return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
-    }).filter(Boolean);
-  });
+  fetch(t.lrc)
+    .then(r => r.text())
+    .then(text => {
+      lyrics = text.split("\n").map(l => {
+        const m = l.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+        return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
+      }).filter(Boolean);
+    });
 
   renderPlaylist();
 }
 
+/* PLAYLIST UI */
 function renderPlaylist() {
   playlistEl.innerHTML = "";
   album.forEach((t, i) => {
@@ -349,10 +354,56 @@ function renderPlaylist() {
   });
 }
 
-playBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
-prevBtn.onclick = () => { index = (index - 1 + album.length) % album.length; loadTrack(index); audio.play(); };
-nextBtn.onclick = () => { index = (index + 1) % album.length; loadTrack(index); audio.play(); };
+/* SHUFFLE LOGIC */
+function getNextIndex() {
+  if (shuffleOn && album.length > 1) {
+    let n;
+    do {
+      n = Math.floor(Math.random() * album.length);
+    } while (n === index);
+    return n;
+  }
+  return (index + 1) % album.length;
+}
 
+/* CONTROLS */
+playBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
+
+nextBtn.onclick = () => {
+  index = getNextIndex();
+  loadTrack(index);
+  audio.play();
+};
+
+prevBtn.onclick = () => {
+  index = (index - 1 + album.length) % album.length;
+  loadTrack(index);
+  audio.play();
+};
+
+shuffleBtn.onclick = () => {
+  shuffleOn = !shuffleOn;
+  shuffleBtn.classList.toggle("active", shuffleOn);
+};
+
+repeatBtn.onclick = () => {
+  repeatMode = (repeatMode + 1) % 3;
+  repeatState.textContent = repeatMode === 1 ? "." : repeatMode === 2 ? "1" : "";
+  audio.loop = repeatMode === 2;
+};
+
+/* SONG END */
+audio.onended = () => {
+  if (repeatMode === 2) return; // repeat one handled by loop
+
+  if (shuffleOn || repeatMode === 1) {
+    index = getNextIndex();
+    loadTrack(index);
+    audio.play();
+  }
+};
+
+/* TIME UPDATE */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
   const p = audio.currentTime / audio.duration * 100;
@@ -360,6 +411,7 @@ audio.ontimeupdate = () => {
   seekFill.style.width = p + "%";
   current.textContent = format(audio.currentTime);
   duration.textContent = format(audio.duration);
+
   for (let i = lyrics.length - 1; i >= 0; i--) {
     if (audio.currentTime >= lyrics[i].time) {
       lyricsBox.textContent = lyrics[i].text;
@@ -368,9 +420,15 @@ audio.ontimeupdate = () => {
   }
 };
 
-seek.oninput = () => audio.currentTime = seek.value / 100 * audio.duration;
-function format(t){return Math.floor(t/60)+":"+Math.floor(t%60).toString().padStart(2,"0");}
+seek.oninput = () => {
+  audio.currentTime = seek.value / 100 * audio.duration;
+};
 
+function format(t) {
+  return Math.floor(t/60) + ":" + Math.floor(t%60).toString().padStart(2,"0");
+}
+
+/* INIT */
 loadTrack(index);
 renderPlaylist();
 </script>
