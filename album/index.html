@@ -443,7 +443,10 @@ function renderPlaylist() {
   album.forEach((t, i) => {
     const c = document.createElement("div");
     c.className = "play-card" + (i === index ? " active" : "");
-    c.innerHTML = `<img src="${t.cover}">`;
+    c.innerHTML = `
+  <img src="${t.cover}">
+  <div class="pl-title">${t.title}</div>
+`;
     c.onclick = () => {
       index = i;
       loadTrack(index);
