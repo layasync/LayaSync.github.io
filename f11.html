@@ -141,31 +141,28 @@ body {
 
 /* PLAYLIST BAR (NEW) */
 /* FIXED PLAYLIST OVERLAY */
+/* FIXED PLAYLIST OVERLAY — COMPACT */
 .playlist-bar {
   position: fixed;
   left: 16px;
   right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 96px);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 84px);
 
   display: flex;
-  gap: 14px;
-  padding: 14px;
+  gap: 12px;
+  padding: 10px;
   overflow-x: auto;
   overflow-y: hidden;
 
   background: linear-gradient(
     180deg,
-    rgba(40,22,18,0.98),
-    rgba(26,14,12,0.98)
+    rgba(40,22,18,0.96),
+    rgba(26,14,12,0.96)
   );
 
-  border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.7);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.65);
   scroll-snap-type: x mandatory;
-}
-
-.playlist-bar::-webkit-scrollbar {
-  display: none;
 }
 
 .play-card {
