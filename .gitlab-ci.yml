@@ -27,6 +27,10 @@ pages:
     - mkdir -p public/cloner
     - cp -r cloner/* public/cloner/
 
+    # Addon Locker
+    - mkdir -p public/addon-locker
+    - cp -r addon-locker/* public/addon-locker/
+
     # Cache Busting: Replace version placeholder with timestamp
     - find public -type f -name "*.html" -exec sed -i "s/v=20260202/v=$(date +%s)/g" {} +
   rules:
