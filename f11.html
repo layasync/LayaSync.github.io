@@ -273,15 +273,26 @@ let lyrics = [];
 let repeatMode = 0;
 let shuffleOn = false;
 
+/* LOAD PLAYLIST DATA FIRST */
 fetch("https://layasync.github.io/songs.json")
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error("playlist.json not found");
+    return res.json();
+  })
   .then(data => {
     album = data.tracks;
+
+    if (!album || album.length === 0) {
+      throw new Error("Playlist empty");
+    }
+
     loadTrack(0);
     renderPlaylist();
   })
   .catch(err => {
-    console.error("Failed to load playlist.json", err);
+    console.error(err);
+    document.getElementById("lyrics").textContent =
+      "Failed to load playlist";
   });
 
 let index = 0;
