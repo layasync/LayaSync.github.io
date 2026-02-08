@@ -275,6 +275,7 @@ let index = 0;
 let lyrics = [];
 let repeatMode = 0;
 let shuffleOn = false;
+let mediaSyncTimer = null;
 
 /* =========================
    ELEMENTS
@@ -297,7 +298,7 @@ const duration = document.getElementById("duration");
 const playlistEl = document.getElementById("playlist");
 
 /* =========================
-   MEDIA SESSION
+   MEDIA SESSION (STABLE)
 ========================= */
 function updateMediaSession(track) {
   if (!("mediaSession" in navigator)) return;
@@ -313,19 +314,30 @@ function updateMediaSession(track) {
 
   navigator.mediaSession.setActionHandler("play", () => audio.play());
   navigator.mediaSession.setActionHandler("pause", () => audio.pause());
-  navigator.mediaSession.setActionHandler("previoustrack", () => prevBtn.onclick());
-  navigator.mediaSession.setActionHandler("nexttrack", () => nextBtn.onclick());
+
+  navigator.mediaSession.setActionHandler("nexttrack", () => {
+    index = getNextIndex();
+    loadTrack(index);
+    audio.play();
+  });
+
+  navigator.mediaSession.setActionHandler("previoustrack", () => {
+    index = (index - 1 + album.length) % album.length;
+    loadTrack(index);
+    audio.play();
+  });
+
   navigator.mediaSession.setActionHandler("seekto", e => {
     if (e.fastSeek && "fastSeek" in audio) {
       audio.fastSeek(e.seekTime);
     } else {
       audio.currentTime = e.seekTime;
     }
-    updateMediaPosition();
+    forceMediaPositionSync();
   });
 }
 
-function updateMediaPosition() {
+function setMediaPosition() {
   if (!("mediaSession" in navigator)) return;
   if (!audio.duration || isNaN(audio.duration)) return;
 
@@ -334,6 +346,20 @@ function updateMediaPosition() {
     playbackRate: audio.playbackRate,
     position: audio.currentTime
   });
+}
+
+function forceMediaPositionSync() {
+  mediaSyncTimer = null;
+  setMediaPosition();
+}
+
+function throttledMediaPositionSync() {
+  if (mediaSyncTimer) return;
+
+  setMediaPosition();
+  mediaSyncTimer = setTimeout(() => {
+    mediaSyncTimer = null;
+  }, 250); // 4x per second (Android-safe)
 }
 
 /* =========================
@@ -355,12 +381,12 @@ fetch("https://layasync.github.io/songs.json")
 ========================= */
 audio.onplay = () => {
   playBtn.textContent = "❚❚";
-  updateMediaPosition();
+  forceMediaPositionSync();
 };
 
 audio.onpause = () => {
   playBtn.textContent = "▶";
-  updateMediaPosition();
+  forceMediaPositionSync();
 };
 
 /* =========================
@@ -389,6 +415,10 @@ function loadTrack(i) {
         return m ? { time:+m[1]*60 + +m[2], text:m[3].trim() } : null;
       }).filter(Boolean);
     });
+
+  audio.onloadedmetadata = () => {
+    forceMediaPositionSync();
+  };
 
   updateMediaSession(t);
   renderPlaylist();
@@ -466,7 +496,7 @@ audio.onended = () => {
 };
 
 /* =========================
-   TIME UPDATE (MASTER SYNC)
+   TIME UPDATE (MASTER)
 ========================= */
 audio.ontimeupdate = () => {
   if (!audio.duration) return;
@@ -485,17 +515,17 @@ audio.ontimeupdate = () => {
     }
   }
 
-  updateMediaPosition();
+  throttledMediaPositionSync();
 };
 
 seek.oninput = () => {
   audio.currentTime = seek.value / 100 * audio.duration;
-  updateMediaPosition();
+  forceMediaPositionSync();
 };
 
 function format(t) {
-  return Math.floor(t/60) + ":" +
-    Math.floor(t%60).toString().padStart(2,"0");
+  return Math.floor(t / 60) + ":" +
+    Math.floor(t % 60).toString().padStart(2, "0");
 }
 </script>
 
