@@ -140,12 +140,27 @@ body {
 }
 
 /* PLAYLIST BAR (NEW) */
+/* FIXED PLAYLIST OVERLAY */
 .playlist-bar {
-  margin-top: 26px;
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 96px);
+
   display: flex;
   gap: 14px;
+  padding: 14px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  overflow-y: hidden;
+
+  background: linear-gradient(
+    180deg,
+    rgba(40,22,18,0.98),
+    rgba(26,14,12,0.98)
+  );
+
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.7);
   scroll-snap-type: x mandatory;
 }
 
