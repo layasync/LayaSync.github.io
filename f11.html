@@ -143,28 +143,30 @@ body {
 /* FIXED PLAYLIST OVERLAY */
 /* FIXED PLAYLIST OVERLAY — COMPACT */
 /* FIXED PLAYLIST OVERLAY — THIN STRIP */
+/* FIXED PLAYLIST OVERLAY — CLEAN STRIP */
 .playlist-bar {
   position: fixed;
   left: 16px;
   right: 16px;
 
-  /* sits just above lyrics bar */
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 64px);
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px) + 72px);
 
-  height: 72px; /* <<< THIS IS THE SIZE YOU MARKED */
+  height: 72px;
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center; /* <<< IMPORTANT */
 
-  padding: 10px 12px;
+  gap: 12px;
+  padding: 10px 14px;
+
   overflow-x: auto;
   overflow-y: hidden;
 
   background: linear-gradient(
     180deg,
-    rgba(42,24,20,0.95),
-    rgba(28,16,14,0.95)
+    rgba(42,24,20,0.96),
+    rgba(28,16,14,0.96)
   );
 
   border-radius: 18px;
@@ -175,13 +177,16 @@ body {
 
 .playlist-bar::-webkit-scrollbar {
   display: none;
+.playlist-bar {
+  z-index: 2;
+
 }
 
 .play-card {
   min-width: 56px;
-  height: 52px;
+  height: 56px;
 
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   border-radius: 12px;
   padding: 4px;
 
@@ -189,11 +194,11 @@ body {
   align-items: center;
   justify-content: center;
 
-  scroll-snap-align: start;
+  scroll-snap-align: center; /* <<< FIX */
 }
 
 .play-card.active {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.22);
 }
 
 .play-card img {
@@ -203,7 +208,7 @@ body {
   object-fit: cover;
 }
 
-/* hide text for strip mode */
+/* strip mode = no text */
 .play-card .title,
 .play-card .artist {
   display: none;
@@ -225,7 +230,10 @@ body {
   font-size: 15px;
   font-weight: 900;
   box-shadow: 0 14px 40px rgba(0,0,0,0.7);
+.lyric-bar {
+  z-index: 1;
 }
+
 </style>
 </head>
 
