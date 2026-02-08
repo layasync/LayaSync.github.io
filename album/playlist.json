@@ -1,1 +1,12 @@
-a
+{
+  "_comment": "Added at 2026-02-08 21:16:21",
+  "tracks": [
+    {
+      "title": "Starboy",
+      "artist": "The Weeknd, Daft Punk",
+      "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Starboy_spotdown.org%20(1).mp3",
+      "lrc": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/lrc/Starboy%20(feat.Daft%20Punk)%20-%20The%20Weeknd.lrc",
+      "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020c8599cbde51245c128bcea9"
+    }
+  ]
+}
