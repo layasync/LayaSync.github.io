@@ -22,6 +22,16 @@
       "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Wicked%20Game%20-%20Chris%20Isaak%20_%208D%20Music(MP3_160K).mp3",
       "lrc": "",
       "cover": "https://m.media-amazon.com/images/I/51h4IcG5BjL._UF1000,1000_QL80_.jpg"
-    }
+    },
+
+
+{
+  "title": "Billie Jean",
+  "artist": "Michael Jackson",
+  "audio": "https://github.com/layasync/LayaSync.github.io/raw/refs/heads/Music/Michael%20Jackson%20-%20Billie%20Jean%20(%F0%9D%99%A8%F0%9D%99%A1%F0%9D%99%A4%F0%9D%99%AC%F0%9D%99%9A%F0%9D%99%99%20%20%20%F0%9D%99%A7%F0%9D%99%9A%F0%9D%99%AB%F0%9D%99%9A%F0%9D%99%A7%F0%9D%99%97)(MP3_160K).mp3",
+  "lrc": "",
+  "cover": "https://cdn-images.dzcdn.net/images/cover/544862aa5be45bc82ad4ab1a14daf63a/1900x1900-000000-80-0-0.jpg"
+}
+
   ]
 }
