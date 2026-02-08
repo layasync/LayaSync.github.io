@@ -18,6 +18,9 @@
  href="https://fonts.googleapis.com/css2?family=Roboto:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
+html {
+  background: #121212;
+}
 * {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
@@ -487,8 +490,11 @@ function loadTrack(i) {
 
   titleEl.textContent = t.title;
   artistEl.textContent = t.artist;
-  coverImg.src = t.cover;
-  coverImg.onload = () => {
+  coverImg.onload = null;
+coverImg.crossOrigin = "anonymous";
+coverImg.src = t.cover + "?cb=" + Date.now();
+coverImg.onload = () => {
+  console.log("Cover loaded, applying background");
   applyDynamicBackground(coverImg);
 };
 
