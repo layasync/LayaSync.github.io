@@ -4,7 +4,7 @@
 class AIOStreamsAPI {
     static get HOSTS() {
         return {
-            Yeb: "https://aiostreamsfortheweak.nhyira.dev",
+            Yeb: "https://aiostreams.fortheweak.cloud",
             ATBP: "https://aio.atbphosting.com",
             Omni: "https://aiostreams.12312023.xyz",
             Midnight: "https://aiostreamsfortheweebsstable.midnightignite.me",
@@ -234,8 +234,7 @@ class AIOStreamsAPI {
             // Regex imports
             try {
                 // Fetch the regex patterns from the remote source
-                // const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/merged-regexes.json";
-                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/refs/heads/main/merged-anime-regexes.json";
+                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/regexes.json";
                 const regexData = await Network.request(regexUrl, { cache: 'no-store' });
 
                 // Filter out unwanted keys based on the requirements
