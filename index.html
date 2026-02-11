@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=3840, initial-scale=1.0">
 <title>LayaSync</title>
 
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app-bg"></div>
+<div class="bg-layer"></div>
 
 <header class="topbar">
-    <div class="nav-left">
+    <div class="left">
         <div class="logo">LayaSync</div>
     </div>
 
-    <nav class="nav-center">
+    <nav class="center">
         <a class="active">Home</a>
         <a>Movies</a>
         <a>Shows</a>
@@ -24,9 +25,10 @@
         <a>Collections</a>
     </nav>
 
-    <div class="nav-right">
-        <button class="icon-btn">🔍</button>
-        <button class="icon-btn">⚙</button>
+    <div class="right">
+        <div class="icon">🔍</div>
+        <div class="icon">⚙</div>
+        <div class="icon">⏻</div>
     </div>
 </header>
 
@@ -34,12 +36,12 @@
 
     <section>
         <h2>Current Watching</h2>
-        <div class="horizontal-row" id="currentRow"></div>
+        <div class="landscape-row" id="landscapeRow"></div>
     </section>
 
     <section>
         <h2>Last added Movies</h2>
-        <div class="poster-grid" id="movieGrid"></div>
+        <div class="poster-grid" id="posterGrid"></div>
     </section>
 
 </main>
