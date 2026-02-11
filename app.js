@@ -1,7 +1,13 @@
 document.addEventListener("DOMContentLoaded", function(){
 
   console.log("APP READY");
+const saved = localStorage.getItem("xtream");
+const status = document.getElementById("xtream-status");
 
+if(saved && status){
+  status.textContent = "Connected";
+  status.classList.add("connected");
+}
   /* ===================================================== */
   /* ================= NAVIGATION ========================= */
   /* ===================================================== */
@@ -98,7 +104,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
         if(data.user_info && data.user_info.auth === 1){
 
-          alert("Xtream Connected Successfully");
+          const status = document.getElementById("xtream-status");
+
+if(status){
+  status.textContent = "Connected";
+  status.classList.remove("failed");
+  status.classList.add("connected");
+}
 
           localStorage.setItem("xtream", JSON.stringify({
             server: cleanServer,
@@ -109,8 +121,13 @@ document.addEventListener("DOMContentLoaded", function(){
           xtreamPopup.style.display = "none";
 
         } else {
-          alert("Invalid Credentials");
-        }
+          const status = document.getElementById("xtream-status");
+
+if(status){
+  status.textContent = "Failed";
+  status.classList.remove("connected");
+  status.classList.add("failed");
+}
 
       } catch (err){
         alert("Connection Failed");
