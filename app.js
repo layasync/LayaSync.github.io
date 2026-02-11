@@ -101,8 +101,7 @@ document.addEventListener("DOMContentLoaded", function(){
       const row = document.createElement("div");
       row.className="row";
 
-      row.onclick = ()=> loadMovies(cat.category_id, row);
-
+      row.addEventListener("dblclick", ()=> loadMovies(cat.category_id, row));
       section.appendChild(title);
       section.appendChild(row);
       container.appendChild(section);
