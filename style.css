@@ -509,3 +509,15 @@ body{
   color:white;
   border:none;
 }
+.card{
+  pointer-events:auto;
+  cursor:pointer;
+}
+
+.row{
+  pointer-events:auto;
+}
+
+.section{
+  pointer-events:auto;
+}
