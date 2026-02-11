@@ -3,7 +3,21 @@ document.addEventListener("DOMContentLoaded", function(){
   const WORKER_URL = "https://layasync-proxy.layasync.workers.dev";
 
   const status = document.getElementById("xtream-status");
-  const xtreamPopup = document.getElementById("xtream-popup");
+  const xtreamBtn = document.querySelector(".xtream-btn");
+const xtreamPopup = document.getElementById("xtream-popup");
+const xtreamClose = document.getElementById("xtream-close");
+
+if(xtreamBtn){
+  xtreamBtn.onclick = function(){
+    xtreamPopup.style.display = "flex";
+  };
+}
+
+if(xtreamClose){
+  xtreamClose.onclick = function(){
+    xtreamPopup.style.display = "none";
+  };
+}
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
