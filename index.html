@@ -1,1 +1,35 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LayaSync</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <header class="navbar glass">
+        <div class="logo">LayaSync</div>
+        <nav>
+            <a class="active">Home</a>
+            <a>Movies</a>
+            <a>Shows</a>
+            <a>Playlists</a>
+        </nav>
+    </header>
+
+    <main class="content">
+        <h2>Featured</h2>
+        <div class="grid" id="grid"></div>
+    </main>
+
+    <div class="player-modal" id="playerModal">
+        <video id="videoPlayer" controls></video>
+        <button class="close-btn" onclick="closePlayer()">✕</button>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
