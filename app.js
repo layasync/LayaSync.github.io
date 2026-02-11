@@ -1,96 +1,119 @@
-const navItems = document.querySelectorAll('.nav');
-
-const pages = {
-  Home:'home',
-  Search:'search',
-  Movies:'movies',
-  Shows:'shows',
-  Playlists:'playlists',
-  Collections:'collections',
-  Live:'live'
-};
-
-function showPage(name){
-  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-  document.getElementById(pages[name]).style.display='block';
-
-  navItems.forEach(n=>n.classList.remove('active'));
-  [...navItems].find(n=>n.textContent.trim()===name).classList.add('active');
-}
-
-navItems.forEach(item=>{
-  item.addEventListener('click',()=>{
-    showPage(item.textContent.trim());
-  });
-});
 /* ===================================================== */
-/* ================= XTREAM POPUP LOGIC ================= */
+/* ================= NAVIGATION LOGIC =================== */
 /* ===================================================== */
 
-// Get elements
-const xtreamBtn = document.querySelector(".xtream-btn");
-const xtreamPopup = document.getElementById("xtream-popup");
-const xtreamClose = document.getElementById("xtream-close");
-const xtreamConnect = document.getElementById("xtream-connect");
+document.addEventListener("DOMContentLoaded", function(){
 
-// Open popup when clicking Xtream Portal
-if(xtreamBtn){
-  xtreamBtn.addEventListener("click", () => {
-    xtreamPopup.style.display = "flex";
-  });
-}
+  /* ===== NAVIGATION ===== */
 
-// Close popup
-if(xtreamClose){
-  xtreamClose.addEventListener("click", () => {
-    xtreamPopup.style.display = "none";
-  });
-}
+  const navItems = document.querySelectorAll('.nav');
 
-// Connect to Xtream
-if(xtreamConnect){
-  xtreamConnect.addEventListener("click", async () => {
+  const pages = {
+    Home:'home',
+    Search:'search',
+    Movies:'movies',
+    Shows:'shows',
+    Playlists:'playlists',
+    Collections:'collections',
+    Live:'live'
+  };
 
-    const server = document.getElementById("xtream-server").value.trim();
-    const username = document.getElementById("xtream-username").value.trim();
-    const password = document.getElementById("xtream-password").value.trim();
+  function showPage(name){
+    document.querySelectorAll('.page').forEach(p=>{
+      p.style.display='none';
+    });
 
-    if(!server || !username || !password){
-      alert("Fill all fields");
-      return;
+    if(pages[name]){
+      document.getElementById(pages[name]).style.display='block';
     }
 
-    try {
+    navItems.forEach(n=>n.classList.remove('active'));
 
-      const cleanServer = server.replace(/\/+$/, "");
+    const activeNav = [...navItems].find(n=>n.textContent.trim()===name);
+    if(activeNav){
+      activeNav.classList.add('active');
+    }
+  }
 
-      const response = await fetch(
-        `${cleanServer}/player_api.php?username=${username}&password=${password}`
-      );
+  navItems.forEach(item=>{
+    item.addEventListener('click',()=>{
+      showPage(item.textContent.trim());
+    });
+  });
 
-      const data = await response.json();
 
-      if(data.user_info && data.user_info.auth === 1){
+  /* ===================================================== */
+  /* ================= XTREAM POPUP LOGIC ================= */
+  /* ===================================================== */
 
-        alert("Xtream Connected Successfully");
+  const xtreamBtn = document.querySelector(".xtream-btn");
+  const xtreamPopup = document.getElementById("xtream-popup");
+  const xtreamClose = document.getElementById("xtream-close");
+  const xtreamConnect = document.getElementById("xtream-connect");
 
-        localStorage.setItem("xtream", JSON.stringify({
-          server: cleanServer,
-          username,
-          password
-        }));
+  // Open popup
+  if(xtreamBtn && xtreamPopup){
+    xtreamBtn.addEventListener("click", () => {
+      xtreamPopup.style.display = "flex";
+    });
+  }
 
-        xtreamPopup.style.display = "none";
+  // Close popup
+  if(xtreamClose && xtreamPopup){
+    xtreamClose.addEventListener("click", () => {
+      xtreamPopup.style.display = "none";
+    });
+  }
 
-      } else {
-        alert("Invalid Credentials");
+  // Connect to Xtream
+  if(xtreamConnect){
+
+    xtreamConnect.addEventListener("click", async () => {
+
+      const server = document.getElementById("xtream-server")?.value.trim();
+      const username = document.getElementById("xtream-username")?.value.trim();
+      const password = document.getElementById("xtream-password")?.value.trim();
+
+      if(!server || !username || !password){
+        alert("Fill all fields");
+        return;
       }
 
-    } catch(err){
-      alert("Connection Error (CORS or Invalid Server)");
-      console.error(err);
-    }
+      try {
 
-  });
-}
+        const cleanServer = server.replace(/\/+$/, "");
 
+        const response = await fetch(
+          `${cleanServer}/player_api.php?username=${username}&password=${password}`
+        );
+
+        const data = await response.json();
+
+        if(data.user_info && data.user_info.auth === 1){
+
+          alert("Xtream Connected Successfully");
+
+          localStorage.setItem("xtream", JSON.stringify({
+            server: cleanServer,
+            username,
+            password
+          }));
+
+          if(xtreamPopup){
+            xtreamPopup.style.display = "none";
+          }
+
+        } else {
+          alert("Invalid Credentials");
+        }
+
+      } catch(err){
+        alert("Connection Error (CORS or Invalid Server)");
+        console.error(err);
+      }
+
+    });
+
+  }
+
+});
