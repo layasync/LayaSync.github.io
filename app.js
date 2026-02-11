@@ -2,14 +2,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
   console.log("APP READY");
 
+  const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
+
   /* ===================================================== */
   /* ================= STATUS AUTO LOAD ================== */
   /* ===================================================== */
 
   const status = document.getElementById("xtream-status");
-  const saved = localStorage.getItem("xtream");
+  const savedLogin = localStorage.getItem("xtream");
 
-  if(saved && status){
+  if(savedLogin && status){
     status.textContent = "Connected";
     status.classList.add("connected");
   }
@@ -49,23 +51,18 @@ document.addEventListener("DOMContentLoaded", function(){
 
   navItems.forEach(item=>{
     item.addEventListener('click', ()=>{
-      showPage(item.textContent.trim());
+      const page = item.textContent.trim();
+
+      showPage(page);
+
+      if(page === "Movies") loadMovies();
+      if(page === "Shows") loadShows();
     });
   });
 
-
   /* ===================================================== */
-  /* ================= XTREAM POPUP ======================= */
+  /* ================= TV SAFE HANDLER =================== */
   /* ===================================================== */
-
-  const xtreamBtn = document.querySelector(".xtream-btn");
-  const xtreamPopup = document.getElementById("xtream-popup");
-  const xtreamClose = document.getElementById("xtream-close");
-  const xtreamConnect = document.getElementById("xtream-connect");
-
-  const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
-
-  /* ===== TV SAFE CLICK HANDLER ===== */
 
   function tvActivate(element, callback){
     if(!element) return;
@@ -81,13 +78,18 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ===== Open Popup ===== */
+  /* ===================================================== */
+  /* ================= XTREAM POPUP ======================= */
+  /* ===================================================== */
+
+  const xtreamBtn = document.querySelector(".xtream-btn");
+  const xtreamPopup = document.getElementById("xtream-popup");
+  const xtreamClose = document.getElementById("xtream-close");
+  const xtreamConnect = document.getElementById("xtream-connect");
 
   tvActivate(xtreamBtn, function(){
     xtreamPopup.style.display = "flex";
   });
-
-  /* ===== Close Popup ===== */
 
   tvActivate(xtreamClose, function(){
     xtreamPopup.style.display = "none";
@@ -153,5 +155,129 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
   });
+
+  /* ===================================================== */
+  /* ================= LOAD MOVIES ======================== */
+  /* ===================================================== */
+
+  async function loadMovies(){
+
+    const saved = JSON.parse(localStorage.getItem("xtream"));
+    if(!saved) return;
+
+    const {server, username, password} = saved;
+
+    const container = document.getElementById("movies-container");
+    container.innerHTML = "Loading...";
+
+    const catUrl =
+      `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`;
+
+    const response = await fetch(
+      `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
+    );
+
+    const categories = await response.json();
+
+    container.innerHTML = "";
+
+    for(const cat of categories){
+
+      const streamsUrl =
+        `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`;
+
+      const streamRes = await fetch(
+        `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+      );
+
+      const streams = await streamRes.json();
+
+      const section = document.createElement("div");
+      section.className = "section";
+
+      const title = document.createElement("h3");
+      title.textContent = cat.category_name;
+
+      const row = document.createElement("div");
+      row.className = "row";
+
+      streams.slice(0,10).forEach(movie=>{
+        const card = document.createElement("div");
+        card.className = "card small";
+
+        card.style.backgroundImage = `url(${movie.stream_icon})`;
+        card.style.backgroundSize = "cover";
+        card.style.backgroundPosition = "center";
+
+        row.appendChild(card);
+      });
+
+      section.appendChild(title);
+      section.appendChild(row);
+      container.appendChild(section);
+    }
+  }
+
+  /* ===================================================== */
+  /* ================= LOAD SHOWS ========================= */
+  /* ===================================================== */
+
+  async function loadShows(){
+
+    const saved = JSON.parse(localStorage.getItem("xtream"));
+    if(!saved) return;
+
+    const {server, username, password} = saved;
+
+    const container = document.getElementById("shows-container");
+    container.innerHTML = "Loading...";
+
+    const catUrl =
+      `${server}/player_api.php?username=${username}&password=${password}&action=get_series_categories`;
+
+    const response = await fetch(
+      `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
+    );
+
+    const categories = await response.json();
+
+    container.innerHTML = "";
+
+    for(const cat of categories){
+
+      const streamsUrl =
+        `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`;
+
+      const streamRes = await fetch(
+        `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+      );
+
+      const streams = await streamRes.json();
+
+      const section = document.createElement("div");
+      section.className = "section";
+
+      const title = document.createElement("h3");
+      title.textContent = cat.category_name;
+
+      const row = document.createElement("div");
+      row.className = "row";
+
+      streams.slice(0,10).forEach(show=>{
+        const card = document.createElement("div");
+        card.className = "card small";
+
+        card.style.backgroundImage = `url(${show.cover})`;
+        card.style.backgroundSize = "cover";
+        card.style.backgroundPosition = "center";
+
+        row.appendChild(card);
+      });
+
+      section.appendChild(title);
+      section.appendChild(row);
+      container.appendChild(section);
+    }
+  }
 
 });
