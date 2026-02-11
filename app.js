@@ -21,10 +21,20 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const navItems = document.querySelectorAll(".nav");
 
-  function activateNav(clickedNav){
-    navItems.forEach(n => n.classList.remove("active"));
-    clickedNav.classList.add("active");
+  function activateNav(clicked){
+    navItems.forEach(n=>n.classList.remove("active"));
+    clicked.classList.add("active");
   }
+
+  /* ================= POPUP ================= */
+
+  document.querySelector(".xtream-btn").onclick = ()=>{
+    xtreamPopup.style.display="flex";
+  };
+
+  xtreamClose.onclick = ()=>{
+    xtreamPopup.style.display="none";
+  };
 
   /* ================= LOGIN ================= */
 
@@ -48,30 +58,24 @@ document.addEventListener("DOMContentLoaded", function(){
       const data = await res.json();
 
       if(!data.user_info || data.user_info.auth !== 1){
-        throw new Error("Invalid login");
+        throw new Error("Invalid");
       }
 
       credentials = { server, username, password };
       localStorage.setItem("xtream_login", JSON.stringify(credentials));
 
-      status.textContent = "Connected";
+      status.textContent="Connected";
       status.classList.remove("failed");
       status.classList.add("connected");
 
-      xtreamPopup.style.display = "none";
+      xtreamPopup.style.display="none";
 
     }catch(e){
-      status.textContent = "Failed";
+      status.textContent="Failed";
       status.classList.remove("connected");
       status.classList.add("failed");
       alert("Login Failed");
     }
-  };
-
-  xtreamClose.onclick = ()=> xtreamPopup.style.display="none";
-
-  document.querySelector(".xtream-btn").onclick = ()=>{
-    xtreamPopup.style.display="flex";
   };
 
   /* ================= MOVIE CATEGORIES ================= */
@@ -81,84 +85,90 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!credentials) return alert("Please login first");
 
     const container = document.getElementById("movies-container");
-    container.innerHTML = "Loading...";
+    container.innerHTML="";
 
     const res = await fetch(
       `${WORKER}/vod-categories?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}`
     );
 
     const categories = await res.json();
-    container.innerHTML = "";
+
+    const pillRow = document.createElement("div");
+    pillRow.className="row";
+    pillRow.style.marginBottom="30px";
+
+    const streamContainer = document.createElement("div");
+    streamContainer.id="movie-streams";
 
     categories.forEach(cat=>{
 
-      const section = document.createElement("div");
-      section.className="section";
+      const pill=document.createElement("div");
+      pill.className="nav";
+      pill.textContent=cat.category_name;
+      pill.style.fontSize="16px";
 
-      const title = document.createElement("h3");
-      title.textContent = cat.category_name;
+      pill.onclick=()=>{
+        document.querySelectorAll("#movies-container .nav")
+          .forEach(p=>p.classList.remove("active"));
+        pill.classList.add("active");
 
-      const row = document.createElement("div");
-      row.className="row";
+        loadMovies(cat.category_id, streamContainer);
+      };
 
-      section.appendChild(title);
-      section.appendChild(row);
-      container.appendChild(section);
-
-      loadMovies(cat.category_id, row);
+      pillRow.appendChild(pill);
     });
+
+    container.appendChild(pillRow);
+    container.appendChild(streamContainer);
   }
 
-  async function loadMovies(category_id, row){
+  async function loadMovies(category_id, container){
 
-    if(row.dataset.loaded) return;
-    if(!credentials) return;
-
-    row.dataset.loaded="true";
-    row.innerHTML="Loading...";
+    container.innerHTML="Loading...";
 
     const res = await fetch(
       `${WORKER}/vod-streams?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}&category_id=${category_id}`
     );
 
     const movies = await res.json();
-    row.innerHTML="";
+    container.innerHTML="";
+
+    const row=document.createElement("div");
+    row.className="row";
 
     movies.forEach(movie=>{
 
-      const card = document.createElement("div");
+      const card=document.createElement("div");
       card.className="card small";
 
       const poster =
         movie.stream_icon ||
         movie.movie_icon ||
         movie.cover ||
-        movie.icon ||
-        null;
+        movie.icon;
 
       if(poster){
-        const img = document.createElement("img");
-        img.src = `${WORKER}/image?url=${encodeURIComponent(poster)}`;
-        img.loading = "lazy";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "18px";
-        img.draggable = false;
+        const img=document.createElement("img");
+        img.src=`${WORKER}/image?url=${encodeURIComponent(poster)}`;
+        img.loading="lazy";
+        img.style.width="100%";
+        img.style.height="100%";
+        img.style.objectFit="cover";
+        img.style.borderRadius="18px";
         card.appendChild(img);
       }
 
-      card.onclick = ()=>{
+      card.onclick=()=>{
         const ext = movie.container_extension || "mp4";
-
         const streamUrl =
           `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.${ext}`;
-
         openPlayer(streamUrl, movie.name);
       };
 
       row.appendChild(card);
     });
+
+    container.appendChild(row);
   }
 
   /* ================= SHOW CATEGORIES ================= */
@@ -168,97 +178,101 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!credentials) return alert("Please login first");
 
     const container = document.getElementById("shows-container");
-    container.innerHTML = "Loading...";
+    container.innerHTML="";
 
     const res = await fetch(
       `${WORKER}/series-categories?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}`
     );
 
     const categories = await res.json();
-    container.innerHTML = "";
+
+    const pillRow=document.createElement("div");
+    pillRow.className="row";
+    pillRow.style.marginBottom="30px";
+
+    const streamContainer=document.createElement("div");
+    streamContainer.id="show-streams";
 
     categories.forEach(cat=>{
 
-      const section = document.createElement("div");
-      section.className="section";
+      const pill=document.createElement("div");
+      pill.className="nav";
+      pill.textContent=cat.category_name;
+      pill.style.fontSize="16px";
 
-      const title = document.createElement("h3");
-      title.textContent = cat.category_name;
+      pill.onclick=()=>{
+        document.querySelectorAll("#shows-container .nav")
+          .forEach(p=>p.classList.remove("active"));
+        pill.classList.add("active");
 
-      const row = document.createElement("div");
-      row.className="row";
+        loadShows(cat.category_id, streamContainer);
+      };
 
-      section.appendChild(title);
-      section.appendChild(row);
-      container.appendChild(section);
-
-      loadShows(cat.category_id, row);
+      pillRow.appendChild(pill);
     });
+
+    container.appendChild(pillRow);
+    container.appendChild(streamContainer);
   }
 
-  async function loadShows(category_id, row){
+  async function loadShows(category_id, container){
 
-    if(row.dataset.loaded) return;
-    if(!credentials) return;
-
-    row.dataset.loaded="true";
-    row.innerHTML="Loading...";
+    container.innerHTML="Loading...";
 
     const res = await fetch(
       `${WORKER}/series?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}&category_id=${category_id}`
     );
 
     const shows = await res.json();
-    row.innerHTML="";
+    container.innerHTML="";
+
+    const row=document.createElement("div");
+    row.className="row";
 
     shows.forEach(show=>{
 
-      const card = document.createElement("div");
+      const card=document.createElement("div");
       card.className="card small";
 
       const poster =
         show.cover ||
         show.stream_icon ||
-        show.movie_icon ||
-        show.icon ||
-        null;
+        show.icon;
 
       if(poster){
-        const img = document.createElement("img");
-        img.src = `${WORKER}/image?url=${encodeURIComponent(poster)}`;
-        img.loading = "lazy";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "18px";
-        img.draggable = false;
+        const img=document.createElement("img");
+        img.src=`${WORKER}/image?url=${encodeURIComponent(poster)}`;
+        img.loading="lazy";
+        img.style.width="100%";
+        img.style.height="100%";
+        img.style.objectFit="cover";
+        img.style.borderRadius="18px";
         card.appendChild(img);
       }
 
-      card.onclick = ()=>{
-        const ext = show.container_extension || "mp4";
-
+      card.onclick=()=>{
         const streamUrl =
-          `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.${ext}`;
-
+          `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
         openPlayer(streamUrl, show.name);
       };
 
       row.appendChild(card);
     });
+
+    container.appendChild(row);
   }
 
   /* ================= NAVIGATION ================= */
 
   navItems.forEach(nav=>{
-    nav.onclick = ()=>{
+    nav.onclick=()=>{
       const name = nav.textContent.trim();
-
       activateNav(nav);
 
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+      document.querySelectorAll(".page")
+        .forEach(p=>p.style.display="none");
 
-      const page = document.getElementById(name.toLowerCase());
+      const page=document.getElementById(name.toLowerCase());
       if(page) page.style.display="block";
 
       if(name==="Movies") loadMovieCategories();
