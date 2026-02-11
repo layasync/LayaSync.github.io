@@ -521,3 +521,6 @@ body{
 .section{
   pointer-events:auto;
 }
+.card img{
+  border-radius:18px;
+}
