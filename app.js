@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
   console.log("APP READY");
 
-  /* ================= NAVIGATION ================= */
+  /* ===================================================== */
+  /* ================= NAVIGATION ========================= */
+  /* ===================================================== */
 
   const navItems = document.querySelectorAll('.nav');
 
@@ -40,18 +42,19 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
 
-  /* ================= XTREAM POPUP ================= */
+  /* ===================================================== */
+  /* ================= XTREAM POPUP ======================= */
+  /* ===================================================== */
 
   const xtreamBtn = document.querySelector(".xtream-btn");
   const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
+  const xtreamConnect = document.getElementById("xtream-connect");
 
-  console.log("Button:", xtreamBtn);
-  console.log("Popup:", xtreamPopup);
+  const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
 
   if(xtreamBtn && xtreamPopup){
     xtreamBtn.addEventListener("click", function(){
-      console.log("Xtream clicked");
       xtreamPopup.style.display = "flex";
     });
   }
@@ -60,6 +63,62 @@ document.addEventListener("DOMContentLoaded", function(){
     xtreamClose.addEventListener("click", function(){
       xtreamPopup.style.display = "none";
     });
+  }
+
+
+  /* ===================================================== */
+  /* ================= XTREAM CONNECT ===================== */
+  /* ===================================================== */
+
+  if(xtreamConnect){
+
+    xtreamConnect.addEventListener("click", async () => {
+
+      const server = document.getElementById("xtream-server").value.trim();
+      const username = document.getElementById("xtream-username").value.trim();
+      const password = document.getElementById("xtream-password").value.trim();
+
+      if(!server || !username || !password){
+        alert("Fill all fields");
+        return;
+      }
+
+      try {
+
+        const cleanServer = server.replace(/\/+$/, "");
+
+        const targetUrl =
+          `${cleanServer}/player_api.php?username=${username}&password=${password}`;
+
+        const response = await fetch(
+          `${WORKER_PROXY}?url=${encodeURIComponent(targetUrl)}`
+        );
+
+        const data = await response.json();
+
+        if(data.user_info && data.user_info.auth === 1){
+
+          alert("Xtream Connected Successfully");
+
+          localStorage.setItem("xtream", JSON.stringify({
+            server: cleanServer,
+            username,
+            password
+          }));
+
+          xtreamPopup.style.display = "none";
+
+        } else {
+          alert("Invalid Credentials");
+        }
+
+      } catch (err){
+        alert("Connection Failed");
+        console.error(err);
+      }
+
+    });
+
   }
 
 });
