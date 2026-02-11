@@ -1,1 +1,98 @@
- 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:system-ui;
+}
+
+body{
+    background:#0f1419;
+    color:white;
+}
+
+.background{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at top left,#1f2937,#0f1419);
+    z-index:-1;
+}
+
+.glass{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.navbar{
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.navbar nav a{
+    margin-left:20px;
+    color:#bbb;
+    cursor:pointer;
+}
+
+.navbar nav a.active,
+.navbar nav a:hover{
+    color:white;
+}
+
+.content{
+    padding:40px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:20px;
+}
+
+.card{
+    aspect-ratio:2/3;
+    background:#1c222b;
+    border-radius:16px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.card:hover{
+    transform:scale(1.05);
+}
+
+.player-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+}
+
+.player-modal video{
+    width:80%;
+    max-height:80%;
+    border-radius:20px;
+}
+
+.close-btn{
+    position:absolute;
+    top:30px;
+    right:40px;
+    background:rgba(255,255,255,0.1);
+    border:none;
+    color:white;
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+} 
