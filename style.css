@@ -302,3 +302,50 @@ body{
   color:#f87171;
   opacity:1;
 }
+/* ================= SCROLLABLE PAGE ================= */
+
+.page{
+  position:absolute;
+  top:120px;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:40px 90px 60px;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+/* Hide ugly scrollbar */
+.page::-webkit-scrollbar{
+  display:none;
+}
+
+/* ================= HORIZONTAL ROW ================= */
+
+.row{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+  padding-bottom:10px;
+}
+
+.row::-webkit-scrollbar{
+  display:none;
+}
+
+/* ================= TV FOCUS EFFECT ================= */
+
+.card{
+  min-width:200px;
+  height:300px;
+  border-radius:18px;
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:focus{
+  outline:none;
+  transform:scale(1.08);
+  box-shadow:0 0 20px rgba(255,255,255,0.4);
+}
