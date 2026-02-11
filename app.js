@@ -2,7 +2,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const WORKER_URL = "https://layasync-proxy.layasync.workers.dev";
 
+  /* ================= ELEMENTS ================= */
+
   const status = document.getElementById("xtream-status");
+  const xtreamBtn = document.querySelector(".xtream-btn");
+  const xtreamPopup = document.getElementById("xtream-popup");
+  const xtreamClose = document.getElementById("xtream-close");
+  const xtreamConnect = document.getElementById("xtream-connect");
 
   const navItems = document.querySelectorAll('.nav');
 
@@ -15,6 +21,8 @@ document.addEventListener("DOMContentLoaded", function(){
     Collections:'collections',
     Live:'live'
   };
+
+  /* ================= NAVIGATION ================= */
 
   function showPage(name){
     document.querySelectorAll('.page').forEach(p=>p.style.display='none');
@@ -38,73 +46,95 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   });
 
-  /* ================= XTREAM CONNECT ================= */
+  /* ================= POPUP ================= */
 
-  document.getElementById("xtream-connect").addEventListener("click", async function(){
+  if(xtreamBtn){
+    xtreamBtn.addEventListener("click", ()=>{
+      xtreamPopup.style.display = "flex";
+    });
+  }
 
-    const server = document.getElementById("xtream-server").value.trim();
-    const username = document.getElementById("xtream-username").value.trim();
-    const password = document.getElementById("xtream-password").value.trim();
+  if(xtreamClose){
+    xtreamClose.addEventListener("click", ()=>{
+      xtreamPopup.style.display = "none";
+    });
+  }
 
-    if(!server || !username || !password){
-      alert("Fill all fields");
-      return;
-    }
+  /* ================= CONNECT ================= */
 
-    try{
+  if(xtreamConnect){
+    xtreamConnect.addEventListener("click", async ()=>{
 
-      localStorage.removeItem("xtream");
-      localStorage.removeItem("xtream_cache");
+      const server = document.getElementById("xtream-server").value.trim();
+      const username = document.getElementById("xtream-username").value.trim();
+      const password = document.getElementById("xtream-password").value.trim();
 
-      const cleanServer = server.replace(/\/+$/, "");
-
-      const syncUrl =
-        `${WORKER_URL}/sync?server=${encodeURIComponent(cleanServer)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
-
-      status.textContent = "Syncing...";
-      status.classList.remove("connected");
-      status.classList.remove("failed");
-
-      const response = await fetch(syncUrl);
-
-      if(!response.ok){
-        throw new Error("Sync failed");
+      if(!server || !username || !password){
+        alert("Fill all fields");
+        return;
       }
 
-      const data = await response.json();
+      try{
 
-      // Save login
-      localStorage.setItem("xtream", JSON.stringify({
-        server: cleanServer,
-        username,
-        password
-      }));
+        localStorage.removeItem("xtream");
+        localStorage.removeItem("xtream_cache");
 
-      // Save full library
-      localStorage.setItem("xtream_cache", JSON.stringify(data));
+        const cleanServer = server.replace(/\/+$/, "");
 
-      status.textContent = "Connected";
-      status.classList.add("connected");
+        const syncUrl =
+          `${WORKER_URL}/sync?server=${encodeURIComponent(cleanServer)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
-      document.getElementById("xtream-popup").style.display="none";
+        if(status){
+          status.textContent = "Syncing...";
+          status.classList.remove("connected");
+          status.classList.remove("failed");
+        }
 
-    }catch(e){
+        const response = await fetch(syncUrl);
 
-      console.error(e);
+        if(!response.ok){
+          throw new Error("Sync failed");
+        }
 
-      status.textContent = "Failed";
-      status.classList.add("failed");
+        const data = await response.json();
 
-      alert("Connection Failed. Try again after 30 seconds.");
-    }
+        localStorage.setItem("xtream", JSON.stringify({
+          server: cleanServer,
+          username,
+          password
+        }));
 
-  });
+        localStorage.setItem("xtream_cache", JSON.stringify(data));
+
+        if(status){
+          status.textContent = "Connected";
+          status.classList.add("connected");
+        }
+
+        xtreamPopup.style.display = "none";
+
+      }catch(e){
+
+        console.error(e);
+
+        if(status){
+          status.textContent = "Failed";
+          status.classList.add("failed");
+        }
+
+        alert("Connection Failed. Try again later.");
+      }
+
+    });
+  }
 
   /* ================= RENDER MOVIES ================= */
 
   function renderMovies(){
 
     const container = document.getElementById("movies-container");
+    if(!container) return;
+
     container.innerHTML = "";
 
     const cache = JSON.parse(localStorage.getItem("xtream_cache"));
@@ -151,6 +181,8 @@ document.addEventListener("DOMContentLoaded", function(){
   function renderShows(){
 
     const container = document.getElementById("shows-container");
+    if(!container) return;
+
     container.innerHTML = "";
 
     const cache = JSON.parse(localStorage.getItem("xtream_cache"));
