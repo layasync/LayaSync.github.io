@@ -8,7 +8,16 @@ document.addEventListener("DOMContentLoaded", function(){
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
-  // ================= LOGIN =================
+  /* ================= RESTORE LOGIN ================= */
+
+  const saved = localStorage.getItem("xtream_login");
+  if(saved){
+    credentials = JSON.parse(saved);
+    status.textContent = "Connected";
+    status.classList.add("connected");
+  }
+
+  /* ================= LOGIN ================= */
 
   xtreamConnect.onclick = async function(){
 
@@ -56,9 +65,11 @@ document.addEventListener("DOMContentLoaded", function(){
     xtreamPopup.style.display="flex";
   };
 
-  // ================= MOVIE CATEGORIES =================
+  /* ================= MOVIE CATEGORIES ================= */
 
   async function loadMovieCategories(){
+
+    if(!credentials) return alert("Please login first");
 
     const container = document.getElementById("movies-container");
     container.innerHTML = "Loading...";
@@ -92,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function(){
   async function loadMovies(category_id, row){
 
     if(row.dataset.loaded) return;
+    if(!credentials) return;
 
     row.innerHTML="Loading...";
 
@@ -118,13 +130,22 @@ document.addEventListener("DOMContentLoaded", function(){
         card.appendChild(img);
       }
 
+      // 🔥 PLAY MOVIE
+      card.onclick = function(){
+        const streamUrl =
+          `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.mp4`;
+        openPlayer(streamUrl);
+      };
+
       row.appendChild(card);
     });
   }
 
-  // ================= SHOW CATEGORIES =================
+  /* ================= SHOW CATEGORIES ================= */
 
   async function loadShowCategories(){
+
+    if(!credentials) return alert("Please login first");
 
     const container = document.getElementById("shows-container");
     container.innerHTML = "Loading...";
@@ -158,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function(){
   async function loadShows(category_id, row){
 
     if(row.dataset.loaded) return;
+    if(!credentials) return;
 
     row.innerHTML="Loading...";
 
@@ -184,11 +206,18 @@ document.addEventListener("DOMContentLoaded", function(){
         card.appendChild(img);
       }
 
+      // 🔥 PLAY SERIES (basic — opens first episode stream id)
+      card.onclick = function(){
+        const streamUrl =
+          `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
+        openPlayer(streamUrl);
+      };
+
       row.appendChild(card);
     });
   }
 
-  // ================= NAVIGATION =================
+  /* ================= NAVIGATION ================= */
 
   document.querySelectorAll(".nav").forEach(nav=>{
     nav.onclick = ()=>{
