@@ -30,8 +30,9 @@ document.addEventListener("DOMContentLoaded", function(){
     item.addEventListener('click', ()=>{
       const page = item.textContent.trim();
       showPage(page);
-      if(page === "Movies") renderMoviesFromCache();
-      if(page === "Shows") renderShowsFromCache();
+
+      if(page === "Movies") renderMovies();
+      if(page === "Shows") renderShows();
     });
   });
 
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   async function fetchJSON(url){
     const res = await fetch(`${WORKER_PROXY}?url=${encodeURIComponent(url)}`);
-    if(!res.ok) throw new Error("Fetch blocked");
+    if(!res.ok) throw new Error("Blocked");
     return res.json();
   }
 
@@ -65,13 +66,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
       const cleanServer = server.replace(/\/+$/, "");
 
-      const loginUrl =
-        `${cleanServer}/player_api.php?username=${username}&password=${password}`;
-
-      const loginData = await fetchJSON(loginUrl);
+      const loginData = await fetchJSON(
+        `${cleanServer}/player_api.php?username=${username}&password=${password}`
+      );
 
       if(!loginData.user_info || loginData.user_info.auth !== 1){
-        throw new Error("Invalid credentials");
+        throw new Error("Invalid");
       }
 
       localStorage.setItem("xtream", JSON.stringify({
@@ -80,22 +80,18 @@ document.addEventListener("DOMContentLoaded", function(){
         password
       }));
 
-      if(status){
-        status.textContent="Syncing...";
-      }
+      status.textContent="Syncing...";
 
       await fullSync(cleanServer, username, password);
 
-      if(status){
-        status.textContent="Connected";
-        status.classList.add("connected");
-      }
+      status.textContent="Connected";
+      status.classList.add("connected");
 
       document.getElementById("xtream-popup").style.display="none";
 
     }catch(e){
       console.error(e);
-      alert("Connection Failed. Wait and retry.");
+      alert("Connection Failed. Wait 10 seconds and retry.");
     }
 
   });
@@ -109,46 +105,55 @@ document.addEventListener("DOMContentLoaded", function(){
       shows: {}
     };
 
-    // MOVIE CATEGORIES
-    const vodCats = await fetchJSON(
+    // MOVIES
+    const movieCats = await fetchJSON(
       `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`
     );
 
-    for(const cat of vodCats){
+    for(const cat of movieCats){
 
       const streams = await fetchJSON(
         `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`
       );
 
-      cache.movies[cat.category_name] = streams;
+      // Store only needed fields
+      cache.movies[cat.category_name] = streams.map(m => ({
+        name: m.name,
+        icon: m.stream_icon,
+        id: m.stream_id
+      }));
 
       localStorage.setItem("xtream_cache", JSON.stringify(cache));
 
-      await delay(400);
+      await delay(500);
     }
 
-    // SERIES CATEGORIES
-    const seriesCats = await fetchJSON(
+    // SHOWS
+    const showCats = await fetchJSON(
       `${server}/player_api.php?username=${username}&password=${password}&action=get_series_categories`
     );
 
-    for(const cat of seriesCats){
+    for(const cat of showCats){
 
       const streams = await fetchJSON(
         `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`
       );
 
-      cache.shows[cat.category_name] = streams;
+      cache.shows[cat.category_name] = streams.map(s => ({
+        name: s.name,
+        cover: s.cover,
+        id: s.series_id
+      }));
 
       localStorage.setItem("xtream_cache", JSON.stringify(cache));
 
-      await delay(400);
+      await delay(500);
     }
   }
 
-  /* ================= RENDER FROM CACHE ================= */
+  /* ================= RENDER MOVIES ================= */
 
-  function renderMoviesFromCache(){
+  function renderMovies(){
 
     const container = document.getElementById("movies-container");
     container.innerHTML="";
@@ -172,9 +177,9 @@ document.addEventListener("DOMContentLoaded", function(){
         card.className="card small";
         card.setAttribute("tabindex","0");
 
-        if(movie.stream_icon){
+        if(movie.icon){
           const img=document.createElement("img");
-          img.src=movie.stream_icon;
+          img.src=movie.icon;
           img.loading="lazy";
           img.style.width="100%";
           img.style.height="100%";
@@ -191,7 +196,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
-  function renderShowsFromCache(){
+  /* ================= RENDER SHOWS ================= */
+
+  function renderShows(){
 
     const container = document.getElementById("shows-container");
     container.innerHTML="";
