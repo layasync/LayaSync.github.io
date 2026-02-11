@@ -20,7 +20,7 @@ body{
     linear-gradient(180deg, #1b2430 0%, #121a23 50%, #0c1117 100%);
 }
 
-/* ================= TOP NAV ================= */
+/* ================= TOP NAV (GLASS OVERLAY) ================= */
 
 #top{
   position:fixed;
@@ -59,7 +59,7 @@ body{
     inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
-/* ================= PAGE ================= */
+/* ================= PAGE BASE ================= */
 
 .page{
   position:absolute;
@@ -81,7 +81,7 @@ body{
   display:none;
 }
 
-/* ================= SECTIONS ================= */
+/* ================= HOME ================= */
 
 .section{
   margin-bottom:50px;
@@ -94,7 +94,7 @@ body{
   opacity:0.85;
 }
 
-/* ================= PREMIUM ROW SCROLL ================= */
+/* ================= PREMIUM SNAP ROW ================= */
 
 .row{
   display:flex;
@@ -118,10 +118,10 @@ body{
 /* ================= CARDS ================= */
 
 .card{
+  background:#242d38;
   min-width:200px;
   height:300px;
   border-radius:22px;
-  background:#242d38;
   box-shadow:0 20px 60px rgba(0,0,0,0.6);
 
   scroll-snap-align:center;
@@ -129,6 +129,16 @@ body{
   transition:
     transform 0.35s cubic-bezier(.2,.8,.2,1),
     box-shadow 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+.card.big{
+  width:420px;
+  height:240px;
+}
+
+.card.small{
+  width:200px;
+  height:300px;
 }
 
 .card:hover{
@@ -151,6 +161,38 @@ body{
   border-radius:22px;
 }
 
+/* ================= SEARCH ================= */
+
+.search-box{
+  display:flex;
+  gap:18px;
+  padding:18px 26px;
+  border-radius:24px;
+  background:rgba(20,30,40,0.75);
+  backdrop-filter:blur(20px);
+  max-width:800px;
+}
+
+.search-box input{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#fff;
+  font-size:20px;
+}
+
+/* ================= PLAYLIST ================= */
+
+.playlist-item{
+  padding:22px;
+  border-radius:24px;
+  margin-bottom:18px;
+  background:rgba(20,30,40,0.75);
+  backdrop-filter:blur(20px);
+  font-size:20px;
+}
+
 /* ================= CATEGORY STYLE ================= */
 
 .category-block{
@@ -158,17 +200,18 @@ body{
 }
 
 .category-header{
-  padding:16px 24px;
-  border-radius:18px;
+  padding:14px 20px;
+  border-radius:16px;
   background:rgba(255,255,255,0.08);
   cursor:pointer;
-  transition:0.25s ease;
+  transition:0.2s ease;
   width:fit-content;
   font-size:26px;
-  margin-bottom:20px;
+  margin-bottom:18px;
 }
 
 .category-header.active{
+  font-size:36px;
   background:rgba(255,255,255,0.15);
   transform:scale(1.05);
 }
