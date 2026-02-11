@@ -2,12 +2,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const WORKER = "https://layasync-proxy.layasync.workers.dev";
 
+  let credentials = null;
+
   const status = document.getElementById("xtream-status");
   const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
-
-  let credentials = null;
 
   /* ================= LOGIN ================= */
 
@@ -31,11 +31,10 @@ document.addEventListener("DOMContentLoaded", function(){
       const data = await res.json();
 
       if(!data.user_info || data.user_info.auth !== 1){
-        throw new Error("Invalid");
+        throw new Error("Invalid login");
       }
 
-      credentials = {server, username, password};
-
+      credentials = { server, username, password };
       localStorage.setItem("xtream_login", JSON.stringify(credentials));
 
       status.textContent = "Connected";
@@ -68,7 +67,6 @@ document.addEventListener("DOMContentLoaded", function(){
     );
 
     const categories = await res.json();
-
     container.innerHTML = "";
 
     categories.forEach(cat=>{
@@ -103,7 +101,6 @@ document.addEventListener("DOMContentLoaded", function(){
     );
 
     const movies = await res.json();
-
     row.innerHTML="";
     row.dataset.loaded="true";
 
@@ -126,16 +123,87 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ================= NAV ================= */
+  /* ================= LOAD SHOW CATEGORIES ================= */
+
+  async function loadShowCategories(){
+
+    const container = document.getElementById("shows-container");
+    container.innerHTML = "Loading...";
+
+    const res = await fetch(
+      `${WORKER}/series-categories?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}`
+    );
+
+    const categories = await res.json();
+    container.innerHTML = "";
+
+    categories.forEach(cat=>{
+
+      const section = document.createElement("div");
+      section.className="section";
+
+      const title = document.createElement("h3");
+      title.textContent = cat.category_name;
+
+      const row = document.createElement("div");
+      row.className="row";
+
+      row.onclick = ()=> loadShows(cat.category_id, row);
+
+      section.appendChild(title);
+      section.appendChild(row);
+      container.appendChild(section);
+    });
+  }
+
+  /* ================= LOAD SHOWS ================= */
+
+  async function loadShows(category_id, row){
+
+    if(row.dataset.loaded) return;
+
+    row.innerHTML="Loading...";
+
+    const res = await fetch(
+      `${WORKER}/series?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}&category_id=${category_id}`
+    );
+
+    const shows = await res.json();
+    row.innerHTML="";
+    row.dataset.loaded="true";
+
+    shows.forEach(show=>{
+
+      const card = document.createElement("div");
+      card.className="card small";
+
+      if(show.cover){
+        const img=document.createElement("img");
+        img.src=show.cover;
+        img.loading="lazy";
+        img.style.width="100%";
+        img.style.height="100%";
+        img.style.objectFit="cover";
+        card.appendChild(img);
+      }
+
+      row.appendChild(card);
+    });
+  }
+
+  /* ================= NAVIGATION ================= */
 
   document.querySelectorAll(".nav").forEach(nav=>{
     nav.onclick = ()=>{
       const name = nav.textContent.trim();
 
       document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-      document.getElementById(name.toLowerCase()).style.display="block";
+
+      const page = document.getElementById(name.toLowerCase());
+      if(page) page.style.display="block";
 
       if(name==="Movies") loadMovieCategories();
+      if(name==="Shows") loadShowCategories();
     };
   });
 
