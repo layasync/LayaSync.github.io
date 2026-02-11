@@ -144,23 +144,9 @@ document.addEventListener("DOMContentLoaded", function(){
         const streamUrl =
           `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.mp4`;
 
-        window.openPlayer = function(url, title){
+        
 
-  const overlay = document.getElementById("video-player-overlay");
-  const video = document.getElementById("video-element");
-  const titleEl = document.getElementById("video-title");
-
-  if(!overlay || !video){
-    console.error("Player elements missing");
-    return;
-  }
-
-  overlay.style.display = "flex";
-  titleEl.textContent = title || "Now Playing";
-
-  video.src = url;
-  video.load();
-  video.play().catch(e=>console.log("Autoplay blocked", e));
+  openPlayer(streamUrl, movie.name);
 };
 
       row.appendChild(card);
