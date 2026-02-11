@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>LayaSync</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync</title>
+
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <div class="background"></div>
+<div class="app-bg"></div>
 
-    <header class="navbar glass">
+<header class="topbar">
+    <div class="nav-left">
         <div class="logo">LayaSync</div>
-        <nav>
-            <a class="active">Home</a>
-            <a>Movies</a>
-            <a>Shows</a>
-            <a>Playlists</a>
-        </nav>
-    </header>
-
-    <main class="content">
-        <h2>Featured</h2>
-        <div class="grid" id="grid"></div>
-    </main>
-
-    <div class="player-modal" id="playerModal">
-        <video id="videoPlayer" controls></video>
-        <button class="close-btn" onclick="closePlayer()">✕</button>
     </div>
 
-    <script src="js/app.js"></script>
+    <nav class="nav-center">
+        <a class="active">Home</a>
+        <a>Movies</a>
+        <a>Shows</a>
+        <a>Playlists</a>
+        <a>Collections</a>
+    </nav>
+
+    <div class="nav-right">
+        <button class="icon-btn">🔍</button>
+        <button class="icon-btn">⚙</button>
+    </div>
+</header>
+
+<main class="main">
+
+    <section>
+        <h2>Current Watching</h2>
+        <div class="horizontal-row" id="currentRow"></div>
+    </section>
+
+    <section>
+        <h2>Last added Movies</h2>
+        <div class="poster-grid" id="movieGrid"></div>
+    </section>
+
+</main>
+
+<script src="js/app.js"></script>
 </body>
-</html> 
+</html>
