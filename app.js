@@ -36,3 +36,34 @@ function closePlayer(){
     video.src = "";
     modal.style.display = "none";
 } 
+const currentRow = document.getElementById("currentRow");
+const movieGrid = document.getElementById("movieGrid");
+
+const landscapeImages = [
+    "https://picsum.photos/800/450?1",
+    "https://picsum.photos/800/450?2",
+    "https://picsum.photos/800/450?3"
+];
+
+const posterImages = [
+    "https://picsum.photos/300/450?4",
+    "https://picsum.photos/300/450?5",
+    "https://picsum.photos/300/450?6",
+    "https://picsum.photos/300/450?7",
+    "https://picsum.photos/300/450?8",
+    "https://picsum.photos/300/450?9"
+];
+
+landscapeImages.forEach(img => {
+    const card = document.createElement("div");
+    card.className = "landscape-card";
+    card.innerHTML = `<img src="${img}">`;
+    currentRow.appendChild(card);
+});
+
+posterImages.forEach(img => {
+    const card = document.createElement("div");
+    card.className = "poster-card";
+    card.innerHTML = `<img src="${img}">`;
+    movieGrid.appendChild(card);
+});
