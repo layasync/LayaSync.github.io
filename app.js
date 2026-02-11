@@ -150,71 +150,75 @@ document.addEventListener("DOMContentLoaded", function(){
 
     container.innerHTML = "Loading...";
 
-    try {
+    const catUrl =
+      `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`;
 
-      const catUrl =
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`;
+    const response = await fetch(
+      `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
+    );
 
-      const response = await fetch(
-        `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
-      );
+    const categories = await response.json();
+    container.innerHTML = "";
 
-      const categories = await response.json();
-      container.innerHTML = "";
+    const firstBatch = categories.slice(0,10);
+    const remaining = categories.slice(10);
 
-      const limited = categories.slice(0, 15);
+    async function renderCategory(cat){
 
-      for(const cat of limited){
+      const section = document.createElement("div");
+      section.className = "section";
 
-        // Create section immediately
-        const section = document.createElement("div");
-        section.className = "section";
+      const title = document.createElement("h3");
+      title.textContent = cat.category_name;
 
-        const title = document.createElement("h3");
-        title.textContent = cat.category_name;
+      const row = document.createElement("div");
+      row.className = "row";
 
-        const row = document.createElement("div");
-        row.className = "row";
+      section.appendChild(title);
+      section.appendChild(row);
+      container.appendChild(section);
 
-        section.appendChild(title);
-        section.appendChild(row);
-        container.appendChild(section);
+      const streamsUrl =
+        `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`;
 
-        // Fetch streams in background
-        const streamsUrl =
-          `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`;
+      try{
+        const streamRes = await fetch(
+          `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+        );
+        const streams = await streamRes.json();
 
-        fetch(`${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`)
-          .then(res => res.json())
-          .then(streams => {
+        streams.slice(0,10).forEach(movie=>{
+          const card = document.createElement("div");
+          card.className = "card small";
+          card.setAttribute("tabindex","0");
 
-            streams.slice(0,10).forEach(movie=>{
-              const card = document.createElement("div");
-              card.className = "card small";
-              card.setAttribute("tabindex","0");
+          if(movie.stream_icon){
+            const img = document.createElement("img");
+            img.src = movie.stream_icon;
+            img.loading="lazy";
+            img.style.width="100%";
+            img.style.height="100%";
+            img.style.objectFit="cover";
+            card.appendChild(img);
+          }
 
-              if(movie.stream_icon){
-                const img = document.createElement("img");
-                img.src = movie.stream_icon;
-                img.loading = "lazy";
-                img.style.width="100%";
-                img.style.height="100%";
-                img.style.objectFit="cover";
-                img.draggable=false;
-                card.appendChild(img);
-              }
+          row.appendChild(card);
+        });
 
-              row.appendChild(card);
-            });
-
-          }).catch(()=>{});
-
-        await delay(250); // small delay for smooth loading
-      }
-
-    } catch(e){
-      console.error("Movies Error:", e);
+      } catch(e){}
     }
+
+    // Load first 10 instantly
+    for(const cat of firstBatch){
+      renderCategory(cat);
+    }
+
+    // Load rest progressively
+    for(const cat of remaining){
+      await delay(400);
+      renderCategory(cat);
+    }
+
   }
 
   /* ================= LOAD SHOWS ================= */
@@ -232,69 +236,73 @@ document.addEventListener("DOMContentLoaded", function(){
 
     container.innerHTML = "Loading...";
 
-    try {
+    const catUrl =
+      `${server}/player_api.php?username=${username}&password=${password}&action=get_series_categories`;
 
-      const catUrl =
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_series_categories`;
+    const response = await fetch(
+      `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
+    );
 
-      const response = await fetch(
-        `${WORKER_PROXY}?url=${encodeURIComponent(catUrl)}`
-      );
+    const categories = await response.json();
+    container.innerHTML = "";
 
-      const categories = await response.json();
-      container.innerHTML = "";
+    const firstBatch = categories.slice(0,10);
+    const remaining = categories.slice(10);
 
-      const limited = categories.slice(0, 15);
+    async function renderCategory(cat){
 
-      for(const cat of limited){
+      const section = document.createElement("div");
+      section.className = "section";
 
-        const section = document.createElement("div");
-        section.className = "section";
+      const title = document.createElement("h3");
+      title.textContent = cat.category_name;
 
-        const title = document.createElement("h3");
-        title.textContent = cat.category_name;
+      const row = document.createElement("div");
+      row.className = "row";
 
-        const row = document.createElement("div");
-        row.className = "row";
+      section.appendChild(title);
+      section.appendChild(row);
+      container.appendChild(section);
 
-        section.appendChild(title);
-        section.appendChild(row);
-        container.appendChild(section);
+      const streamsUrl =
+        `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`;
 
-        const streamsUrl =
-          `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`;
+      try{
+        const streamRes = await fetch(
+          `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+        );
+        const streams = await streamRes.json();
 
-        fetch(`${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`)
-          .then(res => res.json())
-          .then(streams => {
+        streams.slice(0,10).forEach(show=>{
+          const card = document.createElement("div");
+          card.className = "card small";
+          card.setAttribute("tabindex","0");
 
-            streams.slice(0,10).forEach(show=>{
-              const card = document.createElement("div");
-              card.className = "card small";
-              card.setAttribute("tabindex","0");
+          if(show.cover){
+            const img = document.createElement("img");
+            img.src = show.cover;
+            img.loading="lazy";
+            img.style.width="100%";
+            img.style.height="100%";
+            img.style.objectFit="cover";
+            card.appendChild(img);
+          }
 
-              if(show.cover){
-                const img = document.createElement("img");
-                img.src = show.cover;
-                img.loading = "lazy";
-                img.style.width="100%";
-                img.style.height="100%";
-                img.style.objectFit="cover";
-                img.draggable=false;
-                card.appendChild(img);
-              }
+          row.appendChild(card);
+        });
 
-              row.appendChild(card);
-            });
-
-          }).catch(()=>{});
-
-        await delay(250);
-      }
-
-    } catch(e){
-      console.error("Shows Error:", e);
+      } catch(e){}
     }
+
+    for(const cat of firstBatch){
+      renderCategory(cat);
+    }
+
+    for(const cat of remaining){
+      await delay(400);
+      renderCategory(cat);
+    }
+
   }
 
 });
