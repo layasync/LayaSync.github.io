@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function(){
       }
 
       card.onclick=()=>{
-        const ext = movie.container_extension || "mp4";
+        const ext = movie.container_extension || "mkv";
         const streamUrl =
           `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.${ext}`;
         openPlayer(streamUrl, movie.name);
