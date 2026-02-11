@@ -525,36 +525,36 @@ body{
   border-radius:18px;
 }
 
-/* ===== CATEGORY LAYOUT ===== */
+/* ===== CATEGORY STYLE ===== */
 
-.category-layout{
-  display:flex;
-  gap:40px;
-  height:100%;
+.category-block{
+  margin-bottom:40px;
 }
 
-.category-list{
-  width:280px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  overflow-y:auto;
-}
-
-.category-pill{
-  padding:14px 18px;
+.category-header{
+  padding:14px 20px;
   border-radius:16px; /* rounded square */
   background:rgba(255,255,255,0.08);
   cursor:pointer;
   transition:0.2s ease;
+  width:fit-content;
+  font-size:18px;
+  margin-bottom:18px;
 }
 
-.category-pill.active{
+.category-header.active{
   background:rgba(255,255,255,0.18);
   box-shadow:0 0 20px rgba(255,255,255,0.15);
 }
 
-.stream-area{
-  flex:1;
-  overflow-y:auto;
+.category-streams{
+  display:none;
+}
+
+.category-streams.active{
+  display:block;
+}
+
+.card img{
+  border-radius:18px;
 }
