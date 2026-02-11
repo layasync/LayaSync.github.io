@@ -2,7 +2,7 @@
   box-sizing:border-box;
 }
 
-html, body{
+html,body{
   margin:0;
   width:100%;
   height:100%;
@@ -11,41 +11,36 @@ html, body{
   overflow:hidden;
 }
 
-/* ===== FULL CINEMATIC BACKGROUND ===== */
+/* ================= FINAL CINEMATIC BACKGROUND ================= */
 
 body{
   background:
-    radial-gradient(1500px 800px at 50% 15%, rgba(60,75,90,0.35) 0%, transparent 60%),
-    radial-gradient(1200px 600px at 20% 80%, rgba(30,45,60,0.4) 0%, transparent 65%),
-    linear-gradient(180deg, #1a222c 0%, #121820 60%, #0b1118 100%);
+    radial-gradient(1400px 700px at 50% 20%, rgba(70,85,100,0.35) 0%, transparent 60%),
+    radial-gradient(1000px 500px at 80% 85%, rgba(40,55,70,0.35) 0%, transparent 70%),
+    linear-gradient(180deg, #1b2430 0%, #121a23 50%, #0c1117 100%);
 }
 
-/* BACKGROUND */
-body{
-  background:
-    radial-gradient(1200px 600px at 50% 80%, #2b333b 0%, #0d1116 60%, #000 100%);
-}
+/* ================= TOP NAV (GLASS OVERLAY) ================= */
 
-/* NAV */
 #top{
   position:fixed;
-  top:30px;
+  top:40px;
   left:50%;
   transform:translateX(-50%);
   display:flex;
-  gap:28px;
-  padding:16px 34px;
+  gap:30px;
+  padding:18px 38px;
   border-radius:999px;
 
-  background:rgba(25,35,45,0.75);
-  backdrop-filter:blur(30px);
-  -webkit-backdrop-filter:blur(30px);
+  background:rgba(30,40,50,0.65);
+  backdrop-filter:blur(35px);
+  -webkit-backdrop-filter:blur(35px);
 
-  border:1px solid rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
 
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.05);
+    0 25px 70px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.15);
 
   z-index:1000;
 }
@@ -62,20 +57,21 @@ body{
 
 .nav.active{
   opacity:1;
-  background:rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.14);
   box-shadow:
     0 4px 12px rgba(0,0,0,0.4),
     inset 0 1px 0 rgba(255,255,255,0.25);
 }
 
-/* PAGE */
+/* ================= PAGE BASE ================= */
+
 .page{
   position:absolute;
-  top:90px;
+  top:120px;
   left:0;
   right:0;
   bottom:0;
-  padding:24px 64px 40px;
+  padding:40px 90px 60px;
   display:none;
 }
 
@@ -83,46 +79,55 @@ body{
   display:block;
 }
 
-/* HOME */
+/* ================= HOME ================= */
+
 .section{
-  margin-bottom:26px;
+  margin-bottom:50px;
 }
 
 .section h3{
-  margin:0 0 14px;
-  font-size:18px;
+  margin:0 0 24px;
+  font-size:26px;
+  font-weight:600;
   opacity:0.85;
 }
 
 .row{
   display:flex;
-  gap:18px;
+  gap:30px;
 }
 
 .card{
-  background:#2a2f36;
-  border-radius:18px;
-  box-shadow:0 12px 30px rgba(0,0,0,0.6);
+  background:#242d38;
+  border-radius:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  transition:0.3s ease;
 }
 
 .card.big{
-  width:320px;
-  height:180px;
+  width:420px;
+  height:240px;
 }
 
 .card.small{
-  width:150px;
-  height:220px;
+  width:200px;
+  height:300px;
 }
 
-/* SEARCH */
+.card:hover{
+  transform:scale(1.06);
+}
+
+/* ================= SEARCH ================= */
+
 .search-box{
   display:flex;
-  gap:14px;
-  padding:16px 22px;
-  border-radius:20px;
-  background:rgba(15,22,30,0.85);
-  max-width:720px;
+  gap:18px;
+  padding:18px 26px;
+  border-radius:24px;
+  background:rgba(20,30,40,0.75);
+  backdrop-filter:blur(20px);
+  max-width:800px;
 }
 
 .search-box input{
@@ -131,37 +136,44 @@ body{
   border:none;
   outline:none;
   color:#fff;
-  font-size:18px;
+  font-size:20px;
 }
 
-/* PLAYLIST */
+/* ================= PLAYLIST ================= */
+
 .playlist-item{
-  padding:18px;
-  border-radius:20px;
-  margin-bottom:14px;
-  background:rgba(15,22,30,0.85);
+  padding:22px;
+  border-radius:24px;
+  margin-bottom:18px;
+  background:rgba(20,30,40,0.75);
+  backdrop-filter:blur(20px);
+  font-size:20px;
 }
 
-/* LIVE */
+/* ================= LIVE ================= */
+
 .live-header h2{
-  font-size:38px;
+  font-size:44px;
   font-weight:600;
+  margin-bottom:6px;
 }
 
 .live-sub{
-  font-size:15px;
+  font-size:18px;
   opacity:0.65;
+  margin-bottom:30px;
 }
 
 .live-search{
   display:flex;
   align-items:center;
-  gap:14px;
-  padding:14px 20px;
-  border-radius:20px;
-  background:rgba(15,22,30,0.85);
-  max-width:520px;
-  margin-bottom:28px;
+  gap:16px;
+  padding:18px 24px;
+  border-radius:24px;
+  background:rgba(20,30,40,0.75);
+  backdrop-filter:blur(20px);
+  max-width:600px;
+  margin-bottom:40px;
 }
 
 .live-search input{
@@ -169,55 +181,56 @@ body{
   border:none;
   outline:none;
   color:#fff;
-  font-size:18px;
-  opacity:0.7;
+  font-size:20px;
+  opacity:0.8;
 }
 
 .tv-guide{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:20px;
 }
 
 .guide-row{
   display:grid;
-  grid-template-columns:260px 220px 1fr;
+  grid-template-columns:300px 240px 1fr;
   align-items:center;
-  padding:18px 22px;
-  border-radius:22px;
-  background:rgba(15,22,30,0.78);
-  backdrop-filter:blur(18px);
-  box-shadow:0 10px 26px rgba(0,0,0,0.45);
+  padding:22px 30px;
+  border-radius:26px;
+  background:rgba(25,35,45,0.75);
+  backdrop-filter:blur(20px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.5);
+  transition:0.25s ease;
 }
 
 .guide-row.active{
-  background:rgba(255,255,255,0.22);
+  background:rgba(255,255,255,0.18);
 }
 
 .guide-channel{
   display:flex;
   align-items:center;
-  gap:16px;
+  gap:18px;
 }
 
 .guide-logo{
-  width:54px;
-  height:54px;
-  border-radius:14px;
+  width:60px;
+  height:60px;
+  border-radius:16px;
   background:rgba(255,255,255,0.25);
 }
 
 .guide-channel-name{
-  font-size:20px;
+  font-size:22px;
   font-weight:600;
 }
 
 .guide-time{
-  font-size:18px;
+  font-size:20px;
   opacity:0.75;
 }
 
 .guide-program{
-  font-size:20px;
+  font-size:22px;
   font-weight:500;
 }
