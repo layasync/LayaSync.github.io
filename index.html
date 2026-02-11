@@ -2,50 +2,111 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=3840, initial-scale=1.0">
-<title>LayaSync</title>
+<title>LayaSync UI</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="bg-layer"></div>
+<div id="ui">
 
-<header class="topbar">
-    <div class="left">
-        <div class="logo">LayaSync</div>
+  <!-- NAV -->
+  <div id="top">
+    <div class="nav active">Home</div>
+    <div class="nav">Search</div>
+    <div class="nav">Movies</div>
+    <div class="nav">Shows</div>
+    <div class="nav">Playlists</div>
+    <div class="nav">Collections</div>
+    <div class="nav">Live</div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="page">
+    <div class="section">
+      <h3>Current Watching</h3>
+      <div class="row">
+        <div class="card big"></div>
+        <div class="card big"></div>
+        <div class="card big"></div>
+        <div class="card big"></div>
+      </div>
     </div>
 
-    <nav class="center">
-        <a class="active">Home</a>
-        <a>Movies</a>
-        <a>Shows</a>
-        <a>Playlists</a>
-        <a>Collections</a>
-    </nav>
-
-    <div class="right">
-        <div class="icon">🔍</div>
-        <div class="icon">⚙</div>
-        <div class="icon">⏻</div>
+    <div class="section">
+      <h3>Last added Movies</h3>
+      <div class="row">
+        <div class="card small"></div>
+        <div class="card small"></div>
+        <div class="card small"></div>
+      </div>
     </div>
-</header>
+  </div>
 
-<main class="main">
+  <!-- SEARCH -->
+  <div id="search" class="page">
+    <h2>Search</h2>
+    <div class="search-box">
+      <input placeholder="Search..." disabled>
+    </div>
+  </div>
 
-    <section>
-        <h2>Current Watching</h2>
-        <div class="landscape-row" id="landscapeRow"></div>
-    </section>
+  <!-- MOVIES -->
+  <div id="movies" class="page"><h2>Movies</h2></div>
 
-    <section>
-        <h2>Last added Movies</h2>
-        <div class="poster-grid" id="posterGrid"></div>
-    </section>
+  <!-- SHOWS -->
+  <div id="shows" class="page"><h2>Shows</h2></div>
 
-</main>
+  <!-- PLAYLISTS -->
+  <div id="playlists" class="page">
+    <h2>Playlists</h2>
+    <div class="playlist-item">Xtream IPTV</div>
+    <div class="playlist-item">Network Stream</div>
+  </div>
 
-<script src="js/app.js"></script>
+  <!-- COLLECTIONS -->
+  <div id="collections" class="page"><h2>Collections</h2></div>
+
+  <!-- LIVE TV -->
+  <div id="live" class="page">
+
+    <div class="live-header">
+      <h2>Live TV</h2>
+      <div class="live-sub">TV Guide</div>
+    </div>
+
+    <div class="live-search">
+      <span>🔍</span>
+      <input placeholder="Search channel or program" disabled>
+    </div>
+
+    <div class="tv-guide">
+
+      <div class="guide-row active">
+        <div class="guide-channel">
+          <div class="guide-logo"></div>
+          <div class="guide-channel-name">BBC News</div>
+        </div>
+        <div class="guide-time">18:00 – 19:00</div>
+        <div class="guide-program">World News Live</div>
+      </div>
+
+      <div class="guide-row">
+        <div class="guide-channel">
+          <div class="guide-logo"></div>
+          <div class="guide-channel-name">ESPN</div>
+        </div>
+        <div class="guide-time">18:30 – 21:00</div>
+        <div class="guide-program">Live Football</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
