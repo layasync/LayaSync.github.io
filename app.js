@@ -2,43 +2,45 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const WORKER_URL = "https://layasync-proxy.layasync.workers.dev";
 
-  /* ================= ELEMENTS ================= */
-
   const status = document.getElementById("xtream-status");
-  const xtreamBtn = document.querySelector(".xtream-btn");
   const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
-  const navItems = document.querySelectorAll('.nav');
+  const navItems = document.querySelectorAll(".nav");
 
   const pages = {
-    Home:'home',
-    Search:'search',
-    Movies:'movies',
-    Shows:'shows',
-    Playlists:'playlists',
-    Collections:'collections',
-    Live:'live'
+    Home: "home",
+    Search: "search",
+    Movies: "movies",
+    Shows: "shows",
+    Playlists: "playlists",
+    Collections: "collections",
+    Live: "live"
   };
 
   /* ================= NAVIGATION ================= */
 
   function showPage(name){
-    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+
+    document.querySelectorAll(".page").forEach(p=>{
+      p.style.display = "none";
+    });
 
     if(pages[name]){
-      document.getElementById(pages[name]).style.display='block';
+      const target = document.getElementById(pages[name]);
+      if(target) target.style.display = "block";
     }
 
-    navItems.forEach(n=>n.classList.remove('active'));
+    navItems.forEach(n=>n.classList.remove("active"));
+
     const activeNav = [...navItems].find(n=>n.textContent.trim()===name);
-    if(activeNav) activeNav.classList.add('active');
+    if(activeNav) activeNav.classList.add("active");
   }
 
   navItems.forEach(item=>{
-    item.addEventListener('click', ()=>{
-      const page = item.textContent.trim();
+    item.addEventListener("click", function(){
+      const page = this.textContent.trim();
       showPage(page);
 
       if(page === "Movies") renderMovies();
@@ -46,24 +48,35 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   });
 
-  /* ================= POPUP ================= */
+  /* ================= POPUP OPEN (SAFE DELEGATION) ================= */
 
-  if(xtreamBtn){
-    xtreamBtn.addEventListener("click", ()=>{
-      xtreamPopup.style.display = "flex";
-    });
-  }
+  document.addEventListener("click", function(e){
+
+    const btn = e.target.closest(".xtream-btn");
+
+    if(btn){
+      if(xtreamPopup){
+        xtreamPopup.style.display = "flex";
+      }
+    }
+
+  });
+
+  /* ================= POPUP CLOSE ================= */
 
   if(xtreamClose){
-    xtreamClose.addEventListener("click", ()=>{
-      xtreamPopup.style.display = "none";
+    xtreamClose.addEventListener("click", function(){
+      if(xtreamPopup){
+        xtreamPopup.style.display = "none";
+      }
     });
   }
 
   /* ================= CONNECT ================= */
 
   if(xtreamConnect){
-    xtreamConnect.addEventListener("click", async ()=>{
+
+    xtreamConnect.addEventListener("click", async function(){
 
       const server = document.getElementById("xtream-server").value.trim();
       const username = document.getElementById("xtream-username").value.trim();
@@ -74,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function(){
         return;
       }
 
-      try{
+      try {
 
         localStorage.removeItem("xtream");
         localStorage.removeItem("xtream_cache");
@@ -108,17 +121,19 @@ document.addEventListener("DOMContentLoaded", function(){
 
         if(status){
           status.textContent = "Connected";
+          status.classList.remove("failed");
           status.classList.add("connected");
         }
 
         xtreamPopup.style.display = "none";
 
-      }catch(e){
+      } catch (err){
 
-        console.error(e);
+        console.error(err);
 
         if(status){
           status.textContent = "Failed";
+          status.classList.remove("connected");
           status.classList.add("failed");
         }
 
@@ -126,6 +141,7 @@ document.addEventListener("DOMContentLoaded", function(){
       }
 
     });
+
   }
 
   /* ================= RENDER MOVIES ================= */
