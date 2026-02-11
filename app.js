@@ -131,9 +131,12 @@ document.addEventListener("DOMContentLoaded", function(){
       }
 
       // 🔥 PLAY MOVIE
-      card.onclick = function(){
-        const streamUrl =
-          `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.mp4`;
+      card.onclick = ()=>{
+  openPlayer(
+    `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.id}.mp4`,
+    movie.name
+  );
+};
         openPlayer(streamUrl);
       };
 
