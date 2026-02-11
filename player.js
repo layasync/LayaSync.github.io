@@ -17,39 +17,57 @@ document.addEventListener("DOMContentLoaded", function(){
   let aspectIndex = 0;
 
   const aspectModes = [
-    { name:"Fit", apply:()=> video.style.objectFit="contain" },
-    { name:"Zoom", apply:()=> video.style.objectFit="cover" },
-    { name:"Stretch", apply:()=> video.style.objectFit="fill" },
-    { name:"16:9", apply:()=>{
+    { name:"Fit", apply:()=> {
+        video.style.objectFit="contain";
+        video.style.aspectRatio="auto";
+      }
+    },
+    { name:"Zoom", apply:()=> {
+        video.style.objectFit="cover";
+        video.style.aspectRatio="auto";
+      }
+    },
+    { name:"Stretch", apply:()=> {
+        video.style.objectFit="fill";
+        video.style.aspectRatio="auto";
+      }
+    },
+    { name:"16:9", apply:()=> {
         video.style.objectFit="contain";
         video.style.aspectRatio="16/9";
       }
     },
-    { name:"20:9", apply:()=>{
+    { name:"20:9", apply:()=> {
         video.style.objectFit="contain";
         video.style.aspectRatio="20/9";
       }
     }
   ];
 
-  /* ================= OPEN ================= */
+  /* ================= UNIVERSAL OPEN ================= */
 
   window.openPlayer = function(url){
 
-    overlay.style.display="flex";
+    overlay.style.display = "flex";
 
+    // Reset previous playback
     if(hls){
       hls.destroy();
-      hls=null;
+      hls = null;
     }
 
     video.pause();
     video.removeAttribute("src");
     video.load();
 
+    // If HLS stream
     if(url.includes(".m3u8") && typeof Hls !== "undefined" && Hls.isSupported()){
 
-      hls = new Hls();
+      hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true
+      });
+
       hls.loadSource(url);
       hls.attachMedia(video);
 
@@ -58,25 +76,45 @@ document.addEventListener("DOMContentLoaded", function(){
         populateTracks();
       });
 
+      hls.on(Hls.Events.ERROR, function(){
+        showError();
+      });
+
     } else {
-      video.src=url;
-      video.play().then(()=> populateTracks());
+
+      // Native playback (MP4, MKV, TS, etc.)
+      video.src = url;
+
+      video.play()
+        .then(()=> populateTracks())
+        .catch(()=> showError());
     }
   };
 
-  /* ================= CLOSE ================= */
+  /* ================= CLOSE PLAYER ================= */
 
   function closePlayer(){
+
     video.pause();
-    video.src="";
-    if(hls){ hls.destroy(); hls=null; }
-    overlay.style.display="none";
+    video.src = "";
+
+    if(hls){
+      hls.destroy();
+      hls = null;
+    }
+
+    overlay.style.display = "none";
+
+    // Reset aspect
+    aspectIndex = 0;
+    aspectModes[0].apply();
+    btnAspect.textContent = "Fit";
   }
 
   btnClose.onclick = closePlayer;
   btnExit.onclick = closePlayer;
 
-  /* ================= PLAY ================= */
+  /* ================= PLAY / PAUSE ================= */
 
   btnPlay.onclick = ()=>{
     if(video.paused) video.play();
@@ -91,11 +129,11 @@ document.addEventListener("DOMContentLoaded", function(){
   btnBack.onclick = ()=> video.currentTime -= 10;
   btnForward.onclick = ()=> video.currentTime += 10;
 
-  /* ================= ASPECT ================= */
+  /* ================= ASPECT MODES ================= */
 
   btnAspect.onclick = ()=>{
     aspectIndex++;
-    if(aspectIndex >= aspectModes.length) aspectIndex=0;
+    if(aspectIndex >= aspectModes.length) aspectIndex = 0;
 
     aspectModes[aspectIndex].apply();
     btnAspect.textContent = aspectModes[aspectIndex].name;
@@ -108,49 +146,74 @@ document.addEventListener("DOMContentLoaded", function(){
     audioSelect.innerHTML="";
     subtitleSelect.innerHTML="";
 
-    // Audio
-    if(video.audioTracks){
+    // Audio Tracks
+    if(video.audioTracks && video.audioTracks.length > 0){
+
       for(let i=0;i<video.audioTracks.length;i++){
-        const option=document.createElement("option");
-        option.value=i;
-        option.text=video.audioTracks[i].label || "Track "+(i+1);
+
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = video.audioTracks[i].label || "Audio "+(i+1);
+
         audioSelect.appendChild(option);
       }
 
-      audioSelect.onchange=function(){
+      audioSelect.onchange = function(){
+
         for(let i=0;i<video.audioTracks.length;i++){
-          video.audioTracks[i].enabled = (i==this.value);
+          video.audioTracks[i].enabled = (i == this.value);
         }
       };
     }
 
-    // Subtitles
-    for(let i=0;i<video.textTracks.length;i++){
-      const option=document.createElement("option");
-      option.value=i;
-      option.text=video.textTracks[i].label || "Subtitle "+(i+1);
-      subtitleSelect.appendChild(option);
-    }
+    // Subtitle Tracks
+    if(video.textTracks && video.textTracks.length > 0){
 
-    subtitleSelect.onchange=function(){
       for(let i=0;i<video.textTracks.length;i++){
-        video.textTracks[i].mode="disabled";
+
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = video.textTracks[i].label || "Subtitle "+(i+1);
+
+        subtitleSelect.appendChild(option);
       }
-      if(video.textTracks[this.value])
-        video.textTracks[this.value].mode="showing";
-    };
+
+      subtitleSelect.onchange = function(){
+
+        for(let i=0;i<video.textTracks.length;i++){
+          video.textTracks[i].mode = "disabled";
+        }
+
+        if(video.textTracks[this.value])
+          video.textTracks[this.value].mode = "showing";
+      };
+    }
   }
 
-  /* ================= KEYBOARD ================= */
+  /* ================= KEYBOARD / REMOTE ================= */
 
   document.addEventListener("keydown", function(e){
 
-    if(overlay.style.display!=="flex") return;
+    if(overlay.style.display !== "flex") return;
 
-    if(e.key==="Escape" || e.key==="Backspace") closePlayer();
-    if(e.key===" ") btnPlay.click();
-    if(e.key==="ArrowLeft") video.currentTime -=10;
-    if(e.key==="ArrowRight") video.currentTime +=10;
+    if(e.key === "Escape" || e.key === "Backspace")
+      closePlayer();
+
+    if(e.key === " ")
+      btnPlay.click();
+
+    if(e.key === "ArrowLeft")
+      video.currentTime -= 10;
+
+    if(e.key === "ArrowRight")
+      video.currentTime += 10;
   });
+
+  /* ================= ERROR ================= */
+
+  function showError(){
+    alert("Format not supported by device.");
+    closePlayer();
+  }
 
 });
