@@ -275,35 +275,31 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 /* ================= NETWORK STREAM ================= */
 
-const networkBtn = document.querySelector(".network-btn");
 const networkPopup = document.getElementById("network-popup");
-const networkPlay = document.getElementById("network-play");
+const networkBtn = document.querySelector(".network-btn");
 const networkClose = document.getElementById("network-close");
+const networkPlay = document.getElementById("network-play");
 
 if(networkBtn){
-  networkBtn.onclick = ()=>{
+  networkBtn.addEventListener("click", ()=>{
     networkPopup.style.display = "flex";
-  };
+  });
 }
 
 if(networkClose){
-  networkClose.onclick = ()=>{
+  networkClose.addEventListener("click", ()=>{
     networkPopup.style.display = "none";
-  };
+  });
 }
 
 if(networkPlay){
-  networkPlay.onclick = ()=>{
+  networkPlay.addEventListener("click", ()=>{
     const url = document.getElementById("network-url").value.trim();
+    if(!url) return alert("Enter URL");
 
-    if(!url){
-      alert("Enter a stream URL");
-      return;
-    }
-
-    openPlayer(url, "Network Stream");
     networkPopup.style.display = "none";
-  };
+    openPlayer(url, "Network Stream");
+  });
 }
   }
 
