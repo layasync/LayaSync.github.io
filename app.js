@@ -1,13 +1,19 @@
 document.addEventListener("DOMContentLoaded", function(){
 
   console.log("APP READY");
-const saved = localStorage.getItem("xtream");
-const status = document.getElementById("xtream-status");
 
-if(saved && status){
-  status.textContent = "Connected";
-  status.classList.add("connected");
-}
+  /* ===================================================== */
+  /* ================= STATUS AUTO LOAD ================== */
+  /* ===================================================== */
+
+  const status = document.getElementById("xtream-status");
+  const saved = localStorage.getItem("xtream");
+
+  if(saved && status){
+    status.textContent = "Connected";
+    status.classList.add("connected");
+  }
+
   /* ===================================================== */
   /* ================= NAVIGATION ========================= */
   /* ===================================================== */
@@ -42,7 +48,7 @@ if(saved && status){
   }
 
   navItems.forEach(item=>{
-    item.addEventListener('click',()=>{
+    item.addEventListener('click', ()=>{
       showPage(item.textContent.trim());
     });
   });
@@ -59,83 +65,93 @@ if(saved && status){
 
   const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
 
-  if(xtreamBtn && xtreamPopup){
-    xtreamBtn.addEventListener("click", function(){
-      xtreamPopup.style.display = "flex";
+  /* ===== TV SAFE CLICK HANDLER ===== */
+
+  function tvActivate(element, callback){
+    if(!element) return;
+
+    element.setAttribute("tabindex", "0");
+
+    element.addEventListener("click", callback);
+
+    element.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){
+        callback();
+      }
     });
   }
 
-  if(xtreamClose && xtreamPopup){
-    xtreamClose.addEventListener("click", function(){
-      xtreamPopup.style.display = "none";
-    });
-  }
+  /* ===== Open Popup ===== */
 
+  tvActivate(xtreamBtn, function(){
+    xtreamPopup.style.display = "flex";
+  });
+
+  /* ===== Close Popup ===== */
+
+  tvActivate(xtreamClose, function(){
+    xtreamPopup.style.display = "none";
+  });
 
   /* ===================================================== */
   /* ================= XTREAM CONNECT ===================== */
   /* ===================================================== */
 
-  if(xtreamConnect){
+  tvActivate(xtreamConnect, async function(){
 
-    xtreamConnect.addEventListener("click", async () => {
+    const server = document.getElementById("xtream-server").value.trim();
+    const username = document.getElementById("xtream-username").value.trim();
+    const password = document.getElementById("xtream-password").value.trim();
 
-      const server = document.getElementById("xtream-server").value.trim();
-      const username = document.getElementById("xtream-username").value.trim();
-      const password = document.getElementById("xtream-password").value.trim();
+    if(!server || !username || !password){
+      alert("Fill all fields");
+      return;
+    }
 
-      if(!server || !username || !password){
-        alert("Fill all fields");
-        return;
+    try {
+
+      const cleanServer = server.replace(/\/+$/, "");
+
+      const targetUrl =
+        `${cleanServer}/player_api.php?username=${username}&password=${password}`;
+
+      const response = await fetch(
+        `${WORKER_PROXY}?url=${encodeURIComponent(targetUrl)}`
+      );
+
+      const data = await response.json();
+
+      if(data.user_info && data.user_info.auth === 1){
+
+        if(status){
+          status.textContent = "Connected";
+          status.classList.remove("failed");
+          status.classList.add("connected");
+        }
+
+        localStorage.setItem("xtream", JSON.stringify({
+          server: cleanServer,
+          username,
+          password
+        }));
+
+        xtreamPopup.style.display = "none";
+
+      } else {
+
+        if(status){
+          status.textContent = "Failed";
+          status.classList.remove("connected");
+          status.classList.add("failed");
+        }
+
       }
 
-      try {
+    } catch (err){
+      alert("Connection Failed");
+      console.error(err);
+    }
 
-        const cleanServer = server.replace(/\/+$/, "");
-
-        const targetUrl =
-          `${cleanServer}/player_api.php?username=${username}&password=${password}`;
-
-        const response = await fetch(
-          `${WORKER_PROXY}?url=${encodeURIComponent(targetUrl)}`
-        );
-
-        const data = await response.json();
-
-        if(data.user_info && data.user_info.auth === 1){
-
-          const status = document.getElementById("xtream-status");
-
-if(status){
-  status.textContent = "Connected";
-  status.classList.remove("failed");
-  status.classList.add("connected");
-}
-
-          localStorage.setItem("xtream", JSON.stringify({
-            server: cleanServer,
-            username,
-            password
-          }));
-
-          xtreamPopup.style.display = "none";
-
-        } else {
-          const status = document.getElementById("xtream-status");
-
-if(status){
-  status.textContent = "Failed";
-  status.classList.remove("connected");
-  status.classList.add("failed");
-}
-
-      } catch (err){
-        alert("Connection Failed");
-        console.error(err);
-      }
-
-    });
-
-  }
+  });
 
 });
