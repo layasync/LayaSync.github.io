@@ -17,6 +17,15 @@ document.addEventListener("DOMContentLoaded", function(){
     status.classList.add("connected");
   }
 
+  /* ================= NAV PILL HIGHLIGHT ================= */
+
+  const navItems = document.querySelectorAll(".nav");
+
+  function activateNav(clickedNav){
+    navItems.forEach(n => n.classList.remove("active"));
+    clickedNav.classList.add("active");
+  }
+
   /* ================= LOGIN ================= */
 
   xtreamConnect.onclick = async function(){
@@ -130,14 +139,12 @@ document.addEventListener("DOMContentLoaded", function(){
         card.appendChild(img);
       }
 
-      // 🔥 PLAY MOVIE
+      /* 🔥 PLAY MOVIE */
       card.onclick = ()=>{
-  openPlayer(
-    `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.id}.mp4`,
-    movie.name
-  );
-};
-        openPlayer(streamUrl);
+        const streamUrl =
+          `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.mp4`;
+
+        openPlayer(streamUrl, movie.name);
       };
 
       row.appendChild(card);
@@ -209,11 +216,11 @@ document.addEventListener("DOMContentLoaded", function(){
         card.appendChild(img);
       }
 
-      // 🔥 PLAY SERIES (basic — opens first episode stream id)
-      card.onclick = function(){
+      card.onclick = ()=>{
         const streamUrl =
           `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
-        openPlayer(streamUrl);
+
+        openPlayer(streamUrl, show.name);
       };
 
       row.appendChild(card);
@@ -222,9 +229,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* ================= NAVIGATION ================= */
 
-  document.querySelectorAll(".nav").forEach(nav=>{
+  navItems.forEach(nav=>{
     nav.onclick = ()=>{
       const name = nav.textContent.trim();
+
+      activateNav(nav);
 
       document.querySelectorAll(".page").forEach(p=>p.style.display="none");
 
