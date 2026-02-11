@@ -350,3 +350,82 @@ body{
   transform:scale(1.08);
   box-shadow:0 0 20px rgba(255,255,255,0.4);
 }
+
+
+/* ================= FULLSCREEN PLAYER ================= */
+
+.player-overlay{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(1400px 700px at 50% 20%, rgba(70,85,100,0.35) 0%, transparent 60%),
+    linear-gradient(180deg, #1b2430 0%, #0c1117 100%);
+  z-index:99999;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.video-element{
+  width:100%;
+  height:100%;
+  background:black;
+  object-fit:contain;
+}
+
+/* ================= GLASS CONTROLS ================= */
+
+.player-controls{
+  position:absolute;
+  bottom:40px;
+  left:50%;
+  transform:translateX(-50%);
+  width:80%;
+  padding:20px 30px;
+  border-radius:30px;
+
+  background:rgba(30,40,50,0.65);
+  backdrop-filter:blur(35px);
+  -webkit-backdrop-filter:blur(35px);
+
+  display:flex;
+  align-items:center;
+  gap:20px;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.player-controls button{
+  background:rgba(255,255,255,0.15);
+  border:none;
+  padding:12px 18px;
+  border-radius:20px;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.player-controls button:hover{
+  background:rgba(255,255,255,0.25);
+}
+
+.progress-container{
+  flex:1;
+  height:8px;
+  background:rgba(255,255,255,0.15);
+  border-radius:20px;
+  overflow:hidden;
+}
+
+#progress-bar{
+  width:0%;
+  height:100%;
+  background:#4ade80;
+}
+
+#time-display{
+  font-size:16px;
+  opacity:0.8;
+}
