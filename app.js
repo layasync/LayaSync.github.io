@@ -1,10 +1,8 @@
-console.log("APP JS LOADED");/* ===================================================== */
-/* ================= NAVIGATION LOGIC =================== */
-/* ===================================================== */
-
 document.addEventListener("DOMContentLoaded", function(){
 
-  /* ===== NAVIGATION ===== */
+  console.log("APP READY");
+
+  /* ================= NAVIGATION ================= */
 
   const navItems = document.querySelectorAll('.nav');
 
@@ -42,78 +40,26 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
 
-  /* ===================================================== */
-  /* ================= XTREAM POPUP LOGIC ================= */
-  /* ===================================================== */
+  /* ================= XTREAM POPUP ================= */
 
   const xtreamBtn = document.querySelector(".xtream-btn");
   const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
-  const xtreamConnect = document.getElementById("xtream-connect");
 
-  // Open popup
+  console.log("Button:", xtreamBtn);
+  console.log("Popup:", xtreamPopup);
+
   if(xtreamBtn && xtreamPopup){
-    xtreamBtn.addEventListener("click", () => {
+    xtreamBtn.addEventListener("click", function(){
+      console.log("Xtream clicked");
       xtreamPopup.style.display = "flex";
     });
   }
 
-  // Close popup
   if(xtreamClose && xtreamPopup){
-    xtreamClose.addEventListener("click", () => {
+    xtreamClose.addEventListener("click", function(){
       xtreamPopup.style.display = "none";
     });
-  }
-
-  // Connect to Xtream
-  if(xtreamConnect){
-
-    xtreamConnect.addEventListener("click", async () => {
-
-      const server = document.getElementById("xtream-server")?.value.trim();
-      const username = document.getElementById("xtream-username")?.value.trim();
-      const password = document.getElementById("xtream-password")?.value.trim();
-
-      if(!server || !username || !password){
-        alert("Fill all fields");
-        return;
-      }
-
-      try {
-
-        const cleanServer = server.replace(/\/+$/, "");
-
-        const response = await fetch(
-          `${cleanServer}/player_api.php?username=${username}&password=${password}`
-        );
-
-        const data = await response.json();
-
-        if(data.user_info && data.user_info.auth === 1){
-
-          alert("Xtream Connected Successfully");
-
-          localStorage.setItem("xtream", JSON.stringify({
-            server: cleanServer,
-            username,
-            password
-          }));
-
-          if(xtreamPopup){
-            xtreamPopup.style.display = "none";
-          }
-
-        } else {
-          alert("Invalid Credentials");
-        }
-
-      } catch(err){
-        alert("Connection Error (CORS or Invalid Server)");
-        console.error(err);
-      }
-
-    });
-
   }
 
 });
