@@ -543,8 +543,9 @@ body{
 }
 
 .category-header.active{
-  background:rgba(255,255,255,0.18);
-  box-shadow:0 0 20px rgba(255,255,255,0.15);
+  font-size: 36px;
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.03);
 }
 
 .category-streams{
