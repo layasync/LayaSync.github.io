@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
 
   const WORKER = "https://layasync-proxy.layasync.workers.dev";
-
   let credentials = null;
 
   const status = document.getElementById("xtream-status");
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function(){
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
-  /* ================= LOGIN ================= */
+  // ================= LOGIN =================
 
   xtreamConnect.onclick = async function(){
 
@@ -38,12 +37,14 @@ document.addEventListener("DOMContentLoaded", function(){
       localStorage.setItem("xtream_login", JSON.stringify(credentials));
 
       status.textContent = "Connected";
+      status.classList.remove("failed");
       status.classList.add("connected");
 
       xtreamPopup.style.display = "none";
 
     }catch(e){
       status.textContent = "Failed";
+      status.classList.remove("connected");
       status.classList.add("failed");
       alert("Login Failed");
     }
@@ -55,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function(){
     xtreamPopup.style.display="flex";
   };
 
-  /* ================= LOAD MOVIE CATEGORIES ================= */
+  // ================= MOVIE CATEGORIES =================
 
   async function loadMovieCategories(){
 
@@ -88,8 +89,6 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ================= LOAD MOVIES ================= */
-
   async function loadMovies(category_id, row){
 
     if(row.dataset.loaded) return;
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
       if(movie.stream_icon){
         const img=document.createElement("img");
-        img.src=movie.stream_icon;
+        img.src=`${WORKER}/image?url=${encodeURIComponent(movie.stream_icon)}`;
         img.loading="lazy";
         img.style.width="100%";
         img.style.height="100%";
@@ -123,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ================= LOAD SHOW CATEGORIES ================= */
+  // ================= SHOW CATEGORIES =================
 
   async function loadShowCategories(){
 
@@ -156,8 +155,6 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ================= LOAD SHOWS ================= */
-
   async function loadShows(category_id, row){
 
     if(row.dataset.loaded) return;
@@ -179,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
       if(show.cover){
         const img=document.createElement("img");
-        img.src=show.cover;
+        img.src=`${WORKER}/image?url=${encodeURIComponent(show.cover)}`;
         img.loading="lazy";
         img.style.width="100%";
         img.style.height="100%";
@@ -191,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  /* ================= NAVIGATION ================= */
+  // ================= NAVIGATION =================
 
   document.querySelectorAll(".nav").forEach(nav=>{
     nav.onclick = ()=>{
