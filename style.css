@@ -524,3 +524,37 @@ body{
 .card img{
   border-radius:18px;
 }
+
+/* ===== CATEGORY LAYOUT ===== */
+
+.category-layout{
+  display:flex;
+  gap:40px;
+  height:100%;
+}
+
+.category-list{
+  width:280px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  overflow-y:auto;
+}
+
+.category-pill{
+  padding:14px 18px;
+  border-radius:16px; /* rounded square */
+  background:rgba(255,255,255,0.08);
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+.category-pill.active{
+  background:rgba(255,255,255,0.18);
+  box-shadow:0 0 20px rgba(255,255,255,0.15);
+}
+
+.stream-area{
+  flex:1;
+  overflow-y:auto;
+}
