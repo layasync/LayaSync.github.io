@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     try{
-
       const res = await fetch(
         `${WORKER}/login?server=${encodeURIComponent(server)}&username=${username}&password=${password}`
       );
@@ -273,34 +272,35 @@ document.addEventListener("DOMContentLoaded", function(){
       block.appendChild(streamsContainer);
       container.appendChild(block);
     });
-/* ================= NETWORK STREAM ================= */
+  }
 
-const networkPopup = document.getElementById("network-popup");
-const networkBtn = document.querySelector(".network-btn");
-const networkClose = document.getElementById("network-close");
-const networkPlay = document.getElementById("network-play");
+  /* ================= NETWORK STREAM ================= */
 
-if(networkBtn){
-  networkBtn.addEventListener("click", ()=>{
-    networkPopup.style.display = "flex";
-  });
-}
+  const networkPopup = document.getElementById("network-popup");
+  const networkBtn = document.querySelector(".network-btn");
+  const networkClose = document.getElementById("network-close");
+  const networkPlay = document.getElementById("network-play");
 
-if(networkClose){
-  networkClose.addEventListener("click", ()=>{
-    networkPopup.style.display = "none";
-  });
-}
+  if(networkBtn){
+    networkBtn.addEventListener("click", ()=>{
+      networkPopup.style.display = "flex";
+    });
+  }
 
-if(networkPlay){
-  networkPlay.addEventListener("click", ()=>{
-    const url = document.getElementById("network-url").value.trim();
-    if(!url) return alert("Enter URL");
+  if(networkClose){
+    networkClose.addEventListener("click", ()=>{
+      networkPopup.style.display = "none";
+    });
+  }
 
-    networkPopup.style.display = "none";
-    openPlayer(url, "Network Stream");
-  });
-}
+  if(networkPlay){
+    networkPlay.addEventListener("click", ()=>{
+      const url = document.getElementById("network-url").value.trim();
+      if(!url) return alert("Enter URL");
+
+      networkPopup.style.display = "none";
+      openPlayer(url, "Network Stream");
+    });
   }
 
 });
