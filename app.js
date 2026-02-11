@@ -184,8 +184,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
         streams.slice(0,10).forEach(movie=>{
           const card = document.createElement("div");
-          card.className = "card small";
-
+card.className = "card small";
+card.setAttribute("tabindex","0");
           if(movie.stream_icon){
             card.style.backgroundImage = `url(${movie.stream_icon})`;
             card.style.backgroundSize="cover";
@@ -253,8 +253,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
         streams.slice(0,10).forEach(show=>{
           const card = document.createElement("div");
-          card.className = "card small";
-
+card.className = "card small";
+card.setAttribute("tabindex","0");
           if(show.cover){
             card.style.backgroundImage = `url(${show.cover})`;
             card.style.backgroundSize="cover";
