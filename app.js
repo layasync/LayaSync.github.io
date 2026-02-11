@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
 
-  const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
+  const WORKER_URL = "https://layasync-proxy.layasync.workers.dev";
 
   const status = document.getElementById("xtream-status");
 
@@ -18,9 +18,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
   function showPage(name){
     document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+
     if(pages[name]){
       document.getElementById(pages[name]).style.display='block';
     }
+
     navItems.forEach(n=>n.classList.remove('active'));
     const activeNav = [...navItems].find(n=>n.textContent.trim()===name);
     if(activeNav) activeNav.classList.add('active');
@@ -35,16 +37,6 @@ document.addEventListener("DOMContentLoaded", function(){
       if(page === "Shows") renderShows();
     });
   });
-
-  function delay(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function fetchJSON(url){
-    const res = await fetch(`${WORKER_PROXY}?url=${encodeURIComponent(url)}`);
-    if(!res.ok) throw new Error("Blocked");
-    return res.json();
-  }
 
   /* ================= XTREAM CONNECT ================= */
 
@@ -66,121 +58,79 @@ document.addEventListener("DOMContentLoaded", function(){
 
       const cleanServer = server.replace(/\/+$/, "");
 
-      const loginData = await fetchJSON(
-        `${cleanServer}/player_api.php?username=${username}&password=${password}`
-      );
+      const syncUrl =
+        `${WORKER_URL}/sync?server=${encodeURIComponent(cleanServer)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
-      if(!loginData.user_info || loginData.user_info.auth !== 1){
-        throw new Error("Invalid");
+      status.textContent = "Syncing...";
+      status.classList.remove("connected");
+      status.classList.remove("failed");
+
+      const response = await fetch(syncUrl);
+
+      if(!response.ok){
+        throw new Error("Sync failed");
       }
 
+      const data = await response.json();
+
+      // Save login
       localStorage.setItem("xtream", JSON.stringify({
         server: cleanServer,
         username,
         password
       }));
 
-      status.textContent="Syncing...";
+      // Save full library
+      localStorage.setItem("xtream_cache", JSON.stringify(data));
 
-      await fullSync(cleanServer, username, password);
-
-      status.textContent="Connected";
+      status.textContent = "Connected";
       status.classList.add("connected");
 
       document.getElementById("xtream-popup").style.display="none";
 
     }catch(e){
+
       console.error(e);
-      alert("Connection Failed. Wait 10 seconds and retry.");
+
+      status.textContent = "Failed";
+      status.classList.add("failed");
+
+      alert("Connection Failed. Try again after 30 seconds.");
     }
 
   });
-
-  /* ================= FULL SYNC ================= */
-
-  async function fullSync(server, username, password){
-
-    const cache = {
-      movies: {},
-      shows: {}
-    };
-
-    // MOVIES
-    const movieCats = await fetchJSON(
-      `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`
-    );
-
-    for(const cat of movieCats){
-
-      const streams = await fetchJSON(
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`
-      );
-
-      // Store only needed fields
-      cache.movies[cat.category_name] = streams.map(m => ({
-        name: m.name,
-        icon: m.stream_icon,
-        id: m.stream_id
-      }));
-
-      localStorage.setItem("xtream_cache", JSON.stringify(cache));
-
-      await delay(500);
-    }
-
-    // SHOWS
-    const showCats = await fetchJSON(
-      `${server}/player_api.php?username=${username}&password=${password}&action=get_series_categories`
-    );
-
-    for(const cat of showCats){
-
-      const streams = await fetchJSON(
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`
-      );
-
-      cache.shows[cat.category_name] = streams.map(s => ({
-        name: s.name,
-        cover: s.cover,
-        id: s.series_id
-      }));
-
-      localStorage.setItem("xtream_cache", JSON.stringify(cache));
-
-      await delay(500);
-    }
-  }
 
   /* ================= RENDER MOVIES ================= */
 
   function renderMovies(){
 
     const container = document.getElementById("movies-container");
-    container.innerHTML="";
+    container.innerHTML = "";
 
     const cache = JSON.parse(localStorage.getItem("xtream_cache"));
     if(!cache || !cache.movies) return;
 
     for(const category in cache.movies){
 
-      const section=document.createElement("div");
-      section.className="section";
+      const section = document.createElement("div");
+      section.className = "section";
 
-      const title=document.createElement("h3");
-      title.textContent=category;
+      const title = document.createElement("h3");
+      title.textContent = category;
 
-      const row=document.createElement("div");
-      row.className="row";
+      const row = document.createElement("div");
+      row.className = "row";
 
       cache.movies[category].forEach(movie=>{
-        const card=document.createElement("div");
-        card.className="card small";
+
+        const card = document.createElement("div");
+        card.className = "card small";
         card.setAttribute("tabindex","0");
 
         if(movie.icon){
-          const img=document.createElement("img");
-          img.src=movie.icon;
-          img.loading="lazy";
+          const img = document.createElement("img");
+          img.src = movie.icon;
+          img.loading = "lazy";
           img.style.width="100%";
           img.style.height="100%";
           img.style.objectFit="cover";
@@ -201,31 +151,32 @@ document.addEventListener("DOMContentLoaded", function(){
   function renderShows(){
 
     const container = document.getElementById("shows-container");
-    container.innerHTML="";
+    container.innerHTML = "";
 
     const cache = JSON.parse(localStorage.getItem("xtream_cache"));
     if(!cache || !cache.shows) return;
 
     for(const category in cache.shows){
 
-      const section=document.createElement("div");
-      section.className="section";
+      const section = document.createElement("div");
+      section.className = "section";
 
-      const title=document.createElement("h3");
-      title.textContent=category;
+      const title = document.createElement("h3");
+      title.textContent = category;
 
-      const row=document.createElement("div");
-      row.className="row";
+      const row = document.createElement("div");
+      row.className = "row";
 
       cache.shows[category].forEach(show=>{
-        const card=document.createElement("div");
-        card.className="card small";
+
+        const card = document.createElement("div");
+        card.className = "card small";
         card.setAttribute("tabindex","0");
 
         if(show.cover){
-          const img=document.createElement("img");
-          img.src=show.cover;
-          img.loading="lazy";
+          const img = document.createElement("img");
+          img.src = show.cover;
+          img.loading = "lazy";
           img.style.width="100%";
           img.style.height="100%";
           img.style.objectFit="cover";
