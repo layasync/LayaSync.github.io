@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   const WORKER_PROXY = "https://layasync-proxy.layasync.workers.dev";
 
-  /* ===================================================== */
-  /* ================= STATUS AUTO LOAD ================== */
-  /* ===================================================== */
+  /* ================= STATUS ================= */
 
   const status = document.getElementById("xtream-status");
   const savedLogin = localStorage.getItem("xtream");
@@ -16,9 +14,7 @@ document.addEventListener("DOMContentLoaded", function(){
     status.classList.add("connected");
   }
 
-  /* ===================================================== */
-  /* ================= NAVIGATION ========================= */
-  /* ===================================================== */
+  /* ================= NAVIGATION ================= */
 
   const navItems = document.querySelectorAll('.nav');
 
@@ -33,9 +29,7 @@ document.addEventListener("DOMContentLoaded", function(){
   };
 
   function showPage(name){
-    document.querySelectorAll('.page').forEach(p=>{
-      p.style.display='none';
-    });
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
 
     if(pages[name]){
       document.getElementById(pages[name]).style.display='block';
@@ -44,15 +38,12 @@ document.addEventListener("DOMContentLoaded", function(){
     navItems.forEach(n=>n.classList.remove('active'));
 
     const activeNav = [...navItems].find(n=>n.textContent.trim()===name);
-    if(activeNav){
-      activeNav.classList.add('active');
-    }
+    if(activeNav) activeNav.classList.add('active');
   }
 
   navItems.forEach(item=>{
     item.addEventListener('click', ()=>{
       const page = item.textContent.trim();
-
       showPage(page);
 
       if(page === "Movies") loadMovies();
@@ -60,44 +51,28 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   });
 
-  /* ===================================================== */
-  /* ================= TV SAFE HANDLER =================== */
-  /* ===================================================== */
+  /* ================= TV SAFE ================= */
 
   function tvActivate(element, callback){
     if(!element) return;
-
     element.setAttribute("tabindex", "0");
-
     element.addEventListener("click", callback);
-
-    element.addEventListener("keydown", function(e){
-      if(e.key === "Enter"){
-        callback();
-      }
+    element.addEventListener("keydown", e=>{
+      if(e.key === "Enter") callback();
     });
   }
 
-  /* ===================================================== */
-  /* ================= XTREAM POPUP ======================= */
-  /* ===================================================== */
+  /* ================= XTREAM POPUP ================= */
 
   const xtreamBtn = document.querySelector(".xtream-btn");
   const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
-  tvActivate(xtreamBtn, function(){
-    xtreamPopup.style.display = "flex";
-  });
+  tvActivate(xtreamBtn, ()=> xtreamPopup.style.display="flex");
+  tvActivate(xtreamClose, ()=> xtreamPopup.style.display="none");
 
-  tvActivate(xtreamClose, function(){
-    xtreamPopup.style.display = "none";
-  });
-
-  /* ===================================================== */
-  /* ================= XTREAM CONNECT ===================== */
-  /* ===================================================== */
+  /* ================= XTREAM CONNECT ================= */
 
   tvActivate(xtreamConnect, async function(){
 
@@ -126,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function(){
       if(data.user_info && data.user_info.auth === 1){
 
         if(status){
-          status.textContent = "Connected";
+          status.textContent="Connected";
           status.classList.remove("failed");
           status.classList.add("connected");
         }
@@ -137,28 +112,30 @@ document.addEventListener("DOMContentLoaded", function(){
           password
         }));
 
-        xtreamPopup.style.display = "none";
+        xtreamPopup.style.display="none";
 
       } else {
-
         if(status){
-          status.textContent = "Failed";
+          status.textContent="Failed";
           status.classList.remove("connected");
           status.classList.add("failed");
         }
-
       }
 
-    } catch (err){
+    } catch(err){
       alert("Connection Failed");
       console.error(err);
     }
 
   });
 
-  /* ===================================================== */
-  /* ================= LOAD MOVIES ======================== */
-  /* ===================================================== */
+  /* ================= HELPER DELAY ================= */
+
+  function delay(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /* ================= LOAD MOVIES ================= */
 
   async function loadMovies(){
 
@@ -166,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!saved) return;
 
     const {server, username, password} = saved;
-
     const container = document.getElementById("movies-container");
     container.innerHTML = "Loading...";
 
@@ -178,49 +154,57 @@ document.addEventListener("DOMContentLoaded", function(){
     );
 
     const categories = await response.json();
-
     container.innerHTML = "";
 
-    for(const cat of categories){
+    const batchSize = 5;
 
-      const streamsUrl =
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`;
+    for(let i=0; i<categories.length; i+=batchSize){
 
-      const streamRes = await fetch(
-        `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
-      );
+      const batch = categories.slice(i, i+batchSize);
 
-      const streams = await streamRes.json();
+      for(const cat of batch){
 
-      const section = document.createElement("div");
-      section.className = "section";
+        const streamsUrl =
+          `${server}/player_api.php?username=${username}&password=${password}&action=get_vod_streams&category_id=${cat.category_id}`;
 
-      const title = document.createElement("h3");
-      title.textContent = cat.category_name;
+        const streamRes = await fetch(
+          `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+        );
 
-      const row = document.createElement("div");
-      row.className = "row";
+        const streams = await streamRes.json();
 
-      streams.slice(0,10).forEach(movie=>{
-        const card = document.createElement("div");
-        card.className = "card small";
+        const section = document.createElement("div");
+        section.className = "section";
 
-        card.style.backgroundImage = `url(${movie.stream_icon})`;
-        card.style.backgroundSize = "cover";
-        card.style.backgroundPosition = "center";
+        const title = document.createElement("h3");
+        title.textContent = cat.category_name;
 
-        row.appendChild(card);
-      });
+        const row = document.createElement("div");
+        row.className = "row";
 
-      section.appendChild(title);
-      section.appendChild(row);
-      container.appendChild(section);
+        streams.slice(0,10).forEach(movie=>{
+          const card = document.createElement("div");
+          card.className = "card small";
+
+          if(movie.stream_icon){
+            card.style.backgroundImage = `url(${movie.stream_icon})`;
+            card.style.backgroundSize="cover";
+            card.style.backgroundPosition="center";
+          }
+
+          row.appendChild(card);
+        });
+
+        section.appendChild(title);
+        section.appendChild(row);
+        container.appendChild(section);
+      }
+
+      await delay(2000); // 2 second pause between batches
     }
   }
 
-  /* ===================================================== */
-  /* ================= LOAD SHOWS ========================= */
-  /* ===================================================== */
+  /* ================= LOAD SHOWS ================= */
 
   async function loadShows(){
 
@@ -228,7 +212,6 @@ document.addEventListener("DOMContentLoaded", function(){
     if(!saved) return;
 
     const {server, username, password} = saved;
-
     const container = document.getElementById("shows-container");
     container.innerHTML = "Loading...";
 
@@ -240,43 +223,53 @@ document.addEventListener("DOMContentLoaded", function(){
     );
 
     const categories = await response.json();
-
     container.innerHTML = "";
 
-    for(const cat of categories){
+    const batchSize = 5;
 
-      const streamsUrl =
-        `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`;
+    for(let i=0; i<categories.length; i+=batchSize){
 
-      const streamRes = await fetch(
-        `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
-      );
+      const batch = categories.slice(i, i+batchSize);
 
-      const streams = await streamRes.json();
+      for(const cat of batch){
 
-      const section = document.createElement("div");
-      section.className = "section";
+        const streamsUrl =
+          `${server}/player_api.php?username=${username}&password=${password}&action=get_series&category_id=${cat.category_id}`;
 
-      const title = document.createElement("h3");
-      title.textContent = cat.category_name;
+        const streamRes = await fetch(
+          `${WORKER_PROXY}?url=${encodeURIComponent(streamsUrl)}`
+        );
 
-      const row = document.createElement("div");
-      row.className = "row";
+        const streams = await streamRes.json();
 
-      streams.slice(0,10).forEach(show=>{
-        const card = document.createElement("div");
-        card.className = "card small";
+        const section = document.createElement("div");
+        section.className = "section";
 
-        card.style.backgroundImage = `url(${show.cover})`;
-        card.style.backgroundSize = "cover";
-        card.style.backgroundPosition = "center";
+        const title = document.createElement("h3");
+        title.textContent = cat.category_name;
 
-        row.appendChild(card);
-      });
+        const row = document.createElement("div");
+        row.className = "row";
 
-      section.appendChild(title);
-      section.appendChild(row);
-      container.appendChild(section);
+        streams.slice(0,10).forEach(show=>{
+          const card = document.createElement("div");
+          card.className = "card small";
+
+          if(show.cover){
+            card.style.backgroundImage = `url(${show.cover})`;
+            card.style.backgroundSize="cover";
+            card.style.backgroundPosition="center";
+          }
+
+          row.appendChild(card);
+        });
+
+        section.appendChild(title);
+        section.appendChild(row);
+        container.appendChild(section);
+      }
+
+      await delay(2000); // 2 second pause
     }
   }
 
