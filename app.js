@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function(){
     status.classList.add("connected");
   }
 
-  /* ================= NAV PILL HIGHLIGHT ================= */
+  /* ================= NAV HIGHLIGHT ================= */
 
   const navItems = document.querySelectorAll(".nav");
 
@@ -101,10 +101,11 @@ document.addEventListener("DOMContentLoaded", function(){
       const row = document.createElement("div");
       row.className="row";
 
-      loadMovies(cat.category_id, row);
       section.appendChild(title);
       section.appendChild(row);
       container.appendChild(section);
+
+      loadMovies(cat.category_id, row);
     });
   }
 
@@ -113,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(row.dataset.loaded) return;
     if(!credentials) return;
 
+    row.dataset.loaded="true";
     row.innerHTML="Loading...";
 
     const res = await fetch(
@@ -121,32 +123,39 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const movies = await res.json();
     row.innerHTML="";
-    row.dataset.loaded="true";
 
     movies.forEach(movie=>{
 
       const card = document.createElement("div");
       card.className="card small";
 
-      if(movie.stream_icon){
-        const img=document.createElement("img");
-        img.src=`${WORKER}/image?url=${encodeURIComponent(movie.stream_icon)}`;
-        img.loading="lazy";
-        img.style.width="100%";
-        img.style.height="100%";
-        img.style.objectFit="cover";
+      const poster =
+        movie.stream_icon ||
+        movie.movie_icon ||
+        movie.cover ||
+        movie.icon ||
+        null;
+
+      if(poster){
+        const img = document.createElement("img");
+        img.src = `${WORKER}/image?url=${encodeURIComponent(poster)}`;
+        img.loading = "lazy";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "18px";
+        img.draggable = false;
         card.appendChild(img);
       }
 
-      /* 🔥 PLAY MOVIE */
       card.onclick = ()=>{
+        const ext = movie.container_extension || "mp4";
+
         const streamUrl =
-          `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.mp4`;
+          `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.${ext}`;
 
-        
-
-  openPlayer(streamUrl, movie.name);
-};
+        openPlayer(streamUrl, movie.name);
+      };
 
       row.appendChild(card);
     });
@@ -179,11 +188,11 @@ document.addEventListener("DOMContentLoaded", function(){
       const row = document.createElement("div");
       row.className="row";
 
-      row.onclick = ()=> loadShows(cat.category_id, row);
-
       section.appendChild(title);
       section.appendChild(row);
       container.appendChild(section);
+
+      loadShows(cat.category_id, row);
     });
   }
 
@@ -192,6 +201,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if(row.dataset.loaded) return;
     if(!credentials) return;
 
+    row.dataset.loaded="true";
     row.innerHTML="Loading...";
 
     const res = await fetch(
@@ -200,26 +210,36 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const shows = await res.json();
     row.innerHTML="";
-    row.dataset.loaded="true";
 
     shows.forEach(show=>{
 
       const card = document.createElement("div");
       card.className="card small";
 
-      if(show.cover){
-        const img=document.createElement("img");
-        img.src=`${WORKER}/image?url=${encodeURIComponent(show.cover)}`;
-        img.loading="lazy";
-        img.style.width="100%";
-        img.style.height="100%";
-        img.style.objectFit="cover";
+      const poster =
+        show.cover ||
+        show.stream_icon ||
+        show.movie_icon ||
+        show.icon ||
+        null;
+
+      if(poster){
+        const img = document.createElement("img");
+        img.src = `${WORKER}/image?url=${encodeURIComponent(poster)}`;
+        img.loading = "lazy";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "18px";
+        img.draggable = false;
         card.appendChild(img);
       }
 
       card.onclick = ()=>{
+        const ext = show.container_extension || "mp4";
+
         const streamUrl =
-          `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
+          `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.${ext}`;
 
         openPlayer(streamUrl, show.name);
       };
