@@ -59,7 +59,7 @@ landscapeImages.forEach(img => {
     card.className = "landscape-card";
     card.innerHTML = `<img src="${img}">`;
     currentRow.appendChild(card);
-});
+
 
 posterImages.forEach(img => {
     const card = document.createElement("div");
