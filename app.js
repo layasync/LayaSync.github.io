@@ -1,257 +1,142 @@
 document.addEventListener("DOMContentLoaded", function(){
 
-  const WORKER_URL = "https://layasync-proxy.layasync.workers.dev";
+  const WORKER = "https://layasync-proxy.layasync.workers.dev";
 
   const status = document.getElementById("xtream-status");
-  const xtreamBtn = document.querySelector(".xtream-btn");
-const xtreamPopup = document.getElementById("xtream-popup");
-const xtreamClose = document.getElementById("xtream-close");
-
-if(xtreamBtn){
-  xtreamBtn.onclick = function(){
-    xtreamPopup.style.display = "flex";
-  };
-}
-
-if(xtreamClose){
-  xtreamClose.onclick = function(){
-    xtreamPopup.style.display = "none";
-  };
-}
+  const xtreamPopup = document.getElementById("xtream-popup");
   const xtreamClose = document.getElementById("xtream-close");
   const xtreamConnect = document.getElementById("xtream-connect");
 
-  const navItems = document.querySelectorAll(".nav");
+  let credentials = null;
 
-  const pages = {
-    Home: "home",
-    Search: "search",
-    Movies: "movies",
-    Shows: "shows",
-    Playlists: "playlists",
-    Collections: "collections",
-    Live: "live"
+  /* ================= LOGIN ================= */
+
+  xtreamConnect.onclick = async function(){
+
+    const server = document.getElementById("xtream-server").value.trim();
+    const username = document.getElementById("xtream-username").value.trim();
+    const password = document.getElementById("xtream-password").value.trim();
+
+    if(!server || !username || !password){
+      alert("Fill all fields");
+      return;
+    }
+
+    try{
+
+      const res = await fetch(
+        `${WORKER}/login?server=${encodeURIComponent(server)}&username=${username}&password=${password}`
+      );
+
+      const data = await res.json();
+
+      if(!data.user_info || data.user_info.auth !== 1){
+        throw new Error("Invalid");
+      }
+
+      credentials = {server, username, password};
+
+      localStorage.setItem("xtream_login", JSON.stringify(credentials));
+
+      status.textContent = "Connected";
+      status.classList.add("connected");
+
+      xtreamPopup.style.display = "none";
+
+    }catch(e){
+      status.textContent = "Failed";
+      status.classList.add("failed");
+      alert("Login Failed");
+    }
   };
 
-  /* ================= NAVIGATION ================= */
+  xtreamClose.onclick = ()=> xtreamPopup.style.display="none";
 
-  function showPage(name){
+  document.querySelector(".xtream-btn").onclick = ()=>{
+    xtreamPopup.style.display="flex";
+  };
 
-    document.querySelectorAll(".page").forEach(p=>{
-      p.style.display = "none";
-    });
+  /* ================= LOAD MOVIE CATEGORIES ================= */
 
-    if(pages[name]){
-      const target = document.getElementById(pages[name]);
-      if(target) target.style.display = "block";
-    }
-
-    navItems.forEach(n=>n.classList.remove("active"));
-
-    const activeNav = [...navItems].find(n=>n.textContent.trim()===name);
-    if(activeNav) activeNav.classList.add("active");
-  }
-
-  navItems.forEach(item=>{
-    item.addEventListener("click", function(){
-      const page = this.textContent.trim();
-      showPage(page);
-
-      if(page === "Movies") renderMovies();
-      if(page === "Shows") renderShows();
-    });
-  });
-
-  /* ================= POPUP OPEN (SAFE DELEGATION) ================= */
-
-  document.addEventListener("click", function(e){
-
-    const btn = e.target.closest(".xtream-btn");
-
-    if(btn){
-      if(xtreamPopup){
-        xtreamPopup.style.display = "flex";
-      }
-    }
-
-  });
-
-  /* ================= POPUP CLOSE ================= */
-
-  if(xtreamClose){
-    xtreamClose.addEventListener("click", function(){
-      if(xtreamPopup){
-        xtreamPopup.style.display = "none";
-      }
-    });
-  }
-
-  /* ================= CONNECT ================= */
-
-  if(xtreamConnect){
-
-    xtreamConnect.addEventListener("click", async function(){
-
-      const server = document.getElementById("xtream-server").value.trim();
-      const username = document.getElementById("xtream-username").value.trim();
-      const password = document.getElementById("xtream-password").value.trim();
-
-      if(!server || !username || !password){
-        alert("Fill all fields");
-        return;
-      }
-
-      try {
-
-        localStorage.removeItem("xtream");
-        localStorage.removeItem("xtream_cache");
-
-        const cleanServer = server.replace(/\/+$/, "");
-
-        const syncUrl =
-          `${WORKER_URL}/sync?server=${encodeURIComponent(cleanServer)}&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
-
-        if(status){
-          status.textContent = "Syncing...";
-          status.classList.remove("connected");
-          status.classList.remove("failed");
-        }
-
-        const response = await fetch(syncUrl);
-
-        if(!response.ok){
-          throw new Error("Sync failed");
-        }
-
-        const data = await response.json();
-
-        localStorage.setItem("xtream", JSON.stringify({
-          server: cleanServer,
-          username,
-          password
-        }));
-
-        localStorage.setItem("xtream_cache", JSON.stringify(data));
-
-        if(status){
-          status.textContent = "Connected";
-          status.classList.remove("failed");
-          status.classList.add("connected");
-        }
-
-        xtreamPopup.style.display = "none";
-
-      } catch (err){
-
-        console.error(err);
-
-        if(status){
-          status.textContent = "Failed";
-          status.classList.remove("connected");
-          status.classList.add("failed");
-        }
-
-        alert("Connection Failed. Try again later.");
-      }
-
-    });
-
-  }
-
-  /* ================= RENDER MOVIES ================= */
-
-  function renderMovies(){
+  async function loadMovieCategories(){
 
     const container = document.getElementById("movies-container");
-    if(!container) return;
+    container.innerHTML = "Loading...";
+
+    const res = await fetch(
+      `${WORKER}/vod-categories?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}`
+    );
+
+    const categories = await res.json();
 
     container.innerHTML = "";
 
-    const cache = JSON.parse(localStorage.getItem("xtream_cache"));
-    if(!cache || !cache.movies) return;
-
-    for(const category in cache.movies){
+    categories.forEach(cat=>{
 
       const section = document.createElement("div");
-      section.className = "section";
+      section.className="section";
 
       const title = document.createElement("h3");
-      title.textContent = category;
+      title.textContent = cat.category_name;
 
       const row = document.createElement("div");
-      row.className = "row";
+      row.className="row";
 
-      cache.movies[category].forEach(movie=>{
-
-        const card = document.createElement("div");
-        card.className = "card small";
-        card.setAttribute("tabindex","0");
-
-        if(movie.icon){
-          const img = document.createElement("img");
-          img.src = movie.icon;
-          img.loading = "lazy";
-          img.style.width="100%";
-          img.style.height="100%";
-          img.style.objectFit="cover";
-          card.appendChild(img);
-        }
-
-        row.appendChild(card);
-      });
+      row.onclick = ()=> loadMovies(cat.category_id, row);
 
       section.appendChild(title);
       section.appendChild(row);
       container.appendChild(section);
-    }
+    });
   }
 
-  /* ================= RENDER SHOWS ================= */
+  /* ================= LOAD MOVIES ================= */
 
-  function renderShows(){
+  async function loadMovies(category_id, row){
 
-    const container = document.getElementById("shows-container");
-    if(!container) return;
+    if(row.dataset.loaded) return;
 
-    container.innerHTML = "";
+    row.innerHTML="Loading...";
 
-    const cache = JSON.parse(localStorage.getItem("xtream_cache"));
-    if(!cache || !cache.shows) return;
+    const res = await fetch(
+      `${WORKER}/vod-streams?server=${encodeURIComponent(credentials.server)}&username=${credentials.username}&password=${credentials.password}&category_id=${category_id}`
+    );
 
-    for(const category in cache.shows){
+    const movies = await res.json();
 
-      const section = document.createElement("div");
-      section.className = "section";
+    row.innerHTML="";
+    row.dataset.loaded="true";
 
-      const title = document.createElement("h3");
-      title.textContent = category;
+    movies.forEach(movie=>{
 
-      const row = document.createElement("div");
-      row.className = "row";
+      const card = document.createElement("div");
+      card.className="card small";
 
-      cache.shows[category].forEach(show=>{
+      if(movie.stream_icon){
+        const img=document.createElement("img");
+        img.src=movie.stream_icon;
+        img.loading="lazy";
+        img.style.width="100%";
+        img.style.height="100%";
+        img.style.objectFit="cover";
+        card.appendChild(img);
+      }
 
-        const card = document.createElement("div");
-        card.className = "card small";
-        card.setAttribute("tabindex","0");
-
-        if(show.cover){
-          const img = document.createElement("img");
-          img.src = show.cover;
-          img.loading = "lazy";
-          img.style.width="100%";
-          img.style.height="100%";
-          img.style.objectFit="cover";
-          card.appendChild(img);
-        }
-
-        row.appendChild(card);
-      });
-
-      section.appendChild(title);
-      section.appendChild(row);
-      container.appendChild(section);
-    }
+      row.appendChild(card);
+    });
   }
+
+  /* ================= NAV ================= */
+
+  document.querySelectorAll(".nav").forEach(nav=>{
+    nav.onclick = ()=>{
+      const name = nav.textContent.trim();
+
+      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+      document.getElementById(name.toLowerCase()).style.display="block";
+
+      if(name==="Movies") loadMovieCategories();
+    };
+  });
 
 });
