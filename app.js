@@ -1,5 +1,36 @@
 document.addEventListener("DOMContentLoaded", function(){
+/* ================= NETWORK STREAM ================= */
 
+const networkBtn = document.querySelector(".network-btn");
+const networkPopup = document.getElementById("network-popup");
+const networkPlay = document.getElementById("network-play");
+const networkClose = document.getElementById("network-close");
+
+if(networkBtn){
+  networkBtn.onclick = ()=>{
+    networkPopup.style.display = "flex";
+  };
+}
+
+if(networkClose){
+  networkClose.onclick = ()=>{
+    networkPopup.style.display = "none";
+  };
+}
+
+if(networkPlay){
+  networkPlay.onclick = ()=>{
+    const url = document.getElementById("network-url").value.trim();
+
+    if(!url){
+      alert("Enter a stream URL");
+      return;
+    }
+
+    openPlayer(url, "Network Stream");
+    networkPopup.style.display = "none";
+  };
+}
   const WORKER = "https://layasync-proxy.layasync.workers.dev";
   let credentials = null;
 
