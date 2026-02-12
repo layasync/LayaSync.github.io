@@ -5,7 +5,7 @@ const titleEl = document.getElementById("video-title");
 const playPause = document.getElementById("play-pause");
 const seekBack = document.getElementById("seek-back");
 const seekForward = document.getElementById("seek-forward");
-const exitBtn = document.querySelector(".video-btn"); // FIXED
+const exitBtn = overlay ? overlay.querySelector(".video-top .video-btn") : null;
 
 const progressBar = document.getElementById("progress-bar");
 const currentTimeEl = document.getElementById("current-time");
@@ -20,16 +20,26 @@ let hls = null;
 
 /* ================= OPEN PLAYER ================= */
 
-function openPlayer(url, title){
+window.openPlayer = function(url, title){
 
   if(!overlay || !video) return;
+
+  // Reset previous stream
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  if(hls){
+    hls.destroy();
+    hls = null;
+  }
 
   overlay.style.display = "flex";
   titleEl.textContent = title || "Now Playing";
 
-  // HLS SUPPORT
+  // HLS support
   if(url.includes(".m3u8")){
-    if(Hls.isSupported()){
+    if(window.Hls && Hls.isSupported()){
       hls = new Hls();
       hls.loadSource(url);
       hls.attachMedia(video);
@@ -44,14 +54,15 @@ function openPlayer(url, title){
 
   setupTracks();
   resetHideTimer();
-}
+};
 
 /* ================= CLOSE PLAYER ================= */
 
 window.closePlayer = function(){
   if(video){
     video.pause();
-    video.src = "";
+    video.removeAttribute("src");
+    video.load();
   }
 
   if(hls){
@@ -74,11 +85,7 @@ if(exitBtn){
 
 if(playPause){
   playPause.onclick = function(){
-    if(video.paused){
-      video.play();
-    } else {
-      video.pause();
-    }
+    video.paused ? video.play() : video.pause();
   };
 }
 
@@ -99,11 +106,13 @@ video.addEventListener("timeupdate", ()=>{
   durationEl.textContent = formatTime(video.duration);
 });
 
-progressBar.oninput = function(){
-  if(video.duration){
-    video.currentTime = (progressBar.value / 100) * video.duration;
-  }
-};
+if(progressBar){
+  progressBar.oninput = function(){
+    if(video.duration){
+      video.currentTime = (progressBar.value / 100) * video.duration;
+    }
+  };
+}
 
 function formatTime(seconds){
   if(!seconds || isNaN(seconds)) return "00:00";
@@ -112,18 +121,39 @@ function formatTime(seconds){
   return `${m}:${s < 10 ? "0"+s : s}`;
 }
 
-/* ================= ASPECT ================= */
+/* ================= ASPECT MODES ================= */
 
 if(aspectSelect){
   aspectSelect.onchange = function(){
+
     const val = this.value;
 
-    if(val === "16:9"){
-      video.style.aspectRatio = "16 / 9";
-      video.style.objectFit = "contain";
-    } else {
-      video.style.aspectRatio = "";
-      video.style.objectFit = val;
+    // Reset first
+    video.style.aspectRatio = "";
+    video.style.width = "100%";
+    video.style.height = "100%";
+
+    switch(val){
+
+      case "contain":   // FIT
+        video.style.objectFit = "contain";
+        break;
+
+      case "cover":     // ZOOM
+        video.style.objectFit = "cover";
+        break;
+
+      case "fill":      // TRUE FILL (stretch to full screen)
+        video.style.objectFit = "fill";
+        break;
+
+      case "16:9":
+        video.style.objectFit = "contain";
+        video.style.aspectRatio = "16 / 9";
+        break;
+
+      default:
+        video.style.objectFit = "contain";
     }
   };
 }
@@ -139,7 +169,7 @@ function setupTracks(){
 
   const audioTracks = video.audioTracks;
 
-  if(audioTracks){
+  if(audioTracks && audioTracks.length > 0){
     for(let i=0;i<audioTracks.length;i++){
       const option = document.createElement("option");
       option.value = i;
@@ -156,21 +186,23 @@ function setupTracks(){
 
   const textTracks = video.textTracks;
 
-  for(let i=0;i<textTracks.length;i++){
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = textTracks[i].label || "Subtitle "+(i+1);
-    subtitleSelect.appendChild(option);
-  }
-
-  subtitleSelect.onchange = function(){
+  if(textTracks && textTracks.length > 0){
     for(let i=0;i<textTracks.length;i++){
-      textTracks[i].mode = (i == this.value) ? "showing" : "disabled";
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = textTracks[i].label || "Subtitle "+(i+1);
+      subtitleSelect.appendChild(option);
     }
-  };
+
+    subtitleSelect.onchange = function(){
+      for(let i=0;i<textTracks.length;i++){
+        textTracks[i].mode = (i == this.value) ? "showing" : "disabled";
+      }
+    };
+  }
 }
 
-/* ================= AUTO HIDE ================= */
+/* ================= AUTO HIDE UI ================= */
 
 function resetHideTimer(){
   if(!overlay) return;
