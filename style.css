@@ -35,24 +35,25 @@ body {
 
 
 /* =========================================
-   NAVIGATION OVERLAY BAR (VISIBLE VERSION)
+   PREMIUM NAV OVERLAY BAR
+   Deep slate-metal tone
 ========================================= */
 .nav-container {
 
-    /* Brighter than body so it stands out */
-    background: rgba(30, 38, 45, 0.95);
+    /* Rich premium dark tone (different from body) */
+    background: #202a31;
 
-    padding: 14px 32px;      /* Slightly bigger for presence */
-    border-radius: 60px;     /* Smooth rounded shape */
+    padding: 16px 36px;      /* More breathing space */
+    border-radius: 60px;     /* Elegant full curve */
 
-    /* Stronger premium shadow */
+    /* Soft deep shadow for floating effect */
     box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.65);
+        0 18px 50px rgba(0, 0, 0, 0.7);
 
-    /* Visible soft border */
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Very subtle highlight edge */
+    border: 1px solid rgba(255, 255, 255, 0.05);
 
-    backdrop-filter: blur(10px); /* Optional glass effect */
+    transition: all 0.3s ease;
 }
 
 
