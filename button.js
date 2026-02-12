@@ -1,81 +1,93 @@
-// =======================================
-// TV REMOTE COLOR BUTTON CONTROL SYSTEM
-// =======================================
+// ===============================
+// NORMAL DPAD TV NAVIGATION
+// ===============================
 
-// Get all navigation items
-const tvNavItems = document.querySelectorAll(".nav-item");
+// Get elements
+const navItems = document.querySelectorAll(".nav-item");
+const pages = document.querySelectorAll(".page");
 
-// Track focused index
+// Track current nav index
 let currentIndex = 0;
 
-// Focus first nav item when page loads
-tvNavItems[currentIndex].focus();
+// Focus first nav item on load
+navItems[currentIndex].focus();
 
 
-// =======================================
-// Move focus left or right
-// =======================================
-function moveHorizontal(direction) {
-
-    if (direction === "right") {
-        currentIndex++;
-        if (currentIndex >= tvNavItems.length) {
-            currentIndex = 0; // loop back
-        }
-    }
-
-    if (direction === "left") {
-        currentIndex--;
-        if (currentIndex < 0) {
-            currentIndex = tvNavItems.length - 1; // loop to end
-        }
-    }
-
-    tvNavItems[currentIndex].focus();
+// ===============================
+// Center focused nav item
+// ===============================
+function centerNavItem(item) {
+    item.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+    });
 }
 
 
-// =======================================
-// Activate selected page
-// =======================================
-function selectCurrent() {
+// ===============================
+// Switch Page Function
+// ===============================
+function activatePage(index) {
 
-    const selectedItem = tvNavItems[currentIndex];
-    const pageId = selectedItem.getAttribute("data-page");
+    // Remove active from all
+    navItems.forEach(nav => nav.classList.remove("active"));
+    pages.forEach(page => page.classList.remove("active-page"));
 
-    // Use switchPage from app.js
-    switchPage(pageId, selectedItem);
+    // Add active to current
+    navItems[index].classList.add("active");
+
+    const pageId = navItems[index].getAttribute("data-page");
+    const page = document.getElementById(pageId);
+
+    page.classList.add("active-page");
+
+    // Scroll page into view (center vertically)
+    page.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    // Center nav visually
+    centerNavItem(navItems[index]);
 }
 
 
-// =======================================
-// Listen for TV remote keys
-// =======================================
+// ===============================
+// Listen for Arrow Keys
+// ===============================
 document.addEventListener("keydown", function(event) {
 
-    const key = event.key;
+    switch (event.key) {
 
-    // GREEN → RIGHT
-    if (key === "ColorF1Green" || key === "Green") {
-        moveHorizontal("right");
+        case "ArrowRight":
+            currentIndex++;
+            if (currentIndex >= navItems.length) {
+                currentIndex = 0;
+            }
+            navItems[currentIndex].focus();
+            centerNavItem(navItems[currentIndex]);
+            break;
+
+        case "ArrowLeft":
+            currentIndex--;
+            if (currentIndex < 0) {
+                currentIndex = navItems.length - 1;
+            }
+            navItems[currentIndex].focus();
+            centerNavItem(navItems[currentIndex]);
+            break;
+
+        case "Enter":
+        case "ArrowDown":
+            activatePage(currentIndex);
+            break;
+
+        case "ArrowUp":
+            // Jump back to nav focus
+            navItems[currentIndex].focus();
+            centerNavItem(navItems[currentIndex]);
+            break;
     }
 
-    // BLUE → LEFT
-    if (key === "ColorF3Blue" || key === "Blue") {
-        moveHorizontal("left");
-    }
-
-    // YELLOW → SELECT (Down behavior)
-    if (key === "ColorF2Yellow" || key === "Yellow") {
-        selectCurrent();
-    }
-
-    // RED → Go to Home (Up behavior)
-    if (key === "ColorF0Red" || key === "Red") {
-
-        currentIndex = 0;
-        tvNavItems[currentIndex].focus();
-        selectCurrent();
-    }
-
-}); 
+});
