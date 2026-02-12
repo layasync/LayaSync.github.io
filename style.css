@@ -290,18 +290,18 @@ opacity:1;
 /* ================= VIDEO PLAYER ================= */
 
 .video-overlay{
-position:fixed;
-inset:0;
-background:black;
-z-index:20000;
-display:none;
-justify-content:center;
-align-items:center;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:black;
+  z-index:999999;
+  display:none;
+overlay.style.display = "block";
 }
 
-.video-overlay.active{
-display:flex;
-}
+
 
 #video-element{
 width:100%;
