@@ -16,13 +16,13 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 70px;
+    height: 80px;
     background: #1b2228;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
+    justify-content: center; /* center nav */
     z-index: 1000;
+    backdrop-filter: blur(8px);
 }
 
 /* LEFT PROFILE */
