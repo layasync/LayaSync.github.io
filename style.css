@@ -35,30 +35,24 @@ body {
 
 
 /* =========================================
-   NAVIGATION OVERLAY BAR (ROUNDED)
-   The premium dark container behind menu
+   NAVIGATION OVERLAY BAR (VISIBLE VERSION)
 ========================================= */
 .nav-container {
 
-    /* Dark gradient slightly different from body */
-    background: linear-gradient(
-        145deg,
-        #11161b,
-        #0d1217
-    );
+    /* Brighter than body so it stands out */
+    background: rgba(30, 38, 45, 0.95);
 
-    padding: 12px 28px;       /* Space inside bar */
-    border-radius: 50px;      /* Fully rounded edges */
+    padding: 14px 32px;      /* Slightly bigger for presence */
+    border-radius: 60px;     /* Smooth rounded shape */
 
-    /* Premium shadow depth */
+    /* Stronger premium shadow */
     box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.6);
+        0 15px 40px rgba(0, 0, 0, 0.65);
 
-    /* Soft border for separation */
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    /* Visible soft border */
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
-    /* Glass blur effect */
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px); /* Optional glass effect */
 }
 
 
