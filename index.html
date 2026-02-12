@@ -190,16 +190,14 @@
 
 <!-- ================= FULLSCREEN PLAYER ================= -->
 
-<div id="video-player-overlay" class="video-overlay" style="display:none;">
-
-  <video id="video-element" playsinline></video>
-
+<div id="video-player-overlay" class="player-overlay" style="display:none;">
+  <video id="video-element" class="video-element"></video>
   <div class="video-ui">
-
     <div class="video-top">
-      <div id="video-title" class="video-title">Now Playing</div>
-      <button id="video-exit" class="video-btn">✕</button>
+      <div id="video-title" class="video-title"></div>
+      <button onclick="closePlayer()" class="video-btn">Exit</button>
     </div>
+  
 
     <div class="video-controls">
 
