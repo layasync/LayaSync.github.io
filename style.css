@@ -232,3 +232,28 @@ html {
 .nav-container {
     overflow-x: auto;
 }
+/* ===============================
+   Make nav scroll smoothly
+=============================== */
+.nav-container {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}
+
+/* Remove ugly scrollbar */
+.nav-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hover acts like TV focus */
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+/* Active pill stays strong */
+.nav-item.active {
+    background: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+}
