@@ -1,109 +1,175 @@
-/* RESET */
+/* =========================================
+   GLOBAL RESET
+   Removes default browser spacing
+========================================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+
+/* =========================================
+   BODY / PAGE BACKGROUND
+========================================= */
 body {
-    font-family: 'Inter', sans-serif;
-    background: #1b2228; /* dark bluish grey like screenshot */
-    color: #ffffff;
+    font-family: 'Inter', sans-serif;   /* Clean modern font */
+    background: #1b2228;                /* Dark bluish background */
+    color: #ffffff;                    /* Default text color */
+    overflow-x: hidden;                /* Prevent side scrolling */
 }
 
-/* TOP NAVBAR */
+
+/* =========================================
+   TOP NAVIGATION WRAPPER
+   Positions navigation at top center
+========================================= */
 .topbar {
-    position: fixed;
-    top: 20px;
+    position: fixed;          /* Stays on screen while scrolling */
+    top: 25px;                /* Space from top edge */
     width: 100%;
     display: flex;
-    justify-content: center;
-    z-index: 1000;
+    justify-content: center;  /* Center nav horizontally */
+    z-index: 1000;            /* Stay above everything */
 }
 
 
+/* =========================================
+   NAVIGATION OVERLAY BAR (ROUNDED)
+   The premium dark container behind menu
+========================================= */
+.nav-container {
 
-/* NAV CENTER */
+    /* Dark gradient slightly different from body */
+    background: linear-gradient(
+        145deg,
+        #11161b,
+        #0d1217
+    );
+
+    padding: 12px 28px;       /* Space inside bar */
+    border-radius: 50px;      /* Fully rounded edges */
+
+    /* Premium shadow depth */
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.6);
+
+    /* Soft border for separation */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    /* Glass blur effect */
+    backdrop-filter: blur(12px);
+}
+
+
+/* =========================================
+   NAV LINKS CONTAINER
+========================================= */
 .nav {
     display: flex;
-    gap: 10px;
+    gap: 14px; /* Space between nav buttons */
 }
 
+
+/* =========================================
+   INDIVIDUAL NAV BUTTON
+========================================= */
 .nav-item {
     text-decoration: none;
-    color: #bfc6cc;
+    color: #aeb6bd;           /* Soft grey */
     font-weight: 500;
-    padding: 10px 22px;
-    border-radius: 999px;
+    padding: 10px 22px;       /* Button size */
+    border-radius: 999px;     /* Pill shape */
     transition: all 0.3s ease;
 }
 
-.nav-item.active {
-    background: #0e1318; /* deep dark pill */
+
+/* Hover effect for nav */
+.nav-item:hover {
     color: #ffffff;
 }
 
 
-
-.icon-btn {
-    width: 36px;
-    height: 36px;
-    background: #2a3138;
-    border-radius: 999px;
+/* Active nav button (Home selected) */
+.nav-item.active {
+    background: #06090c;      /* Deep dark pill */
+    color: #ffffff;
 }
 
-/* MAIN CONTENT */
+
+/* =========================================
+   MAIN CONTENT AREA
+   Push content below fixed navbar
+========================================= */
 .content {
-    padding: 120px 40px 40px 40px;
+    padding: 140px 50px 50px 50px; /* Top padding avoids nav overlap */
 }
 
-/* SECTIONS */
+
+/* =========================================
+   SECTION WRAPPER
+========================================= */
 .section {
-    margin-bottom: 50px;
+    margin-bottom: 60px; /* Space between sections */
 }
 
+
+/* Section Title */
 .section h2 {
-    margin-bottom: 20px;
     font-size: 22px;
     font-weight: 600;
-    color: #e6e6e6;
+    margin-bottom: 25px;
+    color: #e4e8ec;
 }
 
-/* CARD ROW */
+
+/* =========================================
+   CARD ROW (Horizontal Scroll)
+========================================= */
 .card-row {
     display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding-bottom: 10px;
+    gap: 20px;             /* Space between cards */
+    overflow-x: auto;      /* Horizontal scroll */
+    padding-bottom: 10px;  /* Space for scroll bar */
 }
 
-/* CARDS */
+
+/* Hide scrollbar (clean UI) */
+.card-row::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =========================================
+   GENERIC CARD STYLE
+========================================= */
 .card {
-    background: #2a3138;
-    border-radius: 18px;
-    flex-shrink: 0;
+    background: #2a3138;   /* Slightly lighter than background */
+    border-radius: 18px;   /* Smooth corners */
+    flex-shrink: 0;        /* Prevent shrinking */
     transition: transform 0.3s ease;
 }
 
+
+/* Hover zoom effect */
 .card:hover {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
-/* WIDE CARDS (Current Watching) */
+
+/* =========================================
+   WIDE CARD (Current Watching)
+========================================= */
 .card.wide {
     width: 320px;
     height: 180px;
 }
 
-/* TALL CARDS (Movies) */
+
+/* =========================================
+   TALL CARD (Movie Posters)
+========================================= */
 .card.tall {
     width: 160px;
     height: 240px;
-}
-.nav-container {
-    background: rgba(20, 25, 30, 0.85);
-    padding: 10px 20px;
-    border-radius: 40px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
