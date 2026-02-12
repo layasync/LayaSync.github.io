@@ -35,25 +35,26 @@ body {
 
 
 /* =========================================
-   PREMIUM NAV OVERLAY BAR
-   Deep slate-metal tone
+   WHITE PREMIUM OVERLAY BAR
+   Frosted white glass style
 ========================================= */
 .nav-container {
 
-    /* Rich premium dark tone (different from body) */
-    background: #202a31;
+    /* Soft white with transparency */
+    background: rgba(255, 255, 255, 0.08);
 
-    padding: 16px 36px;      /* More breathing space */
-    border-radius: 60px;     /* Elegant full curve */
+    padding: 16px 36px;
+    border-radius: 60px;
 
-    /* Soft deep shadow for floating effect */
+    /* Frosted glass blur */
+    backdrop-filter: blur(20px);
+
+    /* Soft shadow so it floats */
     box-shadow:
-        0 18px 50px rgba(0, 0, 0, 0.7);
+        0 18px 50px rgba(0, 0, 0, 0.6);
 
-    /* Very subtle highlight edge */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-
-    transition: all 0.3s ease;
+    /* Light edge highlight */
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 
