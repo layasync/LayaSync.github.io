@@ -345,3 +345,24 @@ window.closePlayer = function(){
 };
 
 });
+function openPlayer(url, title){
+
+  const overlay = document.getElementById("video-overlay");
+  const video = document.getElementById("video-element");
+  const titleEl = document.getElementById("video-title");
+
+  if(!overlay || !video){
+    console.error("Player HTML missing");
+    return;
+  }
+
+  overlay.style.display = "block";
+
+  if(titleEl){
+    titleEl.textContent = title || "Now Playing";
+  }
+
+  video.src = url;
+  video.load();
+  video.play().catch(()=>{});
+}
