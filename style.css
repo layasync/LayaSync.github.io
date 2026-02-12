@@ -289,7 +289,7 @@ opacity:1;
 
 /* ================= VIDEO PLAYER ================= */
 
-.video-overlay{
+.player-overlay{
   position:fixed;
   top:0;
   left:0;
@@ -298,7 +298,6 @@ opacity:1;
   background:black;
   z-index:999999;
   display:none;
-overlay.style.display = "block";
 }
 
 
@@ -379,6 +378,10 @@ border-radius:12px;
 background:rgba(255,255,255,0.2);
 color:white;
 border:none;
+}
+
+.player-overlay{
+  pointer-events:auto;
 }
 
 /* ===== CATEGORY STYLE ===== */
