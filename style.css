@@ -169,3 +169,24 @@ body {
     width: 160px;
     height: 240px;
 }
+/* =========================================
+   PAGE SYSTEM
+   Controls section visibility
+========================================= */
+
+/* Hide all sections by default */
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Show active page */
+.active-page {
+    display: block;
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
