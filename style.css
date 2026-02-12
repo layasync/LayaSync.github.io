@@ -120,19 +120,19 @@ body {
 
 
 /* =========================================
-   CARD ROW (Horizontal Scroll)
+   HORIZONTAL MOVIE ROW WITH SNAP
 ========================================= */
 .card-row {
     display: flex;
-    gap: 20px;             /* Space between cards */
-    overflow-x: auto;      /* Horizontal scroll */
-    padding-bottom: 10px;  /* Space for scroll bar */
-}
+    gap: 20px;
 
+    overflow-x: auto;               /* Allow horizontal scroll */
+    scroll-behavior: smooth;        /* Smooth scroll */
+    
+    /* SNAP SETTINGS */
+    scroll-snap-type: x mandatory;  /* Force snap on X axis */
 
-/* Hide scrollbar (clean UI) */
-.card-row::-webkit-scrollbar {
-    display: none;
+    padding-bottom: 20px;
 }
 
 
@@ -140,10 +140,13 @@ body {
    GENERIC CARD STYLE
 ========================================= */
 .card {
-    background: #2a3138;   /* Slightly lighter than background */
-    border-radius: 18px;   /* Smooth corners */
-    flex-shrink: 0;        /* Prevent shrinking */
+    background: #2a3138;
+    border-radius: 18px;
+    flex-shrink: 0;
     transition: transform 0.3s ease;
+
+    /* SNAP ALIGNMENT */
+    scroll-snap-align: start;  /* Each card becomes snap point */
 }
 
 
