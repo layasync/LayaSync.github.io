@@ -172,8 +172,7 @@ document.addEventListener("DOMContentLoaded", function(){
             const streamUrl =
               `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.${ext}`;
 
-            openPlayer(streamUrl, movie.name);
-          };
+            
 
           row.appendChild(card);
         });
@@ -265,8 +264,7 @@ document.addEventListener("DOMContentLoaded", function(){
             const streamUrl =
               `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
 
-            openPlayer(streamUrl, show.name);
-          };
+            
 
           row.appendChild(card);
         });
