@@ -296,8 +296,10 @@ opacity:1;
   width:100vw;
   height:100vh;
   background:black;
-  z-index:999999;
+  z-index:9999999;   /* very high */
   display:none;
+  justify-content:center;
+  align-items:center;
 }
 
 
