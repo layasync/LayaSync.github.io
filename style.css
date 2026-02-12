@@ -260,3 +260,15 @@ html {
     background: rgba(0, 0, 0, 0.6);
     color: #ffffff;
 }
+/* =====================================
+   DISABLE MOUSE POINTER
+   Prevent pointer interference
+===================================== */
+body {
+    cursor: none !important;
+}
+
+/* Disable click selection */
+.nav-item {
+    pointer-events: none;
+}
