@@ -302,5 +302,46 @@ document.addEventListener("DOMContentLoaded", function(){
       openPlayer(url, "Network Stream");
     });
   }
+/* ================= VIDEO PLAYER ================= */
+
+window.openPlayer = function(url, title){
+
+  const overlay = document.getElementById("video-player-overlay");
+  const video = document.getElementById("video-element");
+  const titleEl = document.getElementById("video-title");
+
+  if(!overlay || !video){
+    console.error("Player elements missing in HTML");
+    return;
+  }
+
+  overlay.style.display = "flex";
+
+  if(titleEl){
+    titleEl.textContent = title || "Now Playing";
+  }
+
+  video.src = url;
+  video.load();
+  video.play().catch(e=>{
+    console.log("Autoplay blocked:", e);
+  });
+};
+
+/* ================= CLOSE PLAYER ================= */
+
+window.closePlayer = function(){
+  const overlay = document.getElementById("video-player-overlay");
+  const video = document.getElementById("video-element");
+
+  if(video){
+    video.pause();
+    video.src = "";
+  }
+
+  if(overlay){
+    overlay.style.display = "none";
+  }
+};
 
 });
