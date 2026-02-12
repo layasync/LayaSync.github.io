@@ -195,3 +195,35 @@ body {
     outline: none;
     box-shadow: 0 0 0 3px #ffffff;
 }
+
+/* ===============================
+   Smooth scrolling globally
+=============================== */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ===============================
+   Pages act like full tiles
+   Each page fills viewport
+=============================== */
+.page {
+    min-height: 100vh;      /* Each section full screen */
+    padding-top: 120px;     /* Space below navbar */
+    display: none;
+}
+
+/* Active page visible */
+.active-page {
+    display: block;
+}
+
+/* Center nav items nicely */
+.nav {
+    scroll-behavior: smooth;
+}
+
+/* Make nav scroll horizontally if needed */
+.nav-container {
+    overflow-x: auto;
+}
