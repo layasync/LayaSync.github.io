@@ -12,52 +12,68 @@
 </head>
 <body>
 
-<!-- Top Navigation -->
+<!-- =========================
+     TOP NAVIGATION
+========================= -->
 <header class="topbar">
-
-    <!-- Glass Nav Background -->
     <div class="nav-container">
-
-        <!-- Navigation Links -->
         <nav class="nav">
-            <a href="#" class="nav-item active">Home</a>
-            <a href="#" class="nav-item">Live</a>
-            <a href="#" class="nav-item">Movies</a>
-            <a href="#" class="nav-item">Shows</a>
-            <a href="#" class="nav-item">Playlists</a>
-            <a href="#" class="nav-item">Collections</a>
+            <a href="#" class="nav-item active" data-page="home">Home</a>
+            <a href="#" class="nav-item" data-page="live">Live</a>
+            <a href="#" class="nav-item" data-page="movies">Movies</a>
+            <a href="#" class="nav-item" data-page="shows">Shows</a>
+            <a href="#" class="nav-item" data-page="search">Search</a>
+            <a href="#" class="nav-item" data-page="playlists">Playlists</a>
+            <a href="#" class="nav-item" data-page="collections">Collections</a>
         </nav>
-
     </div>
-
 </header>
-    
 
+
+<!-- =========================
+     MAIN CONTENT AREA
+========================= -->
 <main class="content">
 
-    <section class="section">
-        <h2>Current Watching</h2>
-        <div class="card-row">
-            <div class="card wide"></div>
-            <div class="card wide"></div>
-            <div class="card wide"></div>
-            <div class="card wide"></div>
-        </div>
+    <section id="home" class="page active-page">
+        <h2>Home</h2>
+        <p>Home content goes here.</p>
     </section>
 
-    <section class="section">
-        <h2>Last added Movies</h2>
-        <div class="card-row">
-            <div class="card tall"></div>
-            <div class="card tall"></div>
-            <div class="card tall"></div>
-            <div class="card tall"></div>
-            <div class="card tall"></div>
-            <div class="card tall"></div>
-        </div>
+    <section id="live" class="page">
+        <h2>Live TV</h2>
+        <p>Live channels layout here.</p>
+    </section>
+
+    <section id="movies" class="page">
+        <h2>Movies</h2>
+        <p>Movie posters grid here.</p>
+    </section>
+
+    <section id="shows" class="page">
+        <h2>Shows</h2>
+        <p>TV shows grid here.</p>
+    </section>
+
+    <section id="search" class="page">
+        <h2>Search</h2>
+        <p>Search UI here.</p>
+    </section>
+
+    <section id="playlists" class="page">
+        <h2>Playlists</h2>
+        <p>User playlists here.</p>
+    </section>
+
+    <section id="collections" class="page">
+        <h2>Collections</h2>
+        <p>Saved collections here.</p>
     </section>
 
 </main>
+
+<!-- JS -->
+<script src="app.js"></script>
 
 </body>
 </html>
