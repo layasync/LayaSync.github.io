@@ -29,9 +29,11 @@ document.addEventListener("DOMContentLoaded", function(){
   navItems.forEach(nav=>{
     nav.onclick = ()=>{
       const name = nav.textContent.trim();
+
       activateNav(nav);
 
-      document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+      document.querySelectorAll(".page")
+        .forEach(p=>p.style.display="none");
 
       const page = document.getElementById(name.toLowerCase());
       if(page) page.style.display="block";
@@ -84,9 +86,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
   xtreamClose.onclick = ()=> xtreamPopup.style.display="none";
 
-  document.querySelector(".xtream-btn").onclick = ()=>{
-    xtreamPopup.style.display="flex";
-  };
+  const xtreamBtn = document.querySelector(".xtream-btn");
+  if(xtreamBtn){
+    xtreamBtn.onclick = ()=>{
+      xtreamPopup.style.display="flex";
+    };
+  }
 
   /* ================= MOVIES ================= */
 
@@ -166,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function(){
             const ext = movie.container_extension || "mp4";
             const streamUrl =
               `${credentials.server}/movie/${credentials.username}/${credentials.password}/${movie.stream_id}.${ext}`;
+
             openPlayer(streamUrl, movie.name);
           };
 
@@ -258,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function(){
           card.onclick = ()=>{
             const streamUrl =
               `${credentials.server}/series/${credentials.username}/${credentials.password}/${show.series_id}.mp4`;
+
             openPlayer(streamUrl, show.name);
           };
 
@@ -282,66 +289,25 @@ document.addEventListener("DOMContentLoaded", function(){
   const networkPlay = document.getElementById("network-play");
 
   if(networkBtn){
-    networkBtn.addEventListener("click", ()=>{
+    networkBtn.onclick = ()=>{
       networkPopup.style.display = "flex";
-    });
+    };
   }
 
   if(networkClose){
-    networkClose.addEventListener("click", ()=>{
+    networkClose.onclick = ()=>{
       networkPopup.style.display = "none";
-    });
+    };
   }
 
   if(networkPlay){
-    networkPlay.addEventListener("click", ()=>{
+    networkPlay.onclick = ()=>{
       const url = document.getElementById("network-url").value.trim();
       if(!url) return alert("Enter URL");
 
       networkPopup.style.display = "none";
       openPlayer(url, "Network Stream");
-    });
+    };
   }
-/* ================= VIDEO PLAYER ================= */
-
-openPlayer(streamUrl, movie.name);{
-
-  const overlay = document.getElementById("video-player-overlay");
-  const video = document.getElementById("video-element");
-  const titleEl = document.getElementById("video-title");
-
-  if(!overlay || !video){
-    console.error("Player elements missing in HTML");
-    return;
-  }
-
-  overlay.style.display = "flex";
-
-  if(titleEl){
-    titleEl.textContent = title || "Now Playing";
-  }
-
-  video.src = url;
-  video.load();
-  video.play().catch(e=>{
-    console.log("Autoplay blocked:", e);
-  });
-};
-
-/* ================= CLOSE PLAYER ================= */
-
-window.closePlayer = function(){
-  const overlay = document.getElementById("video-player-overlay");
-  const video = document.getElementById("video-element");
-
-  if(video){
-    video.pause();
-    video.src = "";
-  }
-
-  if(overlay){
-    overlay.style.display = "none";
-  }
-};
 
 });
