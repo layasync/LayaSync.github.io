@@ -1,22 +1,16 @@
 // ===============================
-// NORMAL DPAD TV NAVIGATION
+// MOUSE-OPTIMIZED NAVIGATION SYSTEM
 // ===============================
 
-// Get elements
+// Select nav items and pages
 const navItems = document.querySelectorAll(".nav-item");
 const pages = document.querySelectorAll(".page");
 
-// Track current nav index
-let currentIndex = 0;
-
-// Focus first nav item on load
-navItems[currentIndex].focus();
-
 
 // ===============================
-// Center focused nav item
+// Center nav item in view
 // ===============================
-function centerNavItem(item) {
+function centerNav(item) {
     item.scrollIntoView({
         behavior: "smooth",
         inline: "center",
@@ -26,68 +20,47 @@ function centerNavItem(item) {
 
 
 // ===============================
-// Switch Page Function
+// Switch page
 // ===============================
-function activatePage(index) {
+function switchPage(clickedItem) {
 
-    // Remove active from all
+    // Remove active state
     navItems.forEach(nav => nav.classList.remove("active"));
     pages.forEach(page => page.classList.remove("active-page"));
 
-    // Add active to current
-    navItems[index].classList.add("active");
+    // Activate selected
+    clickedItem.classList.add("active");
 
-    const pageId = navItems[index].getAttribute("data-page");
+    const pageId = clickedItem.getAttribute("data-page");
     const page = document.getElementById(pageId);
 
     page.classList.add("active-page");
 
-    // Scroll page into view (center vertically)
+    // Scroll page to top smoothly
     page.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 
     // Center nav visually
-    centerNavItem(navItems[index]);
+    centerNav(clickedItem);
 }
 
 
 // ===============================
-// Listen for Arrow Keys
+// Hover = Focus Behavior
 // ===============================
-document.addEventListener("keydown", function(event) {
+navItems.forEach(item => {
 
-    switch (event.key) {
+    // When mouse enters nav item
+    item.addEventListener("mouseenter", function() {
+        centerNav(this);
+    });
 
-        case "ArrowRight":
-            currentIndex++;
-            if (currentIndex >= navItems.length) {
-                currentIndex = 0;
-            }
-            navItems[currentIndex].focus();
-            centerNavItem(navItems[currentIndex]);
-            break;
-
-        case "ArrowLeft":
-            currentIndex--;
-            if (currentIndex < 0) {
-                currentIndex = navItems.length - 1;
-            }
-            navItems[currentIndex].focus();
-            centerNavItem(navItems[currentIndex]);
-            break;
-
-        case "Enter":
-        case "ArrowDown":
-            activatePage(currentIndex);
-            break;
-
-        case "ArrowUp":
-            // Jump back to nav focus
-            navItems[currentIndex].focus();
-            centerNavItem(navItems[currentIndex]);
-            break;
-    }
+    // When clicked
+    item.addEventListener("click", function(e) {
+        e.preventDefault();
+        switchPage(this);
+    });
 
 });
