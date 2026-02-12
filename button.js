@@ -1,30 +1,32 @@
-// =====================================
-// COLOR BUTTON DPAD ENGINE
-// =====================================
+// ==========================================
+// SAMSUNG TV BROWSER COLOR DPAD ENGINE
+// Using XF86 color keys
+// ==========================================
 
 // Select nav items and pages
 const navItems = document.querySelectorAll(".nav-item");
 const pages = document.querySelectorAll(".page");
 
-// Track position
+// Track navigation position
 let currentIndex = 0;
-let inNav = true; // true = in top navigation
+let inNav = true; // true = top navigation active
 
-// Focus first nav item
+// Initialize first selection
 navItems[currentIndex].classList.add("active");
-navItems[currentIndex].scrollIntoView({ behavior: "smooth", inline: "center" });
+navItems[currentIndex].scrollIntoView({
+    behavior: "smooth",
+    inline: "center"
+});
 
 
-// =====================================
-// Activate page
-// =====================================
+// ==========================================
+// Activate Selected Page
+// ==========================================
 function activatePage(index) {
 
-    // Remove active state
     navItems.forEach(nav => nav.classList.remove("active"));
     pages.forEach(page => page.classList.remove("active-page"));
 
-    // Activate selected nav
     navItems[index].classList.add("active");
 
     const pageId = navItems[index].getAttribute("data-page");
@@ -32,13 +34,16 @@ function activatePage(index) {
 
     page.classList.add("active-page");
 
-    page.scrollIntoView({ behavior: "smooth", block: "start" });
+    page.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 }
 
 
-// =====================================
-// HORIZONTAL NAVIGATION
-// =====================================
+// ==========================================
+// Horizontal Navigation (LEFT / RIGHT)
+// ==========================================
 function moveHorizontal(direction) {
 
     if (!inNav) return;
@@ -63,9 +68,9 @@ function moveHorizontal(direction) {
 }
 
 
-// =====================================
-// VERTICAL NAVIGATION
-// =====================================
+// ==========================================
+// Vertical Navigation (UP / DOWN)
+// ==========================================
 function moveVertical(direction) {
 
     if (direction === "down") {
@@ -74,7 +79,10 @@ function moveVertical(direction) {
         const pageId = navItems[currentIndex].getAttribute("data-page");
         const page = document.getElementById(pageId);
 
-        page.scrollIntoView({ behavior: "smooth", block: "start" });
+        page.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
     }
 
     if (direction === "up") {
@@ -88,34 +96,34 @@ function moveVertical(direction) {
 }
 
 
-// =====================================
-// COLOR KEY LISTENER
-// =====================================
+// ==========================================
+// KEY LISTENER
+// ==========================================
 document.addEventListener("keydown", function(event) {
 
     const key = event.key;
 
-    // GREEN → RIGHT
-    if (key === "ColorF1Green" || key === "Green") {
+    // XF86Green → RIGHT
+    if (key === "XF86Green") {
         moveHorizontal("right");
     }
 
-    // BLUE → LEFT
-    if (key === "ColorF3Blue" || key === "Blue") {
+    // XF86Blue → LEFT
+    if (key === "XF86Blue") {
         moveHorizontal("left");
     }
 
-    // RED → UP
-    if (key === "ColorF0Red" || key === "Red") {
+    // XF86Red → UP
+    if (key === "XF86Red") {
         moveVertical("up");
     }
 
-    // YELLOW → DOWN
-    if (key === "ColorF2Yellow" || key === "Yellow") {
+    // XF86Yellow → DOWN
+    if (key === "XF86Yellow") {
         moveVertical("down");
     }
 
-    // ENTER (center button)
+    // Center / OK button
     if (key === "Enter") {
         activatePage(currentIndex);
     }
