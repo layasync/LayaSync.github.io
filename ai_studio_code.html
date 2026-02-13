@@ -12,7 +12,7 @@
             --accent: #00f2ff;
             --accent-glow: rgba(0, 242, 255, 0.5);
             --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-border: rgba(255, 255, 255, 0.2);
             --panel-bg: rgba(10, 10, 10, 0.85);
         }
 
@@ -23,181 +23,177 @@
             overflow: hidden; color: #fff;
         }
 
-        /* Video Layer */
-        #video-viewport {
+        #video-container {
             position: relative; width: 100vw; height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            background: #000;
         }
 
         video { 
             width: 100%; height: 100%; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: #000;
         }
 
-        /* Aspect Ratio Logic */
+        /* Aspect Ratio Controls */
         .ratio-fit { object-fit: contain; }
-        .ratio-fill { object-fit: fill !important; } /* Hard stretch for TV */
+        .ratio-fill { object-fit: fill !important; } /* Hard stretch for full TV screen */
         .ratio-zoom { object-fit: cover; }
         .ratio-16-9 { aspect-ratio: 16/9; object-fit: cover; }
 
-        /* Premium Loader */
-        #loader {
-            position: absolute; width: 80px; height: 80px;
-            border: 5px solid rgba(255,255,255,0.05);
-            border-top: 5px solid var(--accent);
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            display: none; z-index: 1000;
-            filter: drop-shadow(0 0 10px var(--accent-glow));
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Floating URL Header */
+        /* Glossy Glass UI - Header */
         .header-ui {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            width: 80%; max-width: 1100px; z-index: 100;
-            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            width: 80%; max-width: 1200px; z-index: 100;
+            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        .url-glass-box {
+        .url-box {
             display: flex; background: var(--glass);
             backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border); padding: 10px;
-            border-radius: 100px; box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            border-radius: 100px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
 
-        .url-glass-box input {
+        .url-box input {
             flex: 1; background: transparent; border: none;
             padding: 10px 30px; color: white; font-size: 1.2rem;
             outline: none; font-weight: 300;
         }
 
-        .btn-load {
+        .btn-prime {
             background: #fff; color: #000; border: none;
             padding: 0 40px; border-radius: 50px; font-weight: 700;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            cursor: pointer; transition: 0.3s;
         }
-        .btn-load:hover { background: var(--accent); color: #fff; box-shadow: 0 0 25px var(--accent-glow); }
+        .btn-prime:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* Bottom Controls Dock */
+        /* Glossy Glass UI - Footer */
         .controls-ui {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1400px; z-index: 100;
-            transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        .glass-dock {
+        .dock {
             background: var(--panel-bg);
-            backdrop-filter: blur(45px); -webkit-backdrop-filter: blur(45px);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border); border-radius: 35px;
-            padding: 30px 45px; box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+            padding: 25px 40px; box-shadow: 0 30px 80px rgba(0,0,0,0.9);
         }
 
-        .timeline {
-            width: 100%; height: 10px; background: rgba(255,255,255,0.1);
+        .progress-container {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1);
             border-radius: 20px; margin-bottom: 25px; cursor: pointer;
-            position: relative; overflow: hidden;
         }
         .progress-bar {
-            height: 100%; width: 0%; background: linear-gradient(90deg, #0088ff, var(--accent));
-            box-shadow: 0 0 20px var(--accent-glow);
+            height: 100%; width: 0%; background: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow); border-radius: 20px;
         }
 
-        .control-row { display: flex; align-items: center; justify-content: space-between; }
+        .control-grid { display: flex; align-items: center; justify-content: space-between; }
         .group { display: flex; align-items: center; gap: 25px; }
 
-        /* SVG Icons Buttons */
+        /* SVG Circular Buttons */
         .btn-svg {
-            width: 65px; height: 65px; border-radius: 50%; border: 1px solid var(--glass-border);
+            width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.05); cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: 0.3s;
         }
-        .btn-svg:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.15); }
-        .btn-svg svg { width: 32px; height: 32px; fill: #fff; }
+        .btn-svg:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
+        .btn-svg svg { width: 30px; height: 30px; fill: #fff; }
 
         /* Dropdowns */
-        .select-item { display: flex; flex-direction: column; gap: 5px; }
-        .select-item label { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1.5px; margin-left: 5px;}
+        .select-wrap { display: flex; flex-direction: column; gap: 4px; }
+        .select-wrap label { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-left: 5px;}
         select {
             background: transparent; color: white; border: none; font-size: 1.1rem;
             outline: none; cursor: pointer; font-family: 'Outfit';
         }
-        option { background: #080808; color: #fff; }
+        option { background: #111; color: #fff; }
 
-        /* UI States */
+        /* Buffering Spinner */
+        #loader {
+            position: absolute; width: 80px; height: 80px;
+            border: 6px solid rgba(255,255,255,0.1);
+            border-top: 6px solid var(--accent);
+            border-radius: 50%; animation: spin 1s linear infinite;
+            display: none; z-index: 1000;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Hide UI Utility */
         .ui-hidden .header-ui { transform: translate(-50%, -150px); opacity: 0; }
         .ui-hidden .controls-ui { transform: translate(-50%, 150px); opacity: 0; }
         .ui-hidden { cursor: none; }
     </style>
 </head>
-<body id="playerBody">
+<body id="master">
 
-    <div id="video-viewport">
+    <div id="video-container">
         <div id="loader"></div>
-        <video id="v" class="ratio-fit" playsinline crossorigin="anonymous"></video>
+        <video id="player" class="ratio-fit" playsinline crossorigin="anonymous"></video>
 
-        <!-- Top Input Panel -->
-        <div class="header-ui" id="uiHeader">
-            <div class="url-glass-box">
-                <input type="text" id="urlInput" placeholder="Paste MKV, Web-DL, MP4 or HLS Link...">
-                <button class="btn-load" onclick="bootPlayer()">Initialize</button>
+        <!-- Header -->
+        <div class="header-ui">
+            <div class="url-box">
+                <input type="text" id="urlInput" placeholder="Paste Network Link (MKV, MP4, HLS, Google Link)...">
+                <button class="btn-prime" onclick="initPlayer()">LOAD STREAM</button>
             </div>
         </div>
 
-        <!-- Bottom UI Panel -->
-        <div class="controls-ui" id="uiFooter">
-            <div class="timeline" id="timeline">
-                <div class="progress-bar" id="prog"></div>
+        <!-- Controls -->
+        <div class="controls-ui">
+            <div class="progress-container" id="timeline">
+                <div class="progress-bar" id="progFill"></div>
             </div>
 
-            <div class="glass-dock">
-                <div class="control-row">
+            <div class="dock">
+                <div class="control-grid">
                     
-                    <!-- Playback Group -->
+                    <!-- Playback -->
                     <div class="group">
-                        <button class="btn-svg" onclick="step(-10)">
-                            <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/><text x="8.5" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
+                        <button class="btn-svg" onclick="seek(-10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/></svg>
                         </button>
                         
                         <button class="btn-svg" id="playBtn">
-                            <svg id="s-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            <svg id="s-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            <svg id="svg-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="svg-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                         </button>
 
-                        <button class="btn-svg" onclick="step(10)">
-                            <svg viewBox="0 0 24 24"><path d="M12.5 3c4.97 0 9 4.03 9 9H24l-3.89 3.89-.07.14L16 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.17-.67 4.24-1.76l1.41 1.41C16.84 18.5 15.03 19.5 13 19.5c-4.14 0-7.5-3.36-7.5-7.5s3.36-7.5 7.5-7.5z"/><text x="10.5" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
+                        <button class="btn-svg" onclick="seek(10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c4.97 0 9 4.03 9 9H24l-3.89 3.89-.07.14L16 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.17-.67 4.24-1.76l1.41 1.41C16.84 18.5 15.03 19.5 13 19.5c-4.14 0-7.5-3.36-7.5-7.5s3.36-7.5 7.5-7.5z"/></svg>
                         </button>
                     </div>
 
-                    <!-- Stream Settings -->
+                    <!-- Audio/Subs -->
                     <div class="group">
-                        <div class="select-item">
-                            <label>AUDIO</label>
-                            <select id="audioSet"><option>Auto</option></select>
+                        <div class="select-wrap">
+                            <label>AUDIO TRACK</label>
+                            <select id="audioSel"><option>Default</option></select>
                         </div>
-                        <div class="select-item">
+                        <div class="select-wrap">
                             <label>SUBTITLES</label>
-                            <select id="subSet"><option value="-1">None</option></select>
+                            <select id="subSel"><option value="-1">None</option></select>
                         </div>
                     </div>
 
-                    <!-- Screen Settings -->
+                    <!-- Aspect/Screen -->
                     <div class="group">
-                        <div class="select-item">
-                            <label>ASPECT</label>
-                            <select id="ratioSet">
-                                <option value="ratio-fit">Fit Original</option>
-                                <option value="ratio-fill">Fill Screen (Stretch)</option>
-                                <option value="ratio-zoom">Smart Zoom</option>
+                        <div class="select-wrap">
+                            <label>DISPLAY MODE</label>
+                            <select id="ratioSel">
+                                <option value="ratio-fit">Fit (Original)</option>
+                                <option value="ratio-fill">Fill (Stretched)</option>
+                                <option value="ratio-zoom">Zoom (Crop)</option>
                                 <option value="ratio-16-9">Cinema 16:9</option>
                             </select>
                         </div>
                         <button class="btn-svg" onclick="toggleFS()">
                             <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
                         </button>
-                        <button class="btn-svg" style="border-color:#ff4b4b" onclick="hideUINow()">
-                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                        <button class="btn-svg" style="border-color:#ff4b4b" onclick="manualHide()">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
                         </button>
                     </div>
 
@@ -207,115 +203,101 @@
     </div>
 
 <script>
-    const video = document.getElementById('v');
+    const video = document.getElementById('player');
     const playBtn = document.getElementById('playBtn');
-    const sPlay = document.getElementById('s-play');
-    const sPause = document.getElementById('s-pause');
-    const audioSet = document.getElementById('audioSet');
-    const subSet = document.getElementById('subSet');
-    const ratioSet = document.getElementById('ratioSet');
-    const prog = document.getElementById('prog');
+    const svgPlay = document.getElementById('svg-play');
+    const svgPause = document.getElementById('svg-pause');
+    const audioSel = document.getElementById('audioSel');
+    const subSel = document.getElementById('subSel');
+    const ratioSel = document.getElementById('ratioSel');
+    const progFill = document.getElementById('progFill');
     const timeline = document.getElementById('timeline');
-    const body = document.getElementById('playerBody');
+    const master = document.getElementById('master');
     const loader = document.getElementById('loader');
 
-    // YOUR PROXY CONFIG
-    const PROXY = "https://layasync-proxy.layasync.workers.dev/";
+    // YOUR PROXY
+    const PROXY_URL = "https://layasync-proxy.layasync.workers.dev/";
 
     let hls = new Hls();
 
-    function bootPlayer() {
-        const rawUrl = document.getElementById('urlInput').value.trim();
-        if(!rawUrl) return;
+    function initPlayer() {
+        const inputUrl = document.getElementById('urlInput').value.trim();
+        if(!inputUrl) return;
 
-        // Apply Proxy to all links to bypass CORS
-        const proxiedUrl = PROXY + rawUrl;
+        // Apply Proxy to the URL
+        const finalUrl = PROXY_URL + inputUrl;
 
         loader.style.display = 'block';
-        audioSet.innerHTML = '<option>Auto</option>';
-        subSet.innerHTML = '<option value="-1">None</option>';
+        audioSel.innerHTML = '<option>Default</option>';
+        subSel.innerHTML = '<option value="-1">None</option>';
 
-        if (rawUrl.includes('.m3u8')) {
+        if (inputUrl.includes('.m3u8')) {
             if (Hls.isSupported()) {
                 hls.destroy();
                 hls = new Hls({
-                    // If your proxy handles the manifest, we load it. 
-                    // Some proxies need the internal segments proxied too.
+                    // This forces every segment and manifest part to use your proxy
                     xhrSetup: function(xhr, url) {
-                        // This forces HLS.js to use the proxy for internal fragments too
-                        if (!url.startsWith(PROXY)) {
-                           xhr.open('GET', PROXY + url, true);
+                        if (!url.startsWith(PROXY_URL)) {
+                            xhr.open('GET', PROXY_URL + url, true);
                         }
                     }
                 });
-                hls.loadSource(proxiedUrl);
+                hls.loadSource(finalUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     video.play();
-                    hls.audioTracks.forEach((t, i) => audioSet.add(new Option(t.name || i, i)));
-                    hls.subtitleTracks.forEach((t, i) => subSet.add(new Option(t.name || i, i)));
+                    hls.audioTracks.forEach((t, i) => audioSel.add(new Option(t.name || i, i)));
+                    hls.subtitleTracks.forEach((t, i) => subSel.add(new Option(t.name || i, i)));
                 });
             }
         } else {
-            // MKV, Web-DL, MP4, etc.
+            // Standard MKV, MP4, Google Links
             hls.destroy();
-            video.src = proxiedUrl;
+            video.src = finalUrl;
             video.load();
-            video.play().catch(e => {
-                console.error("Playback failed", e);
-                loader.style.display = 'none';
-            });
+            video.play().catch(e => { loader.style.display = 'none'; });
         }
     }
 
-    // Play/Pause
+    // Controls Logic
     playBtn.onclick = () => video.paused ? video.play() : video.pause();
-    video.onplay = () => { sPlay.style.display = 'none'; sPause.style.display = 'block'; loader.style.display = 'none'; };
-    video.onpause = () => { sPlay.style.display = 'block'; sPause.style.display = 'none'; };
-
-    // Seek -10 / +10
-    function step(v) { video.currentTime += v; }
+    video.onplay = () => { svgPlay.style.display = 'none'; svgPause.style.display = 'block'; loader.style.display = 'none'; };
+    video.onpause = () => { svgPlay.style.display = 'block'; svgPause.style.display = 'none'; };
     
-    // Timeline Update
-    video.ontimeupdate = () => {
-        const p = (video.currentTime / video.duration) * 100;
-        prog.style.width = p + '%';
-    };
-    timeline.onclick = (e) => {
-        const r = timeline.getBoundingClientRect();
-        video.currentTime = ((e.clientX - r.left) / r.width) * video.duration;
-    };
-
-    // Buffer Spinner
     video.onwaiting = () => loader.style.display = 'block';
     video.onplaying = () => loader.style.display = 'none';
 
-    // Settings
-    ratioSet.onchange = () => video.className = ratioSet.value;
-    audioSet.onchange = () => { if(hls) hls.audioTrack = audioSet.value; };
-    subSet.onchange = () => { if(hls) hls.subtitleTrack = subSet.value; };
+    function seek(s) { video.currentTime += s; }
+    
+    video.ontimeupdate = () => {
+        progFill.style.width = (video.currentTime / video.duration) * 100 + '%';
+    };
+    timeline.onclick = (e) => {
+        const rect = timeline.getBoundingClientRect();
+        video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+    };
 
-    // TV UI Logic
-    let uiActive;
+    ratioSel.onchange = () => video.className = ratioSel.value;
+    audioSel.onchange = () => hls.audioTrack = audioSel.value;
+    subSel.onchange = () => hls.subtitleTrack = subSel.value;
+
+    // UI Toggle Logic
+    let uiTimer;
     function showUI() {
-        body.classList.remove('ui-hidden');
-        clearTimeout(uiActive);
-        uiActive = setTimeout(() => {
-            if(!video.paused) body.classList.add('ui-hidden');
+        master.classList.remove('ui-hidden');
+        clearTimeout(uiTimer);
+        uiTimer = setTimeout(() => {
+            if(!video.paused) master.classList.add('ui-hidden');
         }, 5000);
     }
-    function hideUINow() { body.classList.add('ui-hidden'); }
+    function manualHide() { master.classList.add('ui-hidden'); }
     function toggleFS() {
-        if (!document.fullscreenElement) body.requestFullscreen();
+        if (!document.fullscreenElement) master.requestFullscreen();
         else document.exitFullscreen();
     }
 
     document.addEventListener('mousemove', showUI);
     document.addEventListener('click', showUI);
-
-    // Default link for your test
-    document.getElementById('urlInput').value = "https://video-downloads.googleusercontent.com/ADGPM2lvG7dxy0RMnyO6J_RpA1OzdRoHGovSHXwPcBZP8syLlDpko9Gp-H-vIgP6DRCcLAc84hu4Nc1B8njQ9NgbMQe5XDLe-zVed6s3vFwwPMyhsV3D5QCOXSCjVowdIDwyiszI63ZYjRonY45-dJ131muEaaOs6_4wp6jLUxn2MuhzSIZN84K5dT5ziDcQaeMkGLjNSe0_b2sPNT8KMYDnOKGtRACE6FtB7xBQbmIgp4GXucf0k9G7CKHdelFLBEjCslqjCfPu7I15u7QnpzUnZM2eEiQydnXMlCgeje_vcGofY27nHubZdf6rpk7xn61AtCnMsOEGsUipLgG7pAoQuR5LPnN9NI8JZ_xvylwN1GPQevGYC_07MVIGSAcwagSLnifiyHTsc35p8atT2N2JSQ-DL8puGpMma7qXjDuVpyqbwUXcUcYNxqdFfCE1K_MZWtT95QLDaS5frr-w5mcPXxM9BmlLfhKR4OneO3jNxkqYa6Av-rD_yeufLIiXJMDpRUfEF-VYSzcJtOOaDEdsmw3_5NRl2DxhL6EFYbropxHB4rZYNuw4UO0ITN-MsPgtQmO__O4QGp3eOQV1DqGSoops1wCb77NHfGGf9FGlzQb2VVmA6iD3ogPrRkz_j_xXjJVVqffGmRMW6e0G2JIU1Tb3xNOwOKSUp6WGz0UcKGb3YS7muyC31zOwZF3qQmYsKbABEucqbpBALWUsKoO9JK47dbmvgHDbsoBUMVy4VYBq53AiK2UxQV4DOz3YaNcuHDempE0uSV89D1cfsulikeIcIasnKflErZMEL1ttL-oLCBPAgM2BPQRGucOPQfP9LhvxPApsKpUj9Z__eCJVYNFROXOwEaWpqct3GIPsUTKgXFXCaZNEbB9VtzR79GMc__89AwWNKzdLE7kCoVMcrMTio59lNJd5XJrIzImTIJCtw0vMF_HmmhNI2aTlww45N54EeJ6DwqKSG_qE1o731-AArLA8Nyzce7HlTmJXBxUKlWTcPSl9D6_4DVAIOUsM86eZj-VUXvc6QINxu-aMpDYjaABFPeDA2XDFy0IudJtunofxSybHIT1Dx_oXx8mwkcrL43MK";
 </script>
-
 </body>
 </html>
