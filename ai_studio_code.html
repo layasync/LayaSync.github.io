@@ -3,392 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium TV Streamer</title>
+    <title>Universal Premium Glass Player</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
 
         :root {
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-heavy: rgba(10, 10, 10, 0.75);
-            --border: rgba(255, 255, 255, 0.12);
-            --accent: #00d4ff;
-            --accent-glow: rgba(0, 212, 255, 0.4);
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-heavy: rgba(10, 10, 10, 0.85);
+            --border: rgba(255, 255, 255, 0.15);
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.5);
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: #050505;
-            font-family: 'Outfit', sans-serif;
-            color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #000; font-family: 'Outfit', sans-serif;
+            color: white; overflow: hidden;
         }
 
-        /* Premium Floating URL Bar */
-        .header-panel {
-            position: fixed;
-            top: 30px;
-            width: 70%;
-            z-index: 100;
-            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s;
-        }
-
-        .url-bar-container {
-            display: flex;
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            padding: 10px 15px;
-            border-radius: 100px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            transition: 0.3s;
-        }
-
-        .url-bar-container:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: scale(1.02);
-        }
-
-        .url-bar-container input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 15px 25px;
-            color: white;
-            font-size: 1.2rem;
-            outline: none;
-            font-weight: 300;
-        }
-
-        .load-btn {
-            background: white;
-            color: black;
-            border-radius: 50px;
-            border: none;
-            padding: 0 35px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-        }
-
-        .load-btn:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Main Video Container */
-        .viewport {
+        /* Video Layer */
+        .main-container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100vw; height: 100vh;
+            background: #000;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            transition: all 0.5s ease;
-        }
+        video { width: 100%; height: 100%; transition: 0.4s ease; }
 
-        /* Aspect Ratio Logic - 'Fill' forces 100% of container */
+        /* Aspect Ratio Logic */
         .ratio-fit { object-fit: contain; }
-        .ratio-fill { object-fit: fill; }
+        .ratio-fill { object-fit: fill !important; } /* Force fill screen */
         .ratio-zoom { object-fit: cover; }
         .ratio-16-9 { aspect-ratio: 16/9; object-fit: cover; }
 
-        /* TV Controls Overlay */
-        .tv-overlay {
-            position: absolute;
-            bottom: 40px;
-            width: 85%;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: 0.5s;
+        /* UI Visibility Toggle */
+        .ui-hidden .header-panel, 
+        .ui-hidden .controls-overlay {
+            opacity: 0 !important;
+            transform: translateY(50px) !important;
             pointer-events: none;
         }
 
-        .viewport:hover .tv-overlay,
-        .viewport:hover .header-panel {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+        /* Top Bar - URL Panel */
+        .header-panel {
+            position: fixed; top: 30px; left: 50%;
+            transform: translateX(-50%); width: 70%;
+            z-index: 100; transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .url-box {
+            display: flex; background: var(--glass);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border); padding: 8px;
+            border-radius: 100px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .url-box input {
+            flex: 1; background: transparent; border: none;
+            padding: 10px 30px; color: white; font-size: 1.1rem;
+            outline: none; font-family: 'Outfit';
+        }
+
+        .btn-load {
+            background: #fff; color: #000; border: none;
+            padding: 0 30px; border-radius: 50px; font-weight: 700;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        .btn-load:hover { background: var(--accent); color: #fff; }
+
+        /* Bottom Controls Overlay */
+        .controls-overlay {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); width: 90%;
+            z-index: 100; transition: 0.6s cubic-bezier(0.2, 1, 0.3, 1);
         }
 
         .glass-dock {
             background: var(--glass-heavy);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 25px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--border); border-radius: 30px;
+            padding: 25px 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 30px;
+        .progress-container {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1);
+            border-radius: 10px; margin-bottom: 25px; cursor: pointer;
         }
 
-        .btn-icon {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
+        .progress-bar {
+            height: 100%; background: var(--accent); width: 0%;
+            border-radius: 10px; box-shadow: 0 0 15px var(--accent-glow);
         }
 
-        .btn-icon:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: scale(1.1);
+        .button-row {
+            display: flex; align-items: center; justify-content: space-between;
         }
 
-        .btn-icon svg {
-            width: 32px;
-            height: 32px;
-            fill: white;
+        .group { display: flex; align-items: center; gap: 20px; }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s;
         }
 
-        /* Dropdown Styling */
-        .setting-box {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+        .icon-btn:hover { background: var(--accent); transform: scale(1.1); }
+        .icon-btn svg { width: 28px; height: 28px; fill: #fff; }
 
-        .setting-box label {
-            font-size: 12px;
-            color: var(--accent);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        /* Setting Dropdowns */
+        .select-group { display: flex; flex-direction: column; }
+        .select-group label { font-size: 11px; color: var(--accent); font-weight: 700; margin-left: 5px; }
+        
         select {
-            background: transparent;
-            color: white;
-            border: none;
-            font-size: 1.1rem;
-            font-family: 'Outfit';
-            cursor: pointer;
-            outline: none;
-            padding: 5px;
+            background: transparent; color: white; border: none;
+            font-size: 1rem; outline: none; cursor: pointer;
         }
+        option { background: #111; }
 
-        select option { background: #111; color: white; }
-
-        /* Progress Bar */
-        .timeline-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            margin-bottom: 25px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .timeline-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #0044ff);
-            width: 0%;
-            border-radius: 10px;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        /* Fullscreen Prompt */
-        .fs-hint {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 0.8rem;
-            opacity: 0.5;
-        }
+        /* Disappear Button Style */
+        .hide-btn { border-color: #ff4b4b !important; }
+        .hide-btn:hover { background: #ff4b4b !important; }
     </style>
 </head>
-<body>
+<body id="body">
 
-    <!-- Premium URL Input Bar -->
-    <div class="header-panel" id="headerPanel">
-        <div class="url-bar-container">
-            <input type="text" id="streamUrl" placeholder="Enter Network Stream URL (M3U8 / MP4)...">
-            <button class="load-btn" onclick="loadStream()">Initialize</button>
+    <!-- Header: URL Input -->
+    <div class="header-panel" id="uiHeader">
+        <div class="url-box">
+            <input type="text" id="streamUrl" placeholder="Paste link (m3u8, mp4, mkv, webm)...">
+            <button class="btn-load" onclick="initMedia()">LOAD</button>
         </div>
     </div>
 
-    <div class="viewport" id="playerViewport">
-        <div class="fs-hint">Double-click for Fullscreen</div>
-        
-        <video id="mainVideo" class="ratio-fit" playsinline></video>
+    <div class="main-container" id="playerView">
+        <video id="videoMain" class="ratio-fit" playsinline></video>
 
-        <!-- TV Dock Controls -->
-        <div class="tv-overlay">
-            <div class="timeline-container" id="timeline">
-                <div class="timeline-fill" id="timeFill"></div>
+        <!-- Controls -->
+        <div class="controls-overlay" id="uiFooter">
+            <div class="progress-container" id="progCont">
+                <div class="progress-bar" id="progBar"></div>
             </div>
 
             <div class="glass-dock">
-                <div class="control-group">
-                    <button class="btn-icon" id="playToggle">
-                        <svg id="p-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        <svg id="p-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                    </button>
+                <div class="button-row">
+                    <!-- Playback Controls -->
+                    <div class="group">
+                        <button class="icon-btn" onclick="seek(-10)">
+                            <svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/><text x="10" y="15" font-size="6" fill="white" font-weight="bold">-10</text></svg>
+                        </button>
+                        
+                        <button class="icon-btn" id="playBtn">
+                            <svg id="svgPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="svgPause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
 
-                    <div class="setting-box">
-                        <label>Audio Track</label>
-                        <select id="audioList"><option>Default</option></select>
+                        <button class="icon-btn" onclick="seek(10)">
+                            <svg viewBox="0 0 24 24"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/><text x="8" y="15" font-size="6" fill="white" font-weight="bold">+10</text></svg>
+                        </button>
                     </div>
 
-                    <div class="setting-box">
-                        <label>Subtitles</label>
-                        <select id="subList"><option value="-1">None</option></select>
+                    <!-- Meta Controls -->
+                    <div class="group">
+                        <div class="select-group">
+                            <label>AUDIO</label>
+                            <select id="audioSel"><option>Default</option></select>
+                        </div>
+                        <div class="select-group">
+                            <label>SUBS</label>
+                            <select id="subSel"><option value="-1">None</option></select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="control-group">
-                    <div class="setting-box">
-                        <label>Screen Format</label>
-                        <select id="ratioList">
-                            <option value="ratio-fit">Fit to Screen</option>
-                            <option value="ratio-fill">Fill Screen (Stretch)</option>
-                            <option value="ratio-zoom">Smart Zoom (No Bars)</option>
-                            <option value="ratio-16-9">Cinema 16:9</option>
-                        </select>
+                    <!-- Display Controls -->
+                    <div class="group">
+                        <div class="select-group">
+                            <label>ASPECT</label>
+                            <select id="ratioSel">
+                                <option value="ratio-fit">Fit</option>
+                                <option value="ratio-fill">Fill Screen</option>
+                                <option value="ratio-zoom">Zoom</option>
+                                <option value="ratio-16-9">16:9</option>
+                            </select>
+                        </div>
+                        <button class="icon-btn hide-btn" onclick="toggleUI(true)" title="Hide UI">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </button>
+                        <button class="icon-btn" onclick="toggleFS()">
+                            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                        </button>
                     </div>
-                    
-                    <button class="btn-icon" id="fullScreenBtn">
-                        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    const video = document.getElementById('mainVideo');
-    const playToggle = document.getElementById('playToggle');
-    const pPlay = document.getElementById('p-play');
-    const pPause = document.getElementById('p-pause');
-    const audioList = document.getElementById('audioList');
-    const subList = document.getElementById('subList');
-    const ratioList = document.getElementById('ratioList');
-    const timeFill = document.getElementById('timeFill');
-    const timeline = document.getElementById('timeline');
-    const playerViewport = document.getElementById('playerViewport');
+    const video = document.getElementById('videoMain');
+    const playBtn = document.getElementById('playBtn');
+    const svgPlay = document.getElementById('svgPlay');
+    const svgPause = document.getElementById('svgPause');
+    const audioSel = document.getElementById('audioSel');
+    const subSel = document.getElementById('subSel');
+    const ratioSel = document.getElementById('ratioSel');
+    const progBar = document.getElementById('progBar');
+    const progCont = document.getElementById('progCont');
+    const body = document.getElementById('body');
     
     let hls = new Hls();
 
-    function loadStream() {
+    function initMedia() {
         const url = document.getElementById('streamUrl').value;
         if(!url) return;
 
-        // Reset UI Menus
-        audioList.innerHTML = '<option>Default</option>';
-        subList.innerHTML = '<option value="-1">None</option>';
-
-        if (Hls.isSupported()) {
+        // Reset
+        audioSel.innerHTML = '<option>Default</option>';
+        subSel.innerHTML = '<option value="-1">None</option>';
+        
+        if (url.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                hls.destroy();
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play();
+                    hls.audioTracks.forEach((t, i) => audioSel.add(new Option(t.name || i, i)));
+                    hls.subtitleTracks.forEach((t, i) => subSel.add(new Option(t.name || i, i)));
+                });
+                audioSel.onchange = () => hls.audioTrack = audioSel.value;
+                subSel.onchange = () => hls.subtitleTrack = subSel.value;
+            }
+        } else {
+            // Standard MP4, MKV, WebM Support
             hls.destroy();
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play();
-                updatePlayIcons();
-                
-                // Audio Tracks
-                hls.audioTracks.forEach((t, i) => {
-                    audioList.add(new Option(t.name || `Language ${i}`, i));
-                });
-
-                // Subtitles
-                hls.subtitleTracks.forEach((t, i) => {
-                    subList.add(new Option(t.name || `Subtitles ${i}`, i));
-                });
-            });
-
-            audioList.onchange = () => hls.audioTrack = audioList.value;
-            subList.onchange = () => hls.subtitleTrack = subList.value;
-
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;
             video.play();
         }
     }
 
-    // Play/Pause Interaction
-    playToggle.onclick = togglePlay;
-    video.onclick = togglePlay;
-
-    function togglePlay() {
-        if (video.paused) video.play();
-        else video.pause();
-        updatePlayIcons();
+    // Seek Logic
+    function seek(amount) {
+        video.currentTime += amount;
     }
 
-    function updatePlayIcons() {
-        if (video.paused) {
-            pPlay.style.display = 'block';
-            pPause.style.display = 'none';
+    // UI Disappear Logic
+    let uiTimer;
+    function toggleUI(forceHide = false) {
+        if(forceHide) {
+            body.classList.add('ui-hidden');
         } else {
-            pPlay.style.display = 'none';
-            pPause.style.display = 'block';
+            body.classList.remove('ui-hidden');
+            clearTimeout(uiTimer);
+            uiTimer = setTimeout(() => body.classList.add('ui-hidden'), 5000);
         }
     }
 
-    // Aspect Ratio Logic
-    ratioList.onchange = () => {
-        video.className = ratioList.value;
+    // Show UI on mouse movement
+    document.addEventListener('mousemove', () => toggleUI(false));
+    document.addEventListener('click', () => toggleUI(false));
+
+    // Playback
+    playBtn.onclick = () => {
+        if (video.paused) video.play(); else video.pause();
     };
 
-    // Fullscreen Logic
-    const toggleFS = () => {
-        if (!document.fullscreenElement) {
-            playerViewport.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    };
+    video.onplay = () => { svgPlay.style.display = 'none'; svgPause.style.display = 'block'; };
+    video.onpause = () => { svgPlay.style.display = 'block'; svgPause.style.display = 'none'; };
 
-    document.getElementById('fullScreenBtn').onclick = toggleFS;
-    playerViewport.ondblclick = toggleFS;
+    // Ratios
+    ratioSel.onchange = () => video.className = ratioSel.value;
 
-    // Timeline logic
+    // Timeline
     video.ontimeupdate = () => {
-        const pct = (video.currentTime / video.duration) * 100;
-        timeFill.style.width = pct + '%';
+        progBar.style.width = (video.currentTime / video.duration) * 100 + '%';
     };
 
-    timeline.onclick = (e) => {
-        const rect = timeline.getBoundingClientRect();
-        const pos = (e.clientX - rect.left) / rect.width;
-        video.currentTime = pos * video.duration;
+    progCont.onclick = (e) => {
+        const rect = progCont.getBoundingClientRect();
+        video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
     };
 
-    // Load a sample stream on start
+    function toggleFS() {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    }
+
+    // Default Demo Link
     document.getElementById('streamUrl').value = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
 </script>
-
 </body>
 </html>
