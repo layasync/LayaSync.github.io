@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossy Glass Network Player</title>
+    <!-- HLS.js for streaming support -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --accent-color: #00d2ff;
+        }
+
+        body {
+            margin: 0;
+            background: #0f0f0f;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+
+        /* Video Container with Aspect Ratio Logic */
+        .player-wrapper {
+            position: relative;
+            width: 80%;
+            max-width: 1000px;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* The Video Element */
+        video {
+            width: 100%;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        /* Aspect Ratio States */
+        .ratio-fit { object-fit: contain; }
+        .ratio-fill { object-fit: fill; }
+        .ratio-zoom { object-fit: cover; }
+        .ratio-16-9 { aspect-ratio: 16 / 9; object-fit: cover; }
+
+        /* Glossy Glass UI Controls */
+        .controls-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-wrapper:hover .controls-overlay {
+            opacity: 1;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Buttons & Icons */
+        .btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.1); }
+        .btn svg { width: 28px; height: 28px; fill: white; }
+
+        /* Custom Selection Menus */
+        select {
+            background: var(--glass-bg);
+            color: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="player-wrapper" id="playerContainer">
+    <!-- Video Player -->
+    <video id="video" class="ratio-fit"></video>
+
+    <!-- Controls Layer -->
+    <div class="controls-overlay">
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="glass-panel">
+            <!-- Play/Pause SVG Buttons -->
+            <button class="btn" id="playBtn">
+                <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+
+            <!-- Language/Audio Selection -->
+            <div class="setting-group">
+                <label>Audio: </label>
+                <select id="audioTrack"></select>
+            </div>
+
+            <!-- Subtitle Selection -->
+            <div class="setting-group">
+                <label>Subs: </label>
+                <select id="subtitleTrack"></select>
+            </div>
+
+            <!-- Aspect Ratio Selection -->
+            <div class="setting-group">
+                <label>Ratio: </label>
+                <select id="aspectRatio">
+                    <option value="ratio-fit">Fit</option>
+                    <option value="ratio-fill">Fill</option>
+                    <option value="ratio-zoom">Zoom</option>
+                    <option value="ratio-16-9">16:9</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const audioSelect = document.getElementById('audioTrack');
+    const subtitleSelect = document.getElementById('subtitleTrack');
+    const ratioSelect = document.getElementById('aspectRatio');
+    const progressFill = document.getElementById('progressFill');
+    const progressBar = document.getElementById('progressBar');
+
+    // REPLACE THIS URL with your stream (m3u8, mp4, etc)
+    const streamUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(streamUrl);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            // Populate Audio Tracks
+            hls.audioTracks.forEach((track, index) => {
+                let opt = document.createElement('option');
+                opt.value = index;
+                opt.text = track.name || `Track ${index}`;
+                audioSelect.appendChild(opt);
+            });
+
+            // Populate Subtitles
+            hls.subtitleTracks.forEach((track, index) => {
+                let opt = document.createElement('option');
+                opt.value = index;
+                opt.text = track.name || `Subs ${index}`;
+                subtitleSelect.appendChild(opt);
+            });
+        });
+
+        // Audio Switching
+        audioSelect.onchange = () => { hls.audioTrack = parseInt(audioSelect.value); };
+        // Subtitle Switching
+        subtitleSelect.onchange = () => { hls.subtitleTrack = parseInt(subtitleSelect.value); };
+
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Fallback for Safari native HLS
+        video.src = streamUrl;
+    }
+
+    // Play/Pause Logic
+    playBtn.onclick = () => {
+        if (video.paused) {
+            video.play();
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        } else {
+            video.pause();
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+        }
+    };
+
+    // Aspect Ratio Logic
+    ratioSelect.onchange = () => {
+        video.className = ratioSelect.value;
+    };
+
+    // Progress Bar Updates
+    video.ontimeupdate = () => {
+        const pct = (video.currentTime / video.duration) * 100;
+        progressFill.style.width = pct + '%';
+    };
+
+    progressBar.onclick = (e) => {
+        const rect = progressBar.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+    };
+</script>
+
+</body>
+</html>
