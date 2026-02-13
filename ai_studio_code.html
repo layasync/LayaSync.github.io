@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinity Stream Pro - Proxy Edition</title>
+    <title>Infinity Stream Pro - Premium Cinema</title>
+    <!-- HLS.js for M3U8 support -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&display=swap');
 
         :root {
             --accent: #00f2ff;
             --accent-glow: rgba(0, 242, 255, 0.5);
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --panel-bg: rgba(10, 10, 10, 0.85);
+            --glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --panel-bg: rgba(8, 8, 8, 0.9);
         }
 
         * { box-sizing: border-box; }
@@ -23,24 +24,25 @@
             overflow: hidden; color: #fff;
         }
 
-        #video-container {
+        /* Video Layer */
+        #viewport {
             position: relative; width: 100vw; height: 100vh;
             display: flex; justify-content: center; align-items: center;
+            background: #000;
         }
 
         video { 
             width: 100%; height: 100%; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #000;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Aspect Ratio Controls */
+        /* Aspect Ratio Engines */
         .ratio-fit { object-fit: contain; }
-        .ratio-fill { object-fit: fill !important; } /* Hard stretch for full TV screen */
+        .ratio-fill { object-fit: fill !important; } /* Fills TV edges completely */
         .ratio-zoom { object-fit: cover; }
         .ratio-16-9 { aspect-ratio: 16/9; object-fit: cover; }
 
-        /* Glossy Glass UI - Header */
+        /* Glossy Glass UI - Top Bar */
         .header-ui {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
             width: 80%; max-width: 1200px; z-index: 100;
@@ -49,151 +51,150 @@
 
         .url-box {
             display: flex; background: var(--glass);
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--glass-border); padding: 10px;
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); padding: 8px;
             border-radius: 100px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
 
         .url-box input {
             flex: 1; background: transparent; border: none;
-            padding: 10px 30px; color: white; font-size: 1.2rem;
-            outline: none; font-weight: 300;
+            padding: 12px 30px; color: white; font-size: 1.1rem;
+            outline: none; font-weight: 200;
         }
 
-        .btn-prime {
+        .btn-play {
             background: #fff; color: #000; border: none;
             padding: 0 40px; border-radius: 50px; font-weight: 700;
             cursor: pointer; transition: 0.3s;
         }
-        .btn-prime:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
+        .btn-play:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* Glossy Glass UI - Footer */
+        /* Glossy Glass UI - Bottom Dock */
         .controls-ui {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 1400px; z-index: 100;
+            width: 92%; max-width: 1400px; z-index: 100;
             transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        .dock {
+        .glass-dock {
             background: var(--panel-bg);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
             border: 1px solid var(--glass-border); border-radius: 35px;
-            padding: 25px 40px; box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+            padding: 30px 45px; box-shadow: 0 30px 80px rgba(0,0,0,0.9);
         }
 
-        .progress-container {
-            width: 100%; height: 8px; background: rgba(255,255,255,0.1);
+        .timeline-container {
+            width: 100%; height: 10px; background: rgba(255,255,255,0.1);
             border-radius: 20px; margin-bottom: 25px; cursor: pointer;
+            position: relative; overflow: hidden;
         }
         .progress-bar {
-            height: 100%; width: 0%; background: var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow); border-radius: 20px;
+            height: 100%; width: 0%; background: linear-gradient(90deg, #0088ff, var(--accent));
+            box-shadow: 0 0 20px var(--accent-glow); border-radius: 20px;
         }
 
-        .control-grid { display: flex; align-items: center; justify-content: space-between; }
-        .group { display: flex; align-items: center; gap: 25px; }
+        .row { display: flex; align-items: center; justify-content: space-between; }
+        .group { display: flex; align-items: center; gap: 20px; }
 
         /* SVG Circular Buttons */
-        .btn-svg {
-            width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--glass-border);
+        .btn-icon {
+            width: 65px; height: 65px; border-radius: 50%; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.05); cursor: pointer;
             display: flex; align-items: center; justify-content: center; transition: 0.3s;
         }
-        .btn-svg:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
-        .btn-svg svg { width: 30px; height: 30px; fill: #fff; }
+        .btn-icon:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
+        .btn-icon svg { width: 32px; height: 32px; fill: #fff; }
 
-        /* Dropdowns */
-        .select-wrap { display: flex; flex-direction: column; gap: 4px; }
-        .select-wrap label { font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-left: 5px;}
+        /* Select Menus */
+        .select-group { display: flex; flex-direction: column; gap: 4px; }
+        .select-group label { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1.5px; margin-left: 5px;}
         select {
             background: transparent; color: white; border: none; font-size: 1.1rem;
             outline: none; cursor: pointer; font-family: 'Outfit';
         }
-        option { background: #111; color: #fff; }
+        option { background: #0a0a0a; color: #fff; }
 
         /* Buffering Spinner */
         #loader {
-            position: absolute; width: 80px; height: 80px;
-            border: 6px solid rgba(255,255,255,0.1);
+            position: absolute; width: 90px; height: 90px;
+            border: 6px solid rgba(255,255,255,0.05);
             border-top: 6px solid var(--accent);
-            border-radius: 50%; animation: spin 1s linear infinite;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
             display: none; z-index: 1000;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Hide UI Utility */
-        .ui-hidden .header-ui { transform: translate(-50%, -150px); opacity: 0; }
-        .ui-hidden .controls-ui { transform: translate(-50%, 150px); opacity: 0; }
+        /* UI Visibility States */
+        .ui-hidden .header-ui { transform: translate(-50%, -160px); opacity: 0; }
+        .ui-hidden .controls-ui { transform: translate(-50%, 160px); opacity: 0; }
         .ui-hidden { cursor: none; }
     </style>
 </head>
 <body id="master">
 
-    <div id="video-container">
+    <div id="viewport">
         <div id="loader"></div>
-        <video id="player" class="ratio-fit" playsinline crossorigin="anonymous"></video>
+        <video id="mainVideo" class="ratio-fit" playsinline crossorigin="anonymous"></video>
 
-        <!-- Header -->
+        <!-- Top Input Panel -->
         <div class="header-ui">
             <div class="url-box">
-                <input type="text" id="urlInput" placeholder="Paste Network Link (MKV, MP4, HLS, Google Link)...">
-                <button class="btn-prime" onclick="initPlayer()">LOAD STREAM</button>
+                <input type="text" id="urlInput" placeholder="Paste MKV, MP4, Google Drive, or M3U8 Link...">
+                <button class="btn-play" onclick="initializeStream()">PLAY STREAM</button>
             </div>
         </div>
 
-        <!-- Controls -->
+        <!-- Bottom UI Dock -->
         <div class="controls-ui">
-            <div class="progress-container" id="timeline">
+            <div class="timeline-container" id="timeline">
                 <div class="progress-bar" id="progFill"></div>
             </div>
 
-            <div class="dock">
-                <div class="control-grid">
+            <div class="glass-dock">
+                <div class="row">
                     
-                    <!-- Playback -->
+                    <!-- Seek & Play -->
                     <div class="group">
-                        <button class="btn-svg" onclick="seek(-10)">
-                            <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/></svg>
+                        <button class="btn-icon" onclick="seek(-10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/><text x="9" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
                         </button>
                         
-                        <button class="btn-svg" id="playBtn">
-                            <svg id="svg-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                            <svg id="svg-pause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        <button class="btn-icon" id="playToggle">
+                            <svg id="svgPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="svgPause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                         </button>
 
-                        <button class="btn-svg" onclick="seek(10)">
-                            <svg viewBox="0 0 24 24"><path d="M12.5 3c4.97 0 9 4.03 9 9H24l-3.89 3.89-.07.14L16 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.17-.67 4.24-1.76l1.41 1.41C16.84 18.5 15.03 19.5 13 19.5c-4.14 0-7.5-3.36-7.5-7.5s3.36-7.5 7.5-7.5z"/></svg>
+                        <button class="btn-icon" onclick="seek(10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c4.97 0 9 4.03 9 9H24l-3.89 3.89-.07.14L16 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.17-.67 4.24-1.76l1.41 1.41C16.84 18.5 15.03 19.5 13 19.5c-4.14 0-7.5-3.36-7.5-7.5s3.36-7.5 7.5-7.5z"/><text x="11" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
                         </button>
                     </div>
 
-                    <!-- Audio/Subs -->
+                    <!-- Languages -->
                     <div class="group">
-                        <div class="select-wrap">
-                            <label>AUDIO TRACK</label>
-                            <select id="audioSel"><option>Default</option></select>
+                        <div class="select-group">
+                            <label>AUDIO</label>
+                            <select id="audioMenu"><option>Default</option></select>
                         </div>
-                        <div class="select-wrap">
-                            <label>SUBTITLES</label>
-                            <select id="subSel"><option value="-1">None</option></select>
+                        <div class="select-group">
+                            <label>SUBS</label>
+                            <select id="subMenu"><option value="-1">None</option></select>
                         </div>
                     </div>
 
-                    <!-- Aspect/Screen -->
+                    <!-- Layout -->
                     <div class="group">
-                        <div class="select-wrap">
-                            <label>DISPLAY MODE</label>
-                            <select id="ratioSel">
-                                <option value="ratio-fit">Fit (Original)</option>
-                                <option value="ratio-fill">Fill (Stretched)</option>
-                                <option value="ratio-zoom">Zoom (Crop)</option>
-                                <option value="ratio-16-9">Cinema 16:9</option>
+                        <div class="select-group">
+                            <label>ASPECT</label>
+                            <select id="ratioMenu">
+                                <option value="ratio-fit">Original Fit</option>
+                                <option value="ratio-fill">Full Screen (Fill)</option>
+                                <option value="ratio-zoom">Smart Zoom</option>
+                                <option value="ratio-16-9">Wide 16:9</option>
                             </select>
                         </div>
-                        <button class="btn-svg" onclick="toggleFS()">
+                        <button class="btn-icon" onclick="toggleFullscreen()">
                             <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                        </button>
-                        <button class="btn-svg" style="border-color:#ff4b4b" onclick="manualHide()">
-                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
                         </button>
                     </div>
 
@@ -203,72 +204,67 @@
     </div>
 
 <script>
-    const video = document.getElementById('player');
-    const playBtn = document.getElementById('playBtn');
-    const svgPlay = document.getElementById('svg-play');
-    const svgPause = document.getElementById('svg-pause');
-    const audioSel = document.getElementById('audioSel');
-    const subSel = document.getElementById('subSel');
-    const ratioSel = document.getElementById('ratioSel');
+    const video = document.getElementById('mainVideo');
+    const playToggle = document.getElementById('playToggle');
+    const svgPlay = document.getElementById('svgPlay');
+    const svgPause = document.getElementById('svgPause');
+    const audioMenu = document.getElementById('audioMenu');
+    const subMenu = document.getElementById('subMenu');
+    const ratioMenu = document.getElementById('ratioMenu');
     const progFill = document.getElementById('progFill');
     const timeline = document.getElementById('timeline');
     const master = document.getElementById('master');
     const loader = document.getElementById('loader');
 
     // YOUR PROXY
-    const PROXY_URL = "https://layasync-proxy.layasync.workers.dev/";
+    const PROXY = "https://layasync-proxy.layasync.workers.dev/";
 
     let hls = new Hls();
 
-    function initPlayer() {
-        const inputUrl = document.getElementById('urlInput').value.trim();
-        if(!inputUrl) return;
-
-        // Apply Proxy to the URL
-        const finalUrl = PROXY_URL + inputUrl;
+    function initializeStream() {
+        const url = document.getElementById('urlInput').value.trim();
+        if(!url) return;
 
         loader.style.display = 'block';
-        audioSel.innerHTML = '<option>Default</option>';
-        subSel.innerHTML = '<option value="-1">None</option>';
+        const proxiedUrl = PROXY + url;
 
-        if (inputUrl.includes('.m3u8')) {
+        // Reset Track Menus
+        audioMenu.innerHTML = '<option>Default</option>';
+        subMenu.innerHTML = '<option value="-1">None</option>';
+
+        if (url.includes('.m3u8')) {
             if (Hls.isSupported()) {
                 hls.destroy();
                 hls = new Hls({
-                    // This forces every segment and manifest part to use your proxy
-                    xhrSetup: function(xhr, url) {
-                        if (!url.startsWith(PROXY_URL)) {
-                            xhr.open('GET', PROXY_URL + url, true);
-                        }
+                    xhrSetup: (xhr, u) => {
+                        // Crucial: Proxy every chunk to prevent CORS errors
+                        if(!u.startsWith(PROXY)) xhr.open('GET', PROXY + u, true);
                     }
                 });
-                hls.loadSource(finalUrl);
+                hls.loadSource(proxiedUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     video.play();
-                    hls.audioTracks.forEach((t, i) => audioSel.add(new Option(t.name || i, i)));
-                    hls.subtitleTracks.forEach((t, i) => subSel.add(new Option(t.name || i, i)));
+                    hls.audioTracks.forEach((t, i) => audioMenu.add(new Option(t.name || i, i)));
+                    hls.subtitleTracks.forEach((t, i) => subMenu.add(new Option(t.name || i, i)));
                 });
             }
         } else {
-            // Standard MKV, MP4, Google Links
+            // Direct Video (MP4, MKV, Web-DL, Google Drive)
             hls.destroy();
-            video.src = finalUrl;
+            video.src = proxiedUrl;
             video.load();
             video.play().catch(e => { loader.style.display = 'none'; });
         }
     }
 
-    // Controls Logic
-    playBtn.onclick = () => video.paused ? video.play() : video.pause();
+    // Playback
+    playToggle.onclick = () => video.paused ? video.play() : video.pause();
     video.onplay = () => { svgPlay.style.display = 'none'; svgPause.style.display = 'block'; loader.style.display = 'none'; };
     video.onpause = () => { svgPlay.style.display = 'block'; svgPause.style.display = 'none'; };
     
-    video.onwaiting = () => loader.style.display = 'block';
-    video.onplaying = () => loader.style.display = 'none';
-
+    // Seek
     function seek(s) { video.currentTime += s; }
-    
     video.ontimeupdate = () => {
         progFill.style.width = (video.currentTime / video.duration) * 100 + '%';
     };
@@ -277,11 +273,16 @@
         video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
     };
 
-    ratioSel.onchange = () => video.className = ratioSel.value;
-    audioSel.onchange = () => hls.audioTrack = audioSel.value;
-    subSel.onchange = () => hls.subtitleTrack = subSel.value;
+    // States
+    video.onwaiting = () => loader.style.display = 'block';
+    video.onplaying = () => loader.style.display = 'none';
 
-    // UI Toggle Logic
+    // Settings
+    ratioMenu.onchange = () => video.className = ratioMenu.value;
+    audioMenu.onchange = () => { if(hls) hls.audioTrack = audioMenu.value; };
+    subMenu.onchange = () => { if(hls) hls.subtitleTrack = subMenu.value; };
+
+    // UI Logic
     let uiTimer;
     function showUI() {
         master.classList.remove('ui-hidden');
@@ -290,8 +291,7 @@
             if(!video.paused) master.classList.add('ui-hidden');
         }, 5000);
     }
-    function manualHide() { master.classList.add('ui-hidden'); }
-    function toggleFS() {
+    function toggleFullscreen() {
         if (!document.fullscreenElement) master.requestFullscreen();
         else document.exitFullscreen();
     }
