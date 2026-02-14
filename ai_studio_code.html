@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Cinema - Universal TV Player</title>
-    <!-- HLS Engine for Network Streams -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>Infinity Stream Pro - Premium Movie Player</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&display=swap');
 
         :root {
             --accent: #00f2ff;
-            --accent-glow: rgba(0, 242, 255, 0.4);
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --dock-bg: rgba(10, 10, 10, 0.85);
+            --accent-glow: rgba(0, 242, 255, 0.5);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --dock-bg: rgba(10, 10, 10, 0.9);
         }
 
         * { box-sizing: border-box; }
@@ -33,7 +31,8 @@
 
         video { 
             width: 100%; height: 100%; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #000;
         }
 
         /* Aspect Ratio Logic */
@@ -45,13 +44,13 @@
         /* Glossy Header Panel */
         .header-ui {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            width: 80%; max-width: 1200px; z-index: 100;
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            width: 80%; max-width: 1100px; z-index: 100;
+            transition: all 0.6s ease;
         }
 
         .url-glass-box {
             display: flex; background: var(--glass);
-            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border); padding: 10px;
             border-radius: 100px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
@@ -64,7 +63,7 @@
 
         .btn-load {
             background: #fff; color: #000; border: none;
-            padding: 0 45px; border-radius: 50px; font-weight: 700;
+            padding: 0 40px; border-radius: 50px; font-weight: 700;
             cursor: pointer; transition: 0.3s;
         }
         .btn-load:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
@@ -73,17 +72,17 @@
         .controls-ui {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1400px; z-index: 100;
-            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: all 0.6s ease;
         }
 
         .glass-dock {
             background: var(--dock-bg);
-            backdrop-filter: blur(45px); -webkit-backdrop-filter: blur(45px);
+            backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
             border: 1px solid var(--glass-border); border-radius: 35px;
             padding: 25px 45px; box-shadow: 0 30px 80px rgba(0,0,0,1);
         }
 
-        /* Progress Bar */
+        /* Timeline Bar */
         .timeline {
             width: 100%; height: 10px; background: rgba(255,255,255,0.1);
             border-radius: 20px; margin-bottom: 25px; cursor: pointer;
@@ -94,11 +93,10 @@
             box-shadow: 0 0 15px var(--accent-glow); border-radius: 20px;
         }
 
-        /* Layout Groups */
         .row { display: flex; align-items: center; justify-content: space-between; }
         .group { display: flex; align-items: center; gap: 20px; }
 
-        /* SVG Circle Buttons */
+        /* SVG Control Buttons */
         .btn-svg {
             width: 65px; height: 65px; border-radius: 50%; border: 1px solid var(--glass-border);
             background: rgba(255,255,255,0.05); cursor: pointer;
@@ -132,21 +130,22 @@
         .ui-hidden { cursor: none; }
     </style>
 </head>
-<body id="player-body">
+<body id="master-body">
 
     <div id="video-stage">
         <div id="buffering"></div>
-        <video id="v" class="ratio-fit" playsinline crossorigin="anonymous"></video>
+        <!-- crossorigin and playsinline required for proxy and TV hardware -->
+        <video id="moviePlayer" class="ratio-fit" playsinline crossorigin="anonymous"></video>
 
-        <!-- Header Panel -->
+        <!-- Top Input Panel -->
         <div class="header-ui">
             <div class="url-glass-box">
-                <input type="text" id="urlInput" placeholder="Paste MKV, Web-DL, MP4 or M3U8 link here...">
-                <button class="btn-load" onclick="runStream()">PLAY</button>
+                <input type="text" id="urlInput" placeholder="Enter Movie Link (MKV, Web-DL, MP4)...">
+                <button class="btn-load" onclick="startMovie()">LOAD MOVIE</button>
             </div>
         </div>
 
-        <!-- Dock Panel -->
+        <!-- Bottom UI Panel -->
         <div class="controls-ui">
             <div class="timeline" id="timeline">
                 <div class="progress-fill" id="progFill"></div>
@@ -155,7 +154,7 @@
             <div class="glass-dock">
                 <div class="row">
                     
-                    <!-- LEFT: Playback -->
+                    <!-- LEFT: Seek & Playback -->
                     <div class="group">
                         <button class="btn-svg" onclick="seek(-10)">
                             <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/><text x="8.5" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
@@ -171,11 +170,11 @@
                         </button>
                     </div>
 
-                    <!-- MID: Selectors -->
+                    <!-- MID: Track Selection -->
                     <div class="group">
                         <div class="menu-box">
-                            <label>AUDIO</label>
-                            <select id="audioMenu"><option>Default</option></select>
+                            <label>AUDIO TRACK</label>
+                            <select id="audioMenu"><option>Original Stream</option></select>
                         </div>
                         <div class="menu-box">
                             <label>SUBTITLES</label>
@@ -183,13 +182,13 @@
                         </div>
                     </div>
 
-                    <!-- RIGHT: Format -->
+                    <!-- RIGHT: Aspect & Screen -->
                     <div class="group">
                         <div class="menu-box">
-                            <label>SCREEN MODE</label>
+                            <label>ASPECT RATIO</label>
                             <select id="ratioMenu">
-                                <option value="ratio-fit">Fit (Original)</option>
-                                <option value="ratio-fill">Fill Screen (Stretched)</option>
+                                <option value="ratio-fit">Fit Original</option>
+                                <option value="ratio-fill">Fill Screen (Stretch)</option>
                                 <option value="ratio-zoom">Smart Zoom</option>
                                 <option value="ratio-16-9">Wide 16:9</option>
                             </select>
@@ -205,7 +204,7 @@
     </div>
 
 <script>
-    const video = document.getElementById('v');
+    const video = document.getElementById('moviePlayer');
     const playBtn = document.getElementById('playBtn');
     const svgPlay = document.getElementById('svgPlay');
     const svgPause = document.getElementById('svgPause');
@@ -214,110 +213,98 @@
     const ratioMenu = document.getElementById('ratioMenu');
     const progFill = document.getElementById('progFill');
     const timeline = document.getElementById('timeline');
-    const playerBody = document.getElementById('player-body');
+    const masterBody = document.getElementById('master-body');
     const buffering = document.getElementById('buffering');
 
-    // YOUR WORKING PROXY
+    // YOUR PROXY
     const PROXY = "https://layasync-proxy.layasync.workers.dev/";
 
-    let hls = new Hls();
-
-    function runStream() {
+    function startMovie() {
         const url = document.getElementById('urlInput').value.trim();
         if(!url) return;
 
         buffering.style.display = 'block';
-        const proxiedUrl = PROXY + url;
+        
+        // Combine Proxy + URL
+        video.src = PROXY + url;
 
-        // Reset Selection Menus
-        audioMenu.innerHTML = '<option>Original</option>';
+        // Reset Menus
+        audioMenu.innerHTML = '<option>Original Stream</option>';
         subMenu.innerHTML = '<option value="-1">None</option>';
 
-        // Check for HLS vs MKV/MP4/Web-DL
-        if (url.includes('.m3u8')) {
-            if (Hls.isSupported()) {
-                hls.destroy();
-                hls = new Hls({
-                    xhrSetup: (xhr, u) => {
-                        // Ensure all sub-segments go through your proxy
-                        if(!u.startsWith(PROXY)) xhr.open('GET', PROXY + u, true);
-                    }
-                });
-                hls.loadSource(proxiedUrl);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play();
-                    // Load Audio Tracks from HLS
-                    hls.audioTracks.forEach((t, i) => audioMenu.add(new Option(t.name || i, i)));
-                    // Load Subtitles from HLS
-                    hls.subtitleTracks.forEach((t, i) => subMenu.add(new Option(t.name || i, i)));
-                });
-            }
-        } else {
-            // Native Support for MKV, MP4, Web-DL
-            hls.destroy();
-            video.src = proxiedUrl;
-            video.load();
-            video.play().catch(e => { buffering.style.display = 'none'; });
-            
-            // Populate Native Tracks (if browser exposes them)
-            video.onloadedmetadata = () => {
-                if(video.textTracks) {
-                    for (let i = 0; i < video.textTracks.length; i++) {
-                        subMenu.add(new Option(video.textTracks[i].label || `Sub ${i}`, i));
-                    }
+        video.load();
+        video.play().catch(e => { buffering.style.display = 'none'; });
+
+        // Auto-detect Native Text Tracks (Subtitles)
+        video.onloadedmetadata = () => {
+            if (video.textTracks) {
+                for (let i = 0; i < video.textTracks.length; i++) {
+                    const label = video.textTracks[i].label || `Track ${i + 1}`;
+                    subMenu.add(new Option(label, i));
                 }
-            };
-        }
+            }
+        };
     }
 
-    // Playback State
+    // Play/Pause SVG Switching
     playBtn.onclick = () => video.paused ? video.play() : video.pause();
-    video.onplay = () => { svgPlay.style.display = 'none'; svgPause.style.display = 'block'; buffering.style.display = 'none'; };
-    video.onpause = () => { svgPlay.style.display = 'block'; svgPause.style.display = 'none'; };
     
-    // Seek & Progress
-    function seek(s) { video.currentTime += s; }
-    video.ontimeupdate = () => {
-        progFill.style.width = (video.currentTime / video.duration) * 100 + '%';
+    video.onplay = () => { 
+        svgPlay.style.display = 'none'; 
+        svgPause.style.display = 'block'; 
+        buffering.style.display = 'none'; 
     };
-    timeline.onclick = (e) => {
-        const rect = timeline.getBoundingClientRect();
-        video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+    
+    video.onpause = () => { 
+        svgPlay.style.display = 'block'; 
+        svgPause.style.display = 'none'; 
     };
 
-    // Buffer Spinner
+    // Buffer Spinner logic
     video.onwaiting = () => buffering.style.display = 'block';
     video.onplaying = () => buffering.style.display = 'none';
 
-    // Settings logic
+    // Seek Logic (-10 / +10)
+    function seek(seconds) { video.currentTime += seconds; }
+
+    // Progress Bar
+    video.ontimeupdate = () => {
+        const pct = (video.currentTime / video.duration) * 100;
+        progFill.style.width = pct + '%';
+    };
+
+    timeline.onclick = (e) => {
+        const rect = timeline.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+    };
+
+    // Ratio & Track Switching
     ratioMenu.onchange = () => video.className = ratioMenu.value;
-    audioMenu.onchange = () => { if(hls) hls.audioTrack = audioMenu.value; };
-    subMenu.onchange = () => { 
-        if(hls) hls.subtitleTrack = subMenu.value; 
-        else { // Native subtitle toggle
-            for (let i = 0; i < video.textTracks.length; i++) {
-                video.textTracks[i].mode = (i == subMenu.value) ? 'showing' : 'hidden';
-            }
+
+    subMenu.onchange = () => {
+        for (let i = 0; i < video.textTracks.length; i++) {
+            video.textTracks[i].mode = (i == subMenu.value) ? 'showing' : 'hidden';
         }
     };
 
-    // TV UI Behavior (Auto-hide after 5s)
+    // Auto-hide UI Logic for TV
     let uiTimer;
-    function wakeUI() {
-        playerBody.classList.remove('ui-hidden');
+    function showUI() {
+        masterBody.classList.remove('ui-hidden');
         clearTimeout(uiTimer);
         uiTimer = setTimeout(() => {
-            if(!video.paused) playerBody.classList.add('ui-hidden');
+            if(!video.paused) masterBody.classList.add('ui-hidden');
         }, 5000);
     }
+
     function toggleFullscreen() {
-        if (!document.fullscreenElement) playerBody.requestFullscreen();
+        if (!document.fullscreenElement) masterBody.requestFullscreen();
         else document.exitFullscreen();
     }
 
-    document.addEventListener('mousemove', wakeUI);
-    document.addEventListener('click', wakeUI);
+    document.addEventListener('mousemove', showUI);
+    document.addEventListener('click', showUI);
 </script>
 </body>
 </html>
