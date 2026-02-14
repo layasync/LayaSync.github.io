@@ -3,135 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinity Stream Pro</title>
+    <title>Pro Cinema - Universal TV Player</title>
+    <!-- HLS Engine for Network Streams -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&display=swap');
-        :root { --accent: #00f2ff; --glass: rgba(255, 255, 255, 0.05); --panel: rgba(10, 10, 10, 0.9); }
-        
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; font-family: 'Outfit', sans-serif; overflow: hidden; color: #fff; }
-        
-        #viewport { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        video { width: 100%; height: 100%; transition: 0.5s; background: #000; }
+
+        :root {
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.4);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --dock-bg: rgba(10, 10, 10, 0.85);
+        }
+
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; font-family: 'Outfit', sans-serif; 
+            overflow: hidden; color: #fff;
+        }
+
+        /* Video Stage */
+        #video-stage {
+            position: relative; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background: #000;
+        }
+
+        video { 
+            width: 100%; height: 100%; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
         /* Aspect Ratio Logic */
         .ratio-fit { object-fit: contain; }
-        .ratio-fill { object-fit: fill !important; } 
+        .ratio-fill { object-fit: fill !important; } /* Fills TV edges completely */
         .ratio-zoom { object-fit: cover; }
+        .ratio-16-9 { aspect-ratio: 16/9; object-fit: cover; }
 
-        /* UI Styling */
-        .header-ui { position: absolute; top: 30px; width: 80%; z-index: 100; transition: 0.5s; }
-        .url-box { display: flex; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); padding: 8px; border-radius: 100px; }
-        .url-box input { flex: 1; background: transparent; border: none; padding: 10px 25px; color: white; outline: none; font-size: 1.1rem; }
-        
-        .controls-ui { position: absolute; bottom: 30px; width: 90%; z-index: 100; transition: 0.5s; }
-        .glass-dock { background: var(--panel); backdrop-filter: blur(40px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 25px; box-shadow: 0 20px 50px #000; }
-        
-        .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 20px; cursor: pointer; }
-        .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; box-shadow: 0 0 15px var(--accent); }
+        /* Glossy Header Panel */
+        .header-ui {
+            position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            width: 80%; max-width: 1200px; z-index: 100;
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
 
-        .btn-icon { width: 55px; height: 55px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .btn-icon:hover { background: var(--accent); transform: scale(1.1); }
-        .btn-icon svg { width: 28px; height: 28px; fill: white; }
+        .url-glass-box {
+            display: flex; background: var(--glass);
+            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+            border: 1px solid var(--glass-border); padding: 10px;
+            border-radius: 100px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
 
-        #status-msg { position: absolute; top: 100px; background: rgba(255,0,0,0.6); padding: 10px 20px; border-radius: 10px; display: none; }
-        #loader { position: absolute; width: 60px; height: 60px; border: 5px solid rgba(255,255,255,0.1); border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        .url-glass-box input {
+            flex: 1; background: transparent; border: none;
+            padding: 10px 30px; color: white; font-size: 1.2rem;
+            outline: none; font-weight: 200;
+        }
+
+        .btn-load {
+            background: #fff; color: #000; border: none;
+            padding: 0 45px; border-radius: 50px; font-weight: 700;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-load:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px var(--accent-glow); }
+
+        /* Glossy Control Dock */
+        .controls-ui {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 1400px; z-index: 100;
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .glass-dock {
+            background: var(--dock-bg);
+            backdrop-filter: blur(45px); -webkit-backdrop-filter: blur(45px);
+            border: 1px solid var(--glass-border); border-radius: 35px;
+            padding: 25px 45px; box-shadow: 0 30px 80px rgba(0,0,0,1);
+        }
+
+        /* Progress Bar */
+        .timeline {
+            width: 100%; height: 10px; background: rgba(255,255,255,0.1);
+            border-radius: 20px; margin-bottom: 25px; cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow); border-radius: 20px;
+        }
+
+        /* Layout Groups */
+        .row { display: flex; align-items: center; justify-content: space-between; }
+        .group { display: flex; align-items: center; gap: 20px; }
+
+        /* SVG Circle Buttons */
+        .btn-svg {
+            width: 65px; height: 65px; border-radius: 50%; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.05); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .btn-svg:hover { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
+        .btn-svg svg { width: 32px; height: 32px; fill: #fff; }
+
+        /* Select Menus Style */
+        .menu-box { display: flex; flex-direction: column; gap: 4px; }
+        .menu-box label { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1.5px; margin-left: 5px;}
+        select {
+            background: transparent; color: white; border: none; font-size: 1.1rem;
+            outline: none; cursor: pointer; font-family: 'Outfit';
+        }
+        option { background: #111; color: #fff; }
+
+        /* Loader */
+        #buffering {
+            position: absolute; width: 90px; height: 90px;
+            border: 6px solid rgba(255,255,255,0.05);
+            border-top: 6px solid var(--accent);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            display: none; z-index: 1000;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .ui-hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
-        .ui-hidden-up { opacity: 0; pointer-events: none; transform: translateY(-20px); }
+        /* UI Visibility Logic */
+        .ui-hidden .header-ui { transform: translate(-50%, -160px); opacity: 0; }
+        .ui-hidden .controls-ui { transform: translate(-50%, 160px); opacity: 0; }
+        .ui-hidden { cursor: none; }
     </style>
 </head>
-<body>
+<body id="player-body">
 
-    <div id="viewport">
-        <div id="loader"></div>
-        <div id="status-msg"></div>
-        <video id="mainVideo" class="ratio-fit" crossorigin="anonymous" playsinline></video>
+    <div id="video-stage">
+        <div id="buffering"></div>
+        <video id="v" class="ratio-fit" playsinline crossorigin="anonymous"></video>
 
-        <div class="header-ui" id="uiHeader">
-            <div class="url-box">
-                <input type="text" id="urlInput" placeholder="Paste Video Link...">
-                <button style="background:#fff; color:#000; border-radius:50px; padding:0 30px; border:none; font-weight:700; cursor:pointer;" onclick="playStream()">LOAD</button>
+        <!-- Header Panel -->
+        <div class="header-ui">
+            <div class="url-glass-box">
+                <input type="text" id="urlInput" placeholder="Paste MKV, Web-DL, MP4 or M3U8 link here...">
+                <button class="btn-load" onclick="runStream()">PLAY</button>
             </div>
         </div>
 
-        <div class="controls-ui" id="uiFooter">
-            <div class="progress-track" id="timeline"><div class="progress-fill" id="progFill"></div></div>
+        <!-- Dock Panel -->
+        <div class="controls-ui">
+            <div class="timeline" id="timeline">
+                <div class="progress-fill" id="progFill"></div>
+            </div>
+
             <div class="glass-dock">
-                <div style="display:flex; align-items:center; justify-content:space-between;">
-                    <div style="display:flex; gap:15px;">
-                        <button class="btn-icon" onclick="video.currentTime -= 10"><svg viewBox="0 0 24 24"><path d="M11 18V7l-7 5.5 7 5.5zm8-11l-7 5.5 7 5.5V7z"/></svg></button>
-                        <button class="btn-icon" id="playBtn"><svg id="s-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg id="s-pause" style="display:none" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
-                        <button class="btn-icon" onclick="video.currentTime += 10"><svg viewBox="0 0 24 24"><path d="M4 18l7-5.5L4 7v11zm8-11v11l7-5.5L12 7z"/></svg></button>
+                <div class="row">
+                    
+                    <!-- LEFT: Playback -->
+                    <div class="group">
+                        <button class="btn-svg" onclick="seek(-10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.31 2.69-6 6-6s6 2.69 6 6-2.69 6-6 6c-1.66 0-3.17-.67-4.24-1.76l-1.41 1.41C8.16 18.5 9.97 19.5 12 19.5c4.14 0 7.5-3.36 7.5-7.5S16.14 4.5 12 4.5z"/><text x="8.5" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
+                        </button>
+                        
+                        <button class="btn-svg" id="playBtn">
+                            <svg id="svgPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="svgPause" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+
+                        <button class="btn-svg" onclick="seek(10)">
+                            <svg viewBox="0 0 24 24"><path d="M12.5 3c4.97 0 9 4.03 9 9H24l-3.89 3.89-.07.14L16 12h3c0-3.31-2.69-6-6-6s-6 2.69-6 6 2.69 6 6 6c1.66 0 3.17-.67 4.24-1.76l1.41 1.41C16.84 18.5 15.03 19.5 13 19.5c-4.14 0-7.5-3.36-7.5-7.5s3.36-7.5 7.5-7.5z"/><text x="10.5" y="14.5" font-size="5" fill="white" font-weight="bold">10</text></svg>
+                        </button>
                     </div>
-                    <div style="display:flex; gap:20px; align-items:center;">
-                        <select id="ratioSel" style="background:transparent; color:white; border:1px solid rgba(255,255,255,0.2); padding:10px; border-radius:10px;">
-                            <option value="ratio-fit">Original Fit</option>
-                            <option value="ratio-fill">Fill Screen</option>
-                            <option value="ratio-zoom">Smart Zoom</option>
-                        </select>
-                        <button class="btn-icon" onclick="document.documentElement.requestFullscreen()"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
+
+                    <!-- MID: Selectors -->
+                    <div class="group">
+                        <div class="menu-box">
+                            <label>AUDIO</label>
+                            <select id="audioMenu"><option>Default</option></select>
+                        </div>
+                        <div class="menu-box">
+                            <label>SUBTITLES</label>
+                            <select id="subMenu"><option value="-1">None</option></select>
+                        </div>
                     </div>
+
+                    <!-- RIGHT: Format -->
+                    <div class="group">
+                        <div class="menu-box">
+                            <label>SCREEN MODE</label>
+                            <select id="ratioMenu">
+                                <option value="ratio-fit">Fit (Original)</option>
+                                <option value="ratio-fill">Fill Screen (Stretched)</option>
+                                <option value="ratio-zoom">Smart Zoom</option>
+                                <option value="ratio-16-9">Wide 16:9</option>
+                            </select>
+                        </div>
+                        <button class="btn-svg" onclick="toggleFullscreen()">
+                            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    const video = document.getElementById('mainVideo');
+    const video = document.getElementById('v');
+    const playBtn = document.getElementById('playBtn');
+    const svgPlay = document.getElementById('svgPlay');
+    const svgPause = document.getElementById('svgPause');
+    const audioMenu = document.getElementById('audioMenu');
+    const subMenu = document.getElementById('subMenu');
+    const ratioMenu = document.getElementById('ratioMenu');
+    const progFill = document.getElementById('progFill');
+    const timeline = document.getElementById('timeline');
+    const playerBody = document.getElementById('player-body');
+    const buffering = document.getElementById('buffering');
+
+    // YOUR WORKING PROXY
     const PROXY = "https://layasync-proxy.layasync.workers.dev/";
-    const loader = document.getElementById('loader');
-    const status = document.getElementById('status-msg');
+
     let hls = new Hls();
 
-    function playStream() {
-        let url = document.getElementById('urlInput').value.trim();
+    function runStream() {
+        const url = document.getElementById('urlInput').value.trim();
         if(!url) return;
-        
-        status.style.display = 'none';
-        loader.style.display = 'block';
-        
-        // Final Proxied URL
-        const finalUrl = PROXY + url;
 
-        if(url.includes('.m3u8')) {
-            hls.destroy();
-            hls = new Hls({ xhrSetup: (xhr, u) => { if(!u.startsWith(PROXY)) xhr.open('GET', PROXY + u, true); } });
-            hls.loadSource(finalUrl);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+        buffering.style.display = 'block';
+        const proxiedUrl = PROXY + url;
+
+        // Reset Selection Menus
+        audioMenu.innerHTML = '<option>Original</option>';
+        subMenu.innerHTML = '<option value="-1">None</option>';
+
+        // Check for HLS vs MKV/MP4/Web-DL
+        if (url.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                hls.destroy();
+                hls = new Hls({
+                    xhrSetup: (xhr, u) => {
+                        // Ensure all sub-segments go through your proxy
+                        if(!u.startsWith(PROXY)) xhr.open('GET', PROXY + u, true);
+                    }
+                });
+                hls.loadSource(proxiedUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play();
+                    // Load Audio Tracks from HLS
+                    hls.audioTracks.forEach((t, i) => audioMenu.add(new Option(t.name || i, i)));
+                    // Load Subtitles from HLS
+                    hls.subtitleTracks.forEach((t, i) => subMenu.add(new Option(t.name || i, i)));
+                });
+            }
         } else {
+            // Native Support for MKV, MP4, Web-DL
             hls.destroy();
-            video.src = finalUrl;
-            video.play().catch(err => {
-                status.innerText = "Error: Video could not be loaded. Link might be expired or format not supported.";
-                status.style.display = 'block';
-                loader.style.display = 'none';
-            });
+            video.src = proxiedUrl;
+            video.load();
+            video.play().catch(e => { buffering.style.display = 'none'; });
+            
+            // Populate Native Tracks (if browser exposes them)
+            video.onloadedmetadata = () => {
+                if(video.textTracks) {
+                    for (let i = 0; i < video.textTracks.length; i++) {
+                        subMenu.add(new Option(video.textTracks[i].label || `Sub ${i}`, i));
+                    }
+                }
+            };
         }
     }
 
-    // Controls
-    document.getElementById('playBtn').onclick = () => video.paused ? video.play() : video.pause();
-    video.onplay = () => { document.getElementById('s-play').style.display='none'; document.getElementById('s-pause').style.display='block'; };
-    video.onpause = () => { document.getElementById('s-play').style.display='block'; document.getElementById('s-pause').style.display='none'; };
-    video.ontimeupdate = () => document.getElementById('progFill').style.width = (video.currentTime / video.duration)*100 + '%';
-    document.getElementById('ratioSel').onchange = (e) => video.className = e.target.value;
+    // Playback State
+    playBtn.onclick = () => video.paused ? video.play() : video.pause();
+    video.onplay = () => { svgPlay.style.display = 'none'; svgPause.style.display = 'block'; buffering.style.display = 'none'; };
+    video.onpause = () => { svgPlay.style.display = 'block'; svgPause.style.display = 'none'; };
     
-    // Auto-hide UI
-    let timer;
-    document.addEventListener('mousemove', () => {
-        document.getElementById('uiHeader').classList.remove('ui-hidden-up');
-        document.getElementById('uiFooter').classList.remove('ui-hidden');
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-            if(!video.paused) {
-                document.getElementById('uiHeader').classList.add('ui-hidden-up');
-                document.getElementById('uiFooter').classList.add('ui-hidden');
+    // Seek & Progress
+    function seek(s) { video.currentTime += s; }
+    video.ontimeupdate = () => {
+        progFill.style.width = (video.currentTime / video.duration) * 100 + '%';
+    };
+    timeline.onclick = (e) => {
+        const rect = timeline.getBoundingClientRect();
+        video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+    };
+
+    // Buffer Spinner
+    video.onwaiting = () => buffering.style.display = 'block';
+    video.onplaying = () => buffering.style.display = 'none';
+
+    // Settings logic
+    ratioMenu.onchange = () => video.className = ratioMenu.value;
+    audioMenu.onchange = () => { if(hls) hls.audioTrack = audioMenu.value; };
+    subMenu.onchange = () => { 
+        if(hls) hls.subtitleTrack = subMenu.value; 
+        else { // Native subtitle toggle
+            for (let i = 0; i < video.textTracks.length; i++) {
+                video.textTracks[i].mode = (i == subMenu.value) ? 'showing' : 'hidden';
             }
-        }, 4000);
-    });
+        }
+    };
+
+    // TV UI Behavior (Auto-hide after 5s)
+    let uiTimer;
+    function wakeUI() {
+        playerBody.classList.remove('ui-hidden');
+        clearTimeout(uiTimer);
+        uiTimer = setTimeout(() => {
+            if(!video.paused) playerBody.classList.add('ui-hidden');
+        }, 5000);
+    }
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) playerBody.requestFullscreen();
+        else document.exitFullscreen();
+    }
+
+    document.addEventListener('mousemove', wakeUI);
+    document.addEventListener('click', wakeUI);
 </script>
 </body>
 </html>
