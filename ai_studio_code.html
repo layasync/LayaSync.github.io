@@ -3,167 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glossy Glass Network Player</title>
-    <!-- HLS.js for streaming support -->
+    <title>Infinity Cinema Pro</title>
+    <!-- HLS.js handles network streams and improves stability for movie links -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&display=swap');
+
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.1);
+            --accent: #00f2ff;
+            --glass: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.2);
-            --accent-color: #00d2ff;
+            --panel-bg: rgba(10, 10, 10, 0.9);
         }
 
-        body {
-            margin: 0;
-            background: #0f0f0f;
-            font-family: 'Segoe UI', sans-serif;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #000; font-family: 'Outfit', sans-serif;
+            overflow: hidden; color: #fff;
+        }
+
+        /* Full Screen Viewport */
+        #player-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            color: white;
-        }
-
-        /* Video Container with Aspect Ratio Logic */
-        .player-wrapper {
-            position: relative;
-            width: 80%;
-            max-width: 1000px;
             background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--glass-border);
         }
 
-        /* The Video Element */
+        /* The Video Engine */
         video {
             width: 100%;
-            display: block;
-            transition: all 0.3s ease;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Aspect Ratio States */
+        /* Aspect Ratio Logic */
         .ratio-fit { object-fit: contain; }
-        .ratio-fill { object-fit: fill; }
+        .ratio-fill { object-fit: fill !important; } /* Fills TV edges 100% */
         .ratio-zoom { object-fit: cover; }
-        .ratio-16-9 { aspect-ratio: 16 / 9; object-fit: cover; }
+        .ratio-16-9 { aspect-ratio: 16/9; object-fit: cover; }
 
-        /* Glossy Glass UI Controls */
-        .controls-overlay {
+        /* Glossy Glass Header */
+        .header-panel {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            opacity: 0;
-            transition: opacity 0.3s;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            z-index: 100;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .player-wrapper:hover .controls-overlay {
-            opacity: 1;
-        }
-
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            padding: 10px;
+            border-radius: 100px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transition: 0.6s ease;
         }
 
-        /* Buttons & Icons */
-        .btn {
+        .header-panel input {
+            flex: 1;
             background: transparent;
             border: none;
-            cursor: pointer;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
+            padding: 10px 25px;
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            font-weight: 200;
         }
 
-        .btn:hover { transform: scale(1.1); }
-        .btn svg { width: 28px; height: 28px; fill: white; }
+        .btn-load {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-        /* Custom Selection Menus */
-        select {
-            background: var(--glass-bg);
+        .btn-load:hover {
+            background: var(--accent);
             color: white;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+        }
+
+        /* Glossy Control Dock */
+        .controls-panel {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            z-index: 100;
+            transition: 0.6s ease;
+        }
+
+        .glass-dock {
+            background: var(--panel-bg);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
             border: 1px solid var(--glass-border);
-            border-radius: 5px;
-            padding: 5px;
-            font-size: 12px;
-            outline: none;
+            border-radius: 35px;
+            padding: 25px 45px;
+            box-shadow: 0 30px 80px rgba(0,0,0,1);
+        }
+
+        .timeline {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            position: relative;
         }
 
         .progress-bar {
-            width: 100%;
-            height: 5px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--accent);
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-color);
-            width: 0%;
-            border-radius: 5px;
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
+        .group { display: flex; align-items: center; gap: 20px; }
+
+        /* Pure SVG Control Icons */
+        .icon-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .icon-btn:hover { background: var(--accent); transform: scale(1.1); }
+        .icon-btn svg { width: 30px; height: 30px; fill: white; }
+
+        /* Custom Selection Menus */
+        .select-item { display: flex; flex-direction: column; gap: 4px; }
+        .select-item label { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-left: 5px;}
+        select {
+            background: transparent;
+            color: white;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            font-family: 'Outfit';
+        }
+        option { background: #111; color: #fff; }
+
+        /* Loading Spinner */
+        #loader {
+            position: absolute;
+            width: 80px; height: 80px;
+            border: 6px solid rgba(255,255,255,0.1);
+            border-top: 6px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+            z-index: 1000;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* UI Hidden States for TV Viewing */
+        .ui-hidden { opacity: 0; pointer-events: none; transform: translate(-50%, 50px); }
+        .header-hidden { opacity: 0; pointer-events: none; transform: translate(-50%, -50px); }
     </style>
 </head>
 <body>
 
-<div class="player-wrapper" id="playerContainer">
-    <!-- Video Player -->
-    <video id="video" class="ratio-fit"></video>
+<div id="player-wrapper">
+    <div id="loader"></div>
+    
+    <!-- Video element without restrictive crossorigin for maximum link compatibility -->
+    <video id="video" class="ratio-fit" playsinline></video>
 
-    <!-- Controls Layer -->
-    <div class="controls-overlay">
-        <!-- Progress Bar -->
-        <div class="progress-bar" id="progressBar">
-            <div class="progress-fill" id="progressFill"></div>
+    <!-- Top UI (URL Entry) -->
+    <div class="header-panel" id="ui-header">
+        <input type="text" id="url-input" placeholder="Paste MKV, Web-DL, MP4, or M3U8 Link...">
+        <button class="btn-load" onclick="startPlayback()">LOAD STREAM</button>
+    </div>
+
+    <!-- Bottom UI (Cinema Controls) -->
+    <div class="controls-panel" id="ui-footer">
+        <div class="timeline" id="timeline">
+            <div class="progress-bar" id="prog-bar"></div>
         </div>
 
-        <div class="glass-panel">
-            <!-- Play/Pause SVG Buttons -->
-            <button class="btn" id="playBtn">
-                <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
+        <div class="glass-dock">
+            <div class="control-row">
+                
+                <!-- Seek & Play -->
+                <div class="group">
+                    <button class="icon-btn" onclick="seek(-10)">
+                        <svg viewBox="0 0 24 24"><path d="M11 18V7l-7 5.5 7 5.5zm8-11l-7 5.5 7 5.5V7z"/></svg>
+                    </button>
+                    <button class="icon-btn" id="play-btn">
+                        <svg id="svg-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="svg-pause" style="display:none;" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    <button class="icon-btn" onclick="seek(10)">
+                        <svg viewBox="0 0 24 24"><path d="M4 18l7-5.5L4 7v11zm8-11v11l7-5.5L12 7z"/></svg>
+                    </button>
+                </div>
 
-            <!-- Language/Audio Selection -->
-            <div class="setting-group">
-                <label>Audio: </label>
-                <select id="audioTrack"></select>
-            </div>
+                <!-- Track Management -->
+                <div class="group">
+                    <div class="select-item">
+                        <label>AUDIO</label>
+                        <select id="audio-track"><option>Original</option></select>
+                    </div>
+                    <div class="select-item">
+                        <label>SUBTITLES</label>
+                        <select id="sub-track"><option value="-1">Off</option></select>
+                    </div>
+                </div>
 
-            <!-- Subtitle Selection -->
-            <div class="setting-group">
-                <label>Subs: </label>
-                <select id="subtitleTrack"></select>
-            </div>
+                <!-- Display & Fullscreen -->
+                <div class="group">
+                    <div class="select-item">
+                        <label>SCREEN FORMAT</label>
+                        <select id="ratio-select">
+                            <option value="ratio-fit">Original Fit</option>
+                            <option value="ratio-fill">Fill Screen (No Bars)</option>
+                            <option value="ratio-zoom">Smart Zoom</option>
+                            <option value="ratio-16-9">Cinema 16:9</option>
+                        </select>
+                    </div>
+                    <button class="icon-btn" onclick="toggleFS()">
+                        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                    </button>
+                </div>
 
-            <!-- Aspect Ratio Selection -->
-            <div class="setting-group">
-                <label>Ratio: </label>
-                <select id="aspectRatio">
-                    <option value="ratio-fit">Fit</option>
-                    <option value="ratio-fill">Fill</option>
-                    <option value="ratio-zoom">Zoom</option>
-                    <option value="ratio-16-9">16:9</option>
-                </select>
             </div>
         </div>
     </div>
@@ -171,80 +261,129 @@
 
 <script>
     const video = document.getElementById('video');
-    const playBtn = document.getElementById('playBtn');
-    const playIcon = document.getElementById('playIcon');
-    const pauseIcon = document.getElementById('pauseIcon');
-    const audioSelect = document.getElementById('audioTrack');
-    const subtitleSelect = document.getElementById('subtitleTrack');
-    const ratioSelect = document.getElementById('aspectRatio');
-    const progressFill = document.getElementById('progressFill');
-    const progressBar = document.getElementById('progressBar');
+    const playBtn = document.getElementById('play-btn');
+    const svgPlay = document.getElementById('svg-play');
+    const svgPause = document.getElementById('svg-pause');
+    const progBar = document.getElementById('prog-bar');
+    const timeline = document.getElementById('timeline');
+    const loader = document.getElementById('loader');
+    
+    const uiHeader = document.getElementById('ui-header');
+    const uiFooter = document.getElementById('ui-footer');
+    
+    const ratioSelect = document.getElementById('ratio-select');
+    const audioSelect = document.getElementById('audio-track');
+    const subSelect = document.getElementById('sub-track');
 
-    // REPLACE THIS URL with your stream (m3u8, mp4, etc)
-    const streamUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+    let hls = new Hls();
 
-    if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(streamUrl);
-        hls.attachMedia(video);
+    function startPlayback() {
+        const url = document.getElementById('url-input').value.trim();
+        if(!url) return;
 
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            // Populate Audio Tracks
-            hls.audioTracks.forEach((track, index) => {
-                let opt = document.createElement('option');
-                opt.value = index;
-                opt.text = track.name || `Track ${index}`;
-                audioSelect.appendChild(opt);
+        loader.style.display = 'block';
+
+        // Clear existing tracks
+        audioSelect.innerHTML = '<option>Original</option>';
+        subSelect.innerHTML = '<option value="-1">Off</option>';
+
+        if (url.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                hls.destroy();
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play();
+                    // Audio selection for network streams
+                    hls.audioTracks.forEach((t, i) => audioSelect.add(new Option(t.name || i, i)));
+                    hls.subtitleTracks.forEach((t, i) => subSelect.add(new Option(t.name || i, i)));
+                });
+            }
+        } else {
+            // Direct playback for MKV, MP4, Web-DL
+            hls.destroy();
+            video.src = url;
+            video.play().catch(e => {
+                loader.style.display = 'none';
+                console.error("Playback failed");
             });
-
-            // Populate Subtitles
-            hls.subtitleTracks.forEach((track, index) => {
-                let opt = document.createElement('option');
-                opt.value = index;
-                opt.text = track.name || `Subs ${index}`;
-                subtitleSelect.appendChild(opt);
-            });
-        });
-
-        // Audio Switching
-        audioSelect.onchange = () => { hls.audioTrack = parseInt(audioSelect.value); };
-        // Subtitle Switching
-        subtitleSelect.onchange = () => { hls.subtitleTrack = parseInt(subtitleSelect.value); };
-
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        // Fallback for Safari native HLS
-        video.src = streamUrl;
+        }
     }
 
-    // Play/Pause Logic
-    playBtn.onclick = () => {
-        if (video.paused) {
-            video.play();
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
+    // Play/Pause State
+    playBtn.onclick = () => video.paused ? video.play() : video.pause();
+    
+    video.onplay = () => {
+        svgPlay.style.display = 'none';
+        svgPause.style.display = 'block';
+        loader.style.display = 'none';
+    };
+    video.onpause = () => {
+        svgPlay.style.display = 'block';
+        svgPause.style.display = 'none';
+    };
+
+    // Progress & Seek
+    function seek(s) { video.currentTime += s; }
+    video.ontimeupdate = () => {
+        progBar.style.width = (video.currentTime / video.duration) * 100 + '%';
+    };
+    timeline.onclick = (e) => {
+        const rect = timeline.getBoundingClientRect();
+        video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+    };
+
+    // Ratio Switch
+    ratioSelect.onchange = () => video.className = ratioSelect.value;
+
+    // Subtitle toggle for direct files
+    subSelect.onchange = () => {
+        if(url.includes('.m3u8')) {
+            hls.subtitleTrack = subSelect.value;
         } else {
-            video.pause();
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
+            for (let i = 0; i < video.textTracks.length; i++) {
+                video.textTracks[i].mode = (i == subSelect.value) ? 'showing' : 'hidden';
+            }
         }
     };
 
-    // Aspect Ratio Logic
-    ratioSelect.onchange = () => {
-        video.className = ratioSelect.value;
+    // Auto-Detect Tracks for Direct Movies (MKV/MP4)
+    video.onloadedmetadata = () => {
+        if (video.textTracks) {
+            for (let i = 0; i < video.textTracks.length; i++) {
+                subSelect.add(new Option(video.textTracks[i].label || `Sub ${i+1}`, i));
+            }
+        }
     };
 
-    // Progress Bar Updates
-    video.ontimeupdate = () => {
-        const pct = (video.currentTime / video.duration) * 100;
-        progressFill.style.width = pct + '%';
-    };
+    // Fullscreen Support
+    function toggleFS() {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+    }
 
-    progressBar.onclick = (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const pos = (e.clientX - rect.left) / rect.width;
-        video.currentTime = pos * video.duration;
-    };
+    // TV Auto-hide UI (5 seconds)
+    let uiTimer;
+    function wakeUI() {
+        uiHeader.classList.remove('header-hidden');
+        uiFooter.classList.remove('ui-hidden');
+        clearTimeout(uiTimer);
+        uiTimer = setTimeout(() => {
+            if(!video.paused) {
+                uiHeader.classList.add('header-hidden');
+                uiFooter.classList.add('ui-hidden');
+            }
+        }, 5000);
+    }
+
+    document.addEventListener('mousemove', wakeUI);
+    document.addEventListener('click', wakeUI);
+
+    // Buffering States
+    video.onwaiting = () => loader.style.display = 'block';
+    video.onplaying = () => loader.style.display = 'none';
+
 </script>
 
 </body>
