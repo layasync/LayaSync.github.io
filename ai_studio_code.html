@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime IPTV Pro</title>
+    <title>Prime IPTV Premium</title>
     <style>
         :root {
             --bg: #0b1115;
@@ -11,252 +11,290 @@
             --prime-blue: #00a8e1;
             --text: #ffffff;
             --text-dim: #8197a4;
-            --focus-border: 4px solid #ffffff;
+            --card-w: 240px;
+            --card-h: 135px;
         }
 
         body, html {
             margin: 0; padding: 0; background: var(--bg); color: var(--text);
-            font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; height: 100vh; width: 100vw;
         }
 
-        /* TOP NAVIGATION */
+        /* NAVIGATION BAR */
         nav {
-            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            position: fixed; top: 0; left: 0; right: 0; height: 70px;
             display: flex; align-items: center; padding: 0 50px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to bottom, rgba(15, 23, 30, 1), transparent);
             z-index: 1000;
         }
+        .nav-logo { font-size: 1.5rem; font-weight: bold; color: var(--prime-blue); margin-right: 40px; }
         .nav-item {
-            margin-right: 30px; font-size: 1.2rem; font-weight: bold;
-            color: var(--text-dim); cursor: pointer; padding-bottom: 5px;
+            margin-right: 25px; font-size: 1.1rem; font-weight: 600;
+            color: var(--text-dim); cursor: pointer; transition: 0.3s;
+            padding: 5px 10px; border-radius: 4px;
         }
-        .nav-item.active { color: white; border-bottom: 3px solid var(--prime-blue); }
-        .nav-item.focused { color: white; outline: 2px solid var(--prime-blue); outline-offset: 5px; }
+        .nav-item:hover, .nav-item.active { color: white; }
+        .nav-item.active { border-bottom: 3px solid var(--prime-blue); }
 
-        /* VIEWS CONTAINER */
-        .view { display: none; width: 100%; height: 100%; padding-top: 100px; box-sizing: border-box; }
-        .view.active { display: block; }
+        /* PAGE SYSTEM */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; opacity: 0; transition: opacity 0.5s ease;
+            padding-top: 70px; box-sizing: border-box; overflow-y: auto;
+        }
+        .page.active { display: block; opacity: 1; }
 
-        /* LOGIN VIEW */
-        #view-login { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; }
-        .login-card { background: var(--surface); padding: 40px; border-radius: 8px; width: 400px; }
-        input { 
-            width: 100%; padding: 15px; margin: 10px 0; border-radius: 4px; 
-            border: none; background: #2a3744; color: white; font-size: 1rem;
+        /* HERO SECTION (HOME PAGE) */
+        .hero {
+            height: 75vh; width: 100%; position: relative; margin-top: -70px;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; padding: 0 60px;
         }
-        input.focused { outline: var(--focus-border); }
-        .btn { 
-            width: 100%; padding: 15px; background: var(--prime-blue); border: none; 
-            color: white; font-weight: bold; margin-top: 20px; cursor: pointer;
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to right, var(--bg) 20%, transparent 80%),
+                        linear-gradient(to top, var(--bg) 10%, transparent 40%);
         }
-        .btn.focused { outline: var(--focus-border); transform: scale(1.05); }
+        .hero-content { position: relative; z-index: 2; max-width: 600px; }
+        .hero-title { font-size: 3.5rem; margin: 0; }
+        .hero-desc { color: var(--text-dim); font-size: 1.2rem; margin: 20px 0; }
 
-        /* CATEGORY & GRID VIEW */
-        .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px; padding: 40px 60px; overflow-y: auto; height: 80vh;
+        /* CONTENT ROWS (PRIME STYLE) */
+        .row-container { padding: 20px 0 40px 60px; }
+        .row-header { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; }
+        .row-scroller { 
+            display: flex; gap: 15px; overflow-x: auto; padding: 10px 0;
+            scrollbar-width: none; /* Hide scrollbar */
         }
+        .row-scroller::-webkit-scrollbar { display: none; }
+
         .item-card {
-            background: var(--surface); border-radius: 6px; overflow: hidden;
-            transition: 0.2s; border: 3px solid transparent;
+            min-width: var(--card-w); height: var(--card-h);
+            background: var(--surface); border-radius: 4px; cursor: pointer;
+            transition: transform 0.3s ease; position: relative;
+            background-size: cover; background-position: center;
+            border: 2px solid transparent;
         }
-        .item-card img { width: 100%; height: 280px; object-fit: cover; }
-        .item-card.focused { border-color: white; transform: scale(1.08); z-index: 10; }
-        .item-title { padding: 10px; font-size: 0.9rem; text-align: center; }
-
-        /* DETAILS VIEW */
-        .details-bg {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-size: cover; background-position: center; filter: blur(20px) brightness(0.3);
-            z-index: -1;
+        .item-card:hover { transform: scale(1.1); border-color: white; z-index: 10; }
+        .item-card .title-overlay {
+            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7);
+            padding: 5px; font-size: 0.8rem; text-align: center;
         }
-        .details-content { display: flex; padding: 60px; gap: 50px; align-items: flex-start; }
-        .details-poster { width: 350px; border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .details-info h1 { font-size: 4rem; margin: 0; }
-        .details-meta { font-size: 1.5rem; color: var(--prime-blue); margin: 20px 0; }
-        .details-desc { font-size: 1.2rem; line-height: 1.6; max-width: 800px; color: #ccc; }
 
-        .loading-overlay {
+        /* LOGIN PAGE */
+        .login-box {
+            max-width: 450px; margin: 100px auto; background: var(--surface);
+            padding: 40px; border-radius: 8px; text-align: center;
+        }
+        input {
+            width: 100%; padding: 15px; margin: 10px 0; background: #2a3744;
+            border: 1px solid #3f4e5e; color: white; border-radius: 4px; box-sizing: border-box;
+        }
+        .btn-prime {
+            width: 100%; padding: 15px; background: var(--prime-blue);
+            color: white; border: none; font-weight: bold; cursor: pointer;
+            margin-top: 20px; border-radius: 4px; font-size: 1rem;
+        }
+        .btn-prime:hover { background: #0089b5; }
+
+        /* MOVIE DETAILS VIEW */
+        #movie-details {
+            background: var(--bg); position: fixed; inset: 0; z-index: 2000;
+            display: none; padding: 100px 60px;
+        }
+        .details-flex { display: flex; gap: 50px; }
+        .details-poster { width: 300px; border-radius: 8px; }
+        .details-info h1 { font-size: 3rem; margin: 0; }
+
+        .loader {
             position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; align-items: center; justify-content: center; z-index: 9999;
+            display: none; align-items: center; justify-content: center; z-index: 5000;
         }
     </style>
 </head>
 <body>
 
-    <nav id="top-nav">
-        <div class="nav-item focusable" data-view="home">Home</div>
-        <div class="nav-item focusable" data-view="movies">Movies</div>
-        <div class="nav-item focusable" data-view="series">TV Shows</div>
-        <div class="nav-item focusable" data-view="sports">Sports</div>
-        <div class="nav-item focusable" data-view="login">Setup / Login</div>
+    <nav>
+        <div class="nav-logo">Prime IPTV</div>
+        <div class="nav-item active" data-page="home">Home</div>
+        <div class="nav-item" data-page="movies">Movies</div>
+        <div class="nav-item" data-page="shows">TV Shows</div>
+        <div class="nav-item" data-page="login">Setup</div>
     </nav>
 
-    <div id="loader" class="loading-overlay"><h1>Loading...</h1></div>
+    <div id="loading" class="loader"><h2>Loading Content...</h2></div>
 
-    <!-- LOGIN VIEW -->
-    <div id="view-login" class="view">
-        <div class="login-card">
-            <h2>Xtream Login</h2>
-            <input type="text" id="iptv-url" class="focusable" placeholder="Server URL (http://...:80)">
-            <input type="text" id="iptv-user" class="focusable" placeholder="Username">
-            <input type="password" id="iptv-pass" class="focusable" placeholder="Password">
-            <button id="login-btn" class="btn focusable">CONNECT</button>
-            <p id="login-status" style="margin-top:15px; text-align:center"></p>
+    <!-- HOME PAGE -->
+    <div id="page-home" class="page active">
+        <div class="hero" id="home-hero" style="background-image: url('https://images8.alphacoders.com/126/1266580.jpg');">
+            <div class="hero-content">
+                <h1 class="hero-title">Rings of Power</h1>
+                <p class="hero-desc">An epic drama set thousands of years before the events of J.R.R. Tolkien's The Hobbit and The Lord of the Rings.</p>
+                <button class="btn-prime" style="width: 200px;">▶ Play S2 E1</button>
+            </div>
         </div>
-    </div>
-
-    <!-- CATEGORY LIST VIEW -->
-    <div id="view-categories" class="view">
-        <h2 style="padding-left: 60px;" id="cat-type-title">Categories</h2>
-        <div class="grid-container" id="category-grid"></div>
-    </div>
-
-    <!-- CONTENT GRID VIEW -->
-    <div id="view-content" class="view">
-        <h2 style="padding-left: 60px;" id="content-title">Items</h2>
-        <div class="grid-container" id="content-grid"></div>
-    </div>
-
-    <!-- DETAILS VIEW -->
-    <div id="view-details" class="view">
-        <div id="details-bg" class="details-bg"></div>
-        <div class="details-content">
-            <img id="det-poster" class="details-poster" src="">
-            <div class="details-info">
-                <h1 id="det-title">Movie Title</h1>
-                <div class="details-meta"><span id="det-year">2024</span> | ⭐ <span id="det-rating">8.5</span></div>
-                <p id="det-desc" class="details-desc"></p>
-                <button class="btn focusable" style="width: 200px;">▶ WATCH NOW</button>
+        <div class="row-container">
+            <div class="row-header">Continue Watching</div>
+            <div class="row-scroller" id="recent-row">
+                <!-- Dynamically filled -->
             </div>
         </div>
     </div>
 
-    <script>
-        // CONFIG
-        const PROXY = "https://layasync-proxy.layasync.workers.dev/?url=";
-        let authData = null;
-        let currentView = 'login';
-        let focusables = [];
-        let currentIndex = 0;
+    <!-- MOVIES PAGE (Category List) -->
+    <div id="page-movies" class="page">
+        <h1 style="padding-left:60px">Movie Categories</h1>
+        <div class="row-container">
+            <div class="row-scroller" id="movie-cats" style="flex-wrap: wrap;">
+                <!-- Categories will appear here -->
+            </div>
+        </div>
+    </div>
 
-        // 1. NAVIGATION SYSTEM
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            currentView = viewId;
-            resetFocus();
-        }
+    <!-- SHOWS PAGE (Category List) -->
+    <div id="page-shows" class="page">
+        <h1 style="padding-left:60px">TV Show Categories</h1>
+        <div class="row-container">
+            <div class="row-scroller" id="show-cats" style="flex-wrap: wrap;">
+                <!-- Categories will appear here -->
+            </div>
+        </div>
+    </div>
 
-        function resetFocus() {
-            focusables = Array.from(document.querySelectorAll('.view.active .focusable, nav .focusable'));
-            currentIndex = 0;
-            updateFocusUI();
-        }
+    <!-- LOGIN PAGE -->
+    <div id="page-login" class="page">
+        <div class="login-box">
+            <h2 style="color: var(--prime-blue)">Connect Xtream Account</h2>
+            <input type="text" id="url" placeholder="http://server-address.com:80">
+            <input type="text" id="user" placeholder="Username">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn-prime" onclick="handleLogin()">CONNECT NOW</button>
+            <p id="status"></p>
+        </div>
+    </div>
 
-        function updateFocusUI() {
-            focusables.forEach(el => el.classList.remove('focused'));
-            if (focusables[currentIndex]) {
-                focusables[currentIndex].classList.add('focused');
-                focusables[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
+    <!-- DETAILS VIEW -->
+    <div id="movie-details">
+        <button class="btn-prime" onclick="closeDetails()" style="width:100px; margin-bottom:20px">⬅ Back</button>
+        <div class="details-flex">
+            <img id="det-img" class="details-poster" src="">
+            <div class="details-info">
+                <h1 id="det-name">Title</h1>
+                <p id="det-plot" style="font-size:1.2rem; color:#ccc; max-width: 700px;">
+                    This movie is fetched from your Xtream server. Click play to start the stream.
+                </p>
+                <button class="btn-prime" style="width: 250px;">▶ WATCH MOVIE</button>
+            </div>
+        </div>
+    </div>
 
-        // 2. XTREAM API LOGIC
-        async function apiFetch(action, params = "") {
-            if (!authData) return;
-            document.getElementById('loader').style.display = 'flex';
-            const target = `${authData.url}/player_api.php?username=${authData.user}&password=${authData.pass}&action=${action}${params}`;
-            try {
-                const response = await fetch(PROXY + encodeURIComponent(target));
-                const data = await response.json();
-                document.getElementById('loader').style.display = 'none';
-                return data;
-            } catch (e) {
-                document.getElementById('loader').style.display = 'none';
-                return null;
-            }
-        }
+<script>
+    const PROXY = "https://layasync-proxy.layasync.workers.dev/?url=";
+    let auth = null;
 
-        // 3. ACTIONS
-        document.getElementById('login-btn').onclick = async () => {
-            authData = {
-                url: document.getElementById('iptv-url').value,
-                user: document.getElementById('iptv-user').value,
-                pass: document.getElementById('iptv-pass').value
-            };
-            const result = await apiFetch('get_live_categories'); // Simple test
-            if (result) {
-                document.getElementById('login-status').innerText = "✅ Connected Successfully!";
-                setTimeout(() => showView('home'), 1000);
-            } else {
-                document.getElementById('login-status').innerText = "❌ Failed to connect.";
-            }
+    // --- NAVIGATION LOGIC ---
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const targetPage = item.getAttribute('data-page');
+            openPage(targetPage);
+        });
+    });
+
+    function openPage(pageId) {
+        // Update Nav UI
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+
+        // Swap Pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page-${pageId}`).classList.add('active');
+
+        // Logic based on page
+        if (pageId === 'movies' && auth) loadCategories('get_vod_categories', 'movie-cats');
+        if (pageId === 'shows' && auth) loadCategories('get_series_categories', 'show-cats');
+    }
+
+    // --- XTREAM API ---
+    async function handleLogin() {
+        auth = {
+            url: document.getElementById('url').value,
+            user: document.getElementById('user').value,
+            pass: document.getElementById('pass').value
         };
 
-        async function loadCategories(type) {
-            const action = type === 'movies' ? 'get_vod_categories' : 'get_series_categories';
-            const data = await apiFetch(action);
-            const grid = document.getElementById('category-grid');
-            grid.innerHTML = '';
-            data.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'item-card focusable';
-                div.innerHTML = `<div class="item-title">${cat.category_name}</div>`;
-                div.onclick = () => loadContentList(type, cat.category_id);
-                grid.appendChild(div);
-            });
-            document.getElementById('cat-type-title').innerText = type.toUpperCase() + " Categories";
-            showView('categories');
-        }
+        const testUrl = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=get_live_categories`;
+        document.getElementById('loading').style.display = 'flex';
 
-        async function loadContentList(type, catId) {
-            const action = type === 'movies' ? 'get_vod_streams' : 'get_series';
-            const data = await apiFetch(action, `&category_id=${catId}`);
-            const grid = document.getElementById('content-grid');
-            grid.innerHTML = '';
-            data.slice(0, 50).forEach(item => { // limit to 50 for speed
-                const div = document.createElement('div');
-                div.className = 'item-card focusable';
-                const img = item.stream_icon || item.cover || 'https://via.placeholder.com/200x280?text=No+Poster';
-                div.innerHTML = `<img src="${img}"><div class="item-title">${item.name}</div>`;
-                div.onclick = () => showDetails(item);
-                grid.appendChild(div);
-            });
-            showView('content');
-        }
-
-        function showDetails(item) {
-            document.getElementById('det-title').innerText = item.name;
-            document.getElementById('det-poster').src = item.stream_icon || item.cover;
-            document.getElementById('details-bg').style.backgroundImage = `url(${item.stream_icon || item.cover})`;
-            document.getElementById('det-desc').innerText = "Fetching premium TMDB info...";
-            showView('details');
-            // Here you would trigger a TMDB API call using item.name
-        }
-
-        // 4. REMOTE CONTROL HANDLING
-        window.addEventListener('keydown', (e) => {
-            if (e.keyCode === 39) currentIndex = Math.min(focusables.length - 1, currentIndex + 1); // Right
-            if (e.keyCode === 37) currentIndex = Math.max(0, currentIndex - 1); // Left
-            if (e.keyCode === 40) currentIndex = Math.min(focusables.length - 1, currentIndex + 4); // Down (grid jump)
-            if (e.keyCode === 38) currentIndex = Math.max(0, currentIndex - 4); // Up (grid jump)
-            
-            if (e.keyCode === 13) focusables[currentIndex].click(); // Enter
-            
-            updateFocusUI();
-        });
-
-        // Nav clicks
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.onclick = () => {
-                const v = item.dataset.view;
-                if (v === 'movies' || v === 'series') loadCategories(v);
-                else showView(v);
+        try {
+            const res = await fetch(PROXY + encodeURIComponent(testUrl));
+            const data = await res.json();
+            if (data) {
+                document.getElementById('status').innerText = "Successfully Connected!";
+                setTimeout(() => openPage('home'), 1000);
             }
-        });
+        } catch (e) {
+            document.getElementById('status').innerText = "Connection Failed. Check URL/Auth.";
+        }
+        document.getElementById('loading').style.display = 'none';
+    }
 
-        showView('login');
-    </script>
+    async function loadCategories(action, containerId) {
+        const url = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}`;
+        const res = await fetch(PROXY + encodeURIComponent(url));
+        const data = await res.json();
+
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        data.forEach(cat => {
+            const div = document.createElement('div');
+            div.className = 'item-card';
+            div.style.backgroundColor = '#252e39';
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.style.justifyContent = 'center';
+            div.style.padding = '10px';
+            div.innerHTML = `<span style="font-weight:bold; text-align:center">${cat.category_name}</span>`;
+            
+            // On Category Click -> Load Content
+            div.onclick = () => loadItems(action.includes('vod') ? 'get_vod_streams' : 'get_series', cat.category_id);
+            container.appendChild(div);
+        });
+    }
+
+    async function loadItems(action, catId) {
+        document.getElementById('loading').style.display = 'flex';
+        const url = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}&category_id=${catId}`;
+        const res = await fetch(PROXY + encodeURIComponent(url));
+        const data = await res.json();
+
+        // We reuse the Movie Categories row to show items (Simpler for this prototype)
+        const containerId = action === 'get_vod_streams' ? 'movie-cats' : 'show-cats';
+        const container = document.getElementById(containerId);
+        container.innerHTML = `<button class="btn-prime" onclick="openPage('${action === 'get_vod_streams' ? 'movies' : 'shows'}')" style="width:100px">Back</button>`;
+
+        data.slice(0, 40).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'item-card';
+            const img = item.stream_icon || item.cover || 'https://via.placeholder.com/240x135/1a242f/ffffff?text=No+Poster';
+            div.style.backgroundImage = `url(${img})`;
+            div.innerHTML = `<div class="title-overlay">${item.name}</div>`;
+            div.onclick = () => showDetails(item);
+            container.appendChild(div);
+        });
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    function showDetails(item) {
+        document.getElementById('det-name').innerText = item.name;
+        document.getElementById('det-img').src = item.stream_icon || item.cover;
+        document.getElementById('movie-details').style.display = 'block';
+    }
+
+    function closeDetails() {
+        document.getElementById('movie-details').style.display = 'none';
+    }
+</script>
 </body>
 </html>
