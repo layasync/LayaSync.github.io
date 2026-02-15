@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime IPTV Premium</title>
+    <title>Prime IPTV Ultra</title>
+    <!-- Include HLS.js for professional video playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
         :root {
             --bg: #0b1115;
@@ -12,43 +14,37 @@
             --text: #ffffff;
             --text-dim: #8197a4;
             --card-w: 240px;
-            --card-h: 135px;
+            --card-h: 350px; /* Taller cards for Movie Posters */
         }
 
         body, html {
             margin: 0; padding: 0; background: var(--bg); color: var(--text);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden; height: 100vh; width: 100vw;
+            font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; height: 100vh;
         }
 
-        /* NAVIGATION BAR */
+        /* NAVIGATION */
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 70px;
             display: flex; align-items: center; padding: 0 50px;
-            background: linear-gradient(to bottom, rgba(15, 23, 30, 1), transparent);
-            z-index: 1000;
+            background: rgba(15, 23, 30, 0.95); z-index: 1000;
         }
-        .nav-logo { font-size: 1.5rem; font-weight: bold; color: var(--prime-blue); margin-right: 40px; }
+        .nav-logo { font-size: 1.5rem; font-weight: bold; color: var(--prime-blue); margin-right: 40px; cursor: pointer; }
         .nav-item {
-            margin-right: 25px; font-size: 1.1rem; font-weight: 600;
-            color: var(--text-dim); cursor: pointer; transition: 0.3s;
-            padding: 5px 10px; border-radius: 4px;
+            margin-right: 25px; font-size: 1.1rem; color: var(--text-dim); cursor: pointer; transition: 0.3s;
         }
-        .nav-item:hover, .nav-item.active { color: white; }
-        .nav-item.active { border-bottom: 3px solid var(--prime-blue); }
+        .nav-item:hover, .nav-item.active { color: white; border-bottom: 2px solid var(--prime-blue); }
 
-        /* PAGE SYSTEM */
-        .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; opacity: 0; transition: opacity 0.5s ease;
-            padding-top: 70px; box-sizing: border-box; overflow-y: auto;
+        /* VIEW SYSTEM */
+        .view {
+            position: absolute; inset: 0; display: none; padding-top: 70px;
+            overflow-y: auto; background: var(--bg);
         }
-        .page.active { display: block; opacity: 1; }
+        .view.active { display: block; }
 
-        /* HERO SECTION (HOME PAGE) */
+        /* HERO AREA */
         .hero {
-            height: 75vh; width: 100%; position: relative; margin-top: -70px;
-            background-size: cover; background-position: center;
+            height: 70vh; width: 100%; position: relative;
+            background-size: cover; background-position: top center;
             display: flex; align-items: center; padding: 0 60px;
         }
         .hero::before {
@@ -56,244 +52,228 @@
             background: linear-gradient(to right, var(--bg) 20%, transparent 80%),
                         linear-gradient(to top, var(--bg) 10%, transparent 40%);
         }
-        .hero-content { position: relative; z-index: 2; max-width: 600px; }
-        .hero-title { font-size: 3.5rem; margin: 0; }
-        .hero-desc { color: var(--text-dim); font-size: 1.2rem; margin: 20px 0; }
+        .hero-content { position: relative; z-index: 10; max-width: 700px; }
 
-        /* CONTENT ROWS (PRIME STYLE) */
-        .row-container { padding: 20px 0 40px 60px; }
-        .row-header { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; }
-        .row-scroller { 
-            display: flex; gap: 15px; overflow-x: auto; padding: 10px 0;
-            scrollbar-width: none; /* Hide scrollbar */
+        /* GRID STYLING */
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px; padding: 40px 60px;
         }
-        .row-scroller::-webkit-scrollbar { display: none; }
-
         .item-card {
-            min-width: var(--card-w); height: var(--card-h);
-            background: var(--surface); border-radius: 4px; cursor: pointer;
-            transition: transform 0.3s ease; position: relative;
-            background-size: cover; background-position: center;
-            border: 2px solid transparent;
+            background: var(--surface); border-radius: 8px; cursor: pointer;
+            transition: 0.3s; overflow: hidden; border: 3px solid transparent;
         }
-        .item-card:hover { transform: scale(1.1); border-color: white; z-index: 10; }
-        .item-card .title-overlay {
-            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7);
-            padding: 5px; font-size: 0.8rem; text-align: center;
+        .item-card:hover { transform: scale(1.05); border-color: white; }
+        .item-card img { width: 100%; height: 280px; object-fit: cover; }
+        .item-info { padding: 10px; font-size: 0.9rem; text-align: center; }
+
+        /* DETAILS PAGE (The Premium Look) */
+        .details-container { display: flex; padding: 60px; gap: 50px; z-index: 10; position: relative; }
+        .det-poster { width: 350px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+        .det-meta { font-size: 1.4rem; color: #46d369; margin: 15px 0; font-weight: bold; }
+
+        /* VIDEO PLAYER VIEW */
+        #view-player { 
+            position: fixed; inset: 0; background: black; z-index: 5000; 
+            display: none; padding: 0; 
+        }
+        video { width: 100%; height: 100%; }
+        .player-controls {
+            position: absolute; bottom: 40px; left: 40px; z-index: 5001;
+            display: flex; gap: 20px;
         }
 
-        /* LOGIN PAGE */
-        .login-box {
-            max-width: 450px; margin: 100px auto; background: var(--surface);
-            padding: 40px; border-radius: 8px; text-align: center;
-        }
-        input {
-            width: 100%; padding: 15px; margin: 10px 0; background: #2a3744;
-            border: 1px solid #3f4e5e; color: white; border-radius: 4px; box-sizing: border-box;
-        }
+        /* UTILS */
         .btn-prime {
-            width: 100%; padding: 15px; background: var(--prime-blue);
-            color: white; border: none; font-weight: bold; cursor: pointer;
-            margin-top: 20px; border-radius: 4px; font-size: 1rem;
+            padding: 15px 40px; background: var(--prime-blue); color: white;
+            border: none; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1rem;
         }
-        .btn-prime:hover { background: #0089b5; }
-
-        /* MOVIE DETAILS VIEW */
-        #movie-details {
-            background: var(--bg); position: fixed; inset: 0; z-index: 2000;
-            display: none; padding: 100px 60px;
-        }
-        .details-flex { display: flex; gap: 50px; }
-        .details-poster { width: 300px; border-radius: 8px; }
-        .details-info h1 { font-size: 3rem; margin: 0; }
-
-        .loader {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            display: none; align-items: center; justify-content: center; z-index: 5000;
-        }
+        .loader { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="nav-logo">Prime IPTV</div>
-        <div class="nav-item active" data-page="home">Home</div>
-        <div class="nav-item" data-page="movies">Movies</div>
-        <div class="nav-item" data-page="shows">TV Shows</div>
-        <div class="nav-item" data-page="login">Setup</div>
+        <div class="nav-logo" onclick="openPage('home')">Prime IPTV</div>
+        <div class="nav-item active" onclick="openPage('home')">Home</div>
+        <div class="nav-item" onclick="loadCategories('movies')">Movies</div>
+        <div class="nav-item" onclick="loadCategories('shows')">TV Shows</div>
+        <div class="nav-item" onclick="openPage('login')">Setup</div>
     </nav>
 
-    <div id="loading" class="loader"><h2>Loading Content...</h2></div>
+    <div id="loading" class="loader"><h1>Loading...</h1></div>
 
-    <!-- HOME PAGE -->
-    <div id="page-home" class="page active">
-        <div class="hero" id="home-hero" style="background-image: url('https://images8.alphacoders.com/126/1266580.jpg');">
+    <!-- HOME -->
+    <div id="view-home" class="view active">
+        <div class="hero" style="background-image: url('https://images.alphacoders.com/134/1342614.jpeg');">
             <div class="hero-content">
-                <h1 class="hero-title">Rings of Power</h1>
-                <p class="hero-desc">An epic drama set thousands of years before the events of J.R.R. Tolkien's The Hobbit and The Lord of the Rings.</p>
-                <button class="btn-prime" style="width: 200px;">▶ Play S2 E1</button>
-            </div>
-        </div>
-        <div class="row-container">
-            <div class="row-header">Continue Watching</div>
-            <div class="row-scroller" id="recent-row">
-                <!-- Dynamically filled -->
+                <h1 style="font-size: 4rem; margin: 0;">The Boys</h1>
+                <p style="font-size: 1.3rem; color: #ccc;">A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.</p>
+                <button class="btn-prime">▶ Watch S4 Now</button>
             </div>
         </div>
     </div>
 
-    <!-- MOVIES PAGE (Category List) -->
-    <div id="page-movies" class="page">
-        <h1 style="padding-left:60px">Movie Categories</h1>
-        <div class="row-container">
-            <div class="row-scroller" id="movie-cats" style="flex-wrap: wrap;">
-                <!-- Categories will appear here -->
-            </div>
+    <!-- CONTENT GRID -->
+    <div id="view-grid" class="view">
+        <h1 id="grid-title" style="padding-left: 60px;">Movies</h1>
+        <div class="grid" id="main-grid"></div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="view-login" class="view">
+        <div style="max-width: 400px; margin: 100px auto; background: var(--surface); padding: 40px; border-radius: 10px;">
+            <h2>Server Login</h2>
+            <input type="text" id="iptv_url" placeholder="Server URL" style="width:100%; padding:15px; margin:10px 0; background:#0b1115; border:1px solid #333; color:white;">
+            <input type="text" id="iptv_user" placeholder="Username" style="width:100%; padding:15px; margin:10px 0; background:#0b1115; border:1px solid #333; color:white;">
+            <input type="password" id="iptv_pass" placeholder="Password" style="width:100%; padding:15px; margin:10px 0; background:#0b1115; border:1px solid #333; color:white;">
+            <button class="btn-prime" style="width:100%" onclick="connectXtream()">CONNECT</button>
         </div>
     </div>
 
-    <!-- SHOWS PAGE (Category List) -->
-    <div id="page-shows" class="page">
-        <h1 style="padding-left:60px">TV Show Categories</h1>
-        <div class="row-container">
-            <div class="row-scroller" id="show-cats" style="flex-wrap: wrap;">
-                <!-- Categories will appear here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- LOGIN PAGE -->
-    <div id="page-login" class="page">
-        <div class="login-box">
-            <h2 style="color: var(--prime-blue)">Connect Xtream Account</h2>
-            <input type="text" id="url" placeholder="http://server-address.com:80">
-            <input type="text" id="user" placeholder="Username">
-            <input type="password" id="pass" placeholder="Password">
-            <button class="btn-prime" onclick="handleLogin()">CONNECT NOW</button>
-            <p id="status"></p>
-        </div>
-    </div>
-
-    <!-- DETAILS VIEW -->
-    <div id="movie-details">
-        <button class="btn-prime" onclick="closeDetails()" style="width:100px; margin-bottom:20px">⬅ Back</button>
-        <div class="details-flex">
-            <img id="det-img" class="details-poster" src="">
+    <!-- DETAILS -->
+    <div id="view-details" class="view">
+        <div id="details-backdrop" style="position:fixed; inset:0; background-size:cover; filter:brightness(0.2); z-index:-1;"></div>
+        <div class="details-container">
+            <img id="det-poster" class="det-poster" src="">
             <div class="details-info">
-                <h1 id="det-name">Title</h1>
-                <p id="det-plot" style="font-size:1.2rem; color:#ccc; max-width: 700px;">
-                    This movie is fetched from your Xtream server. Click play to start the stream.
-                </p>
-                <button class="btn-prime" style="width: 250px;">▶ WATCH MOVIE</button>
+                <button class="nav-item" onclick="openPage('grid')">⬅ Back to List</button>
+                <h1 id="det-title" style="font-size: 4rem; margin: 10px 0;">Title</h1>
+                <div class="det-meta">⭐ <span id="det-rating">8.5</span> | <span id="det-year">2024</span></div>
+                <p id="det-plot" style="font-size: 1.3rem; line-height: 1.6; color: #ccc; max-width: 800px;"></p>
+                <button id="play-trigger" class="btn-prime">▶ PLAY NOW</button>
             </div>
+        </div>
+    </div>
+
+    <!-- VIDEO PLAYER -->
+    <div id="view-player">
+        <video id="video-engine" controls autoplay></video>
+        <div class="player-controls">
+            <button class="btn-prime" onclick="closePlayer()">CLOSE PLAYER</button>
         </div>
     </div>
 
 <script>
+    const TMDB_KEY = "c78abeb00aa64f93fd7b516cb9bd180e";
     const PROXY = "https://layasync-proxy.layasync.workers.dev/?url=";
     let auth = null;
+    let currentMode = ''; // 'movies' or 'shows'
 
-    // --- NAVIGATION LOGIC ---
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const targetPage = item.getAttribute('data-page');
-            openPage(targetPage);
-        });
-    });
-
-    function openPage(pageId) {
-        // Update Nav UI
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
-
-        // Swap Pages
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(`page-${pageId}`).classList.add('active');
-
-        // Logic based on page
-        if (pageId === 'movies' && auth) loadCategories('get_vod_categories', 'movie-cats');
-        if (pageId === 'shows' && auth) loadCategories('get_series_categories', 'show-cats');
+    function openPage(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
+        if(id === 'player') document.getElementById('view-player').style.display = 'block';
     }
 
-    // --- XTREAM API ---
-    async function handleLogin() {
+    async function connectXtream() {
         auth = {
-            url: document.getElementById('url').value,
-            user: document.getElementById('user').value,
-            pass: document.getElementById('pass').value
+            url: document.getElementById('iptv_url').value,
+            user: document.getElementById('iptv_user').value,
+            pass: document.getElementById('iptv_pass').value
         };
-
-        const testUrl = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=get_live_categories`;
-        document.getElementById('loading').style.display = 'flex';
-
-        try {
-            const res = await fetch(PROXY + encodeURIComponent(testUrl));
-            const data = await res.json();
-            if (data) {
-                document.getElementById('status').innerText = "Successfully Connected!";
-                setTimeout(() => openPage('home'), 1000);
-            }
-        } catch (e) {
-            document.getElementById('status').innerText = "Connection Failed. Check URL/Auth.";
-        }
-        document.getElementById('loading').style.display = 'none';
+        const test = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=get_live_categories`));
+        if (test.ok) openPage('home');
+        else alert("Login Failed");
     }
 
-    async function loadCategories(action, containerId) {
-        const url = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}`;
-        const res = await fetch(PROXY + encodeURIComponent(url));
+    async function loadCategories(type) {
+        currentMode = type;
+        const action = type === 'movies' ? 'get_vod_categories' : 'get_series_categories';
+        const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}`));
         const data = await res.json();
-
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-
+        
+        const grid = document.getElementById('main-grid');
+        grid.innerHTML = '';
+        document.getElementById('grid-title').innerText = type.toUpperCase() + " Categories";
+        
         data.forEach(cat => {
             const div = document.createElement('div');
             div.className = 'item-card';
-            div.style.backgroundColor = '#252e39';
-            div.style.display = 'flex';
-            div.style.alignItems = 'center';
-            div.style.justifyContent = 'center';
-            div.style.padding = '10px';
-            div.innerHTML = `<span style="font-weight:bold; text-align:center">${cat.category_name}</span>`;
-            
-            // On Category Click -> Load Content
-            div.onclick = () => loadItems(action.includes('vod') ? 'get_vod_streams' : 'get_series', cat.category_id);
-            container.appendChild(div);
+            div.innerHTML = `<div class="item-info"><h3>${cat.category_name}</h3></div>`;
+            div.onclick = () => loadItems(cat.category_id);
+            grid.appendChild(div);
         });
+        openPage('grid');
     }
 
-    async function loadItems(action, catId) {
+    async function loadItems(catId) {
         document.getElementById('loading').style.display = 'flex';
-        const url = `${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}&category_id=${catId}`;
-        const res = await fetch(PROXY + encodeURIComponent(url));
+        const action = currentMode === 'movies' ? 'get_vod_streams' : 'get_series';
+        const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}&category_id=${catId}`));
         const data = await res.json();
-
-        // We reuse the Movie Categories row to show items (Simpler for this prototype)
-        const containerId = action === 'get_vod_streams' ? 'movie-cats' : 'show-cats';
-        const container = document.getElementById(containerId);
-        container.innerHTML = `<button class="btn-prime" onclick="openPage('${action === 'get_vod_streams' ? 'movies' : 'shows'}')" style="width:100px">Back</button>`;
-
+        
+        const grid = document.getElementById('main-grid');
+        grid.innerHTML = '';
         data.slice(0, 40).forEach(item => {
             const div = document.createElement('div');
             div.className = 'item-card';
-            const img = item.stream_icon || item.cover || 'https://via.placeholder.com/240x135/1a242f/ffffff?text=No+Poster';
-            div.style.backgroundImage = `url(${img})`;
-            div.innerHTML = `<div class="title-overlay">${item.name}</div>`;
-            div.onclick = () => showDetails(item);
-            container.appendChild(div);
+            const poster = item.stream_icon || item.cover || 'https://via.placeholder.com/200x300?text=No+Poster';
+            div.innerHTML = `<img src="${poster}"><div class="item-info">${item.name}</div>`;
+            div.onclick = () => fetchPremiumDetails(item);
+            grid.appendChild(div);
         });
         document.getElementById('loading').style.display = 'none';
     }
 
-    function showDetails(item) {
-        document.getElementById('det-name').innerText = item.name;
-        document.getElementById('det-img').src = item.stream_icon || item.cover;
-        document.getElementById('movie-details').style.display = 'block';
+    // --- TMDB INTEGRATION ---
+    async function fetchPremiumDetails(item) {
+        document.getElementById('loading').style.display = 'flex';
+        
+        // Clean Title for Search (removes year brackets like (2024))
+        const cleanName = item.name.replace(/\(\d{4}\)/g, "").trim();
+        const tmdbUrl = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&query=${encodeURIComponent(cleanName)}`;
+        
+        try {
+            const res = await fetch(tmdbUrl);
+            const data = await res.json();
+            const bestMatch = data.results[0];
+
+            if (bestMatch) {
+                document.getElementById('det-title').innerText = bestMatch.title || bestMatch.name;
+                document.getElementById('det-plot').innerText = bestMatch.overview;
+                document.getElementById('det-rating').innerText = bestMatch.vote_average.toFixed(1);
+                document.getElementById('det-year').innerText = (bestMatch.release_date || bestMatch.first_air_date || "2024").substring(0,4);
+                document.getElementById('det-poster').src = `https://image.tmdb.org/t/p/w500${bestMatch.poster_path}`;
+                document.getElementById('details-backdrop').style.backgroundImage = `url(https://image.tmdb.org/t/p/original${bestMatch.backdrop_path})`;
+            } else {
+                // Fallback to Xtream Data if TMDB fails
+                document.getElementById('det-title').innerText = item.name;
+                document.getElementById('det-plot').innerText = "Plot details not available for this title.";
+                document.getElementById('det-poster').src = item.stream_icon || item.cover;
+            }
+        } catch (e) { console.error("TMDB Error", e); }
+
+        // Set Play Action
+        document.getElementById('play-trigger').onclick = () => startStreaming(item);
+
+        document.getElementById('loading').style.display = 'none';
+        openPage('details');
     }
 
-    function closeDetails() {
-        document.getElementById('movie-details').style.display = 'none';
+    // --- VIDEO PLAYER ENGINE ---
+    function startStreaming(item) {
+        const video = document.getElementById('video-engine');
+        // Xtream Movie URL Pattern: server/movie/user/pass/id.extension
+        const extension = item.container_extension || 'mp4';
+        const streamUrl = `${auth.url}/movie/${auth.user}/${auth.pass}/${item.stream_id}.${extension}`;
+
+        openPage('player');
+
+        if (Hls.isSupported() && streamUrl.includes('m3u8')) {
+            const hls = new Hls();
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+        } else {
+            video.src = streamUrl; // Direct MP4/TS
+        }
+    }
+
+    function closePlayer() {
+        const video = document.getElementById('video-engine');
+        video.pause();
+        video.src = "";
+        document.getElementById('view-player').style.display = 'none';
     }
 </script>
 </body>
