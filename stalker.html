@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX STALKER PORTAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #04080c;
+            --surface: #0c1219;
+            --accent: #1a98ff;
+            --text: #ffffff;
+            --text-dim: #6a7c89;
+            --focus-glow: 0 0 40px rgba(26, 152, 255, 0.4);
+        }
+
+        body, html {
+            margin: 0; padding: 0; background: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            display: flex; flex-direction: column; align-items: center; padding-top: 40px; z-index: 1000;
+        }
+        .nav-item { width: 50px; height: 50px; margin-bottom: 25px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); cursor: pointer; }
+        
+        /* FOCUS STATE */
+        .focusable { transition: 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); outline: none; border: 2px solid transparent; }
+        .focusable.focused { transform: scale(1.1); border-color: white; box-shadow: var(--focus-glow); background: rgba(255,255,255,0.1); z-index: 100; }
+        .nav-item.focused { color: var(--accent); border-color: var(--accent); }
+
+        /* --- CONTENT VIEWS --- */
+        main { margin-left: 80px; height: 100vh; overflow: hidden; position: relative; }
+        .view { position: absolute; inset: 0; display: none; padding: 40px 60px; box-sizing: border-box; }
+        .view.active { display: block; }
+
+        /* LISTS & GRIDS */
+        .list-container { display: flex; flex-direction: column; gap: 10px; max-height: 80vh; overflow-y: auto; scrollbar-width: none; }
+        .list-item { background: var(--surface); padding: 20px; border-radius: 12px; font-weight: 700; font-size: 1.2rem; cursor: pointer; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { height: 140px; background: var(--surface); border-radius: 12px; display: flex; align-items: flex-end; padding: 15px; background-size: cover; background-position: center; }
+
+        /* LOGIN */
+        .login-box { max-width: 450px; margin: 100px auto; background: var(--surface); padding: 50px; border-radius: 20px; border: 1px solid #1a222c; }
+        input { width: 100%; padding: 18px; margin: 10px 0; background: #04080c; border: 1px solid #1a222c; color: white; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
+
+        /* PLAYER */
+        #player-layer { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; }
+        video { width: 100%; height: 100%; }
+
+        .loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; align-items: center; justify-content: center; font-weight: 900; color: var(--accent); letter-spacing: 5px; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="nav-item focusable" data-page="home">🏠</div>
+        <div class="nav-item focusable" data-page="live">📺</div>
+        <div class="nav-item focusable" data-page="vod">🎬</div>
+        <div class="nav-item focusable" data-page="login">⚙️</div>
+    </aside>
+
+    <div id="loading" class="loader">STALKER CONNECTING</div>
+
+    <main>
+        <!-- LOGIN -->
+        <section id="view-login" class="view active">
+            <div class="login-box">
+                <h1 style="margin-top:0">Stalker Portal</h1>
+                <input type="text" id="portal_url" class="focusable" placeholder="http://portal-url.com/c/">
+                <input type="text" id="portal_mac" class="focusable" placeholder="00:1A:79:XX:XX:XX">
+                <button class="focusable" onclick="stalkerHandshake()" style="width:100%; padding:20px; background:var(--accent); color:white; border:none; font-weight:900; border-radius:12px; margin-top:20px;">PORTAL LOGIN</button>
+            </div>
+        </section>
+
+        <!-- CATEGORIES -->
+        <section id="view-cats" class="view">
+            <h1 id="cat-title">Live TV</h1>
+            <div class="list-container" id="cat-list"></div>
+        </section>
+
+        <!-- CHANNELS / MOVIES -->
+        <section id="view-items" class="view">
+            <h1 id="item-title">Channels</h1>
+            <div class="grid" id="item-grid"></div>
+        </section>
+    </main>
+
+    <div id="player-layer">
+        <video id="v-engine" controls autoplay></video>
+        <button class="focusable" onclick="closePlayer()" style="position:fixed; top:30px; left:30px; padding:15px; background:rgba(0,0,0,0.5); color:white; border:1px solid white; border-radius:10px;">Back</button>
+    </div>
+
+<script>
+    const PROXY = "https://layasync-proxy.layasync.workers.dev/?url=";
+    let portalData = { url: '', mac: '', token: '' };
+    let currentFocus = null;
+
+    // --- SPATIAL NAVIGATION (IR REMOTE FIX) ---
+    function setFocus(el) {
+        if (!el) return;
+        if (currentFocus) currentFocus.classList.remove('focused');
+        currentFocus = el;
+        currentFocus.classList.add('focused');
+        currentFocus.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function moveFocus(dir) {
+        const all = Array.from(document.querySelectorAll('.view.active .focusable, aside .focusable, #player-layer .focusable'));
+        const curRect = currentFocus.getBoundingClientRect();
+        let target = null; let minDistance = Infinity;
+
+        all.forEach(el => {
+            if (el === currentFocus) return;
+            const r = el.getBoundingClientRect();
+            let isMatch = false;
+            if (dir === 'up' && r.bottom <= curRect.top + 5) isMatch = true;
+            if (dir === 'down' && r.top >= curRect.bottom - 5) isMatch = true;
+            if (dir === 'left' && r.right <= curRect.left + 5) isMatch = true;
+            if (dir === 'right' && r.left >= curRect.right - 5) isMatch = true;
+
+            if (isMatch) {
+                const dist = Math.hypot(r.left - curRect.left, r.top - curRect.top);
+                if (dist < minDistance) { minDistance = dist; target = el; }
+            }
+        });
+        if (target) setFocus(target);
+    }
+
+    window.addEventListener('keydown', e => {
+        const key = e.keyCode;
+        if ([37, 38, 39, 40, 13, 10009].includes(key)) e.preventDefault();
+        if (key === 38) moveFocus('up');
+        if (key === 40) moveFocus('down');
+        if (key === 37) moveFocus('left');
+        if (key === 39) moveFocus('right');
+        if (key === 13) currentFocus.click();
+        if (key === 10009) closePlayer();
+    });
+
+    // --- STALKER API LOGIC ---
+    async function stalkerFetch(action, type = '', params = '') {
+        const baseUrl = portalData.url.endsWith('/') ? portalData.url : portalData.url + '/';
+        const target = `${baseUrl}load.php?action=${action}&type=${type}${params}&JsHttpRequest=1-xml`;
+        const proxyUrl = `${PROXY}${encodeURIComponent(target)}&mac=${portalData.mac}&token=${portalData.token}`;
+        
+        const res = await fetch(proxyUrl);
+        const text = await res.text();
+        // Stalker returns a custom JSON format wrapped in JsHttpRequest strings
+        const jsonStart = text.indexOf('{"');
+        const jsonEnd = text.lastIndexOf('}') + 1;
+        return JSON.parse(text.substring(jsonStart, jsonEnd)).js;
+    }
+
+    async function stalkerHandshake() {
+        document.getElementById('loading').style.display = 'flex';
+        portalData.url = document.getElementById('portal_url').value;
+        portalData.mac = document.getElementById('portal_mac').value;
+
+        try {
+            // Handshake 1: Get Token
+            const handshake = await stalkerFetch('stb', 'handshake');
+            portalData.token = handshake.token;
+            
+            // Handshake 2: Profile setup
+            await stalkerFetch('stb', 'get_profile');
+            
+            alert("Portal Connected!");
+            loadLiveCategories();
+        } catch (e) {
+            alert("Connection Failed. Check Portal URL and MAC.");
+        }
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    async function loadLiveCategories() {
+        const cats = await stalkerFetch('itv', 'get_categories');
+        const list = document.getElementById('cat-list');
+        list.innerHTML = '';
+        cats.forEach(cat => {
+            const div = document.createElement('div');
+            div.className = 'list-item focusable';
+            div.innerText = cat.category_name;
+            div.onclick = () => loadChannels(cat.id);
+            list.appendChild(div);
+        });
+        switchView('cats');
+    }
+
+    async function loadChannels(catId) {
+        document.getElementById('loading').style.display = 'flex';
+        const data = await stalkerFetch('itv', 'get_ordered_list', `&category=${catId}`);
+        const grid = document.getElementById('item-grid');
+        grid.innerHTML = '';
+        data.data.forEach(ch => {
+            const div = document.createElement('div');
+            div.className = 'card focusable';
+            div.style.backgroundImage = `url(${ch.logo})`;
+            div.innerHTML = `<div style="padding:10px; background:rgba(0,0,0,0.7); width:100%; font-size:0.8rem;">${ch.name}</div>`;
+            div.onclick = () => playStream(ch.cmd);
+            grid.appendChild(div);
+        });
+        switchView('items');
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    async function playStream(cmd) {
+        // Stalker cmd format: "ffrt http://..." or "udp://..."
+        const streamUrlRaw = cmd.split(' ')[1];
+        // Request the real link (Stalker often rotates links)
+        const linkData = await stalkerFetch('itv', 'get_link', `&cmd=${encodeURIComponent(cmd)}`);
+        const finalUrl = linkData;
+
+        document.getElementById('player-layer').style.display = 'block';
+        const v = document.getElementById('v-engine');
+        v.src = finalUrl;
+        v.play();
+    }
+
+    function switchView(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
+        setTimeout(() => setFocus(document.querySelector('.view.active .focusable')), 100);
+    }
+
+    function closePlayer() {
+        const v = document.getElementById('v-engine');
+        v.pause(); v.src = "";
+        document.getElementById('player-layer').style.display = 'none';
+    }
+
+    setFocus(document.querySelector('.focusable'));
+</script>
+</body>
+</html>
