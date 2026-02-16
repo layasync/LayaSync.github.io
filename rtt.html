@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONYX PREMIUM IPTV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060d14;
+            --surface: #101a23;
+            --accent: #1a98ff;
+            --text: #f2f4f6;
+            --text-dim: #8197a4;
+            --focus-glow: 0 0 35px rgba(26, 152, 255, 0.5);
+            --transition: 0.35s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; background: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh;
+        }
+
+        /* --- PREMIUM SIDEBAR --- */
+        aside {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 90px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; align-items: center; 
+            padding-top: 40px; z-index: 1000; border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-item {
+            width: 56px; height: 56px; margin-bottom: 25px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-dim); cursor: pointer; transition: var(--transition);
+        }
+
+        /* --- GLOBAL FOCUS ENGINE --- */
+        .focusable { transition: var(--transition); outline: none; border: 2px solid transparent; }
+        
+        /* The "Game" Focus Style */
+        .focusable.focused {
+            transform: scale(1.12);
+            border-color: white !important;
+            box-shadow: var(--focus-glow);
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.focused { color: var(--accent); border-color: var(--accent) !important; }
+        .nav-item svg { width: 28px; height: 28px; fill: currentColor; }
+
+        /* --- MAIN VIEWPORT --- */
+        main { margin-left: 90px; height: 100vh; overflow: hidden; position: relative; }
+        .view { position: absolute; inset: 0; display: none; padding: 40px 60px; box-sizing: border-box; }
+        .view.active { display: block; animation: viewFade 0.5s ease; }
+
+        @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HERO AREA */
+        .hero {
+            height: 65vh; margin: -40px -60px 40px -60px; position: relative;
+            background-size: cover; background-position: top center;
+            display: flex; align-items: center; padding: 0 80px;
+        }
+        .hero::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, var(--bg) 10%, transparent 80%),
+                        linear-gradient(0deg, var(--bg) 0%, transparent 40%);
+        }
+        .hero-content { position: relative; z-index: 10; max-width: 650px; }
+        .hero-title { font-size: 4.5rem; font-weight: 800; margin: 0; letter-spacing: -2px; }
+
+        /* ROWS & CARDS */
+        .row-title { font-size: 1.6rem; font-weight: 700; margin: 40px 0 15px 0; display: flex; align-items: center; gap: 12px; }
+        .row-title::before { content: ''; width: 4px; height: 26px; background: var(--accent); border-radius: 2px; }
+        
+        .scroller { display: flex; gap: 20px; overflow-x: visible; padding: 15px 5px; }
+        
+        .card {
+            min-width: 300px; height: 169px; background: var(--surface);
+            border-radius: 14px; cursor: pointer; flex-shrink: 0;
+            background-size: cover; background-position: center;
+            display: flex; align-items: flex-end; border: 2px solid rgba(255,255,255,0.05);
+        }
+        .card-label { 
+            width: 100%; padding: 18px; background: linear-gradient(0deg, rgba(0,0,0,0.9), transparent);
+            font-weight: 600; border-radius: 0 0 14px 14px; font-size: 0.95rem;
+        }
+
+        /* GRID */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 20px; }
+        .cat-card {
+            height: 120px; background: var(--surface); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.2rem; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* PLAYER */
+        #player-layer { position: fixed; inset: 0; background: #000; z-index: 5000; display: none; }
+
+        /* LOADING */
+        .loader { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; color: var(--accent); letter-spacing: 5px; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="nav-item focusable" data-page="home">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </div>
+        <div class="nav-item focusable" data-page="movies">
+            <svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+        </div>
+        <div class="nav-item focusable" data-page="shows">
+            <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+        </div>
+        <div class="nav-item focusable" data-page="login">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+    </aside>
+
+    <div id="loader" class="loader">ONYX PREMIUM<span>LOADING DATA...</span></div>
+
+    <main id="main-scroll">
+        <section id="view-home" class="view active">
+            <div class="hero" id="home-hero">
+                <div class="hero-content">
+                    <h1 id="hero-title" class="hero-title">Onyx IPTV</h1>
+                    <p id="hero-desc" style="color: var(--text-dim); font-size: 1.3rem; margin: 25px 0; line-height: 1.6;"></p>
+                    <button class="focusable" id="hero-play" style="padding: 18px 45px; background: var(--accent); color:white; border:none; border-radius:14px; font-weight:800; cursor:pointer;">▶ WATCH NOW</button>
+                </div>
+            </div>
+            <div class="row-title">Recently Added</div>
+            <div class="scroller" id="row-server"></div>
+            <div class="row-title">Trending Globally</div>
+            <div class="scroller" id="row-trending"></div>
+        </section>
+
+        <section id="view-library" class="view">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 id="lib-title" style="font-size: 3.5rem; margin:0;">Movies</h1>
+                <button class="focusable" onclick="showView('home')" style="padding:12px 30px; background:var(--surface); border:none; color:white; border-radius:10px; cursor:pointer;">Back to Home</button>
+            </div>
+            <div class="grid" id="lib-grid"></div>
+        </section>
+
+        <section id="view-login" class="view">
+            <div style="max-width:440px; margin: 60px auto; background: var(--surface); padding: 55px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 30px 60px rgba(0,0,0,0.5);">
+                <h2 style="margin-top:0; font-size: 2rem;">Server Setup</h2>
+                <input type="text" id="iptv_url" class="focusable" placeholder="http://server.com:80" style="width:100%; padding:18px; margin:12px 0; background:#060d14; border:1px solid #222; color:white; border-radius:12px;">
+                <input type="text" id="iptv_user" class="focusable" placeholder="Username" style="width:100%; padding:18px; margin:12px 0; background:#060d14; border:1px solid #222; color:white; border-radius:12px;">
+                <input type="password" id="iptv_pass" class="focusable" placeholder="Password" style="width:100%; padding:18px; margin:12px 0; background:#060d14; border:1px solid #222; color:white; border-radius:12px;">
+                <button class="focusable" onclick="connect()" style="width:100%; padding:20px; background:var(--accent); color:white; border:none; font-weight:800; border-radius:14px; margin-top:25px; cursor:pointer;">CONNECT SERVER</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="player-layer">
+        <video id="v-engine" controls autoplay></video>
+        <button class="focusable" onclick="closePlayer()" style="position:fixed; top:40px; left:40px; padding:15px 35px; background:rgba(0,0,0,0.7); border:1px solid #fff; color:white; border-radius:12px; cursor:pointer; font-weight:800;">CLOSE PLAYER</button>
+    </div>
+
+<script>
+    const TMDB_KEY = "c78abeb00aa64f93fd7b516cb9bd180e";
+    const PROXY = "https://layasync-proxy.layasync.workers.dev/?url=";
+    let auth = null;
+    let currentFocus = null;
+
+    // --- 1. THE IR REMOTE & SPATIAL ENGINE ---
+    function setFocus(el) {
+        if (!el) return;
+        if (currentFocus) currentFocus.classList.remove('focused');
+        currentFocus = el;
+        currentFocus.classList.add('focused');
+        currentFocus.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+
+    function moveFocus(dir) {
+        const all = Array.from(document.querySelectorAll('.view.active .focusable, aside .focusable, #player-layer .focusable'));
+        const curRect = currentFocus.getBoundingClientRect();
+        
+        const neighbors = all.filter(el => {
+            if (el === currentFocus) return false;
+            const r = el.getBoundingClientRect();
+            if (dir === 'up') return r.bottom <= curRect.top + 10;
+            if (dir === 'down') return r.top >= curRect.bottom - 10;
+            if (dir === 'left') return r.right <= curRect.left + 10;
+            if (dir === 'right') return r.left >= curRect.right - 10;
+            return false;
+        });
+
+        if (neighbors.length > 0) {
+            const closest = neighbors.reduce((prev, curr) => {
+                const d1 = Math.hypot((curr.getBoundingClientRect().left - curRect.left), (curr.getBoundingClientRect().top - curRect.top));
+                const d2 = Math.hypot((prev.getBoundingClientRect().left - curRect.left), (prev.getBoundingClientRect().top - curRect.top));
+                return d1 < d2 ? curr : prev;
+            });
+            setFocus(closest);
+        }
+    }
+
+    // IR REMOTE FIX: Mapping TV Keys and Preventing Default Mouse Movement
+    window.addEventListener('keydown', e => {
+        const key = e.keyCode || e.which;
+        
+        // Tizen/IR Specific Mappings
+        const UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39, ENTER = 13, RETURN = 10009;
+
+        if ([UP, DOWN, LEFT, RIGHT, ENTER, RETURN].includes(key)) {
+            e.preventDefault(); // STOP THE TV MOUSE
+            
+            if (key === UP) moveFocus('up');
+            if (key === DOWN) moveFocus('down');
+            if (key === LEFT) moveFocus('left');
+            if (key === RIGHT) moveFocus('right');
+            if (key === ENTER) currentFocus.click();
+            if (key === RETURN) {
+                if(document.getElementById('player-layer').style.display === 'block') closePlayer();
+                else showView('home');
+            }
+        }
+    });
+
+    // Support Mouse Hover simultaneously
+    document.addEventListener('mouseover', e => {
+        const target = e.target.closest('.focusable');
+        if (target) setFocus(target);
+    });
+
+    // --- 2. API & LOGIC ---
+    async function showView(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + id).classList.add('active');
+        if (id === 'home') await initHome();
+        setTimeout(() => setFocus(document.querySelector('.view.active .focusable') || document.querySelector('aside .focusable')), 100);
+    }
+
+    async function connect() {
+        auth = { url: document.getElementById('iptv_url').value, user: document.getElementById('iptv_user').value, pass: document.getElementById('iptv_pass').value };
+        const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=get_live_categories`));
+        if (res.ok) showView('home');
+    }
+
+    async function initHome() {
+        document.getElementById('loader').style.display = 'flex';
+        const tmdb = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_KEY}`);
+        const data = await tmdb.json();
+        const top = data.results[0];
+        
+        document.getElementById('home-hero').style.backgroundImage = `url(https://image.tmdb.org/t/p/original${top.backdrop_path})`;
+        document.getElementById('hero-title').innerText = top.title;
+        document.getElementById('hero-desc').innerText = top.overview;
+        document.getElementById('hero-play').onclick = () => alert("Playing Spotlight: " + top.title);
+
+        fillRow('row-trending', data.results);
+        if (auth) {
+            const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=get_vod_streams`));
+            const items = await res.json();
+            fillRow('row-server', items.slice(0, 12), true);
+        }
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    function fillRow(id, items, isServer = false) {
+        const row = document.getElementById(id); row.innerHTML = '';
+        items.forEach(i => {
+            const div = document.createElement('div');
+            div.className = 'card focusable';
+            const img = isServer ? (i.stream_icon || i.cover) : `https://image.tmdb.org/t/p/w500${i.backdrop_path}`;
+            div.style.backgroundImage = `url(${img})`;
+            div.innerHTML = `<div class="card-label">${i.name || i.title}</div>`;
+            div.onclick = () => isServer ? playItem(i) : null;
+            row.appendChild(div);
+        });
+    }
+
+    async function loadLib(type) {
+        document.getElementById('loader').style.display = 'flex';
+        const action = type === 'movies' ? 'get_vod_categories' : 'get_series_categories';
+        const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}`));
+        const data = await res.json();
+        
+        document.getElementById('lib-title').innerText = type.toUpperCase();
+        const grid = document.getElementById('lib-grid'); grid.innerHTML = '';
+        data.forEach(cat => {
+            const div = document.createElement('div');
+            div.className = 'cat-card focusable';
+            div.innerText = cat.category_name;
+            div.onclick = () => loadItems(type === 'movies' ? 'get_vod_streams' : 'get_series', cat.category_id);
+            grid.appendChild(div);
+        });
+        showView('library');
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    async function loadItems(action, id) {
+        document.getElementById('loader').style.display = 'flex';
+        const res = await fetch(PROXY + encodeURIComponent(`${auth.url}/player_api.php?username=${auth.user}&password=${auth.pass}&action=${action}&category_id=${id}`));
+        const data = await res.json();
+        const grid = document.getElementById('lib-grid'); grid.innerHTML = '';
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'card focusable';
+            div.style.width = '100%'; div.style.minWidth = 'unset';
+            div.style.backgroundImage = `url(${item.stream_icon || item.cover})`;
+            div.innerHTML = `<div class="card-label">${item.name}</div>`;
+            div.onclick = () => playItem(item);
+            grid.appendChild(div);
+        });
+        document.getElementById('loader').style.display = 'none';
+        setFocus(grid.firstChild);
+    }
+
+    function playItem(item) {
+        const url = `${auth.url}/movie/${auth.user}/${auth.pass}/${item.stream_id}.${item.container_extension || 'mkv'}`;
+        document.getElementById('player-layer').style.display = 'block';
+        const v = document.getElementById('v-engine'); v.src = url; v.play();
+    }
+
+    function closePlayer() {
+        const v = document.getElementById('v-engine'); v.pause(); v.src = "";
+        document.getElementById('player-layer').style.display = 'none';
+    }
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.onclick = () => {
+            const p = btn.dataset.page;
+            if (p === 'movies' || p === 'shows') loadLib(p);
+            else showView(p);
+        };
+    });
+
+    setFocus(document.querySelector('.nav-item'));
+    setTimeout(() => document.getElementById('loader').style.display = 'none', 1500);
+</script>
+</body>
+</html>
