@@ -1,262 +1,450 @@
-/* =========================================
-   GLOBAL RESET
-   Removes default browser spacing
-========================================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
-/* =========================================
-   BODY / PAGE BACKGROUND
-========================================= */
 body {
-    font-family: 'Inter', sans-serif;   /* Clean modern font */
-    background: #1b2228;                /* Dark bluish background */
-    color: #ffffff;                    /* Default text color */
-    overflow-x: hidden;                /* Prevent side scrolling */
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    overflow: hidden;
+    width: 1920px;
+    height: 1080px;
 }
 
-
-/* =========================================
-   TOP NAVIGATION WRAPPER
-   Positions navigation at top center
-========================================= */
-.topbar {
-    position: fixed;          /* Stays on screen while scrolling */
-    top: 25px;                /* Space from top edge */
+#app {
     width: 100%;
+    height: 100%;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* Login Screen */
+.login-container {
+    max-width: 600px;
+    margin: 200px auto;
+    padding: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 48px;
+    color: #00d9ff;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #ccc;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    font-size: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #00d9ff;
+}
+
+/* Header */
+.header {
     display: flex;
-    justify-content: center;  /* Center nav horizontally */
-    z-index: 1000;            /* Stay above everything */
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 50px;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid #00d9ff;
 }
 
-
-/* =========================================
-   WHITE PREMIUM OVERLAY BAR
-   Frosted white glass style
-========================================= */
-.nav-container {
-
-    /* Soft white with transparency */
-    background: rgba(255, 255, 255, 0.08);
-
-    padding: 16px 36px;
-    border-radius: 60px;
-
-    /* Frosted glass blur */
-    backdrop-filter: blur(20px);
-
-    /* Soft shadow so it floats */
-    box-shadow:
-        0 18px 50px rgba(0, 0, 0, 0.6);
-
-    /* Light edge highlight */
-    border: 1px solid rgba(255, 255, 255, 0.15);
+.header h1 {
+    font-size: 42px;
+    color: #00d9ff;
 }
 
+.user-info {
+    font-size: 20px;
+    color: #ccc;
+}
 
-/* =========================================
-   NAV LINKS CONTAINER
-========================================= */
-.nav {
+/* Main Menu */
+.main-menu {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    padding: 100px;
+    height: calc(100% - 120px);
+}
+
+.menu-item {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.2) 0%, rgba(0, 150, 255, 0.2) 100%);
+    border-radius: 20px;
+    padding: 60px;
     display: flex;
-    gap: 14px; /* Space between nav buttons */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent;
 }
 
+.menu-item:hover,
+.menu-item.focused {
+    transform: scale(1.05);
+    border-color: #00d9ff;
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+}
 
-/* =========================================
-   INDIVIDUAL NAV BUTTON
-========================================= */
-.nav-item {
-    text-decoration: none;
-    color: #aeb6bd;           /* Soft grey */
-    font-weight: 500;
-    padding: 10px 22px;       /* Button size */
-    border-radius: 999px;     /* Pill shape */
+.menu-icon {
+    font-size: 120px;
+    margin-bottom: 30px;
+}
+
+.menu-title {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+/* Content Area */
+.content-area {
+    display: flex;
+    height: calc(100% - 120px);
+}
+
+.sidebar {
+    width: 350px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #00d9ff;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.category-item {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    border: 2px solid transparent;
+}
+
+.category-item:hover,
+.category-item.focused,
+.category-item.active {
+    background: rgba(0, 217, 255, 0.3);
+    border-color: #00d9ff;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.channel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.channel-item,
+.vod-item,
+.series-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.channel-item:hover,
+.channel-item.focused,
+.vod-item:hover,
+.vod-item.focused,
+.series-item:hover,
+.series-item.focused {
+    transform: scale(1.05);
+    border-color: #00d9ff;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.channel-icon,
+.vod-icon,
+.series-icon {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.channel-name,
+.vod-name,
+.series-name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.channel-number {
+    font-size: 16px;
+    color: #00d9ff;
+}
+
+/* Player Screen */
+#playerScreen {
+    background: #000;
+}
+
+#videoPlayer {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.player-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+    padding: 40px 60px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.player-controls.visible {
+    opacity: 1;
+}
+
+.player-info {
+    margin-bottom: 25px;
+}
+
+.player-info h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.player-info p {
+    font-size: 20px;
+    color: #ccc;
+}
+
+.player-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-control {
+    padding: 15px 30px;
+    font-size: 22px;
+    background: rgba(0, 217, 255, 0.3);
+    border: 2px solid #00d9ff;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
     transition: all 0.3s ease;
 }
 
-
-/* Hover effect for nav */
-.nav-item:hover {
-    color: #ffffff;
-}
-
-
-/* Active nav button (Home selected) */
-.nav-item.active {
-    background: #06090c;      /* Deep dark pill */
-    color: #ffffff;
-}
-
-
-/* =========================================
-   MAIN CONTENT AREA
-   Push content below fixed navbar
-========================================= */
-.content {
-    padding: 140px 50px 50px 50px; /* Top padding avoids nav overlap */
-}
-
-
-/* =========================================
-   SECTION WRAPPER
-========================================= */
-.section {
-    margin-bottom: 60px; /* Space between sections */
-}
-
-
-/* Section Title */
-.section h2 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 25px;
-    color: #e4e8ec;
-}
-
-
-/* =========================================
-   HORIZONTAL MOVIE ROW WITH SNAP
-========================================= */
-.card-row {
-    display: flex;
-    gap: 20px;
-
-    overflow-x: auto;               /* Allow horizontal scroll */
-    scroll-behavior: smooth;        /* Smooth scroll */
-    
-    /* SNAP SETTINGS */
-    scroll-snap-type: x mandatory;  /* Force snap on X axis */
-
-    padding-bottom: 20px;
-}
-
-
-/* =========================================
-   GENERIC CARD STYLE
-========================================= */
-.card {
-    background: #2a3138;
-    border-radius: 18px;
-    flex-shrink: 0;
-    transition: transform 0.3s ease;
-
-    /* SNAP ALIGNMENT */
-    scroll-snap-align: start;  /* Each card becomes snap point */
-}
-
-
-/* Hover zoom effect */
-.card:hover {
-    transform: scale(1.06);
-}
-
-
-/* =========================================
-   WIDE CARD (Current Watching)
-========================================= */
-.card.wide {
-    width: 320px;
-    height: 180px;
-}
-
-
-/* =========================================
-   TALL CARD (Movie Posters)
-========================================= */
-.card.tall {
-    width: 160px;
-    height: 240px;
-}
-/* =========================================
-   PAGE SYSTEM
-   Controls section visibility
-========================================= */
-
-/* Hide all sections by default */
-.page {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-/* Show active page */
-.active-page {
-    display: block;
-}
-
-/* Smooth fade animation */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-/* TV Focus Highlight */
-.nav-item:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #ffffff;
-}
-/* TV focus ring */
-.nav-item:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px #ffffff;
-}
-
-/* ===============================
-   Smooth scrolling globally
-=============================== */
-html {
-    scroll-behavior: smooth;
-}
-
-/* ===============================
-   Pages act like full tiles
-   Each page fills viewport
-=============================== */
-.page {
-    min-height: 100vh;      /* Each section full screen */
-    padding-top: 120px;     /* Space below navbar */
-    display: none;
-}
-
-/* Active page visible */
-.active-page {
-    display: block;
-}
-
-/* Center nav items nicely */
-.nav {
-    scroll-behavior: smooth;
-}
-
-/* Make nav scroll horizontally if needed */
-.nav-container {
-    overflow-x: auto;
-}
-/* ===============================
-   Make nav scroll smoothly
-=============================== */
-.nav-container {
-    overflow-x: auto;
-    scroll-behavior: smooth;
-}
-
-/* Remove ugly scrollbar */
-.nav-container::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hover acts like TV focus */
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+.btn-control:hover,
+.btn-control.focused {
+    background: rgba(0, 217, 255, 0.6);
     transform: scale(1.05);
 }
 
-/* Active pill stays strong */
-.nav-item.active {
-    background: rgba(0, 0, 0, 0.6);
-    color: #ffffff;
+.subtitle-selector,
+.audio-selector {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    padding: 40px;
+    border-radius: 15px;
+    border: 2px solid #00d9ff;
+    min-width: 500px;
+}
+
+.subtitle-selector h3,
+.audio-selector h3 {
+    font-size: 32px;
+    margin-bottom: 25px;
+    color: #00d9ff;
+}
+
+.track-item {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    border: 2px solid transparent;
+}
+
+.track-item:hover,
+.track-item.focused,
+.track-item.active {
+    background: rgba(0, 217, 255, 0.3);
+    border-color: #00d9ff;
+}
+
+/* Buttons */
+.btn-primary,
+.btn-back {
+    padding: 15px 40px;
+    font-size: 24px;
+    background: linear-gradient(135deg, #00d9ff 0%, #0096ff 100%);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.btn-primary:hover,
+.btn-primary.focused,
+.btn-back:hover,
+.btn-back.focused {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Settings Screen */
+.settings-content {
+    padding: 60px 100px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00d9ff;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00b8d9;
+}
+
+/* Focus styles */
+.focusable {
+    position: relative;
+}
+
+.focusable.focused::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 3px solid #00d9ff;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(0, 217, 255, 0.8);
+    }
+}
+
+/* Loading indicator */
+.loading {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #00d9ff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
