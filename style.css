@@ -56,3 +56,17 @@ body {
 }
 
 .icon-btn { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+
+---   ------ $  $$$$$$$$
+.card-landscape, .card-portrait {
+    background: #1a1c1f; /* Solid dark color while loading */
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/* Add a hover effect for mouse testing, later we'll change to Remote Focus */
+.card-landscape:hover, .card-portrait:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+$$$$  $$$$   $$$
