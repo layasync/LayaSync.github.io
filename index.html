@@ -1,1 +1,64 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamTV Premium</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Bar Navigation -->
+    <header class="top-bar">
+        <div class="user-section">
+            <div class="icon-btn user-avatar">👤</div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="icon-btn search-icon">🔍</div>
+            <ul class="nav-links">
+                <li class="nav-item active" data-view="home">Home</li>
+                <li class="nav-item" data-view="movies">Movies</li>
+                <li class="nav-item" data-view="shows">Shows</li>
+                <li class="nav-item" data-view="playlists">Playlists</li>
+                <li class="nav-item" data-view="collections">Collections</li>
+                <li class="nav-item" data-view="grid">🔳</li>
+            </ul>
+        </nav>
+
+        <div class="action-section">
+            <div class="icon-btn">📊</div>
+            <div class="icon-btn">⏻</div>
+            <div class="icon-btn">⚙️</div>
+        </div>
+    </header>
+
+    <!-- Content Area where views will swap -->
+    <main id="app-content">
+        <!-- Default Home View -->
+        <div id="view-home" class="page-view active">
+            <section class="row">
+                <h2 class="row-title">Current Watching</h2>
+                <div class="scroller horizontal" id="recent-watching">
+                    <!-- Landscape cards injected here -->
+                </div>
+            </section>
+
+            <section class="row">
+                <h2 class="row-title">Last added Movies</h2>
+                <div class="scroller horizontal" id="last-added">
+                    <!-- Portrait cards injected here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Placeholder for other pages -->
+        <div id="view-movies" class="page-view"><h1>Movies Library</h1></div>
+        <div id="view-shows" class="page-view"><h1>TV Series</h1></div>
+        <!-- ... others ... -->
+    </main>
+
+    <script src="navigation.js"></script>
+    <script src="app.js"></script>
+    <script src="player.js"></script>
+</body>
+</html> 
