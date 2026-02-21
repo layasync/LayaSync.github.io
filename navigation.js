@@ -1,14 +1,17 @@
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
-        const target = item.getAttribute('data-view');
+        const viewId = item.getAttribute('data-view');
         
-        // Update Nav UI
+        // 1. Update Navigation Menu UI
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
         item.classList.add('active');
 
-        // Swap Views
-        document.querySelectorAll('.page-view').forEach(view => view.classList.remove('active'));
-        const targetView = document.getElementById(`view-${target}`);
-        if(targetView) targetView.classList.add('active');
+        // 2. Hide all pages and show the target one
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        
+        const targetPage = document.getElementById('view-' + viewId);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
     });
-}); 
+});
