@@ -7,58 +7,51 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Top Bar Navigation -->
     <header class="top-bar">
         <div class="user-section">
-            <div class="icon-btn user-avatar">👤</div>
+            <div class="icon-btn focusable">👤</div>
         </div>
 
         <nav class="main-nav">
-    <div class="search-icon">🔍</div>
-    <ul class="nav-links">
-        <li class="nav-item active">Home</li>
-        <li class="nav-item">Movies</li>
-        <li class="nav-item">Shows</li>
-        <li class="nav-item">Playlists</li>
-        <li class="nav-item">Collections</li>
-        <li class="nav-item">🔳</li>
-    </ul>
-</nav>
+            <div class="search-icon">🔍</div>
+            <ul class="nav-links">
+                <li class="nav-item active focusable" data-view="home">Home</li>
+                <li class="nav-item focusable" data-view="movies">Movies</li>
+                <li class="nav-item focusable" data-view="shows">Shows</li>
+                <li class="nav-item focusable" data-view="playlists">Playlists</li>
+                <li class="nav-item focusable" data-view="collections">Collections</li>
+                <li class="nav-item focusable" data-view="grid">🔳</li>
+            </ul>
+        </nav>
 
         <div class="action-section">
-            <div class="icon-btn">📊</div>
-            <div class="icon-btn">⏻</div>
-            <div class="icon-btn">⚙️</div>
+            <div class="icon-btn focusable">📊</div>
+            <div class="icon-btn focusable">⏻</div>
+            <div class="icon-btn focusable">⚙️</div>
         </div>
     </header>
 
-    <!-- Content Area where views will swap -->
-    <main id="app-content">
-        <!-- Default Home View -->
-        <div id="view-home" class="page-view active">
+    <main id="view-container">
+        <!-- HOME VIEW -->
+        <div id="view-home" class="page active">
             <section class="row">
                 <h2 class="row-title">Current Watching</h2>
-                <div class="scroller horizontal" id="recent-watching">
-                    <!-- Landscape cards injected here -->
-                </div>
+                <div class="scroller" id="row-recent"></div>
             </section>
-
             <section class="row">
                 <h2 class="row-title">Last added Movies</h2>
-                <div class="scroller horizontal" id="last-added">
-                    <!-- Portrait cards injected here -->
-                </div>
+                <div class="scroller" id="row-last-added"></div>
             </section>
         </div>
 
-        <!-- Placeholder for other pages -->
-        <div id="view-movies" class="page-view"><h1>Movies Library</h1></div>
-        <div id="view-shows" class="page-view"><h1>TV Series</h1></div>
-        <!-- ... others ... -->
+        <!-- OTHER VIEWS (Blank as requested) -->
+        <div id="view-movies" class="page"><div class="blank-state"><h1>Movies</h1><p>Content coming soon...</p></div></div>
+        <div id="view-shows" class="page"><div class="blank-state"><h1>Shows</h1><p>Content coming soon...</p></div></div>
+        <div id="view-playlists" class="page"><div class="blank-state"><h1>Playlists</h1><p>Content coming soon...</p></div></div>
+        <div id="view-collections" class="page"><div class="blank-state"><h1>Collections</h1><p>Content coming soon...</p></div></div>
     </main>
 
-    <script src="navigation.js"></script>
     <script src="app.js"></script>
-    <script src="player.js"></script>
+    <script src="navigation.js"></script>
 </body>
-</html> 
+</html>
