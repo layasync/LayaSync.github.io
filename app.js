@@ -1,41 +1,134 @@
-const data = {
-    recent: [
-        { title: 'SUPERMAN', meta: '1h 15m', progress: 40, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsx6PViRWfo7nMFel81zgsYqq4mNCr4cN3BPTbq348gw&s=10' },
-        { title: 'MOBLAND', meta: 'S1 · E5 - 58m', progress: 80, img: 'https://images7.alphacoders.com/132/1325170.jpeg' },
-        { title: 'BALLERINA', meta: '2h 42m', progress: 10, img: 'https://images8.alphacoders.com/133/1339031.jpg' }
-    ],
-    lastAdded: [
-        { title: 'Deep Cover', img: 'https://www.themoviedb.org/t/p/original/6S0x7hI9S8Xl1WdY1Z1U0u6X0.jpg', isNew: false },
-        { title: 'The Amateur', img: 'https://www.themoviedb.org/t/p/original/8uVKfR6VoBovmZ4fS6SAsURunje.jpg', isNew: false },
-        { title: 'Dragon', img: 'https://www.themoviedb.org/t/p/original/pA0VpS3D28Iu3bJvPqV8t2mC4vL.jpg', isNew: true },
-        { title: 'Sinners', img: 'https://www.themoviedb.org/t/p/original/6S0x7hI9S8Xl1WdY1Z1U0u6X0.jpg', isNew: false },
-        { title: 'Elio', img: 'https://www.themoviedb.org/t/p/original/6S0x7hI9S8Xl1WdY1Z1U0u6X0.jpg', isNew: true }
-    ]
+/**
+ * Onyx Stream Player - App Logic
+ * Handles Data Rendering and View Management
+ */
+
+const App = {
+    // Current state of the app
+    state: {
+        currentView: 'home',
+        isLoading: false
+    },
+
+    // Initialize the application
+    init: async function() {
+        console.log("App Initializing...");
+        this.bindEvents();
+        await this.loadHomeContent();
+    },
+
+    // Bind UI events
+    bindEvents: function() {
+        // Handle Navigation Clicks
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const targetView = e.currentTarget.getAttribute('data-view');
+                this.switchView(targetView);
+            });
+        });
+
+        // Handle card clicks (For future player integration)
+        document.addEventListener('click', (e) => {
+            const card = e.target.closest('.card-landscape, .card-portrait');
+            if (card) {
+                console.log("Card Selected:", card.getAttribute('data-title'));
+                // Here we will later trigger player.js
+            }
+        });
+    },
+
+    // Switch between pages (Home, Movies, Shows, etc.)
+    switchView: function(viewId) {
+        if (this.state.currentView === viewId) return;
+
+        console.log(`Switching to view: ${viewId}`);
+        
+        // 1. Update Navigation UI
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+            if (nav.getAttribute('data-view') === viewId) {
+                nav.classList.add('active');
+            }
+        });
+
+        // 2. Switch Pages
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        const targetPage = document.getElementById('view-' + viewId);
+        
+        if (targetPage) {
+            targetPage.classList.add('active');
+            this.state.currentView = viewId;
+        }
+
+        // 3. Special logic for Home (Reload data if needed)
+        if (viewId === 'home') {
+            // Content is already loaded usually, but can refresh here
+        }
+    },
+
+    // Fetch and Render Home Page Rows
+    loadHomeContent: async function() {
+        const recentRow = document.getElementById('row-recent');
+        const lastAddedRow = document.getElementById('row-last-added');
+
+        if (!recentRow || !lastAddedRow) return;
+
+        try {
+            // Fetch real data from TMDB
+            const trending = await TMDB.getTrending(); // For Landscape
+            const popular = await TMDB.getPopular();   // For Portrait
+
+            // Render "Current Watching" Row
+            recentRow.innerHTML = trending.map(movie => this.templates.landscape(movie)).join('');
+
+            // Render "Last Added" Row
+            lastAddedRow.innerHTML = popular.map((movie, index) => {
+                const isNew = index < 4; // Mark first 4 as "New"
+                return this.templates.portrait(movie, isNew);
+            }).join('');
+
+        } catch (error) {
+            console.error("Failed to load content:", error);
+        }
+    },
+
+    // HTML Templates for the UI
+    templates: {
+        // Landscape Card (Top Row)
+        landscape: function(movie) {
+            // Generate random progress for the "Prime" look
+            const progress = Math.floor(Math.random() * 80) + 10;
+            const hours = Math.floor(Math.random() * 2) + 1;
+            const mins = Math.floor(Math.random() * 59);
+            
+            return `
+                <div class="card-landscape focusable" data-title="${movie.title}" data-id="${movie.id}">
+                    <img src="${TMDB_IMAGE_BASE}${movie.backdrop_path}" alt="${movie.title}" loading="lazy">
+                    <div class="card-overlay">
+                        <div class="card-title">${movie.title.toUpperCase()}</div>
+                        <div class="card-meta">
+                            <span class="play-icon">▶</span>
+                            <span>${hours}h ${mins}m remaining</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        },
+
+        // Portrait Card (Bottom Row)
+        portrait: function(movie, isNew) {
+            return `
+                <div class="card-portrait focusable" data-title="${movie.title}" data-id="${movie.id}">
+                    <img src="${TMDB_IMAGE_BASE}${movie.poster_path}" alt="${movie.title}" loading="lazy">
+                    ${isNew ? '<div class="dot-new"></div>' : ''}
+                </div>
+            `;
+        }
+    }
 };
 
-function renderHome() {
-    const recentRow = document.getElementById('row-recent');
-    const lastAddedRow = document.getElementById('row-last-added');
-
-    data.recent.forEach(item => {
-        recentRow.innerHTML += `
-            <div class="card-landscape">
-                <img src="${item.img}">
-                <div class="card-overlay">
-                    <div class="card-title">${item.title}</div>
-                    <div class="card-meta"><span>▶</span> ${item.meta}</div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${item.progress}%"></div></div>
-                </div>
-            </div>`;
-    });
-
-    data.lastAdded.forEach(item => {
-        lastAddedRow.innerHTML += `
-            <div class="card-portrait">
-                <img src="${item.img}">
-                ${item.isNew ? '<div class="dot-new"></div>' : ''}
-            </div>`;
-    });
-}
-
-window.onload = renderHome;
+// Start the app when the DOM is ready
+document.addEventListener('DOMContentLoaded', () => App.init());
