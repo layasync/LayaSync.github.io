@@ -68,6 +68,7 @@ class QuickStart {
             sizePresets: document.querySelectorAll('.preset-btn'),
             exclude4kCheckbox: document.getElementById("exclude4k"),
             excludeDolbyCheckbox: document.getElementById("excludeDolby"),
+            prioritizeQualityCheckbox: document.getElementById("prioritizeQuality"),
 
             aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
             formatSelect: document.getElementById("formatSelect"),
@@ -472,7 +473,7 @@ class QuickStart {
         return readAccessToken;
     }
 
-    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon) {
+    async createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon, prioritizeQuality) {
         const tmdbReadToken = await this.generateRandomTmdbCredentials();
         const exclude4k = this.ui.exclude4kCheckbox.checked;
         const excludeDolby = this.ui.excludeDolbyCheckbox.checked;
@@ -481,11 +482,10 @@ class QuickStart {
         const selectedHostValue = this.ui.aiostreamsHostSelect.value;
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
-        const formatterName = this.formatters[selectedFormatterId].name;
         const formatterDefinition = this.formatters[selectedFormatterId].definition;
 
         // Prepare the config
-        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterName, formatterDefinition, exclude4k, excludeDolby, maxSize);
+        const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterDefinition, exclude4k, excludeDolby, maxSize, prioritizeQuality);
 
         let manifestUrl = null;
 
@@ -643,6 +643,7 @@ class QuickStart {
         const compatibilityMode = this.ui.compatibilityModeSelect.value;
         const debridioKey = this.ui.debridioInput.value.trim();
         const cleanupOldInstalls = this.ui.cleanDuckStreamsCheckbox.checked;
+        const prioritizeQuality = this.ui.prioritizeQualityCheckbox ? this.ui.prioritizeQualityCheckbox.checked : true;
 
         // Get selected formatter
         const selectedFormatterId = this.ui.formatSelect.value;
@@ -663,7 +664,7 @@ class QuickStart {
             return null;
         }
 
-        return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId, compatibilityMode };
+        return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId, compatibilityMode, prioritizeQuality };
     }
 
     async handleSubmit(e) {
@@ -686,6 +687,7 @@ class QuickStart {
             const cleanupOldInstalls = formData.cleanupOldInstalls;
             const selectedFormatterId = formData.selectedFormatterId;
             const compatibilityMode = formData.compatibilityMode;
+            const prioritizeQuality = formData.prioritizeQuality;
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
@@ -698,7 +700,7 @@ class QuickStart {
             }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon);
+            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon, prioritizeQuality);
 
             if (this.mode === 'account') {
                 // 4. Install Manifest

@@ -610,7 +610,10 @@ class NavigationSidebar {
                     <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style="width: 32px; height: 32px;">
                 </a>
                 <a href="https://ko-fi.com/duckstreams" target="_blank" title="Support on Ko-Fi" style="width: 50px; height: 50px; background: #29abe0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 30px; height: auto;">
+                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 32px; height: auto;">
+                </a>
+                <a href="#" id="crypto-donate-btn" title="Donate Crypto" style="width: 50px; height: 50px; background: #f7931a; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: white;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" alt="BTC" style="width: 42px; height: 42px;">
                 </a>
             </div>
         `;
@@ -700,6 +703,15 @@ class NavigationSidebar {
         reportBtn.addEventListener('click', () => this.openReportModal());
         cancelBtn.addEventListener('click', () => this.closeReportModal());
         form.addEventListener('submit', (e) => this.handleReportSubmit(e));
+
+        // Crypto Donate Listener
+        const cryptoBtn = document.getElementById('crypto-donate-btn');
+        if (cryptoBtn) {
+            cryptoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openCryptoModal();
+            });
+        }
     }
 
     // Toggle the mobile menu state
@@ -804,6 +816,67 @@ class NavigationSidebar {
         }
 
         return currentPath.includes(toolPath);
+    }
+
+    // Open Crypto Donation Modal
+    openCryptoModal() {
+        if (!window.Modal) {
+            console.error("Modal utility not found");
+            return;
+        }
+
+        const contentHtml = `
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left;">
+                <p style="color: #cbd5e1; font-size: 0.95rem; margin-top: 0; margin-bottom: 0.5rem;">Thank you for your support! You can send cryptocurrency to the following addresses:</p>
+                
+                <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(247, 147, 26, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
+                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" width="40" height="40" alt="BTC" style="display:block;" />
+                    </div>
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Bitcoin (BTC)</div>
+                        <div id="crypto-btc-addr" style="font-family: monospace; font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">bc1qfvszy0uwgm6jk2a0whpuhe7jxfwec6pgl6vgu6</div>
+                    </div>
+                    <button data-copy="crypto-btc-addr" class="copy-icon-btn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: 1px solid #475569; color: #cbd5e1; border-radius: 0.35rem; cursor: pointer; transition: all 0.2s; margin-left: 0.75rem; flex-shrink: 0; padding: 0;" onmouseover="this.style.background='#334155'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#cbd5e1'" title="Copy Address">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+
+                <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(98, 126, 234, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
+                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" width="40" height="40" alt="ETH" style="display:block;" />
+                    </div>
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Ethereum (ETH)</div>
+                        <div id="crypto-eth-addr" style="font-family: monospace; font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">0x3cb4Bc0C12b88594ff32054BBfd7a8d45d3F15FB</div>
+                    </div>
+                    <button data-copy="crypto-eth-addr" class="copy-icon-btn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: 1px solid #475569; color: #cbd5e1; border-radius: 0.35rem; cursor: pointer; transition: all 0.2s; margin-left: 0.75rem; flex-shrink: 0; padding: 0;" onmouseover="this.style.background='#334155'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#cbd5e1'" title="Copy Address">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+
+                <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(52, 93, 157, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
+                        <img src="https://cryptologos.cc/logos/litecoin-ltc-logo.svg" width="40" height="40" alt="LTC" style="display:block;" />
+                    </div>
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Litecoin (LTC)</div>
+                        <div id="crypto-ltc-addr" style="font-family: monospace; font-size: 0.85rem; color: #94a3b8; margin-top: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">ltc1q2z3s3ujhjfk6xa5wjcp4thmdsgh2ctrh37krn5</div>
+                    </div>
+                    <button data-copy="crypto-ltc-addr" class="copy-icon-btn" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: 1px solid #475569; color: #cbd5e1; border-radius: 0.35rem; cursor: pointer; transition: all 0.2s; margin-left: 0.75rem; flex-shrink: 0; padding: 0;" onmouseover="this.style.background='#334155'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='#cbd5e1'" title="Copy Address">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        Modal.show({
+            title: "Donate Crypto",
+            message: contentHtml,
+            iconSvg: '<img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" alt="BTC" style="width: 42px; height: 42px;">',
+            iconColor: '#f7931a',
+            buttons: [{ text: 'Close', type: 'primary', onClick: () => true }]
+        });
     }
 }
 

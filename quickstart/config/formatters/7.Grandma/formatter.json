@@ -1,4 +1,0 @@
-{
-  "name": "{stream.title::exists[\"{stream.title}\"||\"\"]}",
-  "description": "Click Me."
-}

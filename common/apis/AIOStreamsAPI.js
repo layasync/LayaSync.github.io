@@ -155,7 +155,7 @@ class AIOStreamsAPI {
     }
 
     // Create a new AIOStreams manifest based on the provided parameters.
-    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterName, formatterDefinition, exclude4k, excludeDolby, maxSize) {
+    static async populateJSON(providersMap, debridioKey, tmdbAccessToken, formatterDefinition, exclude4k, excludeDolby, maxSize, prioritizeQuality) {
         // Fetch the AIOStreams config file to use as a template.
         let aiostreamsConfig;
         try {
@@ -208,14 +208,18 @@ class AIOStreamsAPI {
 
             if (torboxKey) {
                 try {
-                    // If the user is a PRO subscriber, they get Newznab
+                    // If the user is a TB Pro subscriber, they get Newznab
                     const torboxUserData = await TorBoxAPI.getUserData(torboxKey);
-                    // Plan IDs: 0: Free, 1: Essential, 2: Pro, 3: Standard
+                    // Plan IDs. 0: Free
+                    //           1: Essential
+                    //           2: Pro
+                    //           3: Standard
                     if (torboxUserData && torboxUserData.plan === 2) {
                         enableNewznab = true;
                     }
                 } catch (e) {
                     console.error("Failed to check TorBox plan:", e);
+                    throw e;
                 }
             }
 
@@ -228,45 +232,28 @@ class AIOStreamsAPI {
                 aiostreamsConfig.presets = aiostreamsConfig.presets.filter(p => p.type !== 'newznab');
             }
 
-            // Set the formatter in the config
+            // Set the formatter
             aiostreamsConfig.formatter.definition = formatterDefinition;
 
-            // Regex imports
+            // Set the description
+            const currentDate = new Date().toLocaleDateString();
+            aiostreamsConfig.addonDescription = `Installed on: ${currentDate}. Please remember to periodically reinstall to bring in new updates and bug fixes! Thank you for choosing Duck Streams! 🦆 Created using the QuickStart tool: https://duckkota.gitlab.io/stremio-tools/quickstart/`;
+
+            // Set the preferred stream expressions
             try {
-                // Fetch the regex patterns from the remote source
-                const regexUrl = "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/regexes.json";
-                const regexData = await Network.request(regexUrl, { cache: 'no-store' });
+                const preferredSelFile = prioritizeQuality ? 'quality.json' : 'resolution.json';
+                const preferredSelUrl = `config/preferred_sel/${preferredSelFile}`;
+                const preferredSelData = await Network.request(preferredSelUrl, { cache: 'no-store' });
 
-                // Filter out unwanted keys based on the requirements
-                const filteredRegexPatterns = [];
-
-                if (regexData && typeof regexData === 'object') {
-                    for (const item of Object.values(regexData)) {
-                        if (item.name && !item.name.toLowerCase().startsWith("anime")) {
-                            // This check inherently filters out "", "bad" and "web scene"
-                            const tierMatch = item.name.match(/T(\d+)$/);
-                            if (tierMatch) {
-                                item.tier = parseInt(tierMatch[1], 10);
-                                if (formatterName === "Snoak") { // This is a special case for Snoak
-                                    if (item.name.startsWith("Remux")) item.name = "  🥇";
-                                    if (item.name.startsWith("Bluray")) item.name = "  🥈";
-                                    if (item.name.startsWith("Web")) item.name = "  🥉";
-                                }
-                                filteredRegexPatterns.push(item);
-                            }
-                        }
-                    }
+                if (preferredSelData && Array.isArray(preferredSelData.values)) {
+                    aiostreamsConfig.preferredStreamExpressions = preferredSelData.values;
                 }
-
-                filteredRegexPatterns.sort((a, b) => a.tier - b.tier);
-
-                // Apply the filtered patterns to the config
-                aiostreamsConfig.preferredRegexPatterns = filteredRegexPatterns;
             } catch (e) {
-                console.error("Failed to fetch or apply regex patterns:", e);
+                console.error("Failed to fetch preferredStreamExpressions:", e);
+                throw e;
             }
 
-            // Debridio Logic
+            // Set the debridio API key
             if (debridioKey) {
                 // If a Debridio API key is provided, add it to the Debridio addon
                 const preset = aiostreamsConfig.presets.find(p => p.type === 'debridio');
