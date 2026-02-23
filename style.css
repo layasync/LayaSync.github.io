@@ -1,11 +1,14 @@
-/* --- Global & Background --- */
-* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+/* --- Global & Background (Deep Look) --- */
+* { 
+    box-sizing: border-box; 
+    -webkit-font-smoothing: antialiased; 
+}
 
 :root {
     --bg-black: #08090a;
     --bg-charcoal: #181b1e;
     --accent-orange: #ff6a00;
-    --nav-height: 150px; /* Big, Prominent Height */
+    --nav-height: 180px; /* INCREASED HEIGHT */
 }
 
 body {
@@ -13,34 +16,37 @@ body {
     background: radial-gradient(circle at 50% -20%, var(--bg-charcoal) 0%, var(--bg-black) 100%);
     color: white; 
     font-family: 'Inter', sans-serif; 
-    overflow: hidden; /* Strict: Stops the whole app from scrolling vertically */
+    overflow: hidden; /* Strict: Stops the whole TV browser from scrolling */
     height: 100vh;
     width: 100vw;
 }
 
-/* --- Fixed Top Navigation (BIGGER & FIXED) --- */
+/* --- Fixed Top Navigation (TALLER & PERMANENT) --- */
 .top-bar { 
-    position: fixed; /* Forces it to stay on top */
+    position: fixed; /* FIXED ON TOP */
     top: 0;
     left: 0;
     right: 0;
     height: var(--nav-height); 
-    z-index: 10000; /* Extremely high to stay above all movie cards */
+    z-index: 10000; /* Stays above everything */
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     padding: 0 80px; 
-    /* Premium dark fade so content scrolls behind it elegantly */
-    background: linear-gradient(to bottom, var(--bg-black) 60%, rgba(8, 9, 10, 0.8) 85%, transparent 100%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
+    /* Premium Blur & Fade so content scrolls behind bar elegantly */
+    background: linear-gradient(to bottom, 
+        var(--bg-black) 50%, 
+        rgba(8, 9, 10, 0.8) 80%, 
+        transparent 100%);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 }
 
 .main-nav { 
     display: flex; 
     align-items: center; 
     background: rgba(255,255,255,0.08); 
-    padding: 10px 25px; /* Larger Padding */
+    padding: 12px 30px; 
     border-radius: 60px; 
     border: 1px solid rgba(255,255,255,0.05);
 }
@@ -48,11 +54,11 @@ body {
 .nav-links { display: flex; list-style: none; margin: 0; padding: 0; align-items: center; }
 
 .nav-item { 
-    padding: 12px 28px; 
-    color: #777; 
+    padding: 12px 30px; 
+    color: #666; 
     cursor: pointer; 
     font-weight: 600; 
-    font-size: 1.2rem; /* Larger Text */
+    font-size: 1.25rem; /* Large readable text */
     transition: 0.3s cubic-bezier(0.2, 0, 0.2, 1);
 }
 
@@ -62,17 +68,17 @@ body {
     border-radius: 40px; 
 }
 
-.search-icon { font-size: 1.4rem; margin-right: 15px; color: #777; }
+.search-icon { font-size: 1.5rem; margin-right: 20px; color: #666; }
 
-/* --- View Switching (Separate Pages Logic) --- */
+/* --- View Switching (Strict Separate Pages) --- */
 .page { 
     display: none; 
-    /* Starts content 160px down so it's not hidden under the nav bar */
-    padding: 160px 80px 60px 80px; 
+    /* Offset: Starts content below the fixed nav bar */
+    padding: calc(var(--nav-height) + 20px) 80px 60px 80px; 
     height: 100vh; 
     width: 100vw;
     overflow-y: auto; /* Internal scrolling only */
-    position: absolute; /* Overlays pages on top of each other */
+    position: absolute;
     top: 0;
     left: 0;
 }
@@ -85,14 +91,13 @@ body {
     align-items: center; 
     justify-content: center; 
     height: 60vh; 
-    opacity: 0.4; 
+    opacity: 0.5; 
 }
 
-/* --- Premium Card Designs (BIGGER) --- */
+/* --- Card Designs (Bigger as before) --- */
 .row-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: #888; }
 .scroller { display: flex; gap: 30px; padding: 10px 0 50px 0; }
 
-/* Landscape Card (BIG: 500px wide) */
 .card-landscape {
     min-width: 500px; 
     height: 282px; 
@@ -101,7 +106,7 @@ body {
     position: relative; 
     overflow: hidden; 
     transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
 .card-landscape img { width: 100%; height: 100%; object-fit: cover; }
@@ -109,7 +114,7 @@ body {
 .card-overlay {
     position: absolute; 
     inset: 0; 
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%);
     display: flex; 
     flex-direction: column; 
     justify-content: flex-end; 
@@ -118,7 +123,6 @@ body {
 
 .card-title { font-size: 2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; }
 
-/* Portrait Card (BIG: 240px wide) */
 .card-portrait {
     min-width: 240px; 
     height: 360px; 
@@ -127,28 +131,28 @@ body {
     position: relative; 
     overflow: hidden; 
     transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
 .card-portrait img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Hover Effect for Remote/Mouse */
 .card-landscape:hover, .card-portrait:hover {
     transform: scale(1.06);
     z-index: 10;
 }
 
-/* UI Elements */
+/* --- UI Icons --- */
 .icon-btn { 
-    width: 55px; 
-    height: 55px; 
+    width: 58px; 
+    height: 58px; 
     background: rgba(255,255,255,0.06); 
-    border-radius: 50%; /* Pure Circle */
+    border-radius: 50%; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     border: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
 }
 
 .dot-new {
