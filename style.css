@@ -1,109 +1,68 @@
-/* --- 1. Global & Deep Background --- */
-* { 
-    box-sizing: border-box; 
-    -webkit-font-smoothing: antialiased; 
-}
+/* --- Global & Background (Deep Look) --- */
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
 :root {
     --bg-black: #08090a;
     --bg-charcoal: #181b1e;
     --accent-orange: #ff6a00;
-    --nav-height: 140px; /* Taller fixed header */
 }
 
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+body {
+    margin: 0; 
     background: radial-gradient(circle at 50% -20%, var(--bg-charcoal) 0%, var(--bg-black) 100%);
-    background-color: var(--bg-black);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    overflow: hidden; /* Prevents whole-body scrolling */
+    color: white; 
+    font-family: 'Inter', sans-serif; 
+    overflow: hidden; /* Stops the whole TV screen from scrolling */
+    height: 100vh;
+    width: 100vw;
 }
 
-/* --- 2. Fixed Top Navigation (Premium Look) --- */
+/* --- Navigation (Fixed on Top) --- */
 .top-bar { 
-    position: fixed;
+    position: fixed; /* Fixes bar to top */
     top: 0;
     left: 0;
     right: 0;
-    height: var(--nav-height);
+    z-index: 1000; /* Keeps bar above movie cards */
+    background: linear-gradient(to bottom, var(--bg-black) 70%, transparent); /* Fades cards behind nav */
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    padding: 0 70px; 
-    z-index: 1000;
-    /* Frosted glass effect with dark fade */
-    background: linear-gradient(to bottom, 
-        var(--bg-black) 30%, 
-        rgba(8, 9, 10, 0.8) 70%, 
-        transparent 100%);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
+    padding: 40px 60px 20px 60px; 
 }
 
 .main-nav { 
     display: flex; 
     align-items: center; 
-    background: rgba(255,255,255,0.06); 
-    padding: 8px 20px; 
-    border-radius: 60px; 
-    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.05); 
+    padding: 5px 15px; 
+    border-radius: 50px; 
+    backdrop-filter: blur(20px); 
 }
 
-.nav-links { 
-    display: flex; 
-    list-style: none; 
-    margin: 0; 
-    padding: 0; 
-}
+.nav-links { display: flex; list-style: none; margin: 0; padding: 0; }
 
-.nav-item { 
-    padding: 12px 25px; 
-    color: #6a6e73; 
-    cursor: pointer; 
-    font-weight: 500; 
-    font-size: 1.15rem; 
-    transition: 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-}
+.nav-item { padding: 10px 20px; color: #666; cursor: pointer; font-weight: 500; }
 
 .nav-item.active { 
     color: white; 
-    background: rgba(255,255,255,0.12); 
-    border-radius: 40px; 
+    background: rgba(255,255,255,0.1); 
+    border-radius: 30px; 
 }
 
-/* --- 3. View Management (The Separate Page Logic) --- */
-#view-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    padding-top: var(--nav-height); /* Ensure content starts below nav */
-}
-
-/* CRITICAL: This hides all pages except the active one */
+/* --- View Switching (Separate Pages Logic) --- */
 .page { 
     display: none; 
-    padding: 20px 70px 100px 70px; 
-    height: 100%; 
-    overflow-y: auto; /* Allows scrolling inside the individual page only */
-    scrollbar-width: none;
+    padding: 140px 60px 40px 60px; /* 140px top padding ensures content starts below the fixed nav */
+    height: 100vh; 
+    width: 100vw;
+    overflow-y: auto; /* Only scrolls inside the active page */
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-.page::-webkit-scrollbar { display: none; }
-
-/* Show only the active page */
-.page.active { 
-    display: block; 
-    animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.page.active { display: block; }
 
 .blank-state { 
     display: flex; 
@@ -111,33 +70,21 @@ body, html {
     align-items: center; 
     justify-content: center; 
     height: 60vh; 
-    opacity: 0.3; 
+    opacity: 0.5; 
 }
 
-/* --- 4. Content Design (Larger Cards) --- */
-.row-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin: 40px 0 25px 0;
-    color: #92959a;
-}
+/* --- Card Designs (Slightly Bigger) --- */
+.scroller { display: flex; gap: 24px; padding: 10px 0 40px 0; }
 
-.scroller { 
-    display: flex; 
-    gap: 28px; 
-    padding: 10px 0 50px 0; 
-}
-
-/* Landscape Card (480x270) */
+/* Landscape Card (Increased Sizes) */
 .card-landscape {
-    min-width: 480px; 
-    height: 270px; 
-    background: #1a1c1f; 
-    border-radius: 18px; 
+    min-width: 480px; /* Was 440px */
+    height: 270px;     /* Was 247px */
+    background: #111; 
+    border-radius: 16px; 
     position: relative; 
     overflow: hidden; 
-    transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+    transition: 0.3s;
 }
 
 .card-landscape img { width: 100%; height: 100%; object-fit: cover; }
@@ -145,69 +92,63 @@ body, html {
 .card-overlay {
     position: absolute; 
     inset: 0; 
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
     display: flex; 
     flex-direction: column; 
     justify-content: flex-end; 
-    padding: 25px;
+    padding: 20px;
 }
 
-.card-title { font-size: 2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; }
+.card-title { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 5px; }
 
-.card-meta { 
-    font-size: 1rem; 
-    color: #b0b3b8; 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-}
+.card-meta { font-size: 0.9rem; color: #ccc; display: flex; align-items: center; gap: 10px; }
 
 /* Progress Bar */
-.progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-top: 15px; }
-.progress-fill { height: 100%; background: #fff; border-radius: 4px; }
+.progress-bar { height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 10px; }
+.progress-fill { height: 100%; background: #fff; border-radius: 2px; }
 
-/* Portrait Card (230x345) */
+/* Portrait Card (Increased Sizes) */
 .card-portrait {
-    min-width: 230px; 
-    height: 345px; 
-    background: #1a1c1f; 
-    border-radius: 18px;
+    min-width: 230px; /* Was 200px */
+    height: 345px;     /* Was 300px */
+    background: #111; 
+    border-radius: 16px;
     position: relative; 
     overflow: hidden; 
-    transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+    transition: 0.3s;
 }
 
 .card-portrait img { width: 100%; height: 100%; object-fit: cover; }
 
-/* Focus/Hover States */
-.card-landscape:hover, .card-portrait:hover {
-    transform: scale(1.06);
-    z-index: 10;
-}
-
-/* Orange Notification Dot */
+/* Orange New Dot */
 .dot-new {
     position: absolute; 
-    top: 15px; 
-    right: 15px; 
-    width: 12px; 
-    height: 12px;
+    top: 12px; 
+    right: 12px; 
+    width: 10px; 
+    height: 10px;
     background: var(--accent-orange); 
     border-radius: 50%; 
-    box-shadow: 0 0 15px var(--accent-orange);
+    box-shadow: 0 0 10px var(--accent-orange);
 }
 
-/* --- 5. UI Icons (Circles) --- */
 .icon-btn { 
-    width: 52px; 
-    height: 52px; 
-    background: rgba(255,255,255,0.06); 
-    border-radius: 50%; 
+    width: 45px; 
+    height: 45px; 
+    background: rgba(255,255,255,0.05); 
+    border-radius: 12px; 
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    font-size: 1.3rem;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Card Loading/Hover States */
+.card-landscape, .card-portrait {
+    background: #1a1c1f; 
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.card-landscape:hover, .card-portrait:hover {
+    transform: scale(1.05);
+    z-index: 10;
 }
