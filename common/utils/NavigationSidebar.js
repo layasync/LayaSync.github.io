@@ -606,9 +606,6 @@ class NavigationSidebar {
                 Report Issue
             </button>
             <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center;">
-                <a href="https://buymeacoffee.com/duck.streams" target="_blank" title="Buy Me A Coffee" style="width: 50px; height: 50px; background: #FFDD00; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://cdn.buymeacoffee.com/widget/assets/coffee%20cup.svg" alt="Buy Me A Coffee" style="width: 32px; height: 32px;">
-                </a>
                 <a href="https://ko-fi.com/duckstreams" target="_blank" title="Support on Ko-Fi" style="width: 50px; height: 50px; background: #29abe0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 32px; height: auto;">
                 </a>
