@@ -7,7 +7,7 @@ class NavigationSidebar {
             { name: "QuickStart", path: "/quickstart/" },
             { name: "Time Machine", path: "/time-machine/" },
             { name: "Account Cloner", path: "/cloner/" },
-            { name: "Addon Locker", path: "/addon-locker/" },
+            { name: "Addon Butler", path: "/addon-butler/" },
         ];
 
         // Map of icon names to their SVG HTML strings.
@@ -610,7 +610,7 @@ class NavigationSidebar {
                     <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 32px; height: auto;">
                 </a>
                 <a href="#" id="crypto-donate-btn" title="Donate Crypto" style="width: 50px; height: 50px; background: #f7931a; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: white;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" alt="BTC" style="width: 42px; height: 42px;">
+                    <img src="${this.getCorrectPath('/common/assets/crypto/bitcoin-btc-logo.svg')}" alt="BTC" style="width: 42px; height: 42px;">
                 </a>
             </div>
         `;
@@ -828,7 +828,7 @@ class NavigationSidebar {
                 
                 <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
                     <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(247, 147, 26, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
-                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" width="40" height="40" alt="BTC" style="display:block;" />
+                        <img src="${this.getCorrectPath('/common/assets/crypto/bitcoin-btc-logo.svg')}" width="40" height="40" alt="BTC" style="display:block;" />
                     </div>
                     <div style="flex-grow: 1; min-width: 0;">
                         <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Bitcoin (BTC)</div>
@@ -841,7 +841,7 @@ class NavigationSidebar {
 
                 <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
                     <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(98, 126, 234, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
-                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" width="40" height="40" alt="ETH" style="display:block;" />
+                        <img src="${this.getCorrectPath('/common/assets/crypto/ethereum-eth-logo.svg')}" width="40" height="40" alt="ETH" style="display:block;" />
                     </div>
                     <div style="flex-grow: 1; min-width: 0;">
                         <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Ethereum (ETH)</div>
@@ -854,7 +854,7 @@ class NavigationSidebar {
 
                 <div style="display: flex; align-items: center; background: #1e293b; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #334155; transition: border-color 0.2s;" onmouseover="this.style.borderColor='#475569'" onmouseout="this.style.borderColor='#334155'">
                     <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(52, 93, 157, 0.1); border-radius: 50%; margin-right: 1rem; flex-shrink: 0;">
-                        <img src="https://cryptologos.cc/logos/litecoin-ltc-logo.svg" width="40" height="40" alt="LTC" style="display:block;" />
+                        <img src="${this.getCorrectPath('/common/assets/crypto/litecoin-ltc-logo.svg')}" width="40" height="40" alt="LTC" style="display:block;" />
                     </div>
                     <div style="flex-grow: 1; min-width: 0;">
                         <div style="font-weight: 600; color: #f8fafc; font-size: 0.95rem;">Litecoin (LTC)</div>
@@ -870,7 +870,7 @@ class NavigationSidebar {
         Modal.show({
             title: "Donate Crypto",
             message: contentHtml,
-            iconSvg: '<img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" alt="BTC" style="width: 42px; height: 42px;">',
+            iconSvg: `<img src="${this.getCorrectPath('/common/assets/crypto/bitcoin-btc-logo.svg')}" alt="BTC" style="width: 42px; height: 42px;">`,
             iconColor: '#f7931a',
             buttons: [{ text: 'Close', type: 'primary', onClick: () => true }]
         });

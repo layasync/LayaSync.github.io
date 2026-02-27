@@ -2749,3 +2749,155 @@ details[open] summary::before {
         font-size: 0.6rem;
     }
 }
+
+/* ======================================================
+   Feature: Addon Butler
+   ====================================================== */
+
+/* Single-column list — optimised for drag-to-reorder */
+.butler-addon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+/* Row card */
+.butler-addon-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.875rem;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.butler-addon-item:hover {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(255, 255, 255, 0.13);
+}
+
+/* Being dragged */
+.butler-addon-item.dragging {
+    opacity: 0.45;
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+/* Valid drop target */
+.butler-addon-item.drag-over {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.45);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Grip handle */
+.butler-drag-handle {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    color: rgba(148, 163, 184, 0.4);
+    cursor: grab;
+    transition: color 0.15s ease;
+    padding: 0 2px;
+}
+
+.butler-drag-handle:active {
+    cursor: grabbing;
+}
+
+.butler-addon-item:hover .butler-drag-handle {
+    color: rgba(148, 163, 184, 0.8);
+}
+
+.butler-drag-handle svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Icon */
+.butler-addon-icon {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.625rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.butler-addon-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.butler-addon-icon .addon-icon-fallback {
+    font-size: 1.4rem;
+    background: transparent;
+    border-radius: 0;
+    color: #22c55e;
+}
+
+/* Name */
+.butler-addon-name {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+/* Controls section — reuse existing toggle styles, just shrink gaps */
+.butler-addon-item .addon-controls {
+    flex-shrink: 0;
+    gap: 0.75rem !important;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    width: auto !important;
+}
+
+.butler-addon-item .addon-control-pair {
+    gap: 0.2rem;
+    font-size: 0.8rem;
+}
+
+.butler-addon-item .control-divider {
+    height: 28px;
+}
+
+/* Mobile adjustments for Addon Butler */
+@media (max-width: 640px) {
+    .butler-addon-item {
+        gap: 0.65rem;
+        padding: 0.75rem 0.75rem;
+    }
+
+    .butler-addon-name {
+        font-size: 0.875rem;
+    }
+
+    .butler-addon-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .butler-addon-icon .addon-icon-fallback {
+        font-size: 1.1rem;
+    }
+}

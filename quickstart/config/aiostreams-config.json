@@ -1,243 +1,11 @@
 {
-  "services": [
-    {
-      "id": "torbox",
-      "enabled": true,
-      "credentials": {}
-    },
-    {
-      "id": "realdebrid",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "alldebrid",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "premiumize",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "debridlink",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "offcloud",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "putio",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "easynews",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "easydebrid",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "debrider",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "pikpak",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "seedr",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "stremio_nntp",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "nzbdav",
-      "enabled": false,
-      "credentials": {}
-    },
-    {
-      "id": "altmount",
-      "enabled": false,
-      "credentials": {}
-    }
-  ],
-  "presets": [
-    {
-      "type": "seadex",
-      "instanceId": "ebe",
-      "enabled": true,
-      "options": {
-        "name": "SeaDex",
-        "timeout": 10000,
-        "mediaTypes": [
-          "anime"
-        ]
-      }
-    },
-    {
-      "type": "debridio",
-      "instanceId": "38c",
-      "enabled": true,
-      "options": {
-        "name": "Debridio",
-        "timeout": 10000,
-        "resources": [
-          "stream"
-        ],
-        "mediaTypes": []
-      }
-    },
-    {
-      "type": "newznab",
-      "instanceId": "53a",
-      "enabled": true,
-      "options": {
-        "name": "Newznab",
-        "newznabUrl": "https://search-api.torbox.app/newznab",
-        "apiPath": "/api",
-        "timeout": 10000,
-        "mediaTypes": [],
-        "services": [
-          "torbox"
-        ],
-        "searchMode": "both",
-        "paginate": false,
-        "checkOwned": false,
-        "useMultipleInstances": false
-      }
-    },
-    {
-      "type": "stremthruTorz",
-      "instanceId": "03b",
-      "enabled": true,
-      "options": {
-        "name": "StremThru Torz",
-        "timeout": 10000,
-        "resources": [
-          "stream"
-        ],
-        "mediaTypes": [],
-        "includeP2P": false,
-        "useMultipleInstances": false
-      }
-    },
-    {
-      "type": "bitmagnet",
-      "instanceId": "1de",
-      "enabled": true,
-      "options": {
-        "name": "Bitmagnet",
-        "timeout": 10000,
-        "mediaTypes": [],
-        "useMultipleInstances": false,
-        "paginate": false
-      }
-    },
-    {
-      "type": "comet",
-      "instanceId": "36c",
-      "enabled": true,
-      "options": {
-        "name": "Comet",
-        "timeout": 10000,
-        "resources": [
-          "stream"
-        ],
-        "includeP2P": false,
-        "removeTrash": true,
-        "mediaTypes": []
-      }
-    },
-    {
-      "type": "knaben",
-      "instanceId": "a3d",
-      "enabled": true,
-      "options": {
-        "name": "Knaben",
-        "timeout": 10000,
-        "mediaTypes": [],
-        "useMultipleInstances": false
-      }
-    },
-    {
-      "type": "animetosho",
-      "instanceId": "032",
-      "enabled": true,
-      "options": {
-        "name": "AnimeTosho",
-        "timeout": 10000,
-        "mediaTypes": [],
-        "useMultipleInstances": false
-      }
-    },
-    {
-      "type": "mediafusion",
-      "instanceId": "a5f",
-      "enabled": true,
-      "options": {
-        "name": "MediaFusion",
-        "timeout": 10000,
-        "resources": [
-          "stream",
-          "meta"
-        ],
-        "url": "https://mediafusionfortheweebs.midnightignite.me",
-        "useCachedResultsOnly": true,
-        "enableWatchlistCatalogs": false,
-        "downloadViaBrowser": false,
-        "contributorStreams": false,
-        "certificationLevelsFilter": [],
-        "nudityFilter": [],
-        "mediaTypes": []
-      }
-    },
-    {
-      "type": "opensubtitles",
-      "instanceId": "652",
-      "enabled": true,
-      "options": {
-        "name": "OpenSubtitles",
-        "timeout": 10000,
-        "resources": [
-          "subtitles"
-        ]
-      }
-    }
-  ],
-  "formatter": {
-    "id": "custom",
-    "definition": {}
-  },
-  "preferredQualities": [
-    "BluRay REMUX",
-    "BluRay",
-    "WEB-DL",
-    "WEBRip",
-    "HDRip",
-    "HC HD-Rip",
-    "DVDRip",
-    "HDTV",
-    "CAM",
-    "TS",
-    "TC",
-    "SCR",
-    "Unknown"
-  ],
+  "trusted": false,
+  "addonName": "Duck Streams",
+  "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/static/images/duck.png?ref_type=heads",
+  "addonDescription": "",
+  "excludedResolutions": [],
+  "includedResolutions": [],
+  "requiredResolutions": [],
   "preferredResolutions": [
     "2160p",
     "1440p",
@@ -256,10 +24,112 @@
     "TC",
     "SCR"
   ],
+  "includedQualities": [],
+  "requiredQualities": [],
+  "preferredQualities": [
+    "BluRay REMUX",
+    "BluRay",
+    "WEB-DL",
+    "WEBRip",
+    "HDRip",
+    "HC HD-Rip",
+    "DVDRip",
+    "HDTV",
+    "CAM",
+    "TS",
+    "TC",
+    "SCR",
+    "Unknown"
+  ],
+  "excludedLanguages": [],
+  "includedLanguages": [],
+  "requiredLanguages": [],
+  "preferredLanguages": [
+    "English",
+    "Dual Audio",
+    "Multi",
+    "Dubbed",
+    "Unknown"
+  ],
   "excludedVisualTags": [
     "3D",
     "AI"
   ],
+  "includedVisualTags": [],
+  "requiredVisualTags": [],
+  "preferredVisualTags": [
+    "HDR+DV",
+    "DV",
+    "DV Only",
+    "HDR10+",
+    "HDR10",
+    "HDR",
+    "HDR Only",
+    "10bit"
+  ],
+  "excludedAudioTags": [],
+  "includedAudioTags": [],
+  "requiredAudioTags": [],
+  "preferredAudioTags": [],
+  "excludedAudioChannels": [],
+  "includedAudioChannels": [],
+  "requiredAudioChannels": [],
+  "preferredAudioChannels": [],
+  "excludedStreamTypes": [
+    "p2p",
+    "error"
+  ],
+  "includedStreamTypes": [],
+  "requiredStreamTypes": [],
+  "preferredStreamTypes": [
+    "usenet"
+  ],
+  "excludedEncodes": [],
+  "includedEncodes": [],
+  "requiredEncodes": [],
+  "preferredEncodes": [
+    "AV1",
+    "HEVC",
+    "AVC"
+  ],
+  "preferredRegexPatterns": [],
+  "syncedRankedRegexUrls": [
+    "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/regexes.json"
+  ],
+  "syncedRankedStreamExpressionUrls": [
+    "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/expressions.json"
+  ],
+  "seederRangeTypes": [],
+  "ageRangeTypes": [
+    "usenet"
+  ],
+  "digitalReleaseFilter": {
+    "enabled": true,
+    "tolerance": 0,
+    "requestTypes": [],
+    "addons": []
+  },
+  "enableSeadex": true,
+  "excludeCachedFromAddons": [],
+  "excludeCachedFromServices": [],
+  "excludeCachedFromStreamTypes": [],
+  "excludeUncached": false,
+  "excludeUncachedFromAddons": [],
+  "excludeUncachedFromServices": [],
+  "excludeUncachedFromStreamTypes": [],
+  "excludedStreamExpressions": [],
+  "preferredStreamExpressions": [],
+  "rankedStreamExpressions": [],
+  "regexOverrides": [],
+  "dynamicAddonFetching": {
+    "enabled": true,
+    "condition": "(queryType=='anime.series' or queryType=='anime.movie') ? (count(seadex(cached(totalStreams), 'best')) >= 2 or count(seadex(cached(totalStreams))) >= 3) : (totalTimeTaken>=5000)"
+  },
+  "groups": {
+    "enabled": false,
+    "groupings": [],
+    "behaviour": "parallel"
+  },
   "sortCriteria": {
     "global": [
       {
@@ -350,17 +220,9 @@
     "uncachedSeries": []
   },
   "posterService": "rpdb",
-  "deduplicator": {
-    "enabled": true,
-    "excludeAddons": [],
-    "multiGroupBehaviour": "aggressive",
-    "keys": [
-      "filename",
-      "infoHash"
-    ],
-    "cached": "single_result",
-    "uncached": "per_service",
-    "p2p": "single_result"
+  "formatter": {
+    "id": "custom",
+    "definition": {}
   },
   "proxy": {
     "enabled": false,
@@ -368,86 +230,32 @@
     "proxiedAddons": [],
     "proxiedServices": []
   },
-  "trusted": false,
-  "addonName": "Duck Streams",
-  "excludedResolutions": [],
-  "includedResolutions": [],
-  "requiredResolutions": [],
-  "includedQualities": [],
-  "requiredQualities": [],
-  "excludedLanguages": [],
-  "includedLanguages": [],
-  "requiredLanguages": [],
-  "preferredLanguages": [
-    "English",
-    "Dual Audio",
-    "Multi",
-    "Dubbed",
-    "Unknown"
-  ],
-  "includedVisualTags": [],
-  "requiredVisualTags": [],
-  "preferredVisualTags": [
-    "HDR+DV",
-    "DV",
-    "DV Only",
-    "HDR10+",
-    "HDR10",
-    "HDR",
-    "HDR Only",
-    "10bit"
-  ],
-  "excludedAudioTags": [],
-  "includedAudioTags": [],
-  "requiredAudioTags": [],
-  "preferredAudioTags": [],
-  "excludedAudioChannels": [],
-  "includedAudioChannels": [],
-  "requiredAudioChannels": [],
-  "preferredAudioChannels": [],
-  "excludedStreamTypes": [
-    "p2p",
-    "error"
-  ],
-  "includedStreamTypes": [],
-  "requiredStreamTypes": [],
-  "preferredStreamTypes": [
-    "usenet"
-  ],
-  "excludedEncodes": [],
-  "includedEncodes": [],
-  "requiredEncodes": [],
-  "preferredEncodes": [
-    "AV1",
-    "HEVC",
-    "AVC"
-  ],
-  "preferredRegexPatterns": [],
-  "syncedRankedRegexUrls": [
-    "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/regexes.json"
-  ],
-  "syncedRankedStreamExpressionUrls": [
-    "https://raw.githubusercontent.com/Vidhin05/Releases-Regex/main/English/expressions.json"
-  ],
-  "seederRangeTypes": [],
-  "ageRangeTypes": [
-    "usenet"
-  ],
-  "excludeCachedFromAddons": [],
-  "excludeCachedFromServices": [],
-  "excludeCachedFromStreamTypes": [],
-  "excludeUncached": false,
-  "excludeUncachedFromAddons": [],
-  "excludeUncachedFromServices": [],
-  "excludeUncachedFromStreamTypes": [],
-  "excludedStreamExpressions": [],
-  "disableGroups": true,
-  "groups": {
-    "enabled": false,
-    "groupings": [],
-    "behaviour": "parallel"
+  "size": {
+    "global": {
+      "movies": [
+        0,
+        100000000000
+      ],
+      "series": [
+        0,
+        100000000000
+      ],
+      "anime": [
+        0,
+        100000000000
+      ]
+    }
   },
+  "hideErrors": true,
   "hideErrorsForResources": [],
+  "statistics": {
+    "enabled": false,
+    "position": "bottom",
+    "statsToShow": [
+      "addon",
+      "filter"
+    ]
+  },
   "yearMatching": {
     "enabled": true,
     "tolerance": 3,
@@ -467,6 +275,31 @@
     "requestTypes": [],
     "addons": []
   },
+  "deduplicator": {
+    "enabled": true,
+    "excludeAddons": [],
+    "multiGroupBehaviour": "aggressive",
+    "keys": [
+      "filename",
+      "infoHash"
+    ],
+    "cached": "single_result",
+    "uncached": "per_service",
+    "p2p": "single_result",
+    "smartDetectAttributes": [
+      "size",
+      "resolution",
+      "quality",
+      "visualTags",
+      "audioTags",
+      "audioChannels",
+      "languages",
+      "encode",
+      "edition",
+      "network",
+      "remastered"
+    ]
+  },
   "autoPlay": {
     "attributes": [
       "service",
@@ -482,52 +315,232 @@
   },
   "precacheNextEpisode": true,
   "precacheSelector": "count(cached(streams)) == 0 ? uncached(streams) : []",
-  "catalogModifications": [],
-  "statistics": {
-    "enabled": false,
-    "position": "bottom",
-    "statsToShow": [
-      "addon",
-      "filter"
-    ]
-  },
-  "preferredStreamExpressions": [],
-  "rankedStreamExpressions": [],
-  "regexOverrides": [],
-  "dynamicAddonFetching": {
-    "enabled": true,
-    "condition": "(queryType=='anime.series' or queryType=='anime.movie') ? (count(seadex(cached(totalStreams), 'best')) >= 2 or count(seadex(cached(totalStreams))) >= 3) : (totalTimeTaken>=5000)"
-  },
-  "hideErrors": true,
-  "size": {
-    "global": {
-      "movies": [
-        0,
-        100000000000
-      ],
-      "series": [
-        0,
-        100000000000
-      ],
-      "anime": [
-        0,
-        100000000000
-      ]
+  "services": [
+    {
+      "id": "torbox",
+      "enabled": true,
+      "credentials": {}
+    },
+    {
+      "id": "realdebrid",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "alldebrid",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "premiumize",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "debridlink",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "offcloud",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "putio",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "easynews",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "easydebrid",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "debrider",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "pikpak",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "seedr",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "stremio_nntp",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "nzbdav",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "altmount",
+      "enabled": false,
+      "credentials": {}
+    },
+    {
+      "id": "stremthru_newz",
+      "enabled": false,
+      "credentials": {}
     }
-  },
+  ],
+  "presets": [
+    {
+      "type": "seadex",
+      "instanceId": "ebe",
+      "enabled": true,
+      "options": {
+        "name": "SeaDex",
+        "timeout": 10000,
+        "mediaTypes": [
+          "anime"
+        ]
+      }
+    },
+    {
+      "type": "debridio",
+      "instanceId": "38c",
+      "enabled": true,
+      "options": {
+        "name": "Debridio",
+        "timeout": 10000,
+        "resources": [
+          "stream"
+        ],
+        "mediaTypes": []
+      }
+    },
+    {
+      "type": "newznab",
+      "instanceId": "53a",
+      "enabled": true,
+      "options": {
+        "name": "Newznab",
+        "newznabUrl": "https://search-api.torbox.app/newznab",
+        "apiPath": "/api",
+        "timeout": 10000,
+        "mediaTypes": [],
+        "services": [
+          "torbox"
+        ],
+        "searchMode": "both",
+        "paginate": false,
+        "checkOwned": false,
+        "useMultipleInstances": false
+      }
+    },
+    {
+      "type": "stremthruTorz",
+      "instanceId": "03b",
+      "enabled": true,
+      "options": {
+        "name": "StremThru Torz",
+        "timeout": 10000,
+        "resources": [
+          "stream"
+        ],
+        "mediaTypes": [],
+        "includeP2P": false,
+        "useMultipleInstances": false
+      }
+    },
+    {
+      "type": "meteor",
+      "instanceId": "e33",
+      "enabled": true,
+      "options": {
+        "name": "Meteor",
+        "timeout": 10000,
+        "resources": [
+          "stream"
+        ],
+        "includeP2P": false,
+        "removeTrash": false,
+        "useMultipleInstances": false,
+        "mediaTypes": []
+      }
+    },
+    {
+      "type": "bitmagnet",
+      "instanceId": "1de",
+      "enabled": true,
+      "options": {
+        "name": "Bitmagnet",
+        "timeout": 10000,
+        "mediaTypes": [],
+        "useMultipleInstances": false,
+        "paginate": false
+      }
+    },
+    {
+      "type": "comet",
+      "instanceId": "36c",
+      "enabled": true,
+      "options": {
+        "name": "Comet",
+        "timeout": 10000,
+        "resources": [
+          "stream"
+        ],
+        "includeP2P": false,
+        "removeTrash": true,
+        "mediaTypes": []
+      }
+    },
+    {
+      "type": "knaben",
+      "instanceId": "a3d",
+      "enabled": true,
+      "options": {
+        "name": "Knaben",
+        "timeout": 10000,
+        "mediaTypes": [],
+        "useMultipleInstances": false
+      }
+    },
+    {
+      "type": "animetosho",
+      "instanceId": "032",
+      "enabled": true,
+      "options": {
+        "name": "AnimeTosho",
+        "timeout": 10000,
+        "mediaTypes": [],
+        "useMultipleInstances": false
+      }
+    },
+    {
+      "type": "opensubtitles",
+      "instanceId": "652",
+      "enabled": true,
+      "options": {
+        "name": "OpenSubtitles",
+        "timeout": 10000,
+        "resources": [
+          "subtitles"
+        ]
+      }
+    }
+  ],
+  "catalogModifications": [],
   "cacheAndPlay": {
     "enabled": true,
     "streamTypes": [
       "usenet"
     ]
   },
-  "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/static/images/duck.png?ref_type=heads",
-  "addonDescription": "",
-  "digitalReleaseFilter": {
-    "enabled": true,
-    "tolerance": 0,
-    "requestTypes": [],
-    "addons": []
-  },
-  "enableSeadex": true
+  "checkOwned": true
 }

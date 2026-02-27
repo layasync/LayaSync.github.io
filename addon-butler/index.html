@@ -7,27 +7,27 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Addon Locker</title>
-    <link rel="stylesheet" href="../common/style.css?v=20260202">
+    <title>Addon Butler</title>
+    <link rel="stylesheet" href="../common/style.css?v=20260225">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦆</text></svg>">
 
     <!-- Metadata -->
-    <meta name="description" content="Lock and protect your Stremio addons to prevent accidental modifications.">
-    <meta property="og:title" content="Addon Locker">
-    <meta property="og:description" content="Lock and protect your Stremio addons to prevent accidental modifications.">
+    <meta name="description" content="Reorder and control permissions for your Stremio addons.">
+    <meta property="og:title" content="Addon Butler">
+    <meta property="og:description" content="Reorder and control permissions for your Stremio addons.">
     <meta property="og:type" content="website">
-    <link rel="canonical" href="https://duckkota.gitlab.io/stremio-tools/addon-locker/">
+    <link rel="canonical" href="https://duckkota.gitlab.io/stremio-tools/addon-butler/">
 </head>
 
 <body class="centered">
 
-    <!-- Main View: Locker -->
+    <!-- Main View -->
     <div id="view-main" class="view-section">
         <!-- Header Section -->
         <div class="header-section">
-            <h1>Addon Locker</h1>
-            <p class="subtitle">Control permissions for your addons</p>
+            <h1>Addon Butler</h1>
+            <p class="subtitle">Reorder and control permissions for your addons</p>
         </div>
 
         <!-- Logged In Status -->
@@ -37,7 +37,7 @@
 
         <!-- Main Card -->
         <div class="container pb-3">
-            <form id="lockerForm">
+            <form id="butlerForm">
                 <!-- Login Section -->
                 <div id="loginSection" class="auth-section">
                     <div class="field">
@@ -49,7 +49,7 @@
                             <p>
                                 <b>Log In</b>
                                 <br>
-                                Sign in to manage your addon permissions.
+                                Sign in to manage your addons.
                             </p>
                         </div>
 
@@ -85,9 +85,13 @@
 
                 <!-- Addons Section -->
                 <div id="addonSection" class="hidden">
-                    <!-- Filter/Search could go here later -->
-                    <div id="addonContainer" class="addon-list">
+                    <div id="addonContainer" class="butler-addon-list">
                         <!-- Addon items injected by JS -->
+                    </div>
+
+                    <!-- Reorder Actions (shown when order is changed) -->
+                    <div id="reorderActions" class="hidden">
+                        <button id="applyReorderBtn" type="button" class="mt-3">Apply Changes</button>
                     </div>
                 </div>
             </form>
@@ -98,18 +102,18 @@
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
         data-cf-beacon='{"token": "da1cee1ff9f74d0d8b9c0f1a9fe3a820"}'>
         </script>
+    <script src="../common/utils/ErrorHandler.js?v=20260225"></script>
 
     <!-- Utilities -->
-    <script src="../common/utils/ErrorHandler.js?v=20260202"></script>
-    <script src="../common/utils/NavigationSidebar.js?v=20260202"></script>
-    <script src="../common/utils/UIModal.js?v=20260202"></script>
-    <script src="../common/utils/Network.js?v=20260202"></script>
+    <script src="../common/utils/NavigationSidebar.js?v=20260225"></script>
+    <script src="../common/utils/UIModal.js?v=20260225"></script>
+    <script src="../common/utils/Network.js?v=20260225"></script>
 
     <!-- API -->
-    <script src="../common/apis/StremioAPI.js?v=20260202"></script>
+    <script src="../common/apis/StremioAPI.js?v=20260225"></script>
 
     <!-- App Logic -->
-    <script src="js/AddonLocker.js?v=20260202"></script>
+    <script src="js/AddonButler.js?v=20260225"></script>
 </body>
 
 </html>

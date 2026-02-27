@@ -1,4 +1,0 @@
-{
-  "name": "{stream.resolution::exists[\"{stream.resolution}\"||\"\"]}",
-  "description": "{stream.type::title} - {service.cached::istrue[\"[⚡ Cached]\"||\"[⏳ Not Cached]\"]}\n\n{stream.quality} - {addon.name}\n\n{stream.visualTags::join(' | ')}\n\n{stream.audioChannels::join(' | ')} - {stream.audioTags::join(' | ')}\n\n{stream.size::sbytes} ({stream.bitrate::sbitrate})\n\n_________\n\n{stream.seScore}"
-}
