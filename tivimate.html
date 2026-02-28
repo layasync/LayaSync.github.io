@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIVIMATE PREMIUM SETUP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>TIVIMATE PREMIUM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000000;
-            --accent: #007aff;
+            --card-bg: #111111;
+            --accent: #0071ff;
             --text: #ffffff;
-            --card: #121212;
-            --border: #282828;
+            --text-dim: #888888;
         }
 
         body {
@@ -20,44 +20,67 @@
             color: var(--text);
             margin: 0;
             padding: 20px;
-            font-size: 22px; 
-            line-height: 1.5;
+            line-height: 1.4;
+            font-size: 22px; /* Large base font */
         }
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 40px auto;
+        }
+
+        /* HEADER */
+        header {
             text-align: center;
+            margin-bottom: 50px;
         }
 
         h1 {
-            font-size: 5rem;
+            font-size: 4.5rem;
             font-weight: 900;
-            margin: 40px 0 10px 0;
-            letter-spacing: -4px;
-            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: -3px;
+            background: linear-gradient(to bottom, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .sub-header {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 60px;
+        .badge {
+            background: var(--accent);
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
 
+        /* CARDS */
         .card {
-            background: var(--card);
+            background: var(--card-bg);
+            border: 1px solid #222;
             padding: 40px;
-            border-radius: 35px;
+            border-radius: 30px;
             margin-bottom: 30px;
-            border: 1px solid var(--border);
-            text-align: left;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent);
+            margin-bottom: 30px;
+            display: block;
+            text-transform: uppercase;
         }
 
         /* DOWNLOAD BUTTONS */
-        .download-btn {
-            display: block;
+        .download-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
             background: var(--text);
             color: var(--bg);
             text-decoration: none;
@@ -65,116 +88,85 @@
             border-radius: 20px;
             font-weight: 900;
             font-size: 2rem;
-            margin-bottom: 20px;
             text-align: center;
-            transition: 0.2s ease;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
         }
 
-        .download-btn:active {
-            transform: scale(0.96);
-            background: var(--accent);
-            color: white;
-        }
+        .btn:hover { background: var(--accent); color: white; transform: scale(1.02); }
+        .btn-alt { background: #222; color: white; border: 1px solid #333; }
 
-        .btn-tmb {
-            background: #222;
-            color: #fff;
-            border: 1px solid #444;
-            font-size: 1.5rem;
-        }
-
-        /* FIRESTICK CODES */
-        .code-grid {
+        /* FIRESTICK CODES - MASSIVE */
+        .code-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin: 20px 0;
         }
 
         .code-box {
-            background: #1a1a1a;
-            padding: 30px 10px;
+            background: #000;
+            border: 2px solid #333;
+            padding: 30px;
             border-radius: 25px;
-            border: 2px solid var(--border);
-            cursor: pointer;
             text-align: center;
-            position: relative;
+            cursor: pointer;
         }
 
-        .code-box:hover { border-color: var(--accent); }
+        .code-box:active { border-color: var(--accent); }
 
-        .code-label { font-size: 0.8rem; color: #888; font-weight: bold; text-transform: uppercase; }
-
-        .code-number {
-            font-size: 4rem;
-            font-weight: 900;
+        .code-label { font-size: 0.9rem; color: var(--text-dim); display: block; margin-bottom: 5px; }
+        
+        .code-num { 
+            font-size: 4rem; 
+            font-weight: 900; 
             color: var(--accent);
-            display: block;
             font-family: monospace;
         }
 
-        .copy-success {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            left: 0;
-            font-size: 0.7rem;
-            color: #00ff88;
-            display: none;
-        }
-
-        /* INSTRUCTIONS - IMPROVED READABILITY */
-        .instruction-title {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 20px;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        .step-item {
+        /* INSTRUCTIONS */
+        .step {
             display: flex;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .step-num {
+        .step-circle {
             background: var(--accent);
-            color: white;
-            min-width: 45px;
-            height: 45px;
+            min-width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
+            font-size: 1.5rem;
         }
 
-        .step-content b { color: var(--accent); font-size: 1.4rem; }
-        
-        .step-content p { margin: 5px 0 0 0; color: #ccc; }
+        .step-text b { font-size: 1.8rem; color: var(--accent); display: block; margin-bottom: 5px; }
 
-        .warning-box {
-            background: #221111;
-            border: 1px solid #552222;
+        .warning {
+            background: #200;
+            border: 1px solid #400;
             padding: 20px;
             border-radius: 15px;
             font-size: 1rem;
-            color: #ffaaaa;
+            color: #ff8888;
+            margin-top: 20px;
         }
 
         footer {
-            margin-top: 60px;
-            padding-bottom: 60px;
+            text-align: center;
+            padding: 60px 0;
+            color: var(--text-dim);
             font-weight: bold;
-            color: #444;
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 3.5rem; }
-            .code-grid { grid-template-columns: 1fr; }
-            .code-number { font-size: 3.5rem; }
+            h1 { font-size: 3rem; }
+            .code-row { grid-template-columns: 1fr; }
+            .btn { font-size: 1.5rem; }
+            .code-num { font-size: 3.5rem; }
         }
     </style>
 </head>
@@ -182,88 +174,75 @@
 
 <div class="container">
     <header>
+        <span class="badge">Direct Install</span>
         <h1>TIVIMATE</h1>
-        <div class="sub-header">PREMIUM 5.1.6</div>
+        <p style="font-weight: 900; font-size: 1.5rem; margin: 0; color: var(--text-dim)">PREMIUM 5.1.6</p>
     </header>
 
-    <!-- DOWNLOADS -->
-    <div class="card" style="text-align: center;">
-        <span class="instruction-title">Step 1: Downloads</span>
-        <!-- IMPORTANT: Filenames must match exactly what you upload to GitHub -->
-        <a href="TIVIMATE5.1.6PREMIUM.apk" download class="download-btn">INSTALL PREMIUM APK</a>
-        <a href="ULTIMATE.tmb" download class="download-btn btn-tmb">DOWNLOAD BACKUP FILE</a>
-        <p style="font-size: 0.9rem; color: #666;">Files download directly to your device.</p>
+    <!-- DOWNLOAD SECTION -->
+    <div class="card">
+        <span class="section-title">1. Downloads</span>
+        <div class="download-area">
+            <button onclick="directDown('1S0VCt-WV6Tr9xZ27TCq9vzB2q9vSq3AH')" class="btn">DOWNLOAD PREMIUM APK</button>
+            <button onclick="directDown('12aUf_XF2YJ3NRcciX4aHYn2L8YJsZ0P7')" class="btn btn-alt">DOWNLOAD BACKUP (.TMB)</button>
+        </div>
+        <p style="text-align: center; font-size: 0.8rem; color: var(--text-dim); margin-top: 15px;">Downloads start automatically in a new tab.</p>
     </div>
 
-    <!-- FIRESTICK -->
+    <!-- FIRESTICK CODES -->
     <div class="card">
-        <span class="instruction-title">Firestick Codes</span>
-        <p style="margin-top: -10px; margin-bottom: 20px;">Enter these in the <b>Downloader</b> app:</p>
-        <div class="code-grid">
-            <div class="code-box" onclick="copyText('5191902', this)">
-                <span class="code-label">App Code</span>
-                <span class="code-number">5191902</span>
-                <span class="copy-success">COPIED TO CLIPBOARD</span>
+        <span class="section-title">2. Firestick Codes</span>
+        <div class="code-row">
+            <div class="code-box" onclick="copyMe('5191902')">
+                <span class="code-label">APP CODE</span>
+                <span class="code-num">5191902</span>
             </div>
-            <div class="code-box" onclick="copyText('8950111', this)">
-                <span class="code-label">Backup Code</span>
-                <span class="code-number">8950111</span>
-                <span class="copy-success">COPIED TO CLIPBOARD</span>
+            <div class="code-box" onclick="copyMe('8950111')">
+                <span class="code-label">BACKUP CODE</span>
+                <span class="code-num">8950111</span>
             </div>
         </div>
+        <p style="text-align: center; font-size: 0.9rem; margin-top: 15px;">Tap a code to copy it.</p>
     </div>
 
     <!-- INSTALLATION -->
     <div class="card">
-        <span class="instruction-title">Step 2: Activation</span>
+        <span class="section-title">3. Installation</span>
         
-        <div class="step-item">
-            <div class="step-num">1</div>
-            <div class="step-content">
-                <b>Install & Open</b>
-                <p>Install the APK. If on Firestick, use the <b>Downloader Code</b> above.</p>
+        <div class="step">
+            <div class="step-circle">1</div>
+            <div class="step-text">
+                <b>Install App</b>
+                On TV, use the "Downloader" app with the code above. On phone, just install the APK.
             </div>
         </div>
 
-        <div class="step-item">
-            <div class="step-num">2</div>
-            <div class="step-content">
+        <div class="step">
+            <div class="step-circle">2</div>
+            <div class="step-text">
                 <b>Restore Data</b>
-                <p>Go to <b>Settings</b> &rarr; <b>General</b> &rarr; <b>Restore Data</b>.</p>
+                Open TiviMate. Go to <b>Settings</b> &rarr; <b>General</b> &rarr; <b>Restore Data</b>.
             </div>
         </div>
 
-        <div class="step-item">
-            <div class="step-num">3</div>
-            <div class="step-content">
+        <div class="step">
+            <div class="step-circle">3</div>
+            <div class="step-text">
                 <b>Select File</b>
-                <p>Browse and select the <b>ULTIMATE.tmb</b> file. Click Restore. The app is now Premium.</p>
+                Browse and find <b>"ultimate.tmb"</b> and click Restore.
             </div>
         </div>
     </div>
 
     <!-- PLAYLIST -->
     <div class="card">
-        <span class="instruction-title">Step 3: Add Playlist</span>
+        <span class="section-title">4. Add Playlist</span>
+        <p>Go to <b>Playlists</b> &rarr; select <b>Stalker, Xtream, or M3U</b>.</p>
+        <p>Go to <b>Parameters</b> &rarr; <b>Edit</b>.</p>
+        <p style="color: var(--accent); font-weight: bold;">Enter your Portal URL, Username, and Password, then click Apply Changes.</p>
         
-        <div class="step-item">
-            <div class="step-num">4</div>
-            <div class="step-content">
-                <b>Setup Portal</b>
-                <p>Go to <b>Settings</b> &rarr; <b>Playlist</b>. Choose Stalker, Xtream, or M3U.</p>
-            </div>
-        </div>
-
-        <div class="step-item">
-            <div class="step-num">5</div>
-            <div class="step-content">
-                <b>Enter Credentials</b>
-                <p>Click <b>Parameters</b> &rarr; <b>Edit</b>. Input your URL, Username, and Password, then click <b>Apply</b>.</p>
-            </div>
-        </div>
-
-        <div class="warning-box">
-            <b>NOTE:</b> Only legitimate codes work. If it fails to update, check your login details and try clicking "Update" 2-3 times.
+        <div class="warning">
+            Note: If it fails to update, check your login details. Only legitimate codes will work.
         </div>
     </div>
 
@@ -273,17 +252,15 @@
 </div>
 
 <script>
-    function copyText(text, element) {
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("Copy");
-        textArea.remove();
-        
-        const success = element.querySelector('.copy-success');
-        success.style.display = 'block';
-        setTimeout(() => { success.style.display = 'none'; }, 2000);
+    // FIX FOR DOWNLOAD PROBLEM: Forces a direct download trigger
+    function directDown(id) {
+        const link = "https://drive.google.com/uc?export=download&id=" + id;
+        window.open(link, '_blank');
+    }
+
+    function copyMe(text) {
+        navigator.clipboard.writeText(text);
+        alert("Code Copied: " + text);
     }
 </script>
 
