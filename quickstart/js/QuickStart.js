@@ -86,6 +86,7 @@ class QuickStart {
         window.UIClipboard && UIClipboard.setup(); // Initialize Clipboard
         this.populateAIOStreamsHostsSelect();
         await this.loadFormatters(); // Load formatters from config
+        await this.checkForUpdates(); // Check for new updates
 
         // Main view listeners
 
@@ -813,6 +814,88 @@ class QuickStart {
         `;
 
         Modal.alert(html, "About QuickStart", "Got it");
+    }
+
+    // Update Checking & Notifications
+    async checkForUpdates() {
+        try {
+            // Fetch version info from config
+            const versionData = await Network.request('version.json');
+            this.versionData = versionData;
+            
+            // Get the current date
+            const currentDate = versionData.current;
+            
+            // Get the last date the user saw
+            const lastSeenDate = localStorage.getItem('quickstart_last_seen_update');
+            
+            // If no stored date or if current is newer, show notification
+            if (!lastSeenDate || this.compareDates(lastSeenDate, currentDate) < 0) {
+                this.displayUpdateNotification(currentDate);
+                // Update the stored date so we don't show it again
+                localStorage.setItem('quickstart_last_seen_update', currentDate);
+            }
+        } catch (err) {
+            console.error("Error checking for updates:", err);
+            // Silently fail - don't break the app if update check fails
+        }
+    }
+
+    // Display the update notification with changelog
+    displayUpdateNotification(date) {
+        const banner = document.getElementById('updateNotificationBanner');
+        const dateElement = document.getElementById('updateVersionDate');
+        const changesList = document.getElementById('updateChangesList');
+        const dismissBtn = document.getElementById('dismissUpdateBtn');
+        
+        if (!banner || !dateElement || !changesList || !dismissBtn) return; // UI elements not found
+
+        // Find the update info in history
+        let updateInfo = this.versionData.history.find(u => u.date === date);
+        
+        if (!updateInfo) return; // No matching update info found
+
+        // Format the date for display
+        const formattedDate = this.formatDate(updateInfo.date);
+
+        // Update header
+        dateElement.textContent = `Updated on ${formattedDate}`;
+        
+        // Clear and populate changes list
+        changesList.innerHTML = '';
+        updateInfo.changes.forEach(change => {
+            const li = document.createElement('li');
+            li.textContent = change;
+            changesList.appendChild(li);
+        });
+
+        // Show the banner
+        banner.classList.remove('hidden');
+
+        // Setup dismiss button
+        dismissBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            banner.classList.add('hidden');
+        }, { once: true });
+    }
+
+    // Format date from YYYY-MM-DD to readable format
+    formatDate(dateString) {
+        try {
+            // Parse date string manually to avoid timezone issues
+            const [year, month, day] = dateString.split('-').map(Number);
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthName = monthNames[month - 1];
+            return `${monthName} ${day}, ${year}`;
+        } catch {
+            return dateString;
+        }
+    }
+
+    // Compare two date strings in YYYY-MM-DD format (returns -1, 0, or 1)
+    compareDates(date1, date2) {
+        return date1.localeCompare(date2);
     }
 }
 

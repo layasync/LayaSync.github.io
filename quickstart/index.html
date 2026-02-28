@@ -45,6 +45,29 @@
             <p class="subtitle">Install AIOStreams in seconds</p>
         </div>
 
+        <!-- Update Notification Banner -->
+        <div id="updateNotificationBanner" class="update-notification hidden">
+            <div class="update-content">
+                <div class="update-header">
+                    <div class="update-title-group">
+                        <div>
+                            <h3 id="updateVersionTitle">New Update Available</h3>
+                            <p id="updateVersionDate" class="update-version"></p> <!-- Changes will be injected here by JS -->
+                        </div>
+                    </div>
+                    <button id="dismissUpdateBtn" class="dismiss-btn" aria-label="Dismiss">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <ul id="updateChangesList" class="update-changes">
+                    <!-- Changes will be injected here by JS -->
+                </ul>
+            </div>
+        </div>
+
         <!-- Main Card -->
         <div class="container pb-3">
             <form id="setupForm">

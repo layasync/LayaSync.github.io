@@ -1,0 +1,13 @@
+{
+  "current": "2026-02-28",
+  "history": [
+    {
+      "date": "2026-02-28",
+      "changes": [
+        "Updated the sorting algorithm to Swans latest SELs",
+        "Simplified the sorting logic to just global sorting",
+        "Added update notification system to alert users of new features"
+      ]
+    }
+  ]
+}
