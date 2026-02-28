@@ -129,11 +129,13 @@ class AIOStreamsAPI {
         // Handle specific upstream errors
         const errorMsg = (err.message || err.toString()).toLowerCase();
         const isTorrentioError = errorMsg.includes("torrentio");
+        const isMeteorError = errorMsg.includes("meteor");
         const isBitmagnetError = errorMsg.includes("bitmagnet");
         const isSeaDexError = errorMsg.includes("seadex not found");
 
         let presetType = "";
         if (isTorrentioError) presetType = 'torrentio';
+        else if (isMeteorError) presetType = 'meteor';
         else if (isBitmagnetError) presetType = 'bitmagnet';
         else if (isSeaDexError) presetType = 'seadex';
 
@@ -243,8 +245,10 @@ class AIOStreamsAPI {
                 const preferredSelUrl = `config/preferred_sel/${preferredSelFile}`;
                 const preferredSelData = await Network.request(preferredSelUrl, { cache: 'no-store' });
 
-                if (preferredSelData && Array.isArray(preferredSelData.values)) {
-                    aiostreamsConfig.preferredStreamExpressions = preferredSelData.values;
+                if (preferredSelData && Array.isArray(preferredSelData)) {
+                    aiostreamsConfig.preferredStreamExpressions = preferredSelData;
+                } else {
+                    console.warn(`Preferred stream expressions data is missing or malformed at ${preferredSelUrl}`);
                 }
             } catch (e) {
                 console.error("Failed to fetch preferredStreamExpressions:", e);

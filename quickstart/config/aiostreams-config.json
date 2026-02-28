@@ -117,7 +117,16 @@
   "excludeUncachedFromAddons": [],
   "excludeUncachedFromServices": [],
   "excludeUncachedFromStreamTypes": [],
-  "excludedStreamExpressions": [],
+  "excludedStreamExpressions": [
+    {
+      "expression": "isAnime and count(resolution(rseMatched(streams,'SeaDex Best','SeaDex Alt','Remux T1','Remux T2','Remux T3','BD T1','BD T2','BD T3','BD T4','BD T5','BD T6','BD T7','BD T8','Web T1','Web T2','Web T3','Web T4','Web T5','Web T6'),'2160p'))==0 ? resolution(streams,'2160p') : []",
+      "enabled": true
+    },
+    {
+      "expression": "pin(passthrough(uncached(type(streams, 'debrid')), 'excluded'), 'bottom')",
+      "enabled": true
+    }
+  ],
   "preferredStreamExpressions": [],
   "rankedStreamExpressions": [],
   "regexOverrides": [],
@@ -133,14 +142,12 @@
   "sortCriteria": {
     "global": [
       {
+        "key": "seadex",
+        "direction": "desc"
+      },
+      {
         "key": "cached",
         "direction": "desc"
-      }
-    ],
-    "cached": [
-      {
-        "key": "seadex",
-        "direction": "desc"
       },
       {
         "key": "streamExpressionMatched",
@@ -175,48 +182,8 @@
         "direction": "desc"
       }
     ],
-    "uncached": [
-      {
-        "key": "streamType",
-        "direction": "desc"
-      },
-      {
-        "key": "seadex",
-        "direction": "desc"
-      },
-      {
-        "key": "streamExpressionMatched",
-        "direction": "desc"
-      },
-      {
-        "key": "streamExpressionScore",
-        "direction": "desc"
-      },
-      {
-        "key": "resolution",
-        "direction": "desc"
-      },
-      {
-        "key": "quality",
-        "direction": "desc"
-      },
-      {
-        "key": "visualTag",
-        "direction": "desc"
-      },
-      {
-        "key": "audioTag",
-        "direction": "desc"
-      },
-      {
-        "key": "bitrate",
-        "direction": "desc"
-      },
-      {
-        "key": "language",
-        "direction": "desc"
-      }
-    ],
+    "cached": [],
+    "uncached": [],
     "uncachedSeries": []
   },
   "posterService": "rpdb",
@@ -284,7 +251,7 @@
       "infoHash"
     ],
     "cached": "single_result",
-    "uncached": "per_service",
+    "uncached": "single_result",
     "p2p": "single_result",
     "smartDetectAttributes": [
       "size",
