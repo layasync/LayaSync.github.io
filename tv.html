@@ -150,8 +150,8 @@
 <div class="container">
     <!-- STATS AREA -->
     <div class="live-stats">
-        <div class="stat-item">VIEWS <span id="view-count">...</span></div>
-        <div class="stat-item">INSTALLS <span id="down-count">...</span></div>
+        <div class="stat-item">VIEWS <span id="view-count">0</span></div>
+        <div class="stat-item">INSTALLS <span id="down-count">0</span></div>
     </div>
 
     <header>
@@ -174,15 +174,15 @@
     <div class="card">
         <div class="code-title">FIRESTICK DOWNLOADER CODES</div>
         
-        <div class="code-box" onclick="copyText('5191902', this)">
+        <div class="code-box" onclick="copyText('2486858', this)">
             <span class="code-title">APP CODE</span>
-            <span class="code-number">5191902</span>
+            <span class="code-number">2486858</span>
             <span class="copy-toast">COPIED!</span>
         </div>
 
-        <div class="code-box" onclick="copyText('8950111', this)">
+        <div class="code-box" onclick="copyText('6571467', this)">
             <span class="code-title">BACKUP CODE</span>
-            <span class="code-number">8950111</span>
+            <span class="code-number">6571467</span>
             <span class="copy-toast">COPIED!</span>
         </div>
         <p style="font-size: 1.2rem;">Tap the numbers to copy</p>
@@ -212,43 +212,59 @@
 </div>
 
 <script>
-    // These are your unique keys. Change the "tivi_99" part if you want to reset numbers to 0.
-    const namespace = "tivimate_v516_unique_user";
-    const viewKey = "page_views";
-    const downKey = "install_clicks";
+    // UNIQUE ID FOR YOUR PROJECT
+    const namespace = "tivimate_premium_final_v1";
+    const viewKey = "unique_views";
+    const downKey = "unique_installs";
 
-    // Function to update the page display
+    // Helper to update text
     function updateDisplay(id, value) {
-        document.getElementById(id).innerText = value.toLocaleString();
+        document.getElementById(id).innerText = (value || 0).toLocaleString();
     }
 
-    // 1. Logic for Page Views (Increments on load)
+    // 1. PAGE VIEW LOGIC (Unique per browser)
     async function initStats() {
         try {
-            // Increment and get views
-            const vRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${viewKey}/up`);
-            const vData = await vRes.json();
-            updateDisplay('view-count', vData.count);
+            // Check if this user has already been counted
+            const hasVisited = localStorage.getItem('v_done');
+            
+            let url = `https://api.counterapi.dev/v1/${namespace}/${viewKey}`;
+            
+            if (!hasVisited) {
+                // Not counted yet? Hit the +1 endpoint
+                const res = await fetch(url + '/up');
+                const data = await res.json();
+                updateDisplay('view-count', data.count);
+                localStorage.setItem('v_done', 'true'); // Mark as counted
+            } else {
+                // Already counted? Just get the total number to show
+                const res = await fetch(url);
+                const data = await res.json();
+                updateDisplay('view-count', data.count);
+            }
 
-            // Just get current downloads (don't increment yet)
+            // Get current download total (don't increment)
             const dRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}`);
             const dData = await dRes.json();
-            updateDisplay('down-count', dData.count || 0);
-        } catch (err) {
-            console.log("Stats error", err);
-        }
+            updateDisplay('down-count', dData.count);
+
+        } catch (err) { console.log(err); }
     }
 
-    // 2. Logic for Downloads (Increments on click)
+    // 2. DOWNLOAD LOGIC (Unique per browser)
     async function hitDownload() {
         try {
-            const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}/up`);
-            const data = await res.json();
-            updateDisplay('down-count', data.count);
+            const hasDownloaded = localStorage.getItem('d_done');
+            if (!hasDownloaded) {
+                const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}/up`);
+                const data = await res.json();
+                updateDisplay('down-count', data.count);
+                localStorage.setItem('d_done', 'true'); // Mark as counted
+            }
         } catch (err) { }
     }
 
-    // Start
+    // Initialize
     initStats();
 
     // Standard Copy Function
