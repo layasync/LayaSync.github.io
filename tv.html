@@ -212,59 +212,58 @@
 </div>
 
 <script>
-    // UNIQUE ID FOR YOUR PROJECT
-    const namespace = "tivimate_premium_final_v1";
-    const viewKey = "unique_views";
-    const downKey = "unique_installs";
+    /* --- API CONFIGURATION --- */
+    const API_TOKEN = "ut_6i2mMQaXudwwEshUH1tgfoXsUlivVaqwqvlSRp93";
+    const namespace = "tivimate_premium";
+    const viewKey = "page_views";
+    const downKey = "install_clicks";
 
     // Helper to update text
     function updateDisplay(id, value) {
         document.getElementById(id).innerText = (value || 0).toLocaleString();
     }
 
-    // 1. PAGE VIEW LOGIC (Unique per browser)
+    // 1. UNIQUE VIEW LOGIC
     async function initStats() {
         try {
-            // Check if this user has already been counted
-            const hasVisited = localStorage.getItem('v_done');
+            const hasVisited = localStorage.getItem('v_counted');
+            let url = `https://api.counterapi.dev/v1/${namespace}`;
             
-            let url = `https://api.counterapi.dev/v1/${namespace}/${viewKey}`;
-            
+            // If first time visit, increment
             if (!hasVisited) {
-                // Not counted yet? Hit the +1 endpoint
-                const res = await fetch(url + '/up');
+                const res = await fetch(`${url}/${viewKey}/up?token=${API_TOKEN}`);
                 const data = await res.json();
                 updateDisplay('view-count', data.count);
-                localStorage.setItem('v_done', 'true'); // Mark as counted
+                localStorage.setItem('v_counted', 'true');
             } else {
-                // Already counted? Just get the total number to show
-                const res = await fetch(url);
+                // Already counted, just fetch current total
+                const res = await fetch(`${url}/${viewKey}?token=${API_TOKEN}`);
                 const data = await res.json();
                 updateDisplay('view-count', data.count);
             }
 
-            // Get current download total (don't increment)
-            const dRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}`);
+            // Get current download total
+            const dRes = await fetch(`${url}/${downKey}?token=${API_TOKEN}`);
             const dData = await dRes.json();
             updateDisplay('down-count', dData.count);
 
-        } catch (err) { console.log(err); }
+        } catch (err) { console.error("Stats Error:", err); }
     }
 
-    // 2. DOWNLOAD LOGIC (Unique per browser)
+    // 2. UNIQUE INSTALL LOGIC
     async function hitDownload() {
         try {
-            const hasDownloaded = localStorage.getItem('d_done');
+            const hasDownloaded = localStorage.getItem('d_counted');
             if (!hasDownloaded) {
-                const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}/up`);
+                const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}/up?token=${API_TOKEN}`);
                 const data = await res.json();
                 updateDisplay('down-count', data.count);
-                localStorage.setItem('d_done', 'true'); // Mark as counted
+                localStorage.setItem('d_counted', 'true');
             }
         } catch (err) { }
     }
 
-    // Initialize
+    // Run on Load
     initStats();
 
     // Standard Copy Function
