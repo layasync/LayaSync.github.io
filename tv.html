@@ -28,18 +28,26 @@
             margin: 0 auto;
         }
 
-        /* STATS BAR */
-        .stats-bar {
+        /* LIVE COUNTER STYLING */
+        .live-stats {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            font-size: 0.8rem;
-            color: #666;
+            gap: 30px;
             margin-bottom: 20px;
+            font-size: 1rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            background: #111;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #222;
         }
-        .stats-bar span { color: var(--accent); font-weight: bold; }
+        .stat-item span {
+            color: var(--accent);
+            font-weight: 900;
+            display: block;
+            font-size: 1.5rem;
+        }
 
         h1 {
             font-size: 5rem;
@@ -140,10 +148,10 @@
 <body>
 
 <div class="container">
-    <!-- LIVE STATS SECTION -->
-    <div class="stats-bar">
-        <div>Views: <span id="visit-count">...</span></div>
-        <div>Installs: <span id="download-count">...</span></div>
+    <!-- STATS AREA -->
+    <div class="live-stats">
+        <div class="stat-item">VIEWS <span id="view-count">...</span></div>
+        <div class="stat-item">INSTALLS <span id="down-count">...</span></div>
     </div>
 
     <header>
@@ -151,17 +159,18 @@
         <div class="sub-header">PREMIUM 5.1.6</div>
     </header>
 
+    <!-- DOWNLOAD SECTION -->
     <div class="card">
-        <!-- Download Links with onclick tracking -->
         <a href="https://drive.usercontent.google.com/download?id=1S0VCt-WV6Tr9xZ27TCq9vzB2q9vSq3AH&export=download&authuser=0" 
-           onclick="countDownload()" class="download-btn">INSTALL APP</a>
+           onclick="hitDownload()" class="download-btn">INSTALL APP</a>
         
         <a href="https://drive.usercontent.google.com/download?id=12aUf_XF2YJ3NRcciX4aHYn2L8YJsZ0P7&export=download&authuser=0" 
-           onclick="countDownload()" class="download-btn" style="background: #333; color: white;">DOWNLOAD BACKUP</a>
+           onclick="hitDownload()" class="download-btn" style="background: #333; color: white;">DOWNLOAD BACKUP</a>
         
         <p style="font-size: 1rem; color: #666;">Clicking these starts download instantly</p>
     </div>
 
+    <!-- FIRESTICK SECTION -->
     <div class="card">
         <div class="code-title">FIRESTICK DOWNLOADER CODES</div>
         
@@ -179,6 +188,7 @@
         <p style="font-size: 1.2rem;">Tap the numbers to copy</p>
     </div>
 
+    <!-- INSTRUCTIONS SECTION -->
     <div class="card">
         <div class="step">
             <span class="step-title">1. INSTALL</span>
@@ -202,40 +212,44 @@
 </div>
 
 <script>
-    // --- SETTINGS ---
-    // Change "my_unique_site_name" to anything you want to reset counters
-    const SITE_KEY = "tivimate_premium_setups_99"; 
+    // These are your unique keys. Change the "tivi_99" part if you want to reset numbers to 0.
+    const namespace = "tivimate_v516_unique_user";
+    const viewKey = "page_views";
+    const downKey = "install_clicks";
 
-    // 1. Logic to count Page Views
-    async function updateVisits() {
-        try {
-            const response = await fetch(`https://api.countapi.xyz/hit/${SITE_KEY}/visits`);
-            const data = await response.json();
-            document.getElementById('visit-count').innerText = data.value.toLocaleString();
-        } catch (e) { document.getElementById('visit-count').innerText = "0"; }
+    // Function to update the page display
+    function updateDisplay(id, value) {
+        document.getElementById(id).innerText = value.toLocaleString();
     }
 
-    // 2. Logic to count Button Downloads
-    async function countDownload() {
+    // 1. Logic for Page Views (Increments on load)
+    async function initStats() {
         try {
-            const response = await fetch(`https://api.countapi.xyz/hit/${SITE_KEY}/downloads`);
-            const data = await response.json();
-            document.getElementById('download-count').innerText = data.value.toLocaleString();
-        } catch (e) { }
+            // Increment and get views
+            const vRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${viewKey}/up`);
+            const vData = await vRes.json();
+            updateDisplay('view-count', vData.count);
+
+            // Just get current downloads (don't increment yet)
+            const dRes = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}`);
+            const dData = await dRes.json();
+            updateDisplay('down-count', dData.count || 0);
+        } catch (err) {
+            console.log("Stats error", err);
+        }
     }
 
-    // 3. Logic to show initial download count on load
-    async function getInitialDownloads() {
+    // 2. Logic for Downloads (Increments on click)
+    async function hitDownload() {
         try {
-            const response = await fetch(`https://api.countapi.xyz/get/${SITE_KEY}/downloads`);
-            const data = await response.json();
-            document.getElementById('download-count').innerText = data.value.toLocaleString();
-        } catch (e) { document.getElementById('download-count').innerText = "0"; }
+            const res = await fetch(`https://api.counterapi.dev/v1/${namespace}/${downKey}/up`);
+            const data = await res.json();
+            updateDisplay('down-count', data.count);
+        } catch (err) { }
     }
 
-    // Initialize
-    updateVisits();
-    getInitialDownloads();
+    // Start
+    initStats();
 
     // Standard Copy Function
     function copyText(text, element) {
