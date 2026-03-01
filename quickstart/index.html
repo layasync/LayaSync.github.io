@@ -52,7 +52,6 @@
                     <div class="update-title-group">
                         <div>
                             <h3 id="updateVersionTitle">New Update Available</h3>
-                            <p id="updateVersionDate" class="update-version"></p> <!-- Changes will be injected here by JS -->
                         </div>
                     </div>
                     <button id="dismissUpdateBtn" class="dismiss-btn" aria-label="Dismiss">
@@ -393,6 +392,17 @@
                         <select id="aiostreamsHost">
                             <!-- Options are populated from QuickStart.js -->
                         </select>
+
+                        <!-- Custom Host Input (Hidden by default, shown when Custom is selected) -->
+                        <div id="customHostSection" class="hidden">
+                            <div class="field mt-2">
+                                <label for="customHostURL" class="mb-1 d-block">Custom AIOStreams URL</label>
+                                <input type="url" id="customHostURL" placeholder="https://your-custom-aiostreams-instance.com" required>
+                                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
+                                    Enter the full URL to your private AIOStreams instance.
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Formatter Selection -->

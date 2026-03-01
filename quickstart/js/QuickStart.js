@@ -72,6 +72,8 @@ class QuickStart {
             prioritizeQualityCheckbox: document.getElementById("prioritizeQuality"),
 
             aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
+            customHostSection: document.getElementById("customHostSection"),
+            customHostURL: document.getElementById("customHostURL"),
             formatSelect: document.getElementById("formatSelect"),
             formatPreviewImage: document.getElementById("formatPreviewImage"),
             customFormatterSection: document.getElementById("customFormatterSection"),
@@ -141,6 +143,9 @@ class QuickStart {
         this.ui.formatSelect?.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
         this.ui.customFormatterFile?.addEventListener("change", (e) => this.handleCustomFormatterFileUpload(e));
 
+        // Host selection
+        this.ui.aiostreamsHostSelect?.addEventListener("change", (e) => this.handleHostSelection(e.target.value));
+
         this.ui.saveAdvancedSettingsBtn?.addEventListener('click', () => this.switchView('main'));
     }
 
@@ -207,6 +212,12 @@ class QuickStart {
             option.textContent = name;
             this.ui.aiostreamsHostSelect.appendChild(option);
         });
+
+        // Add Custom option
+        const customOption = document.createElement("option");
+        customOption.value = "custom";
+        customOption.textContent = "Custom (Private)";
+        this.ui.aiostreamsHostSelect.appendChild(customOption);
     }
 
     // Load formatters from the config directory
@@ -357,6 +368,15 @@ class QuickStart {
             this.customFormatterDefinition = null;
         };
         reader.readAsText(file);
+    }
+
+    handleHostSelection(selectedHost) {
+        // Show custom input field if "custom" is selected
+        if (selectedHost === 'custom') {
+            this.ui.customHostSection.classList.remove('hidden');
+        } else {
+            this.ui.customHostSection.classList.add('hidden');
+        }
     }
 
     // Main vs Advanced Settings view
@@ -553,8 +573,18 @@ class QuickStart {
         const excludeDolby = this.ui.excludeDolbyCheckbox.checked;
         const maxSize = Array.from(this.ui.sizePresets).find(btn => btn.classList.contains('active'))?.dataset.value || "unlimited";
 
-        const selectedHostValue = this.ui.aiostreamsHostSelect.value;
-        const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
+        let selectedHostValue = this.ui.aiostreamsHostSelect.value;
+        let selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
+
+        // Handle custom host selection
+        if (selectedHostValue === 'custom') {
+            const customUrl = this.ui.customHostURL.value.trim();
+            if (!customUrl) {
+                throw new Error("Please enter a valid custom AIOStreams URL");
+            }
+            selectedHostValue = customUrl;
+            selectedHostName = "Custom";
+        }
 
         // Get formatter definition
         let formatterDefinition;
@@ -920,7 +950,7 @@ class QuickStart {
             
             // If no stored date or if current is newer, show notification
             if (!lastSeenDate || this.compareDates(lastSeenDate, currentDate) < 0) {
-                this.displayUpdateNotification(currentDate);
+                this.displayUpdateNotification(currentDate, lastSeenDate);
                 // Update the stored date so we don't show it again
                 localStorage.setItem('quickstart_last_seen_update', currentDate);
             }
@@ -930,33 +960,47 @@ class QuickStart {
         }
     }
 
-    // Display the update notification with changelog
-    displayUpdateNotification(date) {
+    // Display the update notification with changelog for all updates since last seen
+    displayUpdateNotification(currentDate, lastSeenDate) {
         const banner = document.getElementById('updateNotificationBanner');
-        const dateElement = document.getElementById('updateVersionDate');
         const changesList = document.getElementById('updateChangesList');
         const dismissBtn = document.getElementById('dismissUpdateBtn');
         
-        if (!banner || !dateElement || !changesList || !dismissBtn) return; // UI elements not found
+        if (!banner || !changesList || !dismissBtn) return; // UI elements not found
 
-        // Find the update info in history
-        let updateInfo = this.versionData.history.find(u => u.date === date);
-        
-        if (!updateInfo) return; // No matching update info found
-
-        // Format the date for display
-        const formattedDate = this.formatDate(updateInfo.date);
-
-        // Update header
-        dateElement.textContent = `Updated on ${formattedDate}`;
-        
-        // Clear and populate changes list
-        changesList.innerHTML = '';
-        updateInfo.changes.forEach(change => {
-            const li = document.createElement('li');
-            li.textContent = change;
-            changesList.appendChild(li);
+        // Find all updates that are newer than lastSeenDate
+        const relevantUpdates = this.versionData.history.filter(u => {
+            // If no lastSeenDate, show all updates up to current
+            if (!lastSeenDate) {
+                return this.compareDates(u.date, currentDate) <= 0;
+            }
+            // Otherwise, show updates between lastSeenDate and currentDate
+            return this.compareDates(u.date, lastSeenDate) > 0 && 
+                   this.compareDates(u.date, currentDate) <= 0;
         });
+
+        if (relevantUpdates.length === 0) return; // No updates to display
+        
+        // Clear and populate changes list with all updates
+        changesList.innerHTML = '';
+        
+        // Display updates in chronological order (newest first)
+        for (let i = 0; i < relevantUpdates.length; i++) {
+            const update = relevantUpdates[i];
+            
+            // Add date header
+            const dateHeader = document.createElement('li');
+            dateHeader.className = 'update-date-header';
+            dateHeader.textContent = this.formatDate(update.date);
+            changesList.appendChild(dateHeader);
+            
+            // Add changes for this update
+            update.changes.forEach(change => {
+                const li = document.createElement('li');
+                li.textContent = change;
+                changesList.appendChild(li);
+            });
+        }
 
         // Show the banner
         banner.classList.remove('hidden');
