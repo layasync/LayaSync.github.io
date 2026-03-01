@@ -4,7 +4,8 @@
     {
       "date": "2026-03-01",
       "changes": [
-        "Added support for custom formatter file upload"
+        "Added support for custom formatter file upload",
+        "Added ElfHosted as a new AIOStreams host option"
       ]
     },
     {

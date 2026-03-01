@@ -9,6 +9,7 @@ class AIOStreamsAPI {
             Omni: "https://aiostreams.12312023.xyz",
             Midnight: "https://aiostreamsfortheweebsstable.midnightignite.me",
             Kuu: "https://aiostreams.stremio.ru",
+            ElfHosted: "https://aiostreams.elfhosted.com",
         };
     }
 
