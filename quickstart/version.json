@@ -1,6 +1,12 @@
 {
-  "current": "2026-02-28",
+  "current": "2026-03-01",
   "history": [
+    {
+      "date": "2026-03-01",
+      "changes": [
+        "Added support for custom formatter file upload"
+      ]
+    },
     {
       "date": "2026-02-28",
       "changes": [

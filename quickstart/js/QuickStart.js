@@ -32,6 +32,7 @@ class QuickStart {
         // State
         this.mode = 'account'; // 'account' or 'manifest'
         this.formatters = {}; // Will hold loaded formatter definitions
+        this.customFormatterDefinition = null; // Will hold user-uploaded custom formatter
 
         // UI References
         this.ui = {
@@ -73,6 +74,8 @@ class QuickStart {
             aiostreamsHostSelect: document.getElementById("aiostreamsHost"),
             formatSelect: document.getElementById("formatSelect"),
             formatPreviewImage: document.getElementById("formatPreviewImage"),
+            customFormatterSection: document.getElementById("customFormatterSection"),
+            customFormatterFile: document.getElementById("customFormatterFile"),
             cleanDuckStreamsCheckbox: document.getElementById("cleanDuckStreams"),
 
             saveAdvancedSettingsBtn: document.getElementById("saveAdvancedSettings"),
@@ -136,6 +139,7 @@ class QuickStart {
 
         // Formatter selection
         this.ui.formatSelect?.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
+        this.ui.customFormatterFile?.addEventListener("change", (e) => this.handleCustomFormatterFileUpload(e));
 
         this.ui.saveAdvancedSettingsBtn?.addEventListener('click', () => this.switchView('main'));
     }
@@ -258,6 +262,12 @@ class QuickStart {
                 }
             }
 
+            // Add Custom Formatter Option
+            const customOption = document.createElement("option");
+            customOption.value = "custom";
+            customOption.textContent = "Custom (Upload)";
+            this.ui.formatSelect.appendChild(customOption);
+
             // Select Default (First item)
             if (this.ui.formatSelect.options.length > 0) {
                 const firstId = this.ui.formatSelect.options[0].value;
@@ -272,6 +282,20 @@ class QuickStart {
     }
 
     handleFormatterSelection(formatterId) {
+        const formatterPreviewContainer = document.getElementById('formatPreviewContainer');
+
+        // Handle Custom Formatter Option
+        if (formatterId === 'custom') {
+            // Show custom formatter upload and hide preview
+            this.ui.customFormatterSection.classList.remove('hidden');
+            formatterPreviewContainer.style.display = 'none';
+            return;
+        }
+
+        // Hide custom formatter upload and show preview for built-in formatters
+        this.ui.customFormatterSection.classList.add('hidden');
+        formatterPreviewContainer.style.display = 'block';
+
         const formatter = this.formatters[formatterId];
 
         // If no valid formatter was found, return
@@ -284,6 +308,55 @@ class QuickStart {
 
         this.ui.formatPreviewImage.onerror = () => this.ui.formatPreviewImage.style.display = 'none';
         this.ui.formatPreviewImage.onload = () => this.ui.formatPreviewImage.style.display = 'block';
+    }
+
+    handleCustomFormatterFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            this.customFormatterDefinition = null;
+            return;
+        }
+
+        // Only accept JSON files
+        if (!file.name.endsWith('.json')) {
+            Modal.error("Please select a valid JSON file.");
+            this.ui.customFormatterFile.value = '';
+            this.customFormatterDefinition = null;
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const definition = JSON.parse(e.target.result);
+                
+                // Validate that it's a proper formatter definition
+                if (!definition || typeof definition !== 'object') {
+                    throw new Error("Formatter must be a valid object");
+                }
+                
+                if (!definition.name || typeof definition.name !== 'string') {
+                    throw new Error("Formatter must have a 'name' property (string)");
+                }
+                
+                if (!definition.description || typeof definition.description !== 'string') {
+                    throw new Error("Formatter must have a 'description' property (string)");
+                }
+                
+                this.customFormatterDefinition = definition;
+                console.log("Custom formatter loaded successfully");
+            } catch (err) {
+                Modal.error(`Invalid formatter format: ${err.message}`);
+                this.ui.customFormatterFile.value = '';
+                this.customFormatterDefinition = null;
+            }
+        };
+        reader.onerror = () => {
+            Modal.error("Error reading file. Please try again.");
+            this.ui.customFormatterFile.value = '';
+            this.customFormatterDefinition = null;
+        };
+        reader.readAsText(file);
     }
 
     // Main vs Advanced Settings view
@@ -483,7 +556,15 @@ class QuickStart {
         const selectedHostValue = this.ui.aiostreamsHostSelect.value;
         const selectedHostName = this.ui.aiostreamsHostSelect.options[this.ui.aiostreamsHostSelect.selectedIndex].text;
 
-        const formatterDefinition = this.formatters[selectedFormatterId].definition;
+        // Get formatter definition
+        let formatterDefinition;
+        if (selectedFormatterId === 'custom' && this.customFormatterDefinition) {
+            // Use custom definition if uploaded
+            formatterDefinition = this.customFormatterDefinition;
+        } else {
+            // Use default or fallback formatter
+            formatterDefinition = this.formatters[selectedFormatterId].definition;
+        }
 
         // Prepare the config
         const config = await AIOStreamsAPI.populateJSON(providersMap, debridioKey, tmdbReadToken, formatterDefinition, exclude4k, excludeDolby, maxSize, prioritizeQuality);
@@ -647,7 +728,15 @@ class QuickStart {
         const prioritizeQuality = this.ui.prioritizeQualityCheckbox ? this.ui.prioritizeQualityCheckbox.checked : true;
 
         // Get selected formatter
-        const selectedFormatterId = this.ui.formatSelect.value;
+        let selectedFormatterId = this.ui.formatSelect.value;
+
+        // If custom is selected but no file was uploaded, fall back to default formatter
+        if (selectedFormatterId === 'custom') {
+            if (!this.customFormatterDefinition) {
+                console.log("Custom formatter selected but none uploaded, falling back to default");
+                selectedFormatterId = this.defaultFormatterId;
+            }
+        }
 
         // Gather API Keys from dynamic inputs
         const providersMap = {};
