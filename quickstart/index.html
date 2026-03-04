@@ -388,7 +388,13 @@
 
                     <!-- Host Selection -->
                     <div class="field settings-card">
-                        <label for="aiostreamsHost" class="mb-1 d-block">AIOStreams Host</label>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <label for="aiostreamsHost" class="mb-0">AIOStreams Host</label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="saveAIOStreamsCheckbox">
+                                <span>Save</span>
+                            </label>
+                        </div>
                         <select id="aiostreamsHost">
                             <!-- Options are populated from QuickStart.js -->
                         </select>
@@ -407,7 +413,13 @@
 
                     <!-- Formatter Selection -->
                     <div class="field settings-card">
-                        <label for="formatSelect" class="mb-1 d-block">Formatter Style</label>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <label for="formatSelect" class="mb-0">Formatter Style</label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="saveFormatterCheckbox">
+                                <span>Save</span>
+                            </label>
+                        </div>
                         <select id="formatSelect">
                             <!-- Options are populated from QuickStart.js -->
                         </select>
@@ -422,6 +434,9 @@
                             <div class="field mt-2">
                                 <label for="customFormatterFile" class="mb-1 d-block">Upload Formatter JSON</label>
                                 <input type="file" id="customFormatterFile" accept=".json" placeholder="Select JSON file">
+                                <div id="formatterLoadedIndicator" class="hidden" style="font-size: 0.8rem; color: #377CF4; margin-top: 0.4rem; font-weight: 500;">
+                                    Loaded: <span id="formatterLoadedName"></span>
+                                </div>
                                 <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
                                     Select a JSON file containing your formatter configuration.
                                 </div>

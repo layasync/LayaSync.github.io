@@ -1,6 +1,13 @@
 {
-  "current": "2026-03-01",
+  "current": "2026-03-03",
   "history": [
+    {
+      "date": "2026-03-03",
+      "changes": [
+        "Added ability to save and remember AIOStreams host selection",
+        "Added ability to save and remember formatter selection"
+      ]
+    },
     {
       "date": "2026-03-01",
       "changes": [

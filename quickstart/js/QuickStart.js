@@ -33,6 +33,8 @@ class QuickStart {
         this.mode = 'account'; // 'account' or 'manifest'
         this.formatters = {}; // Will hold loaded formatter definitions
         this.customFormatterDefinition = null; // Will hold user-uploaded custom formatter
+        this.formatterLoadedFromCache = false; // Track if formatter was loaded from localStorage
+        this.formatterFilename = null; // Store the filename of the loaded formatter
 
         // UI References
         this.ui = {
@@ -81,6 +83,10 @@ class QuickStart {
             cleanDuckStreamsCheckbox: document.getElementById("cleanDuckStreams"),
 
             saveAdvancedSettingsBtn: document.getElementById("saveAdvancedSettings"),
+            saveAIOStreamsCheckbox: document.getElementById("saveAIOStreamsCheckbox"),
+            saveFormatterCheckbox: document.getElementById("saveFormatterCheckbox"),
+            formatterLoadedIndicator: document.getElementById("formatterLoadedIndicator"),
+            formatterLoadedName: document.getElementById("formatterLoadedName"),
         };
     }
 
@@ -140,13 +146,235 @@ class QuickStart {
         });
 
         // Formatter selection
-        this.ui.formatSelect?.addEventListener("change", (e) => this.handleFormatterSelection(e.target.value));
+        this.ui.formatSelect?.addEventListener("change", (e) => {
+            this.handleFormatterSelection(e.target.value);
+            this.saveFormatter(); // Auto-save formatter selection if checkbox is enabled
+        });
         this.ui.customFormatterFile?.addEventListener("change", (e) => this.handleCustomFormatterFileUpload(e));
 
         // Host selection
-        this.ui.aiostreamsHostSelect?.addEventListener("change", (e) => this.handleHostSelection(e.target.value));
+        this.ui.aiostreamsHostSelect?.addEventListener("change", (e) => {
+            this.handleHostSelection(e.target.value);
+            this.saveAIOStreamsHost(); // Auto-save host selection if checkbox is enabled
+        });
+        this.ui.customHostURL?.addEventListener("blur", () => this.saveAIOStreamsHost());
 
         this.ui.saveAdvancedSettingsBtn?.addEventListener('click', () => this.switchView('main'));
+
+        // Individual Save Checkboxes
+        this.ui.saveAIOStreamsCheckbox?.addEventListener('change', (e) => this.handleAIOStreamsSaveCheckboxChange(e));
+        this.ui.saveFormatterCheckbox?.addEventListener('change', (e) => this.handleFormatterSaveCheckboxChange(e));
+
+        // Load saved settings if they exist
+        await this.loadSettings();
+    }
+
+    /**
+     * Save AIOStreams URL to localStorage
+     * Only saves if the "Save" checkbox for AIOStreams is checked
+     */
+    saveAIOStreamsHost() {
+        if (!this.ui.saveAIOStreamsCheckbox?.checked) {
+            return;
+        }
+
+        try {
+            const selectedHost = this.ui.aiostreamsHostSelect?.value;
+
+            if (selectedHost === 'custom') {
+                const customUrl = this.ui.customHostURL?.value?.trim();
+                if (customUrl) {
+                    localStorage.setItem('quickstart_aiostreams_url', customUrl);
+                    console.log('AIOStreams URL saved:', customUrl);
+                }
+            } else if (selectedHost && selectedHost !== 'auto') {
+                localStorage.setItem('quickstart_aiostreams_url', selectedHost);
+                console.log('AIOStreams URL saved:', selectedHost);
+            }
+        } catch (err) {
+            console.error('Error saving AIOStreams URL:', err);
+        }
+    }
+
+    /**
+     * Save Formatter JSON to localStorage
+     * Only saves if the "Save" checkbox for Formatter is checked
+     */
+    saveFormatter() {
+        if (!this.ui.saveFormatterCheckbox?.checked) {
+            return;
+        }
+
+        try {
+            const selectedFormatterId = this.ui.formatSelect?.value;
+            
+            // Save the selected formatter ID
+            if (selectedFormatterId) {
+                localStorage.setItem('quickstart_formatter_id', selectedFormatterId);
+                console.log('Formatter ID saved:', selectedFormatterId);
+            }
+            
+            // If it's a custom formatter, also save the JSON definition and filename
+            if (selectedFormatterId === 'custom' && this.customFormatterDefinition) {
+                try {
+                    const jsonString = JSON.stringify(this.customFormatterDefinition);
+                    localStorage.setItem('quickstart_formatter_json', jsonString);
+                    console.log('Custom formatter JSON saved to localStorage');
+                    
+                    // Save the filename if available
+                    if (this.formatterFilename) {
+                        localStorage.setItem('quickstart_formatter_filename', this.formatterFilename);
+                        console.log('Formatter filename saved:', this.formatterFilename);
+                    }
+                } catch (err) {
+                    console.warn('Error serializing formatter:', err);
+                }
+            }
+        } catch (err) {
+            console.error('Error saving formatter:', err);
+        }
+    }
+
+    /**
+     * Load saved settings from localStorage and apply them to the UI
+     */
+    async loadSettings() {
+        try {
+            const savedUrl = localStorage.getItem('quickstart_aiostreams_url');
+            const savedFormatter = localStorage.getItem('quickstart_formatter_json');
+
+            // Restore AIOStreams URL
+            if (savedUrl) {
+                this.ui.saveAIOStreamsCheckbox.checked = true;
+                
+                // Check if it's a predefined host by looking for a matching option
+                const predefinedHost = Array.from(this.ui.aiostreamsHostSelect.options).find(opt => opt.value === savedUrl);
+                
+                if (predefinedHost) {
+                    // It's a predefined host from the dropdown
+                    this.ui.aiostreamsHostSelect.value = savedUrl;
+                    this.handleHostSelection(savedUrl);
+                    // Clear custom URL field for cleanliness
+                    this.ui.customHostURL.value = '';
+                } else {
+                    // It's a custom URL not in the predefined list
+                    this.ui.aiostreamsHostSelect.value = 'custom';
+                    this.handleHostSelection('custom');
+                    this.ui.customHostURL.value = savedUrl;
+                }
+                console.log('AIOStreams URL loaded from cache');
+            }
+
+            // Restore Formatter Selection
+            const savedFormatterId = localStorage.getItem('quickstart_formatter_id');
+            if (savedFormatterId) {
+                this.ui.saveFormatterCheckbox.checked = true;
+                
+                // If it's a custom formatter, try to load the JSON definition
+                if (savedFormatterId === 'custom') {
+                    if (savedFormatter) {
+                        try {
+                            const formatterDef = JSON.parse(savedFormatter);
+                            
+                            // Validate the formatter
+                            if (formatterDef && typeof formatterDef === 'object' && 
+                                formatterDef.name && formatterDef.description) {
+                                
+                                this.customFormatterDefinition = formatterDef;
+                                this.formatterLoadedFromCache = true;
+                                
+                                // Switch to custom formatter option
+                                this.ui.formatSelect.value = 'custom';
+                                this.handleFormatterSelection('custom');
+                                
+                                // Restore and display the filename
+                                const savedFilename = localStorage.getItem('quickstart_formatter_filename');
+                                if (savedFilename) {
+                                    this.formatterFilename = savedFilename;
+                                    this.displayFormatterFilename(savedFilename);
+                                }
+                                
+                                console.log('Custom formatter loaded from cache');
+                            }
+                        } catch (err) {
+                            console.warn('Error parsing saved formatter:', err);
+                            localStorage.removeItem('quickstart_formatter_json');
+                            localStorage.removeItem('quickstart_formatter_filename');
+                        }
+                    }
+                } else if (this.formatters[savedFormatterId]) {
+                    // Built-in formatter - just select it
+                    this.ui.formatSelect.value = savedFormatterId;
+                    this.handleFormatterSelection(savedFormatterId);
+                    console.log('Built-in formatter loaded from cache:', savedFormatterId);
+                }
+            }
+
+            if (savedUrl || savedFormatter) {
+                console.log('Settings loaded from localStorage');
+            }
+        } catch (err) {
+            console.error('Error loading settings from localStorage:', err);
+        }
+    }
+
+    /**
+     * Handle AIOStreams Save checkbox change
+     */
+    handleAIOStreamsSaveCheckboxChange(event) {
+        if (event.target.checked) {
+            // Save current AIOStreams host
+            this.saveAIOStreamsHost();
+        } else {
+            // Clear saved AIOStreams URL
+            try {
+                localStorage.removeItem('quickstart_aiostreams_url');
+                console.log('AIOStreams URL cleared from localStorage');
+            } catch (err) {
+                console.error('Error clearing AIOStreams URL:', err);
+            }
+        }
+    }
+
+    /**
+     * Handle Formatter Save checkbox change
+     */
+    handleFormatterSaveCheckboxChange(event) {
+        if (event.target.checked) {
+            // Save current formatter
+            this.saveFormatter();
+        } else {
+            // Clear saved formatter
+            try {
+                localStorage.removeItem('quickstart_formatter_id');
+                localStorage.removeItem('quickstart_formatter_json');
+                localStorage.removeItem('quickstart_formatter_filename');
+                this.hideFormatterFilename();
+                console.log('Formatter cleared from localStorage');
+            } catch (err) {
+                console.error('Error clearing formatter:', err);
+            }
+        }
+    }
+
+    /**
+     * Display the formatter filename in the UI
+     */
+    displayFormatterFilename(filename) {
+        if (this.ui.formatterLoadedName && this.ui.formatterLoadedIndicator) {
+            this.ui.formatterLoadedName.textContent = filename;
+            this.ui.formatterLoadedIndicator.classList.remove('hidden');
+        }
+    }
+
+    /**
+     * Hide the formatter filename indicator
+     */
+    hideFormatterFilename() {
+        this.formatterFilename = null;
+        if (this.ui.formatterLoadedIndicator) {
+            this.ui.formatterLoadedIndicator.classList.add('hidden');
+        }
     }
 
     // Stremio Account vs Manifest Only
@@ -300,12 +528,19 @@ class QuickStart {
             // Show custom formatter upload and hide preview
             this.ui.customFormatterSection.classList.remove('hidden');
             formatterPreviewContainer.style.display = 'none';
+            // Show filename indicator if it was loaded from cache
+            if (this.formatterFilename) {
+                this.displayFormatterFilename(this.formatterFilename);
+            }
             return;
         }
 
         // Hide custom formatter upload and show preview for built-in formatters
         this.ui.customFormatterSection.classList.add('hidden');
         formatterPreviewContainer.style.display = 'block';
+
+        // Hide filename indicator when switching to built-in formatters
+        this.hideFormatterFilename();
 
         const formatter = this.formatters[formatterId];
 
@@ -325,6 +560,9 @@ class QuickStart {
         const file = event.target.files[0];
         if (!file) {
             this.customFormatterDefinition = null;
+            this.formatterLoadedFromCache = false;
+            this.formatterFilename = null;
+            this.hideFormatterFilename();
             return;
         }
 
@@ -333,6 +571,9 @@ class QuickStart {
             Modal.error("Please select a valid JSON file.");
             this.ui.customFormatterFile.value = '';
             this.customFormatterDefinition = null;
+            this.formatterLoadedFromCache = false;
+            this.formatterFilename = null;
+            this.hideFormatterFilename();
             return;
         }
 
@@ -355,17 +596,29 @@ class QuickStart {
                 }
                 
                 this.customFormatterDefinition = definition;
-                console.log("Custom formatter loaded successfully");
+                this.formatterLoadedFromCache = false; // Mark as user-uploaded, not from cache
+                this.formatterFilename = file.name; // Store the filename
+                this.displayFormatterFilename(file.name); // Show the filename in the UI
+                console.log("Custom formatter loaded successfully:", file.name);
+                
+                // Save the new formatter to localStorage if checkbox is enabled
+                this.saveFormatter();
             } catch (err) {
                 Modal.error(`Invalid formatter format: ${err.message}`);
                 this.ui.customFormatterFile.value = '';
                 this.customFormatterDefinition = null;
+                this.formatterLoadedFromCache = false;
+                this.formatterFilename = null;
+                this.hideFormatterFilename();
             }
         };
         reader.onerror = () => {
             Modal.error("Error reading file. Please try again.");
             this.ui.customFormatterFile.value = '';
             this.customFormatterDefinition = null;
+            this.formatterLoadedFromCache = false;
+            this.formatterFilename = null;
+            this.hideFormatterFilename();
         };
         reader.readAsText(file);
     }
