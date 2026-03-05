@@ -131,12 +131,14 @@ class AIOStreamsAPI {
         const errorMsg = (err.message || err.toString()).toLowerCase();
         const isTorrentioError = errorMsg.includes("torrentio");
         const isMeteorError = errorMsg.includes("meteor");
+        const isMediaFusionError = errorMsg.includes("mediafusion");
         const isBitmagnetError = errorMsg.includes("bitmagnet");
         const isSeaDexError = errorMsg.includes("seadex not found");
 
         let presetType = "";
         if (isTorrentioError) presetType = 'torrentio';
         else if (isMeteorError) presetType = 'meteor';
+        else if (isMediaFusionError) presetType = 'mediafusion';
         else if (isBitmagnetError) presetType = 'bitmagnet';
         else if (isSeaDexError) presetType = 'seadex';
 
