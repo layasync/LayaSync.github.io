@@ -1,6 +1,14 @@
 {
-  "current": "2026-03-03",
+  "current": "2026-03-04",
   "history": [
+    {
+      "date": "2026-03-04",
+      "changes": [
+        "Changed formatter to display '⚠️ Dead Debrid Link' instead of '🚫'",
+        "Added MediaFusion as a scraper",
+        "Removed donation options from the sidebar footer"
+      ]
+    },
     {
       "date": "2026-03-03",
       "changes": [

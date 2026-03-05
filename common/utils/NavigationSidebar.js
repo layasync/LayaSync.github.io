@@ -597,7 +597,6 @@ class NavigationSidebar {
         const footer = document.createElement('div');
         footer.className = 'sidebar-footer';
         footer.innerHTML = `
-            <div>Need help?</div>
             <a href="https://duckkota.gitlab.io/guides/" target="_blank" style="display: block; margin-bottom: 1rem;">
                 Check out my Guides &rarr;
             </a>
@@ -605,16 +604,20 @@ class NavigationSidebar {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
                 Report Issue
             </button>
-            <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center;">
-                <a href="https://ko-fi.com/duckstreams" target="_blank" title="Support on Ko-Fi" style="width: 50px; height: 50px; background: #29abe0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 32px; height: auto;">
-                </a>
-                <a href="#" id="crypto-donate-btn" title="Donate Crypto" style="width: 50px; height: 50px; background: #f7931a; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: white;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    <img src="${this.getCorrectPath('/common/assets/crypto/bitcoin-btc-logo.svg')}" alt="BTC" style="width: 42px; height: 42px;">
-                </a>
-            </div>
         `;
         this.sidebarElement.appendChild(footer);
+
+        // ------
+        // Add the following line of code to the innerHTML above to enable donations again
+        // ------
+        // <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center;">
+        //     <a href="https://ko-fi.com/duckstreams" target="_blank" title="Support on Ko-Fi" style="width: 50px; height: 50px; background: #29abe0; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        //         <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi" style="width: 32px; height: auto;">
+        //     </a>
+        //     <a href="#" id="crypto-donate-btn" title="Donate Crypto" style="width: 50px; height: 50px; background: #f7931a; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: white;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        //         <img src="${this.getCorrectPath('/common/assets/crypto/bitcoin-btc-logo.svg')}" alt="BTC" style="width: 42px; height: 42px;">
+        //     </a>
+        // </div>
     }
 
     // Create the Floating Action Button (FAB) for mobile
