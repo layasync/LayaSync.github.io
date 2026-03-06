@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>IPTV Playlist Builder</title>
 
 <style>
@@ -161,20 +160,24 @@ let channels=[]
 let categories={}
 let m3u=""
 
+function proxy(url){
+return "https://api.allorigins.win/raw?url="+encodeURIComponent(url)
+}
+
 async function load(){
 
 const server=document.getElementById("server").value
 const user=document.getElementById("user").value
 const pass=document.getElementById("pass").value
 
-document.getElementById("status").innerText="Loading..."
+document.getElementById("status").innerText="Loading channels..."
 
 try{
 
-const catRes=await fetch(`${server}/player_api.php?username=${user}&password=${pass}&action=get_live_categories`)
+const catRes=await fetch(proxy(`${server}/player_api.php?username=${user}&password=${pass}&action=get_live_categories`))
 const catData=await catRes.json()
 
-const chRes=await fetch(`${server}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`)
+const chRes=await fetch(proxy(`${server}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`))
 channels=await chRes.json()
 
 categories={}
@@ -186,7 +189,7 @@ categories[String(c.category_id)]=c.category_name
 const counts={}
 
 channels.forEach(ch=>{
-const id=String(ch.category_id || "0")
+const id=String(ch.category_id||"0")
 counts[id]=(counts[id]||0)+1
 })
 
@@ -216,20 +219,18 @@ channels.length+" channels loaded"
 
 }catch(e){
 
-document.getElementById("status").innerText="Failed to load API"
+document.getElementById("status").innerText="Failed to fetch IPTV API"
 
 }
 
 }
 
 function selectAll(){
-document.querySelectorAll("#categories input")
-.forEach(c=>c.checked=true)
+document.querySelectorAll("#categories input").forEach(c=>c.checked=true)
 }
 
 function clearAll(){
-document.querySelectorAll("#categories input")
-.forEach(c=>c.checked=false)
+document.querySelectorAll("#categories input").forEach(c=>c.checked=false)
 }
 
 function generate(){
