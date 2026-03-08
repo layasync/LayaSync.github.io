@@ -4,6 +4,7 @@
  * - capture(addon): Promise<state>
  * - restore(addonUrl, state): Promise<string|null>
  */
+
 class AIOStreamsStrategy {
     constructor() {
         this.id = 'aiostreams';
@@ -71,12 +72,12 @@ class AIOStreamsStrategy {
                 return { uuid, host, password, config };
             } catch (err) {
                 if (err.message && (err.message.includes('401') || err.message.toLowerCase().includes('unauthorized'))) {
-                    console.warn('Stored AIOStreams password failed (401), prompting user', err);
+                    Logger.warn('AIOStreamsStrategy', 'Stored AIOStreams password failed (401), prompting user', { error: err.message });
                     TimeMachineStorage.setAioPassword(uuid, null);
                 } else {
                     // For network/proxy errors, we should probably fail fast too, or at least warn specifically.
                     // But to be safe and consistent with previous behavior (fallback to prompt), we'll just log loudly.
-                    console.warn(`Stored AIOStreams password failed to connect to ${host}: ${err.message}. Falling back to prompt user.`);
+                    Logger.warn('AIOStreamsStrategy', `Stored AIOStreams password failed to connect to ${host}: ${err.message}. Falling back to prompt user.`);
                     TimeMachineStorage.setAioPassword(uuid, null);
                 }
             }
@@ -149,7 +150,7 @@ class AIOStreamsStrategy {
 
             return null;
         } catch (updateErr) {
-            console.warn("AIOStreams update failed, attempting to create new manifest...", updateErr);
+            Logger.warn('AIOStreamsStrategy', "AIOStreams update failed, attempting to create new manifest...", { error: updateErr.message });
         }
 
         // Attempt 2: Create new configuration (if update failed)

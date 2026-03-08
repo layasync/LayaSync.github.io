@@ -1,6 +1,7 @@
 /**
  * AIOStreamsAPI Class
  */
+
 class AIOStreamsAPI {
     static get HOSTS() {
         return {
@@ -143,17 +144,17 @@ class AIOStreamsAPI {
         else if (isSeaDexError) presetType = 'seadex';
 
         // Log for debugging
-        console.log(`SmartRetry: Attempt ${attempts}/${maxAttempts}. Error: "${errorMsg}". Detected Type: "${presetType}"`);
+        Logger.debug('AIOStreamsAPI', `SmartRetry: Attempt ${attempts}/${maxAttempts}. Error: "${errorMsg}". Detected Type: "${presetType}"`);
 
         // If not an identifiable/fixable error, throw immediately
         const hasPreset = config.presets && config.presets.some(p => p.type === presetType);
         if (!presetType || !hasPreset) {
-            console.warn(`SmartRetry: Cannot fix error. Type: ${presetType}, HasPreset: ${hasPreset}`);
+            Logger.warn('AIOStreamsAPI', `SmartRetry: Cannot fix error. Type: ${presetType}, HasPreset: ${hasPreset}`);
             throw err;
         }
 
         // Log and Fix
-        console.warn(`Upstream error (${presetType}). Removing and retrying...`);
+        Logger.warn('AIOStreamsAPI', `Upstream error (${presetType}). Removing and retrying...`);
         config.presets = config.presets.filter(p => p.type !== presetType);
     }
 
@@ -221,7 +222,7 @@ class AIOStreamsAPI {
                         enableNewznab = true;
                     }
                 } catch (e) {
-                    console.error("Failed to check TorBox plan:", e);
+                    Logger.error('AIOStreamsAPI', "Failed to check TorBox plan:", e);
                     throw e;
                 }
             }
@@ -251,10 +252,10 @@ class AIOStreamsAPI {
                 if (preferredSelData && Array.isArray(preferredSelData)) {
                     aiostreamsConfig.preferredStreamExpressions = preferredSelData;
                 } else {
-                    console.warn(`Preferred stream expressions data is missing or malformed at ${preferredSelUrl}`);
+                    Logger.warn('AIOStreamsAPI', `Preferred stream expressions data is missing or malformed at ${preferredSelUrl}`);
                 }
             } catch (e) {
-                console.error("Failed to fetch preferredStreamExpressions:", e);
+                Logger.error('AIOStreamsAPI', "Failed to fetch preferredStreamExpressions:", e);
                 throw e;
             }
 

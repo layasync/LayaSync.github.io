@@ -3,6 +3,7 @@
  * 
  * Main application logic for the Stremio Time Machine (Snapshot Manager).
  */
+
 class TimeMachine {
     constructor() {
         // Variables to keep track of state
@@ -219,7 +220,7 @@ class TimeMachine {
         const snapshot = snapshots.find(s => s.id === id);
 
         if (!snapshot) {
-            console.error(`Snapshot ${id} not found`);
+            Logger.error('TimeMachine', `Snapshot ${id} not found`);
             return;
         }
 
@@ -229,7 +230,7 @@ class TimeMachine {
         );
 
         if (!confirmed) {
-            console.log("User cancelled restore");
+            Logger.debug('TimeMachine', "User cancelled restore");
             return;
         }
 
@@ -247,7 +248,7 @@ class TimeMachine {
 
             // Failed deep restores should be reported to HoneyBadger
             if (deepResults.errors && deepResults.errors.length > 0) {
-                console.warn("Deep restore encountered errors.");
+                Logger.warn('TimeMachine', "Deep restore encountered errors.");
                 deepResults.errors.forEach(err => ErrorHandler.report(err, { method: 'restoreSnapshot_deep' }));
             }
 
@@ -326,7 +327,7 @@ class TimeMachine {
     // Render the user timeline
     renderUserTimeline() {
         if (!this.currentUserEmail) {
-            console.error('No current user found.');
+            Logger.error('TimeMachine', 'No current user found.');
             return;
         }
         const email = this.currentUserEmail;

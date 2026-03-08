@@ -3,6 +3,7 @@
  * 
  * Main application logic for the Stremio QuickStart tool.
  */
+
 class QuickStart {
     constructor() {
         // Supported debrid providers
@@ -185,14 +186,14 @@ class QuickStart {
                 const customUrl = this.ui.customHostURL?.value?.trim();
                 if (customUrl) {
                     localStorage.setItem('quickstart_aiostreams_url', customUrl);
-                    console.log('AIOStreams URL saved:', customUrl);
+                    Logger.debug('QuickStart', 'AIOStreams URL saved:', { customUrl });
                 }
             } else if (selectedHost && selectedHost !== 'auto') {
                 localStorage.setItem('quickstart_aiostreams_url', selectedHost);
-                console.log('AIOStreams URL saved:', selectedHost);
+                Logger.debug('QuickStart', 'AIOStreams URL saved:', { selectedHost });
             }
         } catch (err) {
-            console.error('Error saving AIOStreams URL:', err);
+            Logger.error('QuickStart', 'Error saving AIOStreams URL:', err);
         }
     }
 
@@ -211,7 +212,7 @@ class QuickStart {
             // Save the selected formatter ID
             if (selectedFormatterId) {
                 localStorage.setItem('quickstart_formatter_id', selectedFormatterId);
-                console.log('Formatter ID saved:', selectedFormatterId);
+                Logger.debug('QuickStart', 'Formatter ID saved:', { selectedFormatterId });
             }
             
             // If it's a custom formatter, also save the JSON definition and filename
@@ -219,19 +220,19 @@ class QuickStart {
                 try {
                     const jsonString = JSON.stringify(this.customFormatterDefinition);
                     localStorage.setItem('quickstart_formatter_json', jsonString);
-                    console.log('Custom formatter JSON saved to localStorage');
+                    Logger.debug('QuickStart', 'Custom formatter JSON saved to localStorage');
                     
                     // Save the filename if available
                     if (this.formatterFilename) {
                         localStorage.setItem('quickstart_formatter_filename', this.formatterFilename);
-                        console.log('Formatter filename saved:', this.formatterFilename);
+                        Logger.debug('QuickStart', 'Formatter filename saved:', { filename: this.formatterFilename });
                     }
                 } catch (err) {
-                    console.warn('Error serializing formatter:', err);
+                    Logger.warn('QuickStart', 'Error serializing formatter:', { error: err.message });
                 }
             }
         } catch (err) {
-            console.error('Error saving formatter:', err);
+            Logger.error('QuickStart', 'Error saving formatter:', err);
         }
     }
 
@@ -262,7 +263,7 @@ class QuickStart {
                     this.handleHostSelection('custom');
                     this.ui.customHostURL.value = savedUrl;
                 }
-                console.log('AIOStreams URL loaded from cache');
+                Logger.debug('QuickStart', 'AIOStreams URL loaded from cache');
             }
 
             // Restore Formatter Selection
@@ -294,10 +295,10 @@ class QuickStart {
                                     this.displayFormatterFilename(savedFilename);
                                 }
                                 
-                                console.log('Custom formatter loaded from cache');
+                                Logger.debug('QuickStart', 'Custom formatter loaded from cache');
                             }
                         } catch (err) {
-                            console.warn('Error parsing saved formatter:', err);
+                            Logger.warn('QuickStart', 'Error parsing saved formatter:', { error: err.message });
                             localStorage.removeItem('quickstart_formatter_json');
                             localStorage.removeItem('quickstart_formatter_filename');
                         }
@@ -306,15 +307,15 @@ class QuickStart {
                     // Built-in formatter - just select it
                     this.ui.formatSelect.value = savedFormatterId;
                     this.handleFormatterSelection(savedFormatterId);
-                    console.log('Built-in formatter loaded from cache:', savedFormatterId);
+                    Logger.debug('QuickStart', 'Built-in formatter loaded from cache:', { formatterId: savedFormatterId });
                 }
             }
 
             if (savedUrl || savedFormatter) {
-                console.log('Settings loaded from localStorage');
+                Logger.debug('QuickStart', 'Settings loaded from localStorage');
             }
         } catch (err) {
-            console.error('Error loading settings from localStorage:', err);
+            Logger.error('QuickStart', 'Error loading settings from localStorage:', err);
         }
     }
 
@@ -329,9 +330,9 @@ class QuickStart {
             // Clear saved AIOStreams URL
             try {
                 localStorage.removeItem('quickstart_aiostreams_url');
-                console.log('AIOStreams URL cleared from localStorage');
+                Logger.debug('QuickStart', 'AIOStreams URL cleared from localStorage');
             } catch (err) {
-                console.error('Error clearing AIOStreams URL:', err);
+                Logger.error('QuickStart', 'Error clearing AIOStreams URL:', err);
             }
         }
     }
@@ -350,9 +351,9 @@ class QuickStart {
                 localStorage.removeItem('quickstart_formatter_json');
                 localStorage.removeItem('quickstart_formatter_filename');
                 this.hideFormatterFilename();
-                console.log('Formatter cleared from localStorage');
+                Logger.debug('QuickStart', 'Formatter cleared from localStorage');
             } catch (err) {
-                console.error('Error clearing formatter:', err);
+                Logger.error('QuickStart', 'Error clearing formatter:', err);
             }
         }
     }
@@ -497,7 +498,7 @@ class QuickStart {
                     option.textContent = item.name;
                     this.ui.formatSelect.appendChild(option);
                 } catch (err) {
-                    console.warn(`Error loading formatter ${item.folder}:`, err);
+                    Logger.warn('QuickStart', `Error loading formatter ${item.folder}:`, { error: err.message });
                 }
             }
 
@@ -516,7 +517,7 @@ class QuickStart {
             }
 
         } catch (err) {
-            console.error("Error initializing formatters:", err);
+            Logger.error('QuickStart', "Error initializing formatters:", err);
         }
     }
 
@@ -599,7 +600,7 @@ class QuickStart {
                 this.formatterLoadedFromCache = false; // Mark as user-uploaded, not from cache
                 this.formatterFilename = file.name; // Store the filename
                 this.displayFormatterFilename(file.name); // Show the filename in the UI
-                console.log("Custom formatter loaded successfully:", file.name);
+                Logger.debug('QuickStart', "Custom formatter loaded successfully:", { filename: file.name });
                 
                 // Save the new formatter to localStorage if checkbox is enabled
                 this.saveFormatter();
@@ -768,7 +769,7 @@ class QuickStart {
     }
 
     async cleanUpDuckStreams(keepUuid = null) {
-        console.log("Cleaning up Duck Streams addons...");
+        Logger.debug('QuickStart', "Cleaning up Duck Streams addons...");
         const currentAddons = await StremioAPI.getAddons();
         const filteredAddons = currentAddons.filter(a => {
             if (this.isRecognizedDuckStreams(a)) {
@@ -860,18 +861,18 @@ class QuickStart {
             // If so, we should NOT reuse it, but instead clean it up and create new.
             // also if the user selected 'auto', we should not reuse it, as they want the most reliable host.
             if (existingAddon.host !== selectedHostValue) {
-                console.log(`User selected host (${selectedHostValue}) differs from existing addon host (${existingAddon.host}). Skipping reuse.`);
+                Logger.debug('QuickStart', `User selected host (${selectedHostValue}) differs from existing addon host (${existingAddon.host}). Skipping reuse.`);
                 try {
                     await this.cleanUpDuckStreams(null); // Delete the preserved addon
                 } catch (e) {
-                    console.warn("Failed to cleanup stale addon:", e);
+                    Logger.warn('QuickStart', "Failed to cleanup stale addon:", { error: e.message });
                 }
                 existingAddon = null; // Disable reuse flag
             }
         }
 
         if (existingAddon) {
-            console.log("Updating existing AIOStreams manifest (Host: " + existingAddon.host + ")...");
+            Logger.debug('QuickStart', "Updating existing AIOStreams manifest (Host: " + existingAddon.host + ")...");
             try {
                 manifestUrl = await AIOStreamsAPI.updateConfigWithSmartRetry(
                     existingAddon.host,
@@ -882,13 +883,13 @@ class QuickStart {
                     compatibilityMode
                 );
             } catch (err) {
-                console.warn("Failed to update existing addon, falling back to new installation:", err);
+                Logger.warn('QuickStart', "Failed to update existing addon, falling back to new installation:", { error: err.message });
                 // Fallback to normal flow: cleanup the stale addon and let the code proceed to create a new one
                 try {
-                    console.log("Cleaning up stale addon...");
+                    Logger.debug('QuickStart', "Cleaning up stale addon...");
                     await this.cleanUpDuckStreams(null);
                 } catch (cleanupErr) {
-                    console.warn("Failed to cleanup stale addon:", cleanupErr);
+                    Logger.warn('QuickStart', "Failed to cleanup stale addon:", { error: cleanupErr.message });
                 }
             }
         }
@@ -897,7 +898,7 @@ class QuickStart {
         if (!manifestUrl) {
             if (selectedHostValue !== 'auto') {
                 // Specific host selected
-                console.log("Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
+                Logger.debug('QuickStart', "Creating manifest for AIOStreams (Host: " + selectedHostName + ")...");
                 manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(selectedHostValue, config, password, compatibilityMode);
             } else {
                 // Auto-select host
@@ -907,7 +908,7 @@ class QuickStart {
                 const errors = [];
                 for (const [name, url] of hosts) {
                     try {
-                        console.log("Creating manifest for AIOStreams (Host: " + name + ")...");
+                        Logger.debug('QuickStart', "Creating manifest for AIOStreams (Host: " + name + ")...");
                         // Clone config so modifications (like removing presets) don't persist to the next host
                         manifestUrl = await AIOStreamsAPI.installConfigWithSmartRetry(url, structuredClone(config), password, compatibilityMode);
                         break; // Break if successful
@@ -1016,7 +1017,7 @@ class QuickStart {
         // If custom is selected but no file was uploaded, fall back to default formatter
         if (selectedFormatterId === 'custom') {
             if (!this.customFormatterDefinition) {
-                console.log("Custom formatter selected but none uploaded, falling back to default");
+                Logger.debug('QuickStart', "Custom formatter selected but none uploaded, falling back to default");
                 selectedFormatterId = this.defaultFormatterId;
             }
         }
@@ -1081,10 +1082,10 @@ class QuickStart {
                 const shouldInstall = existingAddon?.transportUrl !== manifestUrl;
 
                 if (shouldInstall) {
-                    console.log("Installing new addon manifest...");
+                    Logger.debug('QuickStart', "Installing new addon manifest...");
                     await StremioAPI.installAddon(manifestUrl);
                 } else {
-                    console.log("Manifest URL is unchanged, skipping Stremio installation.");
+                    Logger.debug('QuickStart', "Manifest URL is unchanged, skipping Stremio installation.");
                 }
 
                 // 5. Show Success
@@ -1095,6 +1096,7 @@ class QuickStart {
             }
 
         } catch (err) {
+            Logger.error('QuickStart', "Error in handleSubmit:", err);
             ErrorHandler.handle(err, { method: "handleSubmit" }, "Setup Failed");
         } finally {
             this.ui.submitBtn.disabled = false;
@@ -1208,7 +1210,7 @@ class QuickStart {
                 localStorage.setItem('quickstart_last_seen_update', currentDate);
             }
         } catch (err) {
-            console.error("Error checking for updates:", err);
+            Logger.error('QuickStart', "Error checking for updates:", err);
             // Silently fail - don't break the app if update check fails
         }
     }

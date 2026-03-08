@@ -2,6 +2,7 @@
  * Time Machine Storage Layer
  * Handles persistence of Stremio account snapshots to localStorage.
  */
+
 class TimeMachineStorage {
     static get STORAGE_KEY() { return 'stremio_time_machine_data'; }
     static get CURRENT_VERSION() { return 1; }
@@ -20,7 +21,7 @@ class TimeMachineStorage {
             return JSON.parse(raw);
         } catch (e) {
             window.sendErrorToHoneyBadger(e);
-            console.error("Failed to parse Time Machine storage", e);
+            Logger.error('TimeMachineStorage', "Failed to parse Time Machine storage", e);
             return { version: this.CURRENT_VERSION, accounts: {} };
         }
     }

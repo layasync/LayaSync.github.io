@@ -72,7 +72,7 @@ class Modal {
             }
 
             // Content
-            overlay.querySelector('#simpleModalContent').textContent = options.message || '';
+            overlay.querySelector('#simpleModalContent').innerHTML = options.message || '';
 
             // Buttons
             const footer = overlay.querySelector('#simpleModalFooter');

@@ -4,6 +4,7 @@
  * - capture(addon): Promise<state>
  * - restore(addonUrl, state): Promise<string|null>
  */
+
 class AIOMetadataStrategy {
     constructor() {
         this.id = 'aiometadata';
@@ -83,7 +84,7 @@ class AIOMetadataStrategy {
 
                 return { uuid, host, password, config: config };
             } catch (err) {
-                console.warn('Stored AIOMetadata password failed, prompting user', err);
+                Logger.warn('AIOMetadataStrategy', 'Stored AIOMetadata password failed, prompting user', { error: err.message });
                 TimeMachineStorage.setAioMetadataPassword(uuid, null);
             }
         }
@@ -142,7 +143,7 @@ class AIOMetadataStrategy {
 
             return null;
         } catch (err) {
-            console.warn("AIOMetadata update failed, attempting to create new manifest...", err);
+            Logger.warn('AIOMetadataStrategy', "AIOMetadata update failed, attempting to create new manifest...", { error: err.message });
             try {
                 // Use dedicated method for creation from raw config
                 const newUrl = await AIOMetadataAPI.installConfig(host, password, config);

@@ -1,6 +1,7 @@
 /**
  * ErrorHandler Class
  */
+
 class ErrorHandler {
     constructor() {
         this.apiKey = "hbp_f6R9jIfXi40Li5ddpEf3AwislT57Ni3zLqtH";
@@ -39,7 +40,7 @@ class ErrorHandler {
 
         script.onload = () => this.configure();
         script.onerror = () => {
-            console.warn("Honeybadger script failed to load. Likely blocked by an ad blocker.");
+            Logger.warn('ErrorHandler', "Honeybadger script failed to load. Likely blocked by an ad blocker.");
             this.isBlocked = true;
         };
 
@@ -56,7 +57,7 @@ class ErrorHandler {
             });
 
             if (this.errorQueue.length > 0) {
-                console.log(`Flushing ${this.errorQueue.length} queued errors to Honeybadger`);
+                Logger.debug('ErrorHandler', `Flushing ${this.errorQueue.length} queued errors to Honeybadger`);
                 this.errorQueue.forEach((item) => {
                     Honeybadger.notify(item.err, item.options);
                 });
@@ -73,19 +74,19 @@ class ErrorHandler {
         const errorObj = isError ? err : new Error(String(err));
 
         if (ErrorHandler.isUserError(errorObj)) {
-            console.warn("Skipping Honeybadger report for user error:", errorObj.message);
+            Logger.warn('ErrorHandler', "Skipping Honeybadger report for user error:", { message: errorObj.message });
             return;
         }
 
         if (window.Honeybadger) {
-            console.error("Reporting error to Honeybadger:", errorObj);
+            Logger.error('ErrorHandler', "Reporting error to Honeybadger:", errorObj);
             try {
                 Honeybadger.notify(errorObj, options);
             } catch (notifyErr) {
-                console.warn("Failed to report error to Honeybadger:", notifyErr);
+                Logger.warn('ErrorHandler', "Failed to report error to Honeybadger:", notifyErr);
             }
         } else {
-            console.warn("Honeybadger not loaded yet, queuing error:", errorObj);
+            Logger.warn('ErrorHandler', "Honeybadger not loaded yet, queuing error:", { message: errorObj.message, stack: errorObj.stack });
             this.errorQueue.push({ err: errorObj, options });
         }
     }
@@ -98,7 +99,7 @@ class ErrorHandler {
     static handle(err, context = {}, customTitle = "Error") {
         // Recursion Guard
         if (ErrorHandler.isHandlingError) {
-            console.error("Recursive error detected in ErrorHandler. Suppressing UI to prevent stack overflow.", err);
+            Logger.error('ErrorHandler', "Recursive error detected in ErrorHandler. Suppressing UI to prevent stack overflow.", err);
             return;
         }
 
@@ -112,12 +113,12 @@ class ErrorHandler {
                 try {
                     Modal.error(errorObj.message, customTitle);
                 } catch (modalErr) {
-                    console.error("Failed to show error modal:", modalErr);
+                    Logger.error('ErrorHandler', "Failed to show error modal:", modalErr);
                     // Fallback to native alert if Modal fails
                     alert(`${customTitle}: ${errorObj.message}`);
                 }
             } else {
-                console.error("Detailed Error:", errorObj);
+                Logger.error('ErrorHandler', "Detailed Error:", errorObj);
                 alert(`${customTitle}: ${errorObj.message}`);
             }
 

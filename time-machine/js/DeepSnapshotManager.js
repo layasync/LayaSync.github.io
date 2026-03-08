@@ -2,6 +2,7 @@
  * Deep Snapshot Manager
  * Handles logic for addons that require "Deep Snapshotting" (server-side config backup/restore).
  */
+
 class DeepSnapshotManagerInternal {
     constructor() {
         this.strategies = [];
@@ -29,7 +30,7 @@ class DeepSnapshotManagerInternal {
 
             // If the addon has a deep clone strategy, capture it
             if (strategy) {
-                console.log("Deep capturing addon: " + addon.manifest.name);
+                Logger.debug('DeepSnapshotManager', "Deep capturing addon: " + addon.manifest.name);
                 const state = await strategy.capture(addon);
                 if (state) {
                     deepStates[addon.transportUrl] = {
@@ -58,7 +59,7 @@ class DeepSnapshotManagerInternal {
 
             if (strategy && entry.state) {
                 try {
-                    console.log("Deep restoring addon: " + addonUrl + " via " + strategy.id);
+                    Logger.debug('DeepSnapshotManager', "Deep restoring addon: " + addonUrl + " via " + strategy.id);
                     const res = await strategy.restore(addonUrl, entry.state); // may return new URL or null
 
                     if (res && typeof res === 'string') {
@@ -66,7 +67,7 @@ class DeepSnapshotManagerInternal {
                     }
                 } catch (err) {
                     // Collect the error. They'll be reported in TimeMachine.js
-                    console.error("Failed to deep restore " + addonUrl + ": " + err);
+                    Logger.error('DeepSnapshotManager', "Failed to deep restore " + addonUrl, err);
                     results.errors.push(err);
                 }
             }

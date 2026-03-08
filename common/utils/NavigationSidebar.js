@@ -1,4 +1,5 @@
 // NavigationSidebar.js
+
 class NavigationSidebar {
     constructor() {
         // The list of tools to display in the sidebar.
@@ -821,7 +822,7 @@ class NavigationSidebar {
     // Open Crypto Donation Modal
     openCryptoModal() {
         if (!window.Modal) {
-            console.error("Modal utility not found");
+            Logger.error('NavigationSidebar', "Modal utility not found");
             return;
         }
 

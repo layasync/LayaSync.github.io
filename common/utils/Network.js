@@ -2,6 +2,7 @@
  * Network Class
  * Helper to fetch data via a Cloudflare worker proxy to bypass CORS.
  */
+
 class Network {
     // Check if a URL is cross-origin relative to the current window.
     static isCrossOrigin(url) {
@@ -63,9 +64,9 @@ class Network {
                         throw new Error(`Failed to parse direct response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
                     }
                 }
-                console.warn(`Direct fetch failed for ${url}: ${resp.status}`);
+                Logger.warn('Network', `Direct fetch failed for ${url}: ${resp.status}`);
             } catch (e) {
-                console.warn(`Direct fetch error for ${url}, falling back to proxy...`, e);
+                Logger.warn('Network', `Direct fetch error for ${url}, falling back to proxy...`, { error: e.message });
                 // Fallthrough to proxy if direct fails (e.g. valid relative path but 404, or network err)
             }
         }
@@ -127,14 +128,14 @@ class Network {
                     throw e;
                 }
 
-                console.warn(`Proxy attempt failed for ${proxyBase}:`, e);
+                Logger.warn('Network', `Proxy attempt failed for ${proxyBase}:`, { error: e.message });
                 lastError = e;
             }
         }
 
         // Retry logic
         if (options.retries && options.retries > 0) {
-            console.warn(`Request failed, retrying... (${options.retries} attempts left)`);
+            Logger.warn('Network', `Request failed, retrying... (${options.retries} attempts left)`);
             return await this.request(url, { ...options, retries: options.retries - 1 });
         }
 

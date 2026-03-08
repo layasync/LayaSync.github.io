@@ -2,6 +2,7 @@
  * UIClipboard Class
  * Handles copy-to-clipboard functionality for the application.
  */
+
 class UIClipboard {
     // Sets up copy buttons globally.
     static setup() {
@@ -19,7 +20,7 @@ class UIClipboard {
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         this._showFeedback(btn);
                     }).catch(err => {
-                        console.error("Failed to copy text:", err);
+                        Logger.error('UIClipboard', "Failed to copy text:", err);
                         this._showError();
                     });
                 } else {
@@ -46,7 +47,7 @@ class UIClipboard {
                             throw new Error("Fallback copy failed.");
                         }
                     } catch (err) {
-                        console.error("Fallback copy failed:", err);
+                        Logger.error('UIClipboard', "Fallback copy failed:", err);
                         this._showError();
                     }
                 }

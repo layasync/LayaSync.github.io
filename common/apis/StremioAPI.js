@@ -1,12 +1,7 @@
 /**
- * StremioAPI Class
- */
+ * StremioAPI Class 
+*/
 class StremioAPI {
-    // Current user session (email, password, authKey)
-    static session = null;
-
-
-
     // Generic function to call Stremio API
     static async call(endpoint, body) {
         const payload = {
@@ -30,52 +25,100 @@ class StremioAPI {
         try {
             return await executeRequest(body);
         } catch (err) {
-            // If the API call throws an error, we'll end up here.
-            // If the error is that a session expired, we'll try to re-login
-            // and retry the request.
-            if (err.message.includes("Session does not exist") &&
-                endpoint !== "login" &&
-                this.session &&
-                body.authKey === this.session.authKey) {
-
-                console.warn("Session expired, attempting auto-relogin...");
-                try {
-                    // Re-login to get a fresh authKey
-                    await this.login(this.session.email, this.session.password);
-
-                    // Update the authKey in the request body
-                    const newBody = { ...body, authKey: this.session.authKey };
-
-                    // Retry request
-                    return await executeRequest(newBody);
-                } catch (retryErr) {
-                    console.error("Auto-relogin failed:", retryErr);
-                    throw err; // Throw original session error if retry fails
+            // Session expired - user must re-login manually
+            // We do NOT auto-relogin with stored password (security risk)
+            if (err.message.includes("Session does not exist") && endpoint !== "login") {
+                Logger.warn('StremioAPI', 'Session expired - user must re-authenticate', {});
+                // Clear the expired session
+                const currentSession = StremioSessionInstance.getSession();
+                if (currentSession) {
+                    this.logout();
                 }
+                // Re-throw with clear message
+                throw new Error("Your session has expired. Please log in again.");
             }
             throw err;
         }
     }
 
-    // Login to Stremio.
+    // Login to Stremio
     static async login(email, password) {
+        // Validate input
+        if (!InputValidator.isValidEmail(email)) {
+            throw new Error("Invalid email format");
+        }
+        if (!InputValidator.isValidPassword(password)) {
+            throw new Error("Password must be 6-20 characters");
+        }
+
         const body = {
             type: "Login",
             email: email,
             password: password
         };
-        const data = await this.call("login", body);
+        
+        try {
+            const data = await this.call("login", body);
 
-        // Store session state
-        this.session = {
-            email,
-            password,
-            authKey: data.result.authKey
-        };
+            // Store ONLY email and authKey - NOT password
+            StremioSessionInstance.setSession(email, data.result.authKey);
+            
+            // Zero out the password parameter for security
+            password = null;
+
+            Logger.debug('StremioAPI', 'User logged in successfully', { email });
+            
+            // Return session without password
+            return StremioSessionInstance.getSession();
+        } catch (error) {
+            Logger.error('StremioAPI', 'Login failed', error, { email });
+            throw error;
+        }
+    }
+
+    // Logout - clear session and any stored credentials
+    static async logout() {
+        const session = StremioSessionInstance.getSession();
+        
+        // Optionally notify the server (best effort)
+        if (session?.authKey) {
+            try {
+                await this.call("logout", {
+                    type: "Logout",
+                    authKey: session.authKey
+                });
+            } catch (e) {
+                // Logout may fail if session already expired - still continue
+                Logger.warn('StremioAPI', 'Logout request failed (may already be expired)', {});
+            }
+        }
+
+        // Clear session locally
+        StremioSessionInstance.clearSession();
+        
+        // Clear any stored credentials from previous version
+        sessionStorage.clear();
+        localStorage.removeItem('lastEmail');
+        localStorage.removeItem('lastPassword');
+        
+        Logger.debug('StremioAPI', 'User logged out');
+    }
+
+    // Check if authenticated
+    static isAuthenticated() {
+        return StremioSessionInstance.isAuthenticated();
     }
 
     // Register a new Stremio account.
     static async register(email, password) {
+        // Validate input
+        if (!InputValidator.isValidEmail(email)) {
+            throw new Error("Invalid email format");
+        }
+        if (!InputValidator.isValidPassword(password)) {
+            throw new Error("Password must be 6-20 characters");
+        }
+
         const body = {
             type: "Register",
             email,
@@ -86,7 +129,13 @@ class StremioAPI {
             }
         };
 
-        await this.call("register", body);
+        try {
+            await this.call("register", body);
+            Logger.debug('StremioAPI', 'Account registered successfully', { email });
+        } catch (error) {
+            Logger.error('StremioAPI', 'Registration failed', error, { email });
+            throw error;
+        }
     }
 
     // Ensure an account exists.
@@ -95,18 +144,18 @@ class StremioAPI {
         let isNewAccount = false;
 
         // First try to register the email and password as a new account.
-        console.log("Attempting to register account...");
+        Logger.debug('StremioAPI', 'Attempting to register account...', { email });
         try {
             await this.register(email, password);
             isNewAccount = true;
-            console.log("Account created successfully.");
+            Logger.debug('StremioAPI', 'Account created successfully', { email });
         } catch (e) {
             // If the account already exists, we suppress the error and proceed to login.
             // For any other error (server down, invalid params), we throw.
             if (!e.message.includes("already exists") && !e.message.includes("existingUser")) {
                 throw e;
             }
-            console.log("Account exists, attempting login...");
+            Logger.debug('StremioAPI', 'Account exists, attempting login...', { email });
         }
 
         // We need to login to get the authKey (whether new or existing).
@@ -119,13 +168,14 @@ class StremioAPI {
     // Get the addons for the account.
     static async getAddons() {
         // If no session is found, throw an error.
-        if (!this.session) {
-            throw new Error("No active session found.");
+        const session = StremioSessionInstance.getSession();
+        if (!session) {
+            throw new Error("No active session found. Please log in first.");
         }
 
         const data = await this.call("addonCollectionGet", {
             type: "AddonCollectionGet",
-            authKey: this.session.authKey
+            authKey: session.authKey
         });
 
         // Return the addons.
@@ -135,13 +185,14 @@ class StremioAPI {
     // Set the addons for the account.
     static async setAddons(addons) {
         // If no session is found, throw an error.
-        if (!this.session) {
-            throw new Error("No active session found.");
+        const session = StremioSessionInstance.getSession();
+        if (!session) {
+            throw new Error("No active session found. Please log in first.");
         }
 
         await this.call("addonCollectionSet", {
             type: "AddonCollectionSet",
-            authKey: this.session.authKey,
+            authKey: session.authKey,
             addons: addons
         });
     }
@@ -149,8 +200,9 @@ class StremioAPI {
     // Take in a manifest URL and install it to the account.
     static async installAddon(manifestUrl) {
         // If no session is found, throw an error.
-        if (!this.session) {
-            throw new Error("No active session found.");
+        const session = StremioSessionInstance.getSession();
+        if (!session) {
+            throw new Error("No active session found. Please log in first.");
         }
 
         // Get current addons
@@ -193,7 +245,7 @@ class StremioAPI {
 
         // Save
         await this.setAddons(newAddonsList);
-        console.log("Addon installed successfully");
+        Logger.debug('StremioAPI', 'Addon installed successfully', { manifestUrl: manifestUrl });
         return true;
     }
 }
