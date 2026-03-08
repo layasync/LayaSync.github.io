@@ -2,3 +2,8 @@
   Cache-Control: no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0
   Pragma: no-cache
   Expires: 0
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.strem.io https://api.torbox.app https://aiostreams.fortheweak.cloud https://aio.atbphosting.com https://aiostreams.elfhosted.com https://aiometadata.viren070.me https://api.allorigins.win https://corsproxy.io https://stremio-proxy.long-surf-c07a.workers.dev https://static.cloudflareinsights.com/json; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
