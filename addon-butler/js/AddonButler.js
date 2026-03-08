@@ -87,7 +87,7 @@ class AddonButler {
 
         try {
             await StremioAPI.login(email, password);
-            if (!StremioAPI.session || !StremioAPI.session.authKey) {
+            if (!StremioAPI.isAuthenticated()) {
                 throw new Error('Login failed: No session created.');
             }
 
@@ -108,7 +108,7 @@ class AddonButler {
         }
     }
 
-    handleLogout(e) {
+    async handleLogout(e) {
         if (e) e.preventDefault();
 
         this.state.addons = [];
@@ -116,7 +116,7 @@ class AddonButler {
         this.state.savedAddons = [];
         this.state.isLoggedIn = false;
         this.state.pendingChanges = false;
-        StremioAPI.session = null;
+        await StremioAPI.logout();
 
         this.ui.emailInput.value = '';
         this.ui.passwordInput.value = '';

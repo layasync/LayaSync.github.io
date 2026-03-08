@@ -32,8 +32,8 @@ pages:
     - mkdir -p public/addon-butler
     - cp -r addon-butler/* public/addon-butler/
 
-    # Cache Busting: Replace version placeholder with timestamp
-    - find public -type f -name "*.html" -exec sed -i "s/v=20260202/v=$(date +%s)/g" {} +
+    # Cache Busting: Replace any version placeholder with Unix timestamp
+    - find public -type f -name "*.html" -exec sed -i "s/v=[0-9]\{8\}/v=$(date +%s)/g" {} +
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   artifacts:

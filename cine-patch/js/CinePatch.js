@@ -60,7 +60,7 @@ class CinePatch {
         try {
             // Login
             await StremioAPI.login(email, password);
-            if (!StremioAPI.session || !StremioAPI.session.authKey) {
+            if (!StremioAPI.isAuthenticated()) {
                 throw new Error('Login failed: No session created.');
             }
 
