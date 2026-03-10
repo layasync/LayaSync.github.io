@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Samsung Remote</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background:#0f0f0f;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  min-height:100dvh;
+  padding-bottom:40px;
+}
+
+/* ── Top bar ── */
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  background:#0f0f0f;
+  position:sticky;
+  top:0;
+  z-index:50;
+  border-bottom:1px solid #1e1e1e;
+}
+
+.topbar-title {
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+.conn-badge {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 14px;
+  border-radius:100px;
+  background:#1a1a1a;
+  border:1px solid #2a2a2a;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:border-color .2s;
+}
+.conn-badge:hover { border-color:#555; }
+.dot { width:7px; height:7px; border-radius:50%; background:#ff4444; transition:all .3s; }
+.dot.on  { background:#00e676; box-shadow:0 0 8px #00e676; }
+.dot.ing { background:#ffbb00; animation:pulse .7s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── Connect sheet ── */
+.sheet {
+  background:#161616;
+  border-bottom:1px solid #222;
+  padding:20px;
+  display:none;
+}
+.sheet.open { display:block; }
+
+.sheet-title {
+  font-size:13px;
+  font-weight:700;
+  color:#888;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:16px;
+}
+
+.field-label {
+  font-size:12px;
+  color:#666;
+  margin-bottom:6px;
+}
+
+.input-group {
+  display:flex;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+input {
+  flex:1;
+  background:#1f1f1f;
+  border:1.5px solid #2a2a2a;
+  border-radius:10px;
+  padding:12px 14px;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  outline:none;
+  transition:border-color .2s;
+}
+input:focus { border-color:#4f7fff; }
+input::placeholder { color:#444; }
+
+.btn-connect {
+  padding:0 20px;
+  background:#4f7fff;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s, transform .1s;
+  white-space:nowrap;
+  height:48px;
+}
+.btn-connect:hover { background:#3d6fee; }
+.btn-connect:active { transform:scale(.96); }
+.btn-connect:disabled { background:#333; color:#666; cursor:not-allowed; }
+
+.log-box {
+  background:#0a0a0a;
+  border-radius:8px;
+  padding:10px 12px;
+  font-family:monospace;
+  font-size:11px;
+  color:#00e676;
+  max-height:80px;
+  overflow-y:auto;
+  display:none;
+  line-height:1.7;
+}
+.log-box.open { display:block; }
+.le { color:#ff4444; }
+.lw { color:#ffbb00; }
+.li { color:#555; }
+
+/* ── Remote body ── */
+.remote {
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  max-width:340px;
+  margin:0 auto;
+}
+
+/* ── Generic button ── */
+.btn {
+  background:#1e1e1e;
+  border:1.5px solid #2a2a2a;
+  border-radius:12px;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .12s, transform .1s, border-color .12s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:4px;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.btn:hover  { background:#272727; border-color:#444; }
+.btn:active { transform:scale(.91); background:#111; }
+
+/* ── Row layouts ── */
+.row { display:flex; gap:10px; width:100%; }
+
+/* ── Power row ── */
+.btn-power {
+  width:60px; height:60px;
+  border-radius:50%;
+  background:#2a1010;
+  border-color:#5a1a1a;
+  color:#ff4444;
+  font-size:22px;
+  flex-shrink:0;
+}
+.btn-power:hover { background:#3a1515; border-color:#ff4444; }
+
+.btn-source {
+  flex:1; height:60px;
+  font-size:13px;
+  border-radius:14px;
+}
+.btn-source .ico { font-size:20px; }
+
+.btn-bixby {
+  width:60px; height:60px;
+  border-radius:50%;
+  background:#101828;
+  border-color:#1e3a7a;
+  color:#4f7fff;
+  font-size:22px;
+  flex-shrink:0;
+}
+.btn-bixby:hover { background:#162040; border-color:#4f7fff; box-shadow:0 0 16px rgba(79,127,255,.3); }
+.btn-bixby.glow { animation:bglow 1s ease-in-out infinite; }
+@keyframes bglow { 0%,100%{box-shadow:0 0 8px rgba(79,127,255,.3)} 50%{box-shadow:0 0 24px rgba(79,127,255,.6)} }
+
+/* ── Vol / Ch card ── */
+.vc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+.vc-card {
+  background:#161616;
+  border:1.5px solid #222;
+  border-radius:14px;
+  padding:14px;
+}
+.vc-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#555; margin-bottom:12px; }
+.vc-row { display:flex; align-items:center; justify-content:space-between; }
+.btn-circ { width:44px; height:44px; border-radius:50%; font-size:20px; font-weight:300; }
+.btn-mid  { width:36px; height:36px; border-radius:50%; font-size:13px; color:#888; }
+
+/* ── D-Pad ── */
+.dpad { position:relative; width:196px; height:196px; flex-shrink:0; }
+.btn-ok {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:70px; height:70px; border-radius:50%;
+  background:#4f7fff;
+  border:none;
+  color:#fff; font-size:14px; font-weight:700;
+  cursor:pointer; z-index:2;
+  box-shadow:0 0 20px rgba(79,127,255,.4);
+  transition:transform .1s, background .1s;
+  font-family:'Inter',sans-serif;
+}
+.btn-ok:active { transform:translate(-50%,-50%) scale(.9); background:#3d6fee; }
+
+.btn-dir {
+  position:absolute;
+  width:56px; height:56px;
+  background:#1e1e1e; border:1.5px solid #2a2a2a;
+  color:#fff; font-size:16px;
+  cursor:pointer; transition:all .12s;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Inter',sans-serif;
+}
+.btn-dir:hover  { background:#272727; border-color:#444; }
+.btn-dir:active { transform:scale(.88) !important; background:#111; }
+
+.dir-up    { top:0;   left:50%; transform:translateX(-50%); border-radius:12px 12px 4px 4px; }
+.dir-down  { bottom:0;left:50%; transform:translateX(-50%); border-radius:4px 4px 12px 12px; }
+.dir-left  { left:0;  top:50%;  transform:translateY(-50%); border-radius:12px 4px 4px 12px; }
+.dir-right { right:0; top:50%;  transform:translateY(-50%); border-radius:4px 12px 12px 4px; }
+
+.dir-up:active    { transform:translateX(-50%) scale(.88) !important; }
+.dir-down:active  { transform:translateX(-50%) scale(.88) !important; }
+.dir-left:active  { transform:translateY(-50%) scale(.88) !important; }
+.dir-right:active { transform:translateY(-50%) scale(.88) !important; }
+
+/* ── Media row ── */
+.btn-med { flex:1; height:48px; border-radius:11px; font-size:18px; }
+
+/* ── Color strip ── */
+.colors { display:flex; gap:8px; width:100%; }
+.btn-col { flex:1; height:10px; border-radius:100px; border:none; cursor:pointer; transition:transform .2s; }
+.btn-col:hover  { transform:scaleY(3); }
+.btn-col:active { transform:scaleY(2); }
+
+/* ── Special 4-grid ── */
+.grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; }
+.btn-sp { height:54px; border-radius:11px; font-size:11px; font-weight:600; }
+.btn-sp .ico { font-size:18px; }
+
+/* ── Apps ── */
+.btn-app { height:64px; border-radius:13px; font-size:11px; font-weight:600; color:#aaa; }
+.btn-app .ico { font-size:24px; }
+.btn-app:hover { color:#fff; }
+
+/* ── Numpad ── */
+.grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:100%; }
+.btn-num { height:54px; border-radius:11px; font-size:20px; font-weight:600; }
+.num-0 { grid-column:2; }
+
+/* ── Voice ── */
+.voice-card {
+  width:100%;
+  background:#161616;
+  border:1.5px solid #222;
+  border-radius:14px;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.btn-mic {
+  width:56px; height:56px; border-radius:50%; flex-shrink:0;
+  font-size:22px;
+  background:#1e1e1e; border:2px solid #2a2a2a; color:#888;
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.btn-mic:hover { border-color:#4f7fff; color:#4f7fff; }
+.btn-mic.on { border-color:#ff4444; color:#ff4444; animation:mic-pulse 1s ease-in-out infinite; box-shadow:0 0 16px rgba(255,68,68,.3); }
+@keyframes mic-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.voice-info { flex:1; }
+.voice-title { font-size:13px; font-weight:600; margin-bottom:3px; }
+.voice-hint  { font-size:11px; color:#555; line-height:1.5; }
+.voice-result { font-size:12px; color:#4f7fff; font-style:italic; margin-top:4px; min-height:16px; }
+
+/* ── Section label ── */
+.lbl { width:100%; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#444; padding-top:4px; }
+
+/* ── Toast ── */
+.toast {
+  position:fixed; bottom:20px; left:50%;
+  transform:translateX(-50%) translateY(100px);
+  background:#222; border:1px solid #333; border-radius:100px;
+  padding:11px 22px; font-size:13px; font-weight:600;
+  z-index:999; transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap; max-width:88vw; text-align:center;
+  pointer-events:none;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-title">📺 Samsung Remote</div>
+  <div class="conn-badge" onclick="toggleSheet()">
+    <div class="dot" id="dot"></div>
+    <span id="connLabel">Connect</span>
+  </div>
+</div>
+
+<!-- Connect sheet -->
+<div class="sheet" id="sheet">
+  <div class="sheet-title">Connect to TV</div>
+  <div class="field-label">TV IP Address — find it at: Settings → General → Network → Network Status</div>
+  <div class="input-group">
+    <input id="ipInput" type="text" placeholder="e.g. 192.168.1.5" inputmode="decimal" />
+    <button class="btn-connect" id="connBtn" onclick="connect()">Connect</button>
+  </div>
+  <div class="log-box" id="log"></div>
+</div>
+
+<!-- Remote -->
+<div class="remote">
+
+  <!-- Voice -->
+  <div class="voice-card">
+    <button class="btn-mic" id="micBtn" onclick="toggleVoice()">🎤</button>
+    <div class="voice-info">
+      <div class="voice-title">Voice Control</div>
+      <div class="voice-hint">Say: "volume up", "Netflix", "channel 5", "home", "Bixby"</div>
+      <div class="voice-result" id="voiceResult"></div>
+    </div>
+  </div>
+
+  <!-- Power -->
+  <div class="lbl">Power</div>
+  <div class="row">
+    <button class="btn btn-power" onclick="k('KEY_POWER')">⏻</button>
+    <button class="btn btn-source" onclick="k('KEY_SOURCE')"><span class="ico">⤢</span>Source / Input</button>
+    <button class="btn btn-bixby" id="bixbyBtn" onclick="bixby()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M8.5 12c0-1.93 1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Volume & Channel -->
+  <div class="lbl">Volume & Channel</div>
+  <div class="vc-grid">
+    <div class="vc-card">
+      <div class="vc-label">🔊 Volume</div>
+      <div class="vc-row">
+        <button class="btn btn-circ" onclick="k('KEY_VOLDOWN')">−</button>
+        <button class="btn btn-mid"  onclick="k('KEY_MUTE')">🔇</button>
+        <button class="btn btn-circ" onclick="k('KEY_VOLUP')">+</button>
+      </div>
+    </div>
+    <div class="vc-card">
+      <div class="vc-label">📺 Channel</div>
+      <div class="vc-row">
+        <button class="btn btn-circ" onclick="k('KEY_CHDOWN')">−</button>
+        <button class="btn btn-mid"  onclick="k('KEY_GUIDE')">☰</button>
+        <button class="btn btn-circ" onclick="k('KEY_CHUP')">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D-Pad -->
+  <div class="lbl">Navigate</div>
+  <div class="dpad">
+    <button class="btn-dir dir-up"    onclick="k('KEY_UP')">▲</button>
+    <button class="btn-dir dir-left"  onclick="k('KEY_LEFT')">◀</button>
+    <button class="btn-ok"            onclick="k('KEY_ENTER')">OK</button>
+    <button class="btn-dir dir-right" onclick="k('KEY_RIGHT')">▶</button>
+    <button class="btn-dir dir-down"  onclick="k('KEY_DOWN')">▼</button>
+  </div>
+
+  <!-- Nav shortcuts -->
+  <div class="row">
+    <button class="btn btn-sp" style="flex:1;height:50px" onclick="k('KEY_HOME')"><span class="ico">🏠</span>Home</button>
+    <button class="btn btn-sp" style="flex:1;height:50px" onclick="k('KEY_BACK')"><span class="ico">↩</span>Back</button>
+    <button class="btn btn-sp" style="flex:1;height:50px" onclick="k('KEY_MENU')"><span class="ico">☰</span>Menu</button>
+  </div>
+
+  <!-- Playback -->
+  <div class="lbl">Playback</div>
+  <div class="row">
+    <button class="btn btn-med" onclick="k('KEY_REWIND')">⏮</button>
+    <button class="btn btn-med" onclick="k('KEY_PLAY')">▶</button>
+    <button class="btn btn-med" onclick="k('KEY_PAUSE')">⏸</button>
+    <button class="btn btn-med" onclick="k('KEY_FF')">⏭</button>
+    <button class="btn btn-med" onclick="k('KEY_STOP')">⏹</button>
+  </div>
+
+  <!-- Color buttons -->
+  <div class="colors">
+    <button class="btn-col" style="background:#ff4444" onclick="k('KEY_RED')"></button>
+    <button class="btn-col" style="background:#00e676" onclick="k('KEY_GREEN')"></button>
+    <button class="btn-col" style="background:#ffbb00" onclick="k('KEY_YELLOW')"></button>
+    <button class="btn-col" style="background:#4f7fff" onclick="k('KEY_BLUE')"></button>
+  </div>
+
+  <!-- Apps -->
+  <div class="lbl">Apps</div>
+  <div class="grid4">
+    <button class="btn btn-app" onclick="app('11101200001')"><span class="ico">▶</span>YouTube</button>
+    <button class="btn btn-app" onclick="app('3201907018807')"><span class="ico">N</span>Netflix</button>
+    <button class="btn btn-app" onclick="app('3201910019365')"><span class="ico">🎵</span>Spotify</button>
+    <button class="btn btn-app" onclick="app('3201606009684')"><span class="ico">🎬</span>Prime</button>
+  </div>
+
+  <!-- More controls -->
+  <div class="lbl">More</div>
+  <div class="grid4">
+    <button class="btn btn-sp" onclick="k('KEY_INFO')"><span class="ico">ℹ</span>Info</button>
+    <button class="btn btn-sp" onclick="k('KEY_TOOLS')"><span class="ico">🔧</span>Tools</button>
+    <button class="btn btn-sp" onclick="k('KEY_CAPTION')"><span class="ico">💬</span>CC</button>
+    <button class="btn btn-sp" onclick="k('KEY_SLEEP')"><span class="ico">😴</span>Sleep</button>
+  </div>
+
+  <!-- Numpad -->
+  <div class="lbl">Numbers</div>
+  <div class="grid3">
+    <button class="btn btn-num" onclick="k('KEY_1')">1</button>
+    <button class="btn btn-num" onclick="k('KEY_2')">2</button>
+    <button class="btn btn-num" onclick="k('KEY_3')">3</button>
+    <button class="btn btn-num" onclick="k('KEY_4')">4</button>
+    <button class="btn btn-num" onclick="k('KEY_5')">5</button>
+    <button class="btn btn-num" onclick="k('KEY_6')">6</button>
+    <button class="btn btn-num" onclick="k('KEY_7')">7</button>
+    <button class="btn btn-num" onclick="k('KEY_8')">8</button>
+    <button class="btn btn-num" onclick="k('KEY_9')">9</button>
+    <button class="btn btn-num num-0" onclick="k('KEY_0')">0</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let ws = null, connected = false, tvIp = '';
+let voiceOn = false, rec = null;
+
+// ── UI helpers ────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, ms=2500) {
+  clearTimeout(toastTimer);
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  toastTimer = setTimeout(() => el.classList.remove('show'), ms);
+}
+
+function setStatus(state, label) {
+  connected = state === true;
+  document.getElementById('dot').className = 'dot' + (state===true?' on':state===null?' ing':'');
+  document.getElementById('connLabel').textContent = label;
+}
+
+function addLog(msg, cls='') {
+  const b = document.getElementById('log');
+  b.classList.add('open');
+  const s = document.createElement('span');
+  s.className = cls ? 'l'+cls : '';
+  s.textContent = msg + '\n';
+  b.appendChild(s);
+  b.scrollTop = b.scrollHeight;
+}
+
+function toggleSheet() {
+  document.getElementById('sheet').classList.toggle('open');
+}
+
+// ── Connect ───────────────────────────────────────────────────
+function connect() {
+  tvIp = document.getElementById('ipInput').value.trim();
+  if (!tvIp) { toast('⚠️ Enter your TV IP address'); return; }
+
+  document.getElementById('connBtn').disabled = true;
+  setStatus(null, 'Connecting…');
+  if (ws) { try { ws.close(); } catch(e){} ws = null; }
+
+  const name = encodeURIComponent(btoa('SamsungRemote'));
+  const saved = (() => { try { return localStorage.getItem('tv_token_'+tvIp)||''; } catch(e){return '';} })();
+  const tok = saved ? '&token='+saved : '';
+
+  addLog('Trying port 8002 (secure)…');
+  tryWS(`wss://${tvIp}:8002/api/v2/channels/samsung.remote.control?name=${name}${tok}`,
+        `ws://${tvIp}:8001/api/v2/channels/samsung.remote.control?name=${name}${tok}`);
+}
+
+function tryWS(urlA, urlB, isFallback=false) {
+  let sock;
+  try { sock = new WebSocket(urlA); }
+  catch(e) {
+    if (!isFallback) { addLog('Port 8002 blocked, trying 8001…','w'); tryWS(urlB, null, true); }
+    else { fail(); }
+    return;
+  }
+
+  const t = setTimeout(() => {
+    try { sock.close(); } catch(e){}
+    if (!isFallback) { addLog('Port 8002 timed out, trying 8001…','w'); tryWS(urlB, null, true); }
+    else { fail(); }
+  }, 5000);
+
+  sock.onopen = () => {
+    clearTimeout(t);
+    ws = sock;
+    addLog('✅ Connected!');
+    setStatus(true, tvIp);
+    document.getElementById('connBtn').disabled = false;
+    document.getElementById('sheet').classList.remove('open');
+    toast('✅ Connected! Accept popup on TV if it appears.');
+  };
+
+  sock.onerror = () => {
+    clearTimeout(t);
+    if (!isFallback) { addLog('Port 8002 error, trying 8001…','w'); tryWS(urlB, null, true); }
+    else { fail(); }
+  };
+
+  sock.onmessage = e => {
+    try {
+      const d = JSON.parse(e.data);
+      if (d.data?.token) {
+        try { localStorage.setItem('tv_token_'+tvIp, d.data.token); } catch(x){}
+        addLog('🔑 Paired with TV');
+      }
+    } catch(x){}
+  };
+
+  sock.onclose = () => {
+    if (connected) {
+      setStatus(false, 'Disconnected');
+      toast('📡 TV disconnected');
+      ws = null;
+    }
+  };
+}
+
+function fail() {
+  addLog('❌ Could not connect. Check:','e');
+  addLog('  • Phone on same WiFi as TV?','e');
+  addLog('  • TV IP correct?','e');
+  addLog('  • TV: Settings → General → External Device Manager → Device Connect Manager → First Time Only','e');
+  setStatus(false, 'Failed');
+  document.getElementById('connBtn').disabled = false;
+  toast('❌ Connection failed — tap Connect to see details', 4000);
+  document.getElementById('sheet').classList.add('open');
+}
+
+// ── Send key ──────────────────────────────────────────────────
+function k(key) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    toast('Not connected — tap Connect at the top');
+    document.getElementById('sheet').classList.add('open');
+    return;
+  }
+  ws.send(JSON.stringify({
+    method: 'ms.remote.control',
+    params: { Cmd:'Click', DataOfCmd:key, Option:'false', TypeOfRemote:'SendRemoteKey' }
+  }));
+  if (navigator.vibrate) navigator.vibrate(22);
+}
+
+function app(id) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) { toast('Not connected'); return; }
+  ws.send(JSON.stringify({
+    method: 'ms.channel.emit',
+    params: { event:'ed.apps.launch', to:'host', data:{ appId:id } }
+  }));
+  toast('🚀 Opening app…');
+  if (navigator.vibrate) navigator.vibrate(22);
+}
+
+function bixby() {
+  k('KEY_BIXBY');
+  const b = document.getElementById('bixbyBtn');
+  b.classList.add('glow');
+  toast('🔵 Bixby!');
+  setTimeout(() => b.classList.remove('glow'), 2000);
+}
+
+// ── Voice ─────────────────────────────────────────────────────
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    toast('⚠️ Voice needs Chrome'); return;
+  }
+  if (voiceOn) { stopVoice(); return; }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = false;
+
+  rec.onstart = () => {
+    voiceOn = true;
+    document.getElementById('micBtn').classList.add('on');
+    document.getElementById('micBtn').textContent = '🛑';
+    document.getElementById('voiceResult').textContent = 'Listening…';
+  };
+
+  rec.onresult = e => {
+    const cmd = e.results[0][0].transcript.toLowerCase().trim();
+    document.getElementById('voiceResult').textContent = '"' + cmd + '"';
+    doVoice(cmd);
+  };
+
+  rec.onerror = () => stopVoice();
+  rec.onend   = () => stopVoice();
+  rec.start();
+}
+
+function stopVoice() {
+  voiceOn = false;
+  document.getElementById('micBtn').classList.remove('on');
+  document.getElementById('micBtn').textContent = '🎤';
+  try { rec && rec.stop(); } catch(e){}
+}
+
+function doVoice(cmd) {
+  toast('🎤 "' + cmd + '"');
+  const map = [
+    [['volume up','louder'],          ()=>k('KEY_VOLUP')],
+    [['volume down','quieter'],       ()=>k('KEY_VOLDOWN')],
+    [['mute','unmute'],               ()=>k('KEY_MUTE')],
+    [['pause'],                       ()=>k('KEY_PAUSE')],
+    [['play'],                        ()=>k('KEY_PLAY')],
+    [['stop'],                        ()=>k('KEY_STOP')],
+    [['home'],                        ()=>k('KEY_HOME')],
+    [['back'],                        ()=>k('KEY_BACK')],
+    [['menu'],                        ()=>k('KEY_MENU')],
+    [['up'],                          ()=>k('KEY_UP')],
+    [['down'],                        ()=>k('KEY_DOWN')],
+    [['left'],                        ()=>k('KEY_LEFT')],
+    [['right'],                       ()=>k('KEY_RIGHT')],
+    [['ok','select','enter'],         ()=>k('KEY_ENTER')],
+    [['power','turn off','turn on'],  ()=>k('KEY_POWER')],
+    [['channel up','next'],           ()=>k('KEY_CHUP')],
+    [['channel down','previous'],     ()=>k('KEY_CHDOWN')],
+    [['source','input'],              ()=>k('KEY_SOURCE')],
+    [['rewind'],                      ()=>k('KEY_REWIND')],
+    [['forward'],                     ()=>k('KEY_FF')],
+    [['bixby'],                       bixby],
+    [['youtube'],                     ()=>app('11101200001')],
+    [['netflix'],                     ()=>app('3201907018807')],
+    [['spotify'],                     ()=>app('3201910019365')],
+    [['prime','amazon'],              ()=>app('3201606009684')],
+  ];
+  for (const [phrases, fn] of map) {
+    if (phrases.some(p => cmd.includes(p))) { fn(); return; }
+  }
+  const m = cmd.match(/(\d+)/);
+  if (m) { [...m[1]].forEach((d,i) => setTimeout(()=>k('KEY_'+d), i*380)); return; }
+  document.getElementById('voiceResult').textContent = '? Not recognized: "' + cmd + '"';
+}
+
+// ── Keyboard shortcuts ─────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const m = {ArrowUp:'KEY_UP',ArrowDown:'KEY_DOWN',ArrowLeft:'KEY_LEFT',ArrowRight:'KEY_RIGHT',
+             Enter:'KEY_ENTER',Backspace:'KEY_BACK',Escape:'KEY_HOME',m:'KEY_MUTE',
+             '+':'KEY_VOLUP','-':'KEY_VOLDOWN'};
+  if (m[e.key]) { e.preventDefault(); k(m[e.key]); }
+});
+</script>
+</body>
+</html>
