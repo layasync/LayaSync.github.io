@@ -1,0 +1,573 @@
+#EXTM3U url-tvg="https://github.com/ferteque/Curated-M3U-Repository/raw/refs/heads/main/epg1.xml.gz"
+#EXTINF:0 CUID="0" tvg-name="EPGenius" tvg-id="EPGenius" tvg-logo="https://raw.githubusercontent.com/K-yzu/Logos/390c17f57d8b5e58353ca0dad8d1dd638a3fe95b/MISC/EPGenius%20Logo%20Cube.gif" group-title="EPGenius",Play this to learn that EPGenius is a free service
+https://epgenius.org/static/1.ts
+#EXTINF:-1 tvg-id="2" tvg-name="MOVISTAR LA LIGA" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga.png" tvg-chno="2" group-title="⚽ LA LIGA",MOVISTAR LA LIGA
+DNS/live/USERNAME/PASSWORD/840009.ts
+#EXTINF:-1 tvg-id="3" tvg-name="MOVISTAR LA LIGA 2" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%202.png" tvg-chno="3" group-title="⚽ LA LIGA",MOVISTAR LA LIGA 2
+DNS/live/USERNAME/PASSWORD/840017.ts
+#EXTINF:-1 tvg-id="4" tvg-name="MOVISTAR LA LIGA 3" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%203.png" tvg-chno="4" group-title="⚽ LA LIGA",MOVISTAR LA LIGA 3
+DNS/live/USERNAME/PASSWORD/840007.ts
+#EXTINF:-1 tvg-id="5" tvg-name="DAZN LA LIGA" tvg-logo="https://logo.m3uassets.com/daznlaliga.png" tvg-chno="5" group-title="⚽ LA LIGA",DAZN LA LIGA
+DNS/live/USERNAME/PASSWORD/1683618.ts
+#EXTINF:-1 tvg-id="6" tvg-name="DAZN LA LIGA 2" tvg-logo="https://logo.m3uassets.com/daznlaliga2.png" tvg-chno="6" group-title="⚽ LA LIGA",DAZN LA LIGA 2
+DNS/live/USERNAME/PASSWORD/839971.ts
+#EXTINF:-1 tvg-id="31" tvg-name="LALIGA TV HYPERMOTION" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion.png" tvg-chno="31" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION
+DNS/live/USERNAME/PASSWORD/840016.ts
+#EXTINF:-1 tvg-id="32" tvg-name="LALIGA TV HYPERMOTION 2" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion2.png" tvg-chno="32" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 2
+DNS/live/USERNAME/PASSWORD/840015.ts
+#EXTINF:-1 tvg-id="33" tvg-name="LALIGA TV HYPERMOTION 3" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion3.png" tvg-chno="33" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 3
+DNS/live/USERNAME/PASSWORD/840020.ts
+#EXTINF:-1 tvg-id="34" tvg-name="LALIGA TV HYPERMOTION 4" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion4.png" tvg-chno="34" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 4
+DNS/live/USERNAME/PASSWORD/840003.ts
+#EXTINF:-1 tvg-id="35" tvg-name="LALIGA TV HYPERMOTION 5" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion5.png" tvg-chno="35" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 5
+DNS/live/USERNAME/PASSWORD/840002.ts
+#EXTINF:-1 tvg-id="36" tvg-name="LALIGA TV HYPERMOTION 6" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion.png" tvg-chno="36" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 6
+DNS/live/USERNAME/PASSWORD/840001.ts
+#EXTINF:-1 tvg-id="37" tvg-name="LALIGA TV HYPERMOTION 7" tvg-logo="https://logo.m3uassets.com/laligatvhypermotion.png" tvg-chno="37" group-title="⚽ LA LIGA",LALIGA TV HYPERMOTION 7
+DNS/live/USERNAME/PASSWORD/840000.ts
+#EXTINF:-1 tvg-id="38" tvg-name="MOVISTAR LA LIGA 4" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%204.png" tvg-chno="38" group-title="⚽ LA LIGA",MOVISTAR LA LIGA 4
+DNS/live/USERNAME/PASSWORD/840000.ts
+#EXTINF:-1 tvg-id="39" tvg-name="MOVISTAR LA LIGA 5" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%205.png" tvg-chno="39" group-title="⚽ LA LIGA",MOVISTAR LA LIGA 5
+DNS/live/USERNAME/PASSWORD/1713900.ts
+#EXTINF:-1 tvg-id="40" tvg-name="MOVISTAR LA LIGA 6" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20LaLiga%206.png" tvg-chno="40" group-title="⚽ LA LIGA",MOVISTAR LA LIGA 6
+DNS/live/USERNAME/PASSWORD/1680820.ts
+#EXTINF:-1 tvg-id="41" tvg-name="M LIGA CAMPEONES 1" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%20HDR.png" tvg-chno="41" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 1
+DNS/live/USERNAME/PASSWORD/1302883.ts
+#EXTINF:-1 tvg-id="42" tvg-name="M LIGA CAMPEONES 2" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP1.png" tvg-chno="42" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 2
+DNS/live/USERNAME/PASSWORD/1302878.ts
+#EXTINF:-1 tvg-id="43" tvg-name="M. LIGA CAMPEONES 3" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP2.png" tvg-chno="43" group-title="⚽ FUTBOL EUROPEO",M. LIGA CAMPEONES 3
+DNS/live/USERNAME/PASSWORD/1677861.ts
+#EXTINF:-1 tvg-id="44" tvg-name="M LIGA CAMPEONES 4" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP3.png" tvg-chno="44" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 4
+DNS/live/USERNAME/PASSWORD/1302900.ts
+#EXTINF:-1 tvg-id="45" tvg-name="M LIGA CAMPEONES 5" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP4.png" tvg-chno="45" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 5
+DNS/live/USERNAME/PASSWORD/1302899.ts
+#EXTINF:-1 tvg-id="46" tvg-name="M LIGA CAMPEONES 6" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP5.png" tvg-chno="46" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 6
+DNS/live/USERNAME/PASSWORD/1302898.ts
+#EXTINF:-1 tvg-id="47" tvg-name="M LIGA CAMPEONES 7" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP6.png" tvg-chno="47" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 7
+DNS/live/USERNAME/PASSWORD/1302897.ts
+#EXTINF:-1 tvg-id="48" tvg-name="M LIGA CAMPEONES 8" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP7.png" tvg-chno="48" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 8
+DNS/live/USERNAME/PASSWORD/1302896.ts
+#EXTINF:-1 tvg-id="49" tvg-name="M LIGA CAMPEONES 9" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP8.png" tvg-chno="49" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 9
+DNS/live/USERNAME/PASSWORD/1302895.ts
+#EXTINF:-1 tvg-id="50" tvg-name="M LIGA CAMPEONES 10" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP9.png" tvg-chno="50" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 10
+DNS/live/USERNAME/PASSWORD/1302894.ts
+#EXTINF:-1 tvg-id="51" tvg-name="M LIGA CAMPEONES 11" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP10.png" tvg-chno="51" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 11
+DNS/live/USERNAME/PASSWORD/1302893.ts
+#EXTINF:-1 tvg-id="52" tvg-name="M LIGA CAMPEONES 12" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP11.png" tvg-chno="52" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 12
+DNS/live/USERNAME/PASSWORD/1302892.ts
+#EXTINF:-1 tvg-id="53" tvg-name="M LIGA CAMPEONES 13" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP12.png" tvg-chno="53" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 13
+DNS/live/USERNAME/PASSWORD/1302891.ts
+#EXTINF:-1 tvg-id="54" tvg-name="M LIGA CAMPEONES 14" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP13.png" tvg-chno="54" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 14
+DNS/live/USERNAME/PASSWORD/1302890.ts
+#EXTINF:-1 tvg-id="55" tvg-name="M LIGA CAMPEONES 15" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP14.png" tvg-chno="55" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 15
+DNS/live/USERNAME/PASSWORD/1302889.ts
+#EXTINF:-1 tvg-id="56" tvg-name="M LIGA CAMPEONES 16" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP15.png" tvg-chno="56" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 16
+DNS/live/USERNAME/PASSWORD/1302888.ts
+#EXTINF:-1 tvg-id="57" tvg-name="M LIGA CAMPEONES 17" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/CHAP16.png" tvg-chno="57" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 17
+DNS/live/USERNAME/PASSWORD/1302887.ts
+#EXTINF:-1 tvg-id="58" tvg-name="M LIGA CAMPEONES 18" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%20HDR.png" tvg-chno="58" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 18
+DNS/live/USERNAME/PASSWORD/1302886.ts
+#EXTINF:-1 tvg-id="59" tvg-name="M LIGA CAMPEONES 19" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/M%2B%20Liga%20de%20Campeones%20HDR.png" tvg-chno="59" group-title="⚽ FUTBOL EUROPEO",M LIGA CAMPEONES 19
+DNS/live/USERNAME/PASSWORD/1302885.ts
+#EXTINF:-1 tvg-id="230" tvg-name="DAZN 1" tvg-logo="https://logo.m3uassets.com/dazn1.png" tvg-chno="230" group-title="🏍️ DAZN ESPAÑA",DAZN 1
+DNS/live/USERNAME/PASSWORD/839951.ts
+#EXTINF:-1 tvg-id="231" tvg-name="DAZN 2" tvg-logo="https://logo.m3uassets.com/dazn2.png" tvg-chno="231" group-title="🏍️ DAZN ESPAÑA",DAZN 2
+DNS/live/USERNAME/PASSWORD/839950.ts
+#EXTINF:-1 tvg-id="232" tvg-name="DAZN 3" tvg-logo="https://logo.m3uassets.com/dazn3.png" tvg-chno="232" group-title="🏍️ DAZN ESPAÑA",DAZN 3
+DNS/live/USERNAME/PASSWORD/839949.ts
+#EXTINF:-1 tvg-id="233" tvg-name="DAZN 4" tvg-logo="https://logo.m3uassets.com/dazn4.png" tvg-chno="233" group-title="🏍️ DAZN ESPAÑA",DAZN 4
+DNS/live/USERNAME/PASSWORD/839948.ts
+#EXTINF:-1 tvg-id="235" tvg-name="PROXIMOS EVENTOS" tvg-logo="https://logo.m3uassets.com/daznppv.png" tvg-chno="235" group-title="📅 EVENTOS",PROXIMOS EVENTOS
+DNS/live/USERNAME/PASSWORD/1302905.ts
+#EXTINF:-1 tvg-id="236" tvg-name="Liga Endesa: Casademont Zaragoza vs. Bàsquet Girona" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="236" group-title="🏍️ DAZN ESPAÑA",Liga Endesa: Casademont Zaragoza vs. Bàsquet Girona
+DNS/live/USERNAME/PASSWORD/1684003.ts
+#EXTINF:-1 tvg-id="237" tvg-name="Liga Endesa: Río Breogán vs. Real Madrid" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="237" group-title="🏍️ DAZN ESPAÑA",Liga Endesa: Río Breogán vs. Real Madrid
+DNS/live/USERNAME/PASSWORD/1684002.ts
+#EXTINF:-1 tvg-id="238" tvg-name="Liga Endesa: Hiopos Lleida vs. Longevida San Pablo Burgos" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="238" group-title="🏍️ DAZN ESPAÑA",Liga Endesa: Hiopos Lleida vs. Longevida San Pablo Burgos
+DNS/live/USERNAME/PASSWORD/1684001.ts
+#EXTINF:-1 tvg-id="239" tvg-name="Liga Endesa: Tenerife vs. Baskonia" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="239" group-title="🏍️ DAZN ESPAÑA",Liga Endesa: Tenerife vs. Baskonia
+DNS/live/USERNAME/PASSWORD/1684000.ts
+#EXTINF:-1 tvg-id="240" tvg-name="ACB EVENTO 05 | OFFLINE" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="240" group-title="🏍️ DAZN ESPAÑA",ACB EVENTO 05 | OFFLINE
+DNS/live/USERNAME/PASSWORD/1683999.ts
+#EXTINF:-1 tvg-id="241" tvg-name="ACB EVENTO 06 | OFFLINE" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="241" group-title="🏍️ DAZN ESPAÑA",ACB EVENTO 06 | OFFLINE
+DNS/live/USERNAME/PASSWORD/1683998.ts
+#EXTINF:-1 tvg-id="242" tvg-name="ACB EVENTO 07 | OFFLINE" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="242" group-title="🏍️ DAZN ESPAÑA",ACB EVENTO 07 | OFFLINE
+DNS/live/USERNAME/PASSWORD/1683997.ts
+#EXTINF:-1 tvg-id="243" tvg-name="ACB EVENTO 08 | OFFLINE" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="243" group-title="🏍️ DAZN ESPAÑA",ACB EVENTO 08 | OFFLINE
+DNS/live/USERNAME/PASSWORD/1683996.ts
+#EXTINF:-1 tvg-id="244" tvg-name="ACB EVENTO 09 | OFFLINE" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="244" group-title="🏍️ DAZN ESPAÑA",ACB EVENTO 09 | OFFLINE
+DNS/live/USERNAME/PASSWORD/1683995.ts
+#EXTINF:-1 tvg-id="245" tvg-name="ES: DAZN BALONCESTO 1 ᴿᴬᵂ" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="245" group-title="🏍️ DAZN ESPAÑA",ES: DAZN BALONCESTO 1 ᴿᴬᵂ
+DNS/live/USERNAME/PASSWORD/1747403.ts
+#EXTINF:-1 tvg-id="246" tvg-name="ES: DAZN BALONCESTO 2 ᴿᴬᵂ" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="246" group-title="🏍️ DAZN ESPAÑA",ES: DAZN BALONCESTO 2 ᴿᴬᵂ
+DNS/live/USERNAME/PASSWORD/1747402.ts
+#EXTINF:-1 tvg-id="247" tvg-name="ES: DAZN BALONCESTO 3 ᴿᴬᵂ" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12983.png?ver=89182" tvg-chno="247" group-title="🏍️ DAZN ESPAÑA",ES: DAZN BALONCESTO 3 ᴿᴬᵂ
+DNS/live/USERNAME/PASSWORD/1747401.ts
+#EXTINF:-1 tvg-id="711" tvg-name="CANAL COCINA" tvg-logo="https://logo.m3uassets.com/canalcocina.png" tvg-chno="711" group-title="🏠 ESTILO DE VIDA",CANAL COCINA
+DNS/live/USERNAME/PASSWORD/840189.ts
+#EXTINF:-1 tvg-id="714" tvg-name="BBC FOOD" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/BBC%20Food.png" tvg-chno="714" group-title="🏠 ESTILO DE VIDA",BBC FOOD
+DNS/live/USERNAME/PASSWORD/1579773.ts
+#EXTINF:-1 tvg-id="718" tvg-name="CANAL DECASA" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/DECASA.png" tvg-chno="718" group-title="🏠 ESTILO DE VIDA",CANAL DECASA
+DNS/live/USERNAME/PASSWORD/840195.ts
+#EXTINF:-1 tvg-id="721" tvg-name="DKISS" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/DKISS.png" tvg-chno="721" group-title="🏠 ESTILO DE VIDA",DKISS
+DNS/live/USERNAME/PASSWORD/840053.ts
+#EXTINF:-1 tvg-id="727" tvg-name="NOVA" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Nova.png" tvg-chno="727" group-title="🏠 ESTILO DE VIDA",NOVA
+DNS/live/USERNAME/PASSWORD/840059.ts
+#EXTINF:-1 tvg-id="733" tvg-name="BUEN VIAJE!" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/BUENV.png" tvg-chno="733" group-title="🏠 ESTILO DE VIDA",BUEN VIAJE!
+DNS/live/USERNAME/PASSWORD/1683620.ts
+#EXTINF:-1 tvg-id="736" tvg-name="TEN" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/Ten.png" tvg-chno="736" group-title="🏠 ESTILO DE VIDA",TEN
+DNS/live/USERNAME/PASSWORD/1683693.ts
+#EXTINF:-1 tvg-id="743" tvg-name="Iberalia" tvg-logo="https://www.movistarplus.es/recorte/m-NEO/canal/IBERAL.png" tvg-chno="743" group-title="🏠 ESTILO DE VIDA",Iberalia
+DNS/live/USERNAME/PASSWORD/840194.ts
+#EXTINF:-1 tvg-id="747" tvg-name="Cazavision" tvg-logo="https://iili.io/K9mWByv.png" tvg-chno="747" group-title="🏠 ESTILO DE VIDA",Cazavision
+DNS/live/USERNAME/PASSWORD/840190.ts
+#EXTINF:-1 tvg-id="752" tvg-name="Vivir con perros" tvg-logo="https://media.tvup.cloud/canales/color_lg_628cf372f712d6001b3a6484.png" tvg-chno="752" group-title="🏠 ESTILO DE VIDA",Vivir con perros
+DNS/live/USERNAME/PASSWORD/871634.ts
+#EXTINF:-1 tvg-id="759" tvg-name="MOVISTAR DOCUMENTALES" tvg-logo="https://logo.m3uassets.com/documentalespormovistarplus.png" tvg-chno="759" group-title="📽️ DOCUMENTALES",MOVISTAR DOCUMENTALES
+DNS/live/USERNAME/PASSWORD/840085.ts
+#EXTINF:-1 tvg-id="760" tvg-name="ODISEA  3840P" tvg-logo="https://logo.m3uassets.com/odisea.png" tvg-chno="760" group-title="📽️ DOCUMENTALES",ODISEA  3840P
+DNS/live/USERNAME/PASSWORD/839887.ts
+#EXTINF:-1 tvg-id="761" tvg-name="NATIONAL GEOGRAPHIC" tvg-logo="https://logo.m3uassets.com/nationalgeographic.png" tvg-chno="761" group-title="📽️ DOCUMENTALES",NATIONAL GEOGRAPHIC
+DNS/live/USERNAME/PASSWORD/1460603.ts
+#EXTINF:-1 tvg-id="762" tvg-name="NATIONAL GEOGRAPHIC WILD" tvg-logo="https://logo.m3uassets.com/nationalgeographicwild.png" tvg-chno="762" group-title="📽️ DOCUMENTALES",NATIONAL GEOGRAPHIC WILD
+DNS/live/USERNAME/PASSWORD/839885.ts
+#EXTINF:-1 tvg-id="763" tvg-name="HISTORIA" tvg-logo="https://logo.m3uassets.com/historia.png" tvg-chno="763" group-title="📽️ DOCUMENTALES",HISTORIA
+DNS/live/USERNAME/PASSWORD/839884.ts
+#EXTINF:-1 tvg-id="764" tvg-name="DISCOVERY CHANNEL" tvg-logo="https://logo.m3uassets.com/discoverychannel.png" tvg-chno="764" group-title="📽️ DOCUMENTALES",DISCOVERY CHANNEL
+DNS/live/USERNAME/PASSWORD/839883.ts
+#EXTINF:-1 tvg-id="765" tvg-name="BUENVIAJE" tvg-logo="https://images.amcselekt.es/EqXj3CWkTa9Ens1sPrzQkKMbBdnc6bYbHKR2qvRE/1ecf19580c53699576f57b5087b103a7_LOGO-BUENVIAJE_V-Color.png" tvg-chno="765" group-title="📽️ DOCUMENTALES",BUENVIAJE
+DNS/live/USERNAME/PASSWORD/839881.ts
+#EXTINF:-1 tvg-id="766" tvg-name="AMC BREAK" tvg-logo="https://logo.m3uassets.com/amcbreak.png" tvg-chno="766" group-title="📽️ DOCUMENTALES",AMC BREAK
+DNS/live/USERNAME/PASSWORD/839880.ts
+#EXTINF:-1 tvg-id="767" tvg-name="AMC CRIME" tvg-logo="https://logo.m3uassets.com/amccrime.png" tvg-chno="767" group-title="📽️ DOCUMENTALES",AMC CRIME
+DNS/live/USERNAME/PASSWORD/839879.ts
+#EXTINF:-1 tvg-id="768" tvg-name="DMAX" tvg-logo="https://logo.m3uassets.com/dmax.png" tvg-chno="768" group-title="📽️ DOCUMENTALES",DMAX
+DNS/live/USERNAME/PASSWORD/839878.ts
+#EXTINF:-1 tvg-id="769" tvg-name="AMC SELEKT TV" tvg-logo="https://logo.m3uassets.com/amcselekt.png" tvg-chno="769" group-title="📽️ DOCUMENTALES",AMC SELEKT TV
+DNS/live/USERNAME/PASSWORD/1683711.ts
+#EXTINF:-1 tvg-id="770" tvg-name="BBC history" tvg-logo="https://raw.githubusercontent.com/davidmuma/picons_dobleM/master/icon/BBC%20History.png" tvg-chno="770" group-title="📽️ DOCUMENTALES",BBC history
+DNS/live/USERNAME/PASSWORD/1579776.ts
+#EXTINF:-1 tvg-id="771" tvg-name="MOVISTAR PLUS+" tvg-logo="https://logo.m3uassets.com/movistarplus.png" tvg-chno="771" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR PLUS+
+DNS/live/USERNAME/PASSWORD/840088.ts
+#EXTINF:-1 tvg-id="773" tvg-name="MOVISTAR HIT" tvg-logo="https://logo.m3uassets.com/movistar.png" tvg-chno="773" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR HIT
+DNS/live/USERNAME/PASSWORD/840086.ts
+#EXTINF:-1 tvg-id="774" tvg-name="MOVISTAR ACCION" tvg-logo="https://logo.m3uassets.com/movistaraccion.png" tvg-chno="774" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR ACCION
+DNS/live/USERNAME/PASSWORD/1683673.ts
+#EXTINF:-1 tvg-id="775" tvg-name="MOVISTAR COMEDIA" tvg-logo="https://logo.m3uassets.com/movistarcomedia.png" tvg-chno="775" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR COMEDIA
+DNS/live/USERNAME/PASSWORD/840131.ts
+#EXTINF:-1 tvg-id="776" tvg-name="MOVISTAR DRAMA" tvg-logo="https://logo.m3uassets.com/movistardrama.png" tvg-chno="776" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR DRAMA
+DNS/live/USERNAME/PASSWORD/840130.ts
+#EXTINF:-1 tvg-id="777" tvg-name="MOVISTAR ORIGINALES" tvg-logo="https://logo.m3uassets.com/originalespormovistarplus.png" tvg-chno="777" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR ORIGINALES
+DNS/live/USERNAME/PASSWORD/840183.ts
+#EXTINF:-1 tvg-id="778" tvg-name="MOVISTAR CLASICOS" tvg-logo="https://logo.m3uassets.com/movistarclasicos.png" tvg-chno="778" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR CLASICOS
+DNS/live/USERNAME/PASSWORD/840182.ts
+#EXTINF:-1 tvg-id="779" tvg-name="MOVISTAR ESTRENOSE" tvg-logo="https://logo.m3uassets.com/movistarestrenos.png" tvg-chno="779" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR ESTRENOSE
+DNS/live/USERNAME/PASSWORD/840154.ts
+#EXTINF:-1 tvg-id="780" tvg-name="MOVISTAR CINE Ñ" tvg-logo="https://logo.m3uassets.com/movistarcine.png" tvg-chno="780" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR CINE Ñ
+DNS/live/USERNAME/PASSWORD/840126.ts
+#EXTINF:-1 tvg-id="781" tvg-name="MOVISTAR INDIE" tvg-logo="https://logo.m3uassets.com/movistar.png" tvg-chno="781" group-title="Ⓜ️ MOVISTAR PLUS+",MOVISTAR INDIE
+DNS/live/USERNAME/PASSWORD/1677967.ts
+#EXTINF:-1 tvg-id="782" tvg-name="PARAMOUNT CHANNEL" tvg-logo="https://logo.m3uassets.com/paramountchannel.png" tvg-chno="782" group-title="Ⓜ️ MOVISTAR PLUS+",PARAMOUNT CHANNEL
+DNS/live/USERNAME/PASSWORD/1677900.ts
+#EXTINF:-1 tvg-id="783" tvg-name="STAR CHANNEL" tvg-logo="https://logo.m3uassets.com/starchannel.png" tvg-chno="783" group-title="Ⓜ️ MOVISTAR PLUS+",STAR CHANNEL
+DNS/live/USERNAME/PASSWORD/1677899.ts
+#EXTINF:-1 tvg-id="784" tvg-name="WARNER TV" tvg-logo="https://logo.m3uassets.com/warnertv.png" tvg-chno="784" group-title="Ⓜ️ MOVISTAR PLUS+",WARNER TV
+DNS/live/USERNAME/PASSWORD/840117.ts
+#EXTINF:-1 tvg-id="785" tvg-name="DARK" tvg-logo="https://logo.m3uassets.com/dark.png" tvg-chno="785" group-title="Ⓜ️ MOVISTAR PLUS+",DARK
+DNS/live/USERNAME/PASSWORD/840114.ts
+#EXTINF:-1 tvg-id="786" tvg-name="XTRM" tvg-logo="https://logo.m3uassets.com/xtrm.png" tvg-chno="786" group-title="Ⓜ️ MOVISTAR PLUS+",XTRM
+DNS/live/USERNAME/PASSWORD/840113.ts
+#EXTINF:-1 tvg-id="787" tvg-name="AXN MOVIES" tvg-logo="https://logo.m3uassets.com/axnmovies.png" tvg-chno="787" group-title="Ⓜ️ MOVISTAR PLUS+",AXN MOVIES
+DNS/live/USERNAME/PASSWORD/840110.ts
+#EXTINF:-1 tvg-id="788" tvg-name="COSMO" tvg-logo="https://logo.m3uassets.com/cosmo.png" tvg-chno="788" group-title="Ⓜ️ MOVISTAR PLUS+",COSMO
+DNS/live/USERNAME/PASSWORD/840109.ts
+#EXTINF:-1 tvg-id="789" tvg-name="SYFY  VOS" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/6611.png?83363" tvg-chno="789" group-title="Ⓜ️ MOVISTAR PLUS+",SYFY  VOS
+DNS/live/USERNAME/PASSWORD/840107.ts
+#EXTINF:-1 tvg-id="790" tvg-name="HOLLYWOOD" tvg-logo="https://logo.m3uassets.com/hollywood.png" tvg-chno="790" group-title="Ⓜ️ MOVISTAR PLUS+",HOLLYWOOD
+DNS/live/USERNAME/PASSWORD/840103.ts
+#EXTINF:-1 tvg-id="1009" tvg-name="MOVISTAR DEPORTES 1" tvg-logo="https://logo.m3uassets.com/movistardeportes.png" tvg-chno="1009" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 1
+DNS/live/USERNAME/PASSWORD/839941.ts
+#EXTINF:-1 tvg-id="1010" tvg-name="MOVISTAR DEPORTES 2" tvg-logo="https://logo.m3uassets.com/movistardeportes2.png" tvg-chno="1010" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 2
+DNS/live/USERNAME/PASSWORD/839940.ts
+#EXTINF:-1 tvg-id="1011" tvg-name="MOVISTAR DEPORTES 3" tvg-logo="https://logo.m3uassets.com/movistardeportes3.png" tvg-chno="1011" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 3
+DNS/live/USERNAME/PASSWORD/1680831.ts
+#EXTINF:-1 tvg-id="1012" tvg-name="MOVISTAR DEPORTES 4" tvg-logo="https://logo.m3uassets.com/movistardeportes4.png" tvg-chno="1012" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 4
+DNS/live/USERNAME/PASSWORD/1680830.ts
+#EXTINF:-1 tvg-id="1013" tvg-name="MOVISTAR DEPORTES 5" tvg-logo="https://logo.m3uassets.com/movistardeportes5.png" tvg-chno="1013" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 5
+DNS/live/USERNAME/PASSWORD/839936.ts
+#EXTINF:-1 tvg-id="1014" tvg-name="MOVISTAR DEPORTES 6" tvg-logo="https://logo.m3uassets.com/movistardeportes6.png" tvg-chno="1014" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 6
+DNS/live/USERNAME/PASSWORD/839935.ts
+#EXTINF:-1 tvg-id="1015" tvg-name="MOVISTAR DEPORTES 7" tvg-logo="https://logo.m3uassets.com/movistardeportes7.png" tvg-chno="1015" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR DEPORTES 7
+DNS/live/USERNAME/PASSWORD/839934.ts
+#EXTINF:-1 tvg-id="1016" tvg-name="MOVISTAR GOLF" tvg-logo="https://logo.m3uassets.com/movistargolf.png" tvg-chno="1016" group-title="🏟️ MOVISTAR DEPORTES",MOVISTAR GOLF
+DNS/live/USERNAME/PASSWORD/839929.ts
+#EXTINF:-1 tvg-id="1017" tvg-name="EUROSPORT 1" tvg-logo="https://logo.m3uassets.com/eurosport1.png" tvg-chno="1017" group-title="🏟️ MOVISTAR DEPORTES",EUROSPORT 1
+DNS/live/USERNAME/PASSWORD/839912.ts
+#EXTINF:-1 tvg-id="1018" tvg-name="EUROSPORT 2" tvg-logo="https://logo.m3uassets.com/eurosport2.png" tvg-chno="1018" group-title="🏟️ MOVISTAR DEPORTES",EUROSPORT 2
+DNS/live/USERNAME/PASSWORD/839911.ts
+#EXTINF:-1 tvg-id="1020" tvg-name="#VAMOS" tvg-logo="https://www.movistarplus.es/recorte/m-DP/modmarcas/VAMOHD" tvg-chno="1020" group-title="🏟️ MOVISTAR DEPORTES",#VAMOS
+DNS/live/USERNAME/PASSWORD/839861.ts
+#EXTINF:-1 tvg-id="1021" tvg-name="#VAMOS 2" tvg-logo="https://www.movistarplus.es/recorte/m-DP/modmarcas/VAM2HD" tvg-chno="1021" group-title="🏟️ MOVISTAR DEPORTES",#VAMOS 2
+DNS/live/USERNAME/PASSWORD/1683720.ts
+#EXTINF:-1 tvg-id="1022" tvg-name="ELLAS #V" tvg-logo="https://www.movistarplus.es/recorte/m-DPBLAN/guiapc/MELLAV.png" tvg-chno="1022" group-title="🏟️ MOVISTAR DEPORTES",ELLAS #V
+DNS/live/USERNAME/PASSWORD/839860.ts
+#EXTINF:-1 tvg-id="1070" tvg-name="LEAGUE PASS 1" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1070" group-title="🏀 NBA",LEAGUE PASS 1
+DNS/live/USERNAME/PASSWORD/633387.ts
+#EXTINF:-1 tvg-id="1071" tvg-name="LEAGUE PASS 2" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1071" group-title="🏀 NBA",LEAGUE PASS 2
+DNS/live/USERNAME/PASSWORD/633386.ts
+#EXTINF:-1 tvg-id="1072" tvg-name="LEAGUE PASS 3" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1072" group-title="🏀 NBA",LEAGUE PASS 3
+DNS/live/USERNAME/PASSWORD/633385.ts
+#EXTINF:-1 tvg-id="1073" tvg-name="LEAGUE PASS 4" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1073" group-title="🏀 NBA",LEAGUE PASS 4
+DNS/live/USERNAME/PASSWORD/633384.ts
+#EXTINF:-1 tvg-id="1074" tvg-name="LEAGUE PASS 5" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1074" group-title="🏀 NBA",LEAGUE PASS 5
+DNS/live/USERNAME/PASSWORD/633383.ts
+#EXTINF:-1 tvg-id="1075" tvg-name="LEAGUE PASS 6" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1075" group-title="🏀 NBA",LEAGUE PASS 6
+DNS/live/USERNAME/PASSWORD/633382.ts
+#EXTINF:-1 tvg-id="1076" tvg-name="LEAGUE PASS 7" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1076" group-title="🏀 NBA",LEAGUE PASS 7
+DNS/live/USERNAME/PASSWORD/633381.ts
+#EXTINF:-1 tvg-id="1077" tvg-name="LEAGUE PASS 8" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1077" group-title="🏀 NBA",LEAGUE PASS 8
+DNS/live/USERNAME/PASSWORD/633380.ts
+#EXTINF:-1 tvg-id="1078" tvg-name="LEAGUE PASS 9" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1078" group-title="🏀 NBA",LEAGUE PASS 9
+DNS/live/USERNAME/PASSWORD/633379.ts
+#EXTINF:-1 tvg-id="1079" tvg-name="LEAGUE PASS 10" tvg-logo="http://icon-tmdb.me/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1079" group-title="🏀 NBA",LEAGUE PASS 10
+DNS/live/USERNAME/PASSWORD/633378.ts
+#EXTINF:-1 tvg-id="1150" tvg-name="### NBA ATT LIVE EVENTS ###" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/42/Animated-Flag-USA.gif" tvg-chno="1150" group-title="🏀 NBA",### NBA ATT LIVE EVENTS ###
+DNS/live/USERNAME/PASSWORD/595618.ts
+#EXTINF:-1 tvg-id="1151" tvg-name="NBA: NBA TV HD" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1151" group-title="🏀 NBA",NBA: NBA TV HD
+DNS/live/USERNAME/PASSWORD/607602.ts
+#EXTINF:-1 tvg-id="1152" tvg-name="Denver Nuggets vs. New York Knicks" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1152" group-title="🏀 NBA",Denver Nuggets vs. New York Knicks
+DNS/live/USERNAME/PASSWORD/607601.ts
+#EXTINF:-1 tvg-id="1153" tvg-name="Knicks vs. Timberwolves" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1153" group-title="🏀 NBA",Knicks vs. Timberwolves
+DNS/live/USERNAME/PASSWORD/607600.ts
+#EXTINF:-1 tvg-id="1154" tvg-name="Minnesota Timberwolves vs. Toronto Raptors" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1154" group-title="🏀 NBA",Minnesota Timberwolves vs. Toronto Raptors
+DNS/live/USERNAME/PASSWORD/607599.ts
+#EXTINF:-1 tvg-id="1155" tvg-name="Boston Celtics vs. Houston Rockets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1155" group-title="🏀 NBA",Boston Celtics vs. Houston Rockets
+DNS/live/USERNAME/PASSWORD/607598.ts
+#EXTINF:-1 tvg-id="1156" tvg-name="New Orleans Pelicans vs. Milwaukee Bucks" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1156" group-title="🏀 NBA",New Orleans Pelicans vs. Milwaukee Bucks
+DNS/live/USERNAME/PASSWORD/607597.ts
+#EXTINF:-1 tvg-id="1157" tvg-name="Oklahoma City Thunder vs. San Antonio Spurs" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1157" group-title="🏀 NBA",Oklahoma City Thunder vs. San Antonio Spurs
+DNS/live/USERNAME/PASSWORD/607596.ts
+#EXTINF:-1 tvg-id="1158" tvg-name="Memphis Grizzlies vs. Sacramento Kings" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1158" group-title="🏀 NBA",Memphis Grizzlies vs. Sacramento Kings
+DNS/live/USERNAME/PASSWORD/607595.ts
+#EXTINF:-1 tvg-id="1159" tvg-name="Chicago Bulls vs. Milwaukee Bucks" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1159" group-title="🏀 NBA",Chicago Bulls vs. Milwaukee Bucks
+DNS/live/USERNAME/PASSWORD/607594.ts
+#EXTINF:-1 tvg-id="1160" tvg-name="Orlando Magic vs. Oklahoma City Thunder" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1160" group-title="🏀 NBA",Orlando Magic vs. Oklahoma City Thunder
+DNS/live/USERNAME/PASSWORD/607593.ts
+#EXTINF:-1 tvg-id="1161" tvg-name="Philadelphia 76ers vs. Golden State Warriors" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1161" group-title="🏀 NBA",Philadelphia 76ers vs. Golden State Warriors
+DNS/live/USERNAME/PASSWORD/607592.ts
+#EXTINF:-1 tvg-id="1162" tvg-name="Milwaukee Bucks vs. Golden State Warriors" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1162" group-title="🏀 NBA",Milwaukee Bucks vs. Golden State Warriors
+DNS/live/USERNAME/PASSWORD/607591.ts
+#EXTINF:-1 tvg-id="1163" tvg-name="Houston Rockets vs. Portland Trail Blazers" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1163" group-title="🏀 NBA",Houston Rockets vs. Portland Trail Blazers
+DNS/live/USERNAME/PASSWORD/607590.ts
+#EXTINF:-1 tvg-id="1164" tvg-name="Kings vs. Pistons" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1164" group-title="🏀 NBA",Kings vs. Pistons
+DNS/live/USERNAME/PASSWORD/607589.ts
+#EXTINF:-1 tvg-id="1165" tvg-name="Clippers vs. Rockets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1165" group-title="🏀 NBA",Clippers vs. Rockets
+DNS/live/USERNAME/PASSWORD/607588.ts
+#EXTINF:-1 tvg-id="1166" tvg-name="Rockets vs. Nuggets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1166" group-title="🏀 NBA",Rockets vs. Nuggets
+DNS/live/USERNAME/PASSWORD/607587.ts
+#EXTINF:-1 tvg-id="1167" tvg-name="### NBA SLING LIVE EVENTS ###" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/42/Animated-Flag-USA.gif" tvg-chno="1167" group-title="🏀 NBA",### NBA SLING LIVE EVENTS ###
+DNS/live/USERNAME/PASSWORD/616098.ts
+#EXTINF:-1 tvg-id="1168" tvg-name="NBA: NBA TV HD" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1168" group-title="🏀 NBA",NBA: NBA TV HD
+DNS/live/USERNAME/PASSWORD/616097.ts
+#EXTINF:-1 tvg-id="1169" tvg-name="Chicago Bulls vs. Miami Heat" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1169" group-title="🏀 NBA",Chicago Bulls vs. Miami Heat
+DNS/live/USERNAME/PASSWORD/616096.ts
+#EXTINF:-1 tvg-id="1170" tvg-name="San Antonio Spurs vs. Charlotte Hornets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1170" group-title="🏀 NBA",San Antonio Spurs vs. Charlotte Hornets
+DNS/live/USERNAME/PASSWORD/616095.ts
+#EXTINF:-1 tvg-id="1171" tvg-name="Atlanta Hawks vs. Indiana Pacers" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1171" group-title="🏀 NBA",Atlanta Hawks vs. Indiana Pacers
+DNS/live/USERNAME/PASSWORD/616094.ts
+#EXTINF:-1 tvg-id="1172" tvg-name="New Orleans Pelicans vs. Philadelphia 76ers" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1172" group-title="🏀 NBA",New Orleans Pelicans vs. Philadelphia 76ers
+DNS/live/USERNAME/PASSWORD/616093.ts
+#EXTINF:-1 tvg-id="1173" tvg-name="Minnesota Timberwolves vs. Memphis Grizzlies" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1173" group-title="🏀 NBA",Minnesota Timberwolves vs. Memphis Grizzlies
+DNS/live/USERNAME/PASSWORD/616092.ts
+#EXTINF:-1 tvg-id="1174" tvg-name="Dallas Mavericks vs. Houston Rockets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1174" group-title="🏀 NBA",Dallas Mavericks vs. Houston Rockets
+DNS/live/USERNAME/PASSWORD/616091.ts
+#EXTINF:-1 tvg-id="1175" tvg-name="Brooklyn Nets vs. Utah Jazz" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1175" group-title="🏀 NBA",Brooklyn Nets vs. Utah Jazz
+DNS/live/USERNAME/PASSWORD/616090.ts
+#EXTINF:-1 tvg-id="1176" tvg-name="LA Clippers vs. Denver Nuggets" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1176" group-title="🏀 NBA",LA Clippers vs. Denver Nuggets
+DNS/live/USERNAME/PASSWORD/616089.ts
+#EXTINF:-1 tvg-id="1177" tvg-name="Detroit Pistons vs. Golden State Warriors" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1177" group-title="🏀 NBA",Detroit Pistons vs. Golden State Warriors
+DNS/live/USERNAME/PASSWORD/616088.ts
+#EXTINF:-1 tvg-id="1178" tvg-name="Houston Rockets vs. Sacramento Kings" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1178" group-title="🏀 NBA",Houston Rockets vs. Sacramento Kings
+DNS/live/USERNAME/PASSWORD/616087.ts
+#EXTINF:-1 tvg-id="1179" tvg-name="Milwaukee Bucks vs. Golden State Warriors" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1179" group-title="🏀 NBA",Milwaukee Bucks vs. Golden State Warriors
+DNS/live/USERNAME/PASSWORD/616086.ts
+#EXTINF:-1 tvg-id="1180" tvg-name="Houston Rockets vs. Portland Trail Blazers" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1180" group-title="🏀 NBA",Houston Rockets vs. Portland Trail Blazers
+DNS/live/USERNAME/PASSWORD/616085.ts
+#EXTINF:-1 tvg-id="1181" tvg-name="NBA 13 :" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1181" group-title="🏀 NBA",NBA 13 :
+DNS/live/USERNAME/PASSWORD/616084.ts
+#EXTINF:-1 tvg-id="1182" tvg-name="NBA 14 :" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1182" group-title="🏀 NBA",NBA 14 :
+DNS/live/USERNAME/PASSWORD/616083.ts
+#EXTINF:-1 tvg-id="1183" tvg-name="NBA 15 :" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13734.png?ver=55075" tvg-chno="1183" group-title="🏀 NBA",NBA 15 :
+DNS/live/USERNAME/PASSWORD/616082.ts
+#EXTINF:-1 tvg-id="1314" tvg-name=" BJJ CLUBES " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1314" group-title="📅 EVENTOS", BJJ CLUBES 
+DNS/live/USERNAME/PASSWORD/605932.ts
+#EXTINF:-1 tvg-id="1315" tvg-name=" CAGE WARRIORS 199 " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1315" group-title="📅 EVENTOS", CAGE WARRIORS 199 
+DNS/live/USERNAME/PASSWORD/605931.ts
+#EXTINF:-1 tvg-id="1316" tvg-name="  POST-FIGHT PRESS CONFERENCE " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1316" group-title="📅 EVENTOS",  POST-FIGHT PRESS CONFERENCE 
+DNS/live/USERNAME/PASSWORD/605930.ts
+#EXTINF:-1 tvg-id="1317" tvg-name="  PRELIMS " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1317" group-title="📅 EVENTOS",  PRELIMS 
+DNS/live/USERNAME/PASSWORD/605929.ts
+#EXTINF:-1 tvg-id="1318" tvg-name=" LUX 056 " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1318" group-title="📅 EVENTOS", LUX 056 
+DNS/live/USERNAME/PASSWORD/605928.ts
+#EXTINF:-1 tvg-id="1319" tvg-name="" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1319" group-title="📅 EVENTOS",
+DNS/live/USERNAME/PASSWORD/605927.ts
+#EXTINF:-1 tvg-id="1320" tvg-name="" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1320" group-title="📅 EVENTOS",
+DNS/live/USERNAME/PASSWORD/605926.ts
+#EXTINF:-1 tvg-id="1321" tvg-name=" UAE WARRIORS 67 " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1321" group-title="📅 EVENTOS", UAE WARRIORS 67 
+DNS/live/USERNAME/PASSWORD/605936.ts
+#EXTINF:-1 tvg-id="1322" tvg-name="  FIGHT PASS PRELIMS " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1322" group-title="📅 EVENTOS",  FIGHT PASS PRELIMS 
+DNS/live/USERNAME/PASSWORD/605935.ts
+#EXTINF:-1 tvg-id="1323" tvg-name="  VOLKANOVSKI VS LOPES 2 " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1323" group-title="📅 EVENTOS",  VOLKANOVSKI VS LOPES 2 
+DNS/live/USERNAME/PASSWORD/605934.ts
+#EXTINF:-1 tvg-id="1324" tvg-name="  PRELIMS " tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/12620.jpg?ver=4006" tvg-chno="1324" group-title="📅 EVENTOS",  PRELIMS 
+DNS/live/USERNAME/PASSWORD/605933.ts
+#EXTINF:-1 tvg-id="1340" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1340" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924177.ts
+#EXTINF:-1 tvg-id="1341" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1341" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924176.ts
+#EXTINF:-1 tvg-id="1342" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1342" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924175.ts
+#EXTINF:-1 tvg-id="1343" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1343" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924174.ts
+#EXTINF:-1 tvg-id="1344" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1344" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924173.ts
+#EXTINF:-1 tvg-id="1345" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1345" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924172.ts
+#EXTINF:-1 tvg-id="1346" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1346" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924171.ts
+#EXTINF:-1 tvg-id="1347" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1347" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924170.ts
+#EXTINF:-1 tvg-id="1348" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1348" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924169.ts
+#EXTINF:-1 tvg-id="1349" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1349" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924168.ts
+#EXTINF:-1 tvg-id="1350" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1350" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924167.ts
+#EXTINF:-1 tvg-id="1351" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1351" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924166.ts
+#EXTINF:-1 tvg-id="1352" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1352" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924165.ts
+#EXTINF:-1 tvg-id="1353" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1353" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924164.ts
+#EXTINF:-1 tvg-id="1354" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1354" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924163.ts
+#EXTINF:-1 tvg-id="1355" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1355" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924162.ts
+#EXTINF:-1 tvg-id="1356" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1356" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924161.ts
+#EXTINF:-1 tvg-id="1357" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1357" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924160.ts
+#EXTINF:-1 tvg-id="1358" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1358" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924159.ts
+#EXTINF:-1 tvg-id="1359" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1359" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924158.ts
+#EXTINF:-1 tvg-id="1360" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1360" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924157.ts
+#EXTINF:-1 tvg-id="1361" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1361" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924156.ts
+#EXTINF:-1 tvg-id="1362" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1362" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924155.ts
+#EXTINF:-1 tvg-id="1363" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1363" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924154.ts
+#EXTINF:-1 tvg-id="1364" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1364" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924153.ts
+#EXTINF:-1 tvg-id="1365" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1365" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924152.ts
+#EXTINF:-1 tvg-id="1366" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1366" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924151.ts
+#EXTINF:-1 tvg-id="1367" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1367" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924150.ts
+#EXTINF:-1 tvg-id="1368" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1368" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924149.ts
+#EXTINF:-1 tvg-id="1369" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1369" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924148.ts
+#EXTINF:-1 tvg-id="1370" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1370" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924147.ts
+#EXTINF:-1 tvg-id="1371" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1371" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924146.ts
+#EXTINF:-1 tvg-id="1372" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1372" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924145.ts
+#EXTINF:-1 tvg-id="1373" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1373" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924144.ts
+#EXTINF:-1 tvg-id="1374" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1374" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924143.ts
+#EXTINF:-1 tvg-id="1375" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1375" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924142.ts
+#EXTINF:-1 tvg-id="1376" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1376" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924141.ts
+#EXTINF:-1 tvg-id="1377" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1377" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924140.ts
+#EXTINF:-1 tvg-id="1378" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1378" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924139.ts
+#EXTINF:-1 tvg-id="1379" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1379" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924138.ts
+#EXTINF:-1 tvg-id="1380" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1380" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924137.ts
+#EXTINF:-1 tvg-id="1381" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1381" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924136.ts
+#EXTINF:-1 tvg-id="1382" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1382" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924135.ts
+#EXTINF:-1 tvg-id="1383" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1383" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924134.ts
+#EXTINF:-1 tvg-id="1384" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1384" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924133.ts
+#EXTINF:-1 tvg-id="1385" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1385" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924132.ts
+#EXTINF:-1 tvg-id="1386" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1386" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924131.ts
+#EXTINF:-1 tvg-id="1387" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1387" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924130.ts
+#EXTINF:-1 tvg-id="1388" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1388" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924129.ts
+#EXTINF:-1 tvg-id="1389" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1389" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924128.ts
+#EXTINF:-1 tvg-id="1390" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1390" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924127.ts
+#EXTINF:-1 tvg-id="1391" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1391" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924126.ts
+#EXTINF:-1 tvg-id="1392" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1392" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924125.ts
+#EXTINF:-1 tvg-id="1393" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1393" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924124.ts
+#EXTINF:-1 tvg-id="1394" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1394" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924123.ts
+#EXTINF:-1 tvg-id="1395" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1395" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924122.ts
+#EXTINF:-1 tvg-id="1396" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1396" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924121.ts
+#EXTINF:-1 tvg-id="1397" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1397" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924120.ts
+#EXTINF:-1 tvg-id="1398" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1398" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924119.ts
+#EXTINF:-1 tvg-id="1399" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1399" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924118.ts
+#EXTINF:-1 tvg-id="1400" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1400" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924117.ts
+#EXTINF:-1 tvg-id="1401" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1401" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924116.ts
+#EXTINF:-1 tvg-id="1402" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1402" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924115.ts
+#EXTINF:-1 tvg-id="1403" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1403" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924114.ts
+#EXTINF:-1 tvg-id="1404" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1404" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924113.ts
+#EXTINF:-1 tvg-id="1405" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1405" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924112.ts
+#EXTINF:-1 tvg-id="1406" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1406" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924111.ts
+#EXTINF:-1 tvg-id="1407" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1407" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924110.ts
+#EXTINF:-1 tvg-id="1408" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1408" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924109.ts
+#EXTINF:-1 tvg-id="1409" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1409" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924108.ts
+#EXTINF:-1 tvg-id="1410" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1410" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924107.ts
+#EXTINF:-1 tvg-id="1411" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1411" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924106.ts
+#EXTINF:-1 tvg-id="1412" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1412" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924105.ts
+#EXTINF:-1 tvg-id="1413" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1413" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924104.ts
+#EXTINF:-1 tvg-id="1414" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1414" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924103.ts
+#EXTINF:-1 tvg-id="1415" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1415" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924102.ts
+#EXTINF:-1 tvg-id="1416" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1416" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924101.ts
+#EXTINF:-1 tvg-id="1417" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1417" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924100.ts
+#EXTINF:-1 tvg-id="1418" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1418" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924099.ts
+#EXTINF:-1 tvg-id="1419" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1419" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924098.ts
+#EXTINF:-1 tvg-id="1420" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1420" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924097.ts
+#EXTINF:-1 tvg-id="1421" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1421" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924096.ts
+#EXTINF:-1 tvg-id="1422" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1422" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924095.ts
+#EXTINF:-1 tvg-id="1423" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1423" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924094.ts
+#EXTINF:-1 tvg-id="1424" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1424" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924093.ts
+#EXTINF:-1 tvg-id="1425" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1425" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924092.ts
+#EXTINF:-1 tvg-id="1426" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1426" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924091.ts
+#EXTINF:-1 tvg-id="1427" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1427" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924090.ts
+#EXTINF:-1 tvg-id="1428" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1428" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924089.ts
+#EXTINF:-1 tvg-id="1429" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1429" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924088.ts
+#EXTINF:-1 tvg-id="1430" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1430" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924087.ts
+#EXTINF:-1 tvg-id="1431" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1431" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924086.ts
+#EXTINF:-1 tvg-id="1432" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1432" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924085.ts
+#EXTINF:-1 tvg-id="1433" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1433" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924084.ts
+#EXTINF:-1 tvg-id="1434" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1434" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/924083.ts
+#EXTINF:-1 tvg-id="1435" tvg-name="MARK ALLEN - ALI CARTER" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1435" group-title="📅 EVENTOS",MARK ALLEN - ALI CARTER
+DNS/live/USERNAME/PASSWORD/924182.ts
+#EXTINF:-1 tvg-id="1436" tvg-name="SHAUN MURPHY - PANG JUNXU" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1436" group-title="📅 EVENTOS",SHAUN MURPHY - PANG JUNXU
+DNS/live/USERNAME/PASSWORD/924181.ts
+#EXTINF:-1 tvg-id="1437" tvg-name="JOHN HIGGINS - ZHAO XINTONG" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1437" group-title="📅 EVENTOS",JOHN HIGGINS - ZHAO XINTONG
+DNS/live/USERNAME/PASSWORD/924180.ts
+#EXTINF:-1 tvg-id="1438" tvg-name="JUDD TRUMP - YUAN SIJUN" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1438" group-title="📅 EVENTOS",JUDD TRUMP - YUAN SIJUN
+DNS/live/USERNAME/PASSWORD/924179.ts
+#EXTINF:-1 tvg-id="1439" tvg-name="EXACT CROSS" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13794.png?ver=89391" tvg-chno="1439" group-title="📅 EVENTOS",EXACT CROSS
+DNS/live/USERNAME/PASSWORD/924178.ts
+#EXTINF:-1 tvg-id="1492" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1492" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946800.ts
+#EXTINF:-1 tvg-id="1493" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1493" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946799.ts
+#EXTINF:-1 tvg-id="1494" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1494" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946798.ts
+#EXTINF:-1 tvg-id="1495" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1495" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946797.ts
+#EXTINF:-1 tvg-id="1496" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1496" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946796.ts
+#EXTINF:-1 tvg-id="1497" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1497" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946795.ts
+#EXTINF:-1 tvg-id="1498" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1498" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946794.ts
+#EXTINF:-1 tvg-id="1499" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1499" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946793.ts
+#EXTINF:-1 tvg-id="1500" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1500" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946792.ts
+#EXTINF:-1 tvg-id="1501" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1501" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946791.ts
+#EXTINF:-1 tvg-id="1502" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1502" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946790.ts
+#EXTINF:-1 tvg-id="1503" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1503" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946789.ts
+#EXTINF:-1 tvg-id="1504" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1504" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946788.ts
+#EXTINF:-1 tvg-id="1505" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1505" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946787.ts
+#EXTINF:-1 tvg-id="1506" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1506" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946786.ts
+#EXTINF:-1 tvg-id="1507" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1507" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946785.ts
+#EXTINF:-1 tvg-id="1508" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1508" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946784.ts
+#EXTINF:-1 tvg-id="1509" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1509" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946783.ts
+#EXTINF:-1 tvg-id="1510" tvg-name="NO EVENT STREAMING -" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1510" group-title="📅 EVENTOS",NO EVENT STREAMING -
+DNS/live/USERNAME/PASSWORD/946782.ts
+#EXTINF:-1 tvg-id="1511" tvg-name="TENNIS TV 24/7" tvg-logo="http://icon-tmdb.com/stalker_portal/misc/logos/320/13801.png?ver=71063" tvg-chno="1511" group-title="📅 EVENTOS",TENNIS TV 24/7
+DNS/live/USERNAME/PASSWORD/946801.ts
+#EXTINF:-1 tvg-id="1715" tvg-name="TNT SPORTS ULTIMATE" tvg-logo="https://r2.thesportsdb.com/images/media/channel/logo/13fost1689746391.png" tvg-chno="1715" group-title="🏉 TNT SPORT",TNT SPORTS ULTIMATE
+DNS/live/USERNAME/PASSWORD/1290338.ts
+#EXTINF:-1 tvg-id="1716" tvg-name="TNT SPORTS 1" tvg-logo="https://eu1-prod-images.disco-api.com/2023/07/18/3f28a637-5677-49fb-ad4d-126248820b5b.png?w=1200&f=PNG&p=true&q=60" tvg-chno="1716" group-title="🏉 TNT SPORT",TNT SPORTS 1
+DNS/live/USERNAME/PASSWORD/1290337.ts
+#EXTINF:-1 tvg-id="1717" tvg-name="TNT SPORTS 2" tvg-logo="https://logo.m3uassets.com/tntsports2.png" tvg-chno="1717" group-title="🏉 TNT SPORT",TNT SPORTS 2
+DNS/live/USERNAME/PASSWORD/1176214.ts
+#EXTINF:-1 tvg-id="1718" tvg-name="TNT SPORTS 3" tvg-logo="https://logo.m3uassets.com/tntsports3.png" tvg-chno="1718" group-title="🏉 TNT SPORT",TNT SPORTS 3
+DNS/live/USERNAME/PASSWORD/1290335.ts
+#EXTINF:-1 tvg-id="1719" tvg-name="TNT SPORTS 4" tvg-logo="https://eu1-prod-images.disco-api.com/2023/07/18/bc8e2117-5268-4e01-bbe9-e1b69a2f63bf.png?w=1200&f=PNG&p=true&q=60" tvg-chno="1719" group-title="🏉 TNT SPORT",TNT SPORTS 4
+DNS/live/USERNAME/PASSWORD/1290334.ts
