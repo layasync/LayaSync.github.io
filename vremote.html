@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Samsung TV Remote</title>
+
+<style>
+
+body{
+background:#0a0a0a;
+color:white;
+font-family:sans-serif;
+text-align:center;
+margin:0;
+}
+
+header{
+padding:18px;
+font-size:22px;
+font-weight:600;
+}
+
+button{
+
+width:90px;
+height:60px;
+margin:6px;
+border-radius:14px;
+border:none;
+background:#1f1f1f;
+color:white;
+font-size:16px;
+
+}
+
+.big{
+width:200px;
+height:60px;
+font-size:18px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+max-width:260px;
+margin:auto;
+}
+
+.touch{
+
+width:260px;
+height:140px;
+background:#151515;
+margin:20px auto;
+border-radius:16px;
+
+}
+
+input{
+
+padding:12px;
+border-radius:10px;
+border:none;
+background:#1c1c1c;
+color:white;
+width:200px;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>Samsung TV Remote</header>
+
+<div>
+
+<input id="ip" placeholder="TV IP address">
+
+<br><br>
+
+<button class="big" onclick="connect()">CONNECT TO TV</button>
+
+<button class="big" onclick="scan()">SCAN NETWORK</button>
+
+</div>
+
+<div id="devices"></div>
+
+<div id="status"></div>
+
+<h3>Gesture Pad</h3>
+
+<div id="touch" class="touch"></div>
+
+<h3>Navigation</h3>
+
+<div class="grid">
+
+<div></div>
+<button onclick="sendKey('KEY_UP')">▲</button>
+<div></div>
+
+<button onclick="sendKey('KEY_LEFT')">◀</button>
+<button onclick="sendKey('KEY_ENTER')">OK</button>
+<button onclick="sendKey('KEY_RIGHT')">▶</button>
+
+<div></div>
+<button onclick="sendKey('KEY_DOWN')">▼</button>
+<div></div>
+
+</div>
+
+<h3>Volume</h3>
+
+<button onclick="sendKey('KEY_VOLDOWN')">Vol-</button>
+<button onclick="sendKey('KEY_MUTE')">Mute</button>
+<button onclick="sendKey('KEY_VOLUP')">Vol+</button>
+
+<h3>Channel</h3>
+
+<button onclick="sendKey('KEY_CHDOWN')">CH-</button>
+<button onclick="sendKey('KEY_CHUP')">CH+</button>
+
+<h3>Apps</h3>
+
+<button onclick="launch('111299001912')">YouTube</button>
+<button onclick="launch('3201907018807')">Netflix</button>
+
+<h3>Keyboard</h3>
+
+<input id="text">
+<button onclick="sendText()">Send</button>
+
+<h3>Voice</h3>
+
+<button onclick="voice()">🎤 Speak</button>
+
+<h3>System</h3>
+
+<button onclick="sendKey('KEY_HOME')">Home</button>
+<button onclick="sendKey('KEY_BACK')">Back</button>
+<button onclick="sendKey('KEY_SOURCE')">Source</button>
+<button onclick="sendKey('KEY_POWER')">Power</button>
+
+<script>
+
+let socket=null
+let tvIP=null
+
+function connect(){
+
+tvIP=document.getElementById("ip").value
+
+if(!tvIP){
+alert("Enter TV IP")
+return
+}
+
+let name=btoa("WebRemote")
+
+socket=new WebSocket(`ws://${tvIP}:8001/api/v2/channels/samsung.remote.control?name=${name}`)
+
+socket.onopen=()=>{
+
+document.getElementById("status").innerText="Connected. Check TV for popup."
+
+}
+
+socket.onerror=()=>{
+
+document.getElementById("status").innerText="Connection failed"
+
+}
+
+socket.onclose=()=>{
+
+document.getElementById("status").innerText="Disconnected"
+
+}
+
+}
+
+function sendKey(key){
+
+if(!socket || socket.readyState!==1){
+alert("Connect first")
+return
+}
+
+socket.send(JSON.stringify({
+
+method:"ms.remote.control",
+params:{
+Cmd:"Click",
+DataOfCmd:key,
+Option:"false",
+TypeOfRemote:"SendRemoteKey"
+}
+
+}))
+
+}
+
+function launch(id){
+
+socket.send(JSON.stringify({
+
+method:"ms.channel.emit",
+params:{
+event:"ed.apps.launch",
+to:"host",
+data:{appId:id}
+
+}
+
+}))
+
+}
+
+function sendText(){
+
+let text=document.getElementById("text").value
+
+socket.send(JSON.stringify({
+
+method:"ms.remote.control",
+params:{
+Cmd:"Type",
+DataOfCmd:text,
+TypeOfRemote:"SendInputString"
+
+}
+
+}))
+
+}
+
+function voice(){
+
+let rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)()
+
+rec.onresult=e=>{
+document.getElementById("text").value=e.results[0][0].transcript
+}
+
+rec.start()
+
+}
+
+function scan(){
+
+document.getElementById("devices").innerHTML="Scanning..."
+
+let ranges=["192.168.0.","192.168.1.","192.168.31."]
+
+ranges.forEach(base=>{
+
+for(let i=2;i<255;i++){
+
+let ip=base+i
+
+fetch(`http://${ip}:8001/api/v2/`)
+.then(r=>r.json())
+.then(data=>{
+
+if(data.device){
+
+let btn=document.createElement("button")
+
+btn.innerText=data.device.name+" "+ip
+
+btn.onclick=()=>{
+
+document.getElementById("ip").value=ip
+
+}
+
+document.getElementById("devices").appendChild(btn)
+
+}
+
+})
+
+.catch(()=>{})
+
+}
+
+})
+
+}
+
+let pad=document.getElementById("touch")
+
+let sx,sy
+
+pad.addEventListener("touchstart",e=>{
+sx=e.touches[0].clientX
+sy=e.touches[0].clientY
+})
+
+pad.addEventListener("touchend",e=>{
+
+let dx=e.changedTouches[0].clientX-sx
+let dy=e.changedTouches[0].clientY-sy
+
+if(Math.abs(dx)>Math.abs(dy)){
+
+if(dx>30) sendKey("KEY_RIGHT")
+if(dx<-30) sendKey("KEY_LEFT")
+
+}else{
+
+if(dy>30) sendKey("KEY_DOWN")
+if(dy<-30) sendKey("KEY_UP")
+
+}
+
+})
+
+</script>
+
+</body>
+  </html>
