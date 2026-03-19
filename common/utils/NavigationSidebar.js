@@ -444,6 +444,46 @@ class NavigationSidebar {
                 height: 18px;
             }
 
+            .sidebar-kofi-btn {
+                margin-top: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.45rem;
+                padding: 0.5rem 1.1rem;
+                border-radius: 2rem;
+                background: rgba(255, 160, 50, 0.08);
+                border: 1px solid rgba(255, 160, 50, 0.2);
+                color: #ffa032;
+                font-size: 0.8rem;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.25s ease;
+                width: fit-content;
+                align-self: center;
+                box-sizing: border-box;
+            }
+
+            .sidebar-kofi-btn:hover {
+                background: rgba(255, 160, 50, 0.15);
+                border-color: rgba(255, 160, 50, 0.4);
+                color: #ffb84d;
+                text-decoration: none;
+                box-shadow: 0 0 10px rgba(255, 160, 50, 0.15);
+            }
+
+            .sidebar-kofi-btn img {
+                width: 16px;
+                height: 16px;
+                opacity: 0.9;
+            }
+
+            .sidebar-kofi-wrap {
+                display: flex;
+                justify-content: center;
+                margin-top: 0;
+            }
+
             /* =========================================================
             Floating Action Button (FAB)
             ========================================================= */
@@ -605,6 +645,12 @@ class NavigationSidebar {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
                 Report Issue
             </button>
+            <div class="sidebar-kofi-wrap">
+                <a href="https://ko-fi.com/duckontheweb" target="_blank" class="sidebar-kofi-btn">
+                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" alt="Ko-Fi">
+                    Support Me
+                </a>
+            </div>
         `;
         this.sidebarElement.appendChild(footer);
 
