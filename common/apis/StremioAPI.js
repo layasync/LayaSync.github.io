@@ -47,27 +47,24 @@ class StremioAPI {
         if (!InputValidator.isValidEmail(email)) {
             throw new Error("Invalid email format");
         }
-        if (!InputValidator.isValidPassword(password)) {
-            throw new Error("Password must be 6-20 characters");
-        }
 
         const body = {
             type: "Login",
             email: email,
             password: password
         };
-        
+
         try {
             const data = await this.call("login", body);
 
             // Store ONLY email and authKey - NOT password
             StremioSessionInstance.setSession(email, data.result.authKey);
-            
+
             // Zero out the password parameter for security
             password = null;
 
             Logger.debug('StremioAPI', 'User logged in successfully', { email });
-            
+
             // Return session without password
             return StremioSessionInstance.getSession();
         } catch (error) {
@@ -79,7 +76,7 @@ class StremioAPI {
     // Logout - clear session and any stored credentials
     static async logout() {
         const session = StremioSessionInstance.getSession();
-        
+
         // Optionally notify the server (best effort)
         if (session?.authKey) {
             try {
@@ -95,12 +92,12 @@ class StremioAPI {
 
         // Clear session locally
         StremioSessionInstance.clearSession();
-        
+
         // Clear any stored credentials from previous version
         sessionStorage.clear();
         localStorage.removeItem('lastEmail');
         localStorage.removeItem('lastPassword');
-        
+
         Logger.debug('StremioAPI', 'User logged out');
     }
 
@@ -115,9 +112,6 @@ class StremioAPI {
         if (!InputValidator.isValidEmail(email)) {
             throw new Error("Invalid email format");
         }
-        if (!InputValidator.isValidPassword(password)) {
-            throw new Error("Password must be 6-20 characters");
-        }
 
         const body = {
             type: "Register",
@@ -129,13 +123,8 @@ class StremioAPI {
             }
         };
 
-        try {
-            await this.call("register", body);
-            Logger.debug('StremioAPI', 'Account registered successfully', { email });
-        } catch (error) {
-            Logger.error('StremioAPI', 'Registration failed', error, { email });
-            throw error;
-        }
+        await this.call("register", body);
+        Logger.debug('StremioAPI', 'Account registered successfully', { email });
     }
 
     // Ensure an account exists.

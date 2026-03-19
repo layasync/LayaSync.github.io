@@ -50,11 +50,13 @@ class Network {
             }
         }
 
-        const shouldUseProxy = this.isCrossOrigin(url) && !options.forceDirect;
+        // Always try a direct fetch first. Many cross-origin APIs (e.g. TorBox) support CORS
+        // natively, and proxying them strips auth headers causing failures. Only skip direct
+        // fetch if the caller explicitly opts out via forceDirect: false.
+        const skipDirect = options.forceDirect === false;
 
-        if (!shouldUseProxy) {
+        if (!skipDirect) {
             try {
-                // Try direct fetch (for local files, same-origin, or explicitly forced)
                 const resp = await this.fetchWithTimeout(url, options, options.timeout);
                 if (resp.ok) {
                     try {
@@ -67,7 +69,7 @@ class Network {
                 Logger.warn('Network', `Direct fetch failed for ${url}: ${resp.status}`);
             } catch (e) {
                 Logger.warn('Network', `Direct fetch error for ${url}, falling back to proxy...`, { error: e.message });
-                // Fallthrough to proxy if direct fails (e.g. valid relative path but 404, or network err)
+                // Fallthrough to proxy below
             }
         }
 

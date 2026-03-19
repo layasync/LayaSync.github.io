@@ -16,13 +16,13 @@ class Logger {
     }
 
     // Error logging - always reports to Honeybadger (but not sensitive data)
-    static error(component, message, error = null, data = {}) {
+    static async error(component, message, error = null, data = {}) {
         console.error(`[${component}] ${message}`, error, this.#sanitize(data));
 
         // Report to Honeybadger if available
         if (typeof window !== 'undefined' && window.Honeybadger) {
             try {
-                Honeybadger.notify(error || new Error(message), {
+                await Honeybadger.notify(error || new Error(message), {
                     component,
                     context: this.#sanitize(data)
                 });
