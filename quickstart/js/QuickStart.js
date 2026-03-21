@@ -208,20 +208,20 @@ class QuickStart {
 
         try {
             const selectedFormatterId = this.ui.formatSelect?.value;
-            
+
             // Save the selected formatter ID
             if (selectedFormatterId) {
                 localStorage.setItem('quickstart_formatter_id', selectedFormatterId);
                 Logger.debug('QuickStart', 'Formatter ID saved:', { selectedFormatterId });
             }
-            
+
             // If it's a custom formatter, also save the JSON definition and filename
             if (selectedFormatterId === 'custom' && this.customFormatterDefinition) {
                 try {
                     const jsonString = JSON.stringify(this.customFormatterDefinition);
                     localStorage.setItem('quickstart_formatter_json', jsonString);
                     Logger.debug('QuickStart', 'Custom formatter JSON saved to localStorage');
-                    
+
                     // Save the filename if available
                     if (this.formatterFilename) {
                         localStorage.setItem('quickstart_formatter_filename', this.formatterFilename);
@@ -247,10 +247,10 @@ class QuickStart {
             // Restore AIOStreams URL
             if (savedUrl) {
                 this.ui.saveAIOStreamsCheckbox.checked = true;
-                
+
                 // Check if it's a predefined host by looking for a matching option
                 const predefinedHost = Array.from(this.ui.aiostreamsHostSelect.options).find(opt => opt.value === savedUrl);
-                
+
                 if (predefinedHost) {
                     // It's a predefined host from the dropdown
                     this.ui.aiostreamsHostSelect.value = savedUrl;
@@ -270,31 +270,31 @@ class QuickStart {
             const savedFormatterId = localStorage.getItem('quickstart_formatter_id');
             if (savedFormatterId) {
                 this.ui.saveFormatterCheckbox.checked = true;
-                
+
                 // If it's a custom formatter, try to load the JSON definition
                 if (savedFormatterId === 'custom') {
                     if (savedFormatter) {
                         try {
                             const formatterDef = JSON.parse(savedFormatter);
-                            
+
                             // Validate the formatter
-                            if (formatterDef && typeof formatterDef === 'object' && 
+                            if (formatterDef && typeof formatterDef === 'object' &&
                                 formatterDef.name && formatterDef.description) {
-                                
+
                                 this.customFormatterDefinition = formatterDef;
                                 this.formatterLoadedFromCache = true;
-                                
+
                                 // Switch to custom formatter option
                                 this.ui.formatSelect.value = 'custom';
                                 this.handleFormatterSelection('custom');
-                                
+
                                 // Restore and display the filename
                                 const savedFilename = localStorage.getItem('quickstart_formatter_filename');
                                 if (savedFilename) {
                                     this.formatterFilename = savedFilename;
                                     this.displayFormatterFilename(savedFilename);
                                 }
-                                
+
                                 Logger.debug('QuickStart', 'Custom formatter loaded from cache');
                             }
                         } catch (err) {
@@ -582,26 +582,26 @@ class QuickStart {
         reader.onload = (e) => {
             try {
                 const definition = JSON.parse(e.target.result);
-                
+
                 // Validate that it's a proper formatter definition
                 if (!definition || typeof definition !== 'object') {
                     throw new Error("Formatter must be a valid object");
                 }
-                
+
                 if (!definition.name || typeof definition.name !== 'string') {
                     throw new Error("Formatter must have a 'name' property (string)");
                 }
-                
+
                 if (!definition.description || typeof definition.description !== 'string') {
                     throw new Error("Formatter must have a 'description' property (string)");
                 }
-                
+
                 this.customFormatterDefinition = definition;
                 this.formatterLoadedFromCache = false; // Mark as user-uploaded, not from cache
                 this.formatterFilename = file.name; // Store the filename
                 this.displayFormatterFilename(file.name); // Show the filename in the UI
                 Logger.debug('QuickStart', "Custom formatter loaded successfully:", { filename: file.name });
-                
+
                 // Save the new formatter to localStorage if checkbox is enabled
                 this.saveFormatter();
             } catch (err) {
@@ -1105,13 +1105,6 @@ class QuickStart {
     }
 
     async showSuccessModal(isNewAccount, email, password) {
-        let modalMessage = "";
-        if (isNewAccount) {
-            modalMessage = `Created a <b>new account</b> and set it up.`;
-        } else {
-            modalMessage = `Updated your <b>existing account</b>.`;
-        }
-
         let detailsHtml = '';
         if (isNewAccount) {
             detailsHtml = `
@@ -1128,8 +1121,8 @@ class QuickStart {
         }
 
         await Modal.success(
-            `${modalMessage} ${detailsHtml} <br><br> Your Duck Streams password is the same as your Stremio password. <br><br> Login to Stremio with these credentials to start watching!`,
-            "Success! 🎉"
+            `Log into Stremio and enjoy! ${detailsHtml} <br><br>Your Duck Streams password is the same as your Stremio password.`,
+            "Welcome to Duck Streams!"
         );
     }
 
@@ -1196,13 +1189,13 @@ class QuickStart {
             // Fetch version info from config
             const versionData = await Network.request('version.json');
             this.versionData = versionData;
-            
+
             // Get the current date
             const currentDate = versionData.current;
-            
+
             // Get the last date the user saw
             const lastSeenDate = localStorage.getItem('quickstart_last_seen_update');
-            
+
             // If no stored date or if current is newer, show notification
             if (!lastSeenDate || this.compareDates(lastSeenDate, currentDate) < 0) {
                 this.displayUpdateNotification(currentDate, lastSeenDate);
@@ -1220,7 +1213,7 @@ class QuickStart {
         const banner = document.getElementById('updateNotificationBanner');
         const changesList = document.getElementById('updateChangesList');
         const dismissBtn = document.getElementById('dismissUpdateBtn');
-        
+
         if (!banner || !changesList || !dismissBtn) return; // UI elements not found
 
         // Find all updates that are newer than lastSeenDate
@@ -1230,25 +1223,25 @@ class QuickStart {
                 return this.compareDates(u.date, currentDate) <= 0;
             }
             // Otherwise, show updates between lastSeenDate and currentDate
-            return this.compareDates(u.date, lastSeenDate) > 0 && 
-                   this.compareDates(u.date, currentDate) <= 0;
+            return this.compareDates(u.date, lastSeenDate) > 0 &&
+                this.compareDates(u.date, currentDate) <= 0;
         });
 
         if (relevantUpdates.length === 0) return; // No updates to display
-        
+
         // Clear and populate changes list with all updates
         changesList.innerHTML = '';
-        
+
         // Display updates in chronological order (newest first)
         for (let i = 0; i < relevantUpdates.length; i++) {
             const update = relevantUpdates[i];
-            
+
             // Add date header
             const dateHeader = document.createElement('li');
             dateHeader.className = 'update-date-header';
             dateHeader.textContent = this.formatDate(update.date);
             changesList.appendChild(dateHeader);
-            
+
             // Add changes for this update
             update.changes.forEach(change => {
                 const li = document.createElement('li');
@@ -1272,8 +1265,8 @@ class QuickStart {
         try {
             // Parse date string manually to avoid timezone issues
             const [year, month, day] = dateString.split('-').map(Number);
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const monthName = monthNames[month - 1];
             return `${monthName} ${day}, ${year}`;
         } catch {

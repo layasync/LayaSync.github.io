@@ -35,16 +35,16 @@ class StremioSession {
 
     // Check if user is authenticated
     isAuthenticated() {
-        return this.#sessionData !== null && 
-               this.#sessionData.authKey !== undefined &&
-               Date.now() < this.#sessionData.expiresAt;
+        return this.#sessionData !== null &&
+            this.#sessionData.authKey !== undefined &&
+            Date.now() < this.#sessionData.expiresAt;
     }
 
     // Invalidate session (logout)
     clearSession() {
         const hadSession = this.#sessionData !== null;
         this.#sessionData = null;
-        
+
         if (hadSession) {
             if (typeof Logger !== 'undefined') {
                 Logger.debug('StremioSession', 'Session cleared');
@@ -60,3 +60,4 @@ class StremioSession {
 
 // Create and expose singleton instance
 const StremioSessionInstance = new StremioSession();
+window.StremioSessionInstance = StremioSessionInstance;
