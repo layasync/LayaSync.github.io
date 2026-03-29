@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>IPTV COMMANDER - V8 ELITE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="IPTV Sync">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg">
+    <title>IPTV Sync - Mobile Elite</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,7 +25,7 @@
         * {
             box-sizing: border-box; margin: 0; padding: 0;
             font-family: 'Roboto', sans-serif; text-transform: uppercase;
-            font-weight: 900; letter-spacing: 0.8px; -webkit-font-smoothing: antialiased;
+            font-weight: 900; letter-spacing: 0.6px; -webkit-font-smoothing: antialiased;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -32,10 +36,23 @@
 
         .app-shell { display: flex; height: 100vh; width: 100vw; position: relative; }
 
-        /* SIDEBAR DRAWER */
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 150; backdrop-filter: blur(4px); }
-        .col-sources { width: 70px; background: #E5E5EA; display: flex; flex-direction: column; align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 200; transition: left 0.3s ease; }
-        .col-nav { width: 270px; background: var(--sidebar); display: flex; flex-direction: column; border-right: 1px solid var(--border); z-index: 200; transition: left 0.3s ease; }
+        /* SIDEBAR / DRAWER */
+        .sidebar-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            display: none; z-index: 150; backdrop-filter: blur(4px);
+        }
+
+        .col-sources {
+            width: 70px; background: #E5E5EA; display: flex; flex-direction: column;
+            align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 200;
+            transition: left 0.3s ease;
+        }
+        
+        .col-nav {
+            width: 270px; background: var(--sidebar); 
+            display: flex; flex-direction: column; border-right: 1px solid var(--border);
+            z-index: 200; transition: left 0.3s ease;
+        }
 
         @media (max-width: 768px) {
             .col-sources { position: absolute; height: 100%; left: -70px; }
@@ -45,54 +62,102 @@
             .app-shell.menu-open .sidebar-overlay { display: block; }
         }
 
-        /* ICONS */
-        .source-icon { width: 46px; height: 46px; background: #FFF; border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); font-size: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .source-icon {
+            width: 46px; height: 46px; background: #FFF; border-radius: 12px; margin-bottom: 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); transition: 0.2s; font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
+        }
+        .source-icon img { width: 100%; height: 100%; object-fit: cover; }
         .source-icon.active { border-color: var(--accent); background: var(--accent); color: #FFF; }
         .source-icon.add { color: var(--accent); border: 1px dashed var(--accent); }
         .source-icon.settings { color: var(--text-dim); }
         .source-icon.bulk-del { color: var(--danger); }
 
-        /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 15px; }
-        .modal { background: #FFF; padding: 25px; border-radius: 20px; width: 100%; max-width: 480px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column; position: relative; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+        /* NAVIGATION HEADER */
+        .nav-header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
         .close-x { font-size: 22px; cursor: pointer; color: var(--text-dim); padding: 5px; }
+
+        .mode-switch { display: flex; padding: 10px; gap: 5px; }
+        .mode-btn {
+            flex: 1; padding: 12px 5px; background: rgba(0,0,0,0.05); border-radius: 8px;
+            text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim);
+        }
+        .mode-btn.active { background: var(--accent); color: #fff; }
+
+        .cat-scroll { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
+        .cat-item {
+            padding: 14px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--text-dim); font-size: 9px;
+        }
+        .cat-item.active { background: var(--accent); color: #fff; }
+        .cat-edit-btn { font-size: 7px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 4px; color: #fff; }
+
+        /* MAIN CONTENT */
+        main { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.4); }
+        header {
+            height: 65px; padding: 0 10px; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+        }
+        .menu-toggle { font-size: 24px; padding: 10px; cursor: pointer; }
+
+        .search-bar {
+            background: #FFF; border: 1px solid var(--border); padding: 10px 15px;
+            border-radius: 10px; width: 130px; color: var(--text); font-size: 10px;
+        }
+
+        /* 3-COLUMN GRID */
+        .grid {
+            flex: 1; overflow-y: auto; padding: 10px; display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px; align-content: start; -webkit-overflow-scrolling: touch;
+        }
+
+        .card {
+            background: #FFF; border-radius: 10px; padding: 8px;
+            text-align: center; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 5px; border-radius: 4px; background: #F2F2F7; }
+        .card-name { font-size: 7px; height: 18px; overflow: hidden; line-height: 1.1; color: var(--text-dim); }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(10px); padding: 15px;
+        }
+        .modal {
+            background: #FFF; padding: 25px; border-radius: 20px;
+            width: 100%; max-width: 480px; border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; 
+            display: flex; flex-direction: column; position: relative;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+        }
         .modal-body { overflow-y: auto; flex: 1; padding: 5px 0; }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; background: #F2F2F7; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-weight: 900; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; background: #F2F2F7; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-weight: 900; font-size: 11px; }
         .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; cursor: pointer; color: #fff; font-weight: 900; font-size: 11px; margin-top: 5px; }
         .btn-blue { background: var(--accent); }
         .btn-red { background: var(--danger); }
         .btn-green { background: var(--success); }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
 
-        /* NAV */
-        .mode-switch { display: flex; padding: 10px; gap: 5px; }
-        .mode-btn { flex: 1; padding: 12px 5px; background: rgba(0,0,0,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim); }
-        .mode-btn.active { background: var(--accent); color: #fff; }
-        .cat-scroll { flex: 1; overflow-y: auto; padding: 10px; }
-        .cat-item { padding: 14px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 9px; }
-        .cat-item.active { background: var(--accent); color: #fff; }
-
-        /* GRID */
-        main { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.4); }
-        header { height: 65px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
-        .menu-toggle { display: none; font-size: 24px; padding: 10px; cursor: pointer; }
-        @media (max-width: 768px) { .menu-toggle { display: block; } }
-        .search-bar { background: #FFF; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; width: 40%; color: var(--text); font-size: 10px; }
-        @media (max-width: 768px) { .search-bar { width: 140px; } }
-        .grid { flex: 1; overflow-y: auto; padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; align-content: start; }
-        .card { background: #FFF; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid var(--border); }
-        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 8px; border-radius: 6px; background: #F2F2F7; }
-        .card-name { font-size: 8px; height: 22px; overflow: hidden; line-height: 1.2; color: var(--text-dim); }
-
         #loading { position: fixed; top: 20px; right: 20px; background: var(--accent); padding: 10px 20px; border-radius: 30px; display: none; z-index: 2000; color: #FFF; }
         .bulk-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #EEE; gap: 10px; font-size: 9px; }
+        .bulk-group-header { background: #F9F9F9; font-size: 10px; color: var(--accent); padding: 12px; margin-top: 10px; display: flex; align-items: center; gap: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <div id="loading">WORKING...</div>
+    <div id="loading">...</div>
     <div class="sidebar-overlay" onclick="closeDrawer()"></div>
 
     <!-- SETTINGS MODAL -->
@@ -103,17 +168,17 @@
                 <div class="close-x" onclick="closeModal('settingsModal')">×</div>
             </div>
             <label style="font-size: 8px;">CORS PROXY URL</label>
-            <input type="text" id="proxyInput" placeholder="https://your-worker.workers.dev/?url=">
+            <input type="text" id="proxyInput" value="https://shy-salad-c986.layasync.workers.dev/?url=">
             <button class="btn btn-blue" onclick="saveSettings()">SAVE SETTINGS</button>
-            <button class="btn btn-red" onclick="clearAllData()">WIPE ALL DATA</button>
+            <button class="btn btn-red" onclick="clearAllData()">WIPE WORKSPACE</button>
         </div>
     </div>
 
-    <!-- BULK MODAL -->
+    <!-- BULK TOOLS MODAL -->
     <div class="modal-overlay" id="bulkModal">
         <div class="modal">
             <div class="modal-header">
-                <h2>🗑️ BULK MANAGEMENT</h2>
+                <h2>🗑️ BULK TOOLS</h2>
                 <div class="close-x" onclick="closeModal('bulkModal')">×</div>
             </div>
             <div class="mode-switch">
@@ -131,22 +196,23 @@
     <div class="modal-overlay" id="importModal" style="display: flex;">
         <div class="modal">
             <div class="modal-header">
-                <h2>ADD PLAYLIST</h2>
+                <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg" style="height:30px; border-radius:5px; margin-right:10px;">
+                <h2>IPTV Sync</h2>
                 <div class="close-x" onclick="closeModal('importModal')" id="closeImpX" style="display:none;">×</div>
             </div>
             <select id="importType" onchange="toggleImportFields()">
                 <option value="xtream">XTREAM CODES API</option>
                 <option value="m3u_url">M3U URL</option>
-                <option value="m3u_file">M3U FILE</option>
-                <option value="builder">EMPTY BUILDER</option>
+                <option value="m3u_file">LOCAL FILE</option>
+                <option value="builder">CUSTOM BUILDER</option>
             </select>
             <div id="xtFields">
-                <input type="text" id="xtHost" placeholder="HOST">
+                <input type="text" id="xtHost" placeholder="HOST (http://...)">
                 <input type="text" id="xtUser" placeholder="USERNAME">
                 <input type="password" id="xtPass" placeholder="PASSWORD">
             </div>
             <div id="m3uFields" style="display:none;">
-                <input type="text" id="m3uUrl" placeholder="URL">
+                <input type="text" id="m3uUrl" placeholder="PASTE M3U URL">
                 <input type="file" id="m3uFileInput">
             </div>
             <div id="builderFields" style="display:none;">
@@ -177,13 +243,16 @@
 
     <div class="app-shell" id="shell">
         <div class="col-sources" id="sourceBar">
+            <div class="source-icon active" style="margin-bottom:20px;">
+                <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg">
+            </div>
             <div class="source-icon add" onclick="openModal('importModal')">+</div>
             <div class="source-icon settings" onclick="openModal('settingsModal')">⚙️</div>
             <div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>
         </div>
 
         <div class="col-nav">
-            <div class="nav-header-mobile" style="padding:15px; display:flex; justify-content:space-between;">
+            <div class="nav-header">
                 <div class="traffic-lights"><div class="light" style="background:#FF5F56"></div><div class="light" style="background:#FFBD2E"></div><div class="light" style="background:#27C93F"></div></div>
                 <div class="close-x" onclick="closeDrawer()">✕</div>
             </div>
@@ -212,16 +281,10 @@
         </main>
     </div>
 
-    <!-- EXTRA MODALS -->
-    <div class="modal-overlay" id="addGroupModal">
-        <div class="modal"><div class="modal-header"><h3>📁 NEW GROUP</h3><div class="close-x" onclick="closeModal('addGroupModal')">×</div></div><input type="text" id="newGroupName"><button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button></div>
-    </div>
-    <div class="modal-overlay" id="groupModal">
-        <div class="modal"><div class="modal-header"><h3>📁 EDIT GROUP</h3><div class="close-x" onclick="closeModal('groupModal')">×</div></div><input type="text" id="editGroupName"><button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button><button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button></div>
-    </div>
-    <div class="modal-overlay" id="manualItemModal">
-        <div class="modal"><div class="modal-header"><h3>+ MANUAL ITEM</h3><div class="close-x" onclick="closeModal('manualItemModal')">×</div></div><input type="text" id="manName" placeholder="NAME"><input type="text" id="manLogo" placeholder="LOGO"><input type="text" id="manUrl" placeholder="URL"><select id="manCatSelect"></select><button class="btn btn-blue" onclick="saveManualItem()">ADD</button></div>
-    </div>
+    <!-- UTILITY MODALS -->
+    <div class="modal-overlay" id="addGroupModal"><div class="modal"><div class="modal-header"><h3>📁 NEW GROUP</h3><div class="close-x" onclick="closeModal('addGroupModal')">×</div></div><input type="text" id="newGroupName"><button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button></div></div>
+    <div class="modal-overlay" id="groupModal"><div class="modal"><div class="modal-header"><h3>📁 EDIT GROUP</h3><div class="close-x" onclick="closeModal('groupModal')">×</div></div><input type="text" id="editGroupName"><button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button><button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button></div></div>
+    <div class="modal-overlay" id="manualItemModal"><div class="modal"><div class="modal-header"><h3>+ MANUAL ITEM</h3><div class="close-x" onclick="closeModal('manualItemModal')">×</div></div><input type="text" id="manName" placeholder="NAME"><input type="text" id="manLogo" placeholder="LOGO"><input type="text" id="manUrl" placeholder="URL"><select id="manCatSelect"></select><button class="btn btn-blue" onclick="saveManualItem()">ADD</button></div></div>
 
     <script>
         let playlists = [], activeIdx = -1, activeMode = 'live', activeCatId = null, editingItemId = null, editingCatId = null, bulkMode = 'live';
@@ -265,11 +328,11 @@
                 } else {
                     const file = document.getElementById('m3uFileInput').files[0], url = document.getElementById('m3uUrl').value;
                     let raw = file ? await file.text() : await fetch(`${PROXY}${encodeURIComponent(url)}`).then(r => r.text());
-                    data.name = file ? file.name : "M3U SOURCE"; parseM3U(raw, data);
+                    data.name = file ? file.name : "M3U"; parseM3U(raw, data);
                 }
                 playlists.push(data); saveWorkspace(); finalizeUI(playlists.length - 1);
                 document.getElementById('closeImpX').style.display = 'block';
-            } catch(e) { alert("IMPORT ERROR: Verify Proxy URL in Settings."); }
+            } catch(e) { alert("IMPORT ERROR: VERIFY PROXY IN SETTINGS."); }
             document.getElementById('loading').style.display = 'none';
         }
 
@@ -281,7 +344,7 @@
                     const url = lines[i+1]?.trim();
                     if (url && !url.startsWith('#')) {
                         const name = (l.match(/,(.*)$/)?.[1] || "CHANNEL").trim();
-                        const group = (l.match(/group-title="([^"]*)"/)?.[1] || "UNSORTED").trim();
+                        const group = (l.match(/group-title="([^"]*)"/)?.[1] || "GENERAL").trim();
                         const logo = (l.match(/tvg-logo="([^"]*)"/)?.[1] || "").trim();
                         dataObj.live.items.push({ stream_id: 'm3u-'+Math.random(), name, stream_icon: logo, category_id: group, url });
                         gMap.add(group); i++;
@@ -295,7 +358,7 @@
             editingItemId = item.stream_id || item.series_id || item.vod_id;
             document.getElementById('editItemName').value = item.name;
             document.getElementById('editItemLogo').value = item.stream_icon || item.cover || '';
-            document.getElementById('editItemUrl').value = item.url || "API STREAM";
+            document.getElementById('editItemUrl').value = item.url || "API LINK";
             const sel = document.getElementById('editItemCat');
             sel.innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}" ${c.category_id == item.category_id ? 'selected' : ''}>${c.category_name}</option>`).join('');
             openModal('itemModal');
@@ -332,7 +395,7 @@
                 const cat = p[bulkMode].cats.find(c => c.category_id == i.category_id)?.category_name || bulkMode;
                 m3u += `#EXTINF:-1 tvg-logo="${i.stream_icon||i.cover||''}" group-title="${cat}",${i.name}\n${url}\n`;
             });
-            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Export.m3u`; a.click();
+            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Selected.m3u`; a.click();
         }
 
         function executeBulkDelete() {
@@ -364,7 +427,7 @@
         function finalizeUI(idx) { renderSources(); closeModal('importModal'); switchPlaylist(idx); closeDrawer(); }
         function renderSources() {
             const bar = document.getElementById('sourceBar');
-            bar.innerHTML = '<div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>';
+            bar.innerHTML = '<div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div><div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>';
             playlists.forEach((p, idx) => {
                 const div = document.createElement('div'); div.className = `source-icon ${idx === activeIdx ? 'active' : ''}`;
                 div.innerText = p.name.substring(0, 2); div.onclick = () => { switchPlaylist(idx); closeDrawer(); }; bar.prepend(div);
@@ -395,10 +458,10 @@
             grid.appendChild(frag);
         }
 
-        function saveWorkspace() { try { localStorage.setItem('iptv_elite_v8', JSON.stringify(playlists)); } catch(e){} }
-        function loadWorkspace() { const saved = localStorage.getItem('iptv_elite_v8'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
+        function saveWorkspace() { try { localStorage.setItem('iptv_sync_v5', JSON.stringify(playlists)); } catch(e){} }
+        function loadWorkspace() { const saved = localStorage.getItem('iptv_sync_v5'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
         function saveSettings() { PROXY = document.getElementById('proxyInput').value; localStorage.setItem('iptv_proxy', PROXY); closeModal('settingsModal'); }
-        function clearAllData() { if(confirm("WIPE?")) { localStorage.clear(); location.reload(); } }
+        function clearAllData() { if(confirm("WIPE DATA?")) { localStorage.clear(); location.reload(); } }
         function handleSearch() { renderGrid(playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()))); }
         function sortCats() { if(activeIdx===-1) return; playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name)); renderCategories(); }
         function saveManualItem() {
@@ -407,7 +470,7 @@
             saveWorkspace(); closeModal('manualItemModal'); loadCategory(c);
         }
         function openManualItem() {
-            if(activeIdx===-1) return alert("LIST REQ");
+            if(activeIdx===-1) return alert("LOAD LIST");
             document.getElementById('manCatSelect').innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join('');
             openModal('manualItemModal');
         }
@@ -427,7 +490,7 @@
                     m3u += `#EXTINF:-1 tvg-logo="${i.stream_icon||i.cover||''}" group-title="${cat}",${i.name}\n${url}\n`;
                 });
             });
-            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_Build.m3u`; a.click();
+            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_IPTV_Sync.m3u`; a.click();
         }
     </script>
 </body>
