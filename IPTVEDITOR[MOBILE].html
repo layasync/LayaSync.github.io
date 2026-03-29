@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="IPTV Sync">
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg">
-    <title>IPTV Sync - v12 Elite</title>
+    <title>IPTV Sync - Nitro v13</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,6 +24,7 @@
             box-sizing: border-box; margin: 0; padding: 0;
             font-family: 'Roboto', sans-serif; text-transform: uppercase;
             font-weight: 900; letter-spacing: 0.5px; -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body { 
@@ -31,93 +32,35 @@
             color: var(--text); height: 100vh; width: 100vw; overflow: hidden; font-size: 10px; 
         }
 
-        /* STABLE APP STRUCTURE */
-        .app-shell { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        .app-shell { display: flex; height: 100vh; width: 100vw; position: relative; overflow: hidden; }
 
-        /* COLUMN 1: SIDEBAR (SOURCES) */
-        .col-sources {
-            width: 65px; min-width: 65px; background: #E5E5EA; display: flex; flex-direction: column;
-            align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 300;
-        }
-
-        /* COLUMN 2: NAVIGATION (DRAWER) */
-        .col-nav {
-            width: 280px; min-width: 280px; background: var(--sidebar); 
-            display: flex; flex-direction: column; border-right: 1px solid var(--border);
-            z-index: 200; transition: transform 0.3s ease;
-        }
+        /* DRAWER SYSTEM */
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 150; backdrop-filter: blur(4px); }
+        .col-sources { width: 70px; min-width: 70px; background: #E5E5EA; display: flex; flex-direction: column; align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 200; transition: left 0.3s ease; }
+        .col-nav { width: 280px; min-width: 280px; background: var(--sidebar); display: flex; flex-direction: column; border-right: 1px solid var(--border); z-index: 200; transition: left 0.3s ease; }
 
         @media (max-width: 768px) {
-            .col-nav {
-                position: absolute; left: 0; height: 100%;
-                transform: translateX(-100%);
-            }
-            .app-shell.menu-open .col-nav { transform: translateX(65px); }
-            .sidebar-overlay {
-                position: fixed; inset: 0; background: rgba(0,0,0,0.3);
-                display: none; z-index: 150; backdrop-filter: blur(4px);
-            }
+            .col-sources { position: absolute; height: 100%; left: -70px; }
+            .col-nav { position: absolute; height: 100%; left: -350px; }
+            .app-shell.menu-open .col-sources { left: 0; }
+            .app-shell.menu-open .col-nav { left: 70px; }
             .app-shell.menu-open .sidebar-overlay { display: block; }
         }
 
-        /* UI COMPONENTS */
-        .source-icon {
-            width: 44px; height: 44px; background: #FFF; border-radius: 12px; margin-bottom: 12px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--border); font-size: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;
-        }
+        /* ICONS */
+        .source-icon { width: 46px; height: 46px; background: #FFF; border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); font-size: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; flex-shrink: 0; }
         .source-icon img { width: 100%; height: 100%; object-fit: cover; }
         .source-icon.active { border-color: var(--accent); background: var(--accent); color: #FFF; }
         .source-icon.add { color: var(--accent); border: 1px dashed var(--accent); }
         .source-icon.settings { color: var(--text-dim); }
         .source-icon.bulk-del { color: var(--danger); }
 
-        .nav-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .traffic-lights { display: flex; gap: 5px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; }
-
-        .mode-switch { display: flex; padding: 10px; gap: 5px; }
-        .mode-btn { flex: 1; padding: 12px 5px; background: rgba(0,0,0,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim); }
-        .mode-btn.active { background: var(--accent); color: #fff; }
-
-        .cat-scroll { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
-        .cat-item {
-            padding: 12px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            color: var(--text-dim); font-size: 9px; transition: 0.2s;
-        }
-        .cat-item.active { background: var(--accent); color: #fff; }
-        .cat-edit-btn { font-size: 7px; background: rgba(0,0,0,0.1); padding: 4px 8px; border-radius: 4px; color: #fff; }
-        .cat-item.active .cat-edit-btn { background: rgba(255,255,255,0.2); }
-
-        /* MAIN CONTENT & 3-COL GRID */
-        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        header {
-            height: 65px; min-height: 65px; padding: 0 15px; display: flex; align-items: center;
-            justify-content: space-between; border-bottom: 1px solid var(--border);
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-        }
-        .menu-toggle { font-size: 24px; cursor: pointer; display: none; }
-        @media (max-width: 768px) { .menu-toggle { display: block; } }
-
-        .search-bar { background: #FFF; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; width: 140px; font-size: 10px; }
-
-        .grid {
-            flex: 1; overflow-y: auto; padding: 10px; display: grid;
-            grid-template-columns: repeat(3, 1fr); gap: 8px;
-            align-content: start; -webkit-overflow-scrolling: touch; width: 100%;
-        }
-
-        .card { background: #FFF; border-radius: 10px; padding: 8px; text-align: center; border: 1px solid var(--border); min-width: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 6px; border-radius: 4px; background: #F2F2F7; }
-        .card-name { font-size: 7px; height: 18px; overflow: hidden; line-height: 1.1; color: var(--text-dim); }
-
         /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 10px; }
-        .modal { background: #FFF; padding: 20px; border-radius: 20px; width: 100%; max-width: 480px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
-        .close-x { font-size: 24px; cursor: pointer; color: var(--text-dim); padding: 5px; line-height: 1; }
-        .modal-body { overflow-y: auto; flex: 1; padding: 5px 0; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 15px; }
+        .modal { background: #FFF; padding: 20px; border-radius: 20px; width: 100%; max-width: 480px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .close-btn { font-size: 24px; cursor: pointer; color: var(--text-dim); padding: 5px; }
+        .modal-body { overflow-y: auto; flex: 1; }
 
         input, select { width: 100%; padding: 14px; margin: 6px 0; background: #F2F2F7; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-weight: 900; font-size: 11px; }
         .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; cursor: pointer; color: #fff; font-weight: 900; font-size: 11px; margin-top: 5px; }
@@ -126,29 +69,50 @@
         .btn-green { background: var(--success); }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
 
-        /* BULK TOOLS SPECIAL UI */
-        .bulk-search { position: sticky; top: 0; background: #FFF; z-index: 10; padding-bottom: 10px; }
-        .bulk-group-header { background: #F2F2F7; font-size: 10px; color: var(--accent); padding: 12px; margin-top: 10px; display: flex; align-items: center; gap: 12px; border-radius: 10px; cursor: pointer; }
-        .bulk-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #F2F2F7; gap: 12px; font-size: 9px; }
-        .bulk-row input[type="checkbox"], .bulk-group-header input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+        /* NAV */
+        .mode-switch { display: flex; padding: 10px; gap: 5px; }
+        .mode-btn { flex: 1; padding: 12px 5px; background: rgba(0,0,0,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim); }
+        .mode-btn.active { background: var(--accent); color: #fff; }
+        .cat-scroll { flex: 1; overflow-y: auto; padding: 10px; }
+        .cat-item { padding: 14px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 9px; }
+        .cat-item.active { background: var(--accent); color: #fff; }
 
-        #loading { position: fixed; top: 20px; right: 20px; background: var(--accent); padding: 10px 20px; border-radius: 30px; display: none; z-index: 2000; color: #FFF; }
+        /* CONTENT GRID */
+        main { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.2); overflow: hidden; width: 100%; }
+        header { height: 65px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
+        .menu-toggle { font-size: 24px; padding: 10px; cursor: pointer; }
+        .search-bar { background: #FFF; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; width: 130px; font-size: 10px; }
+
+        .grid { 
+            flex: 1; overflow-y: auto; padding: 10px; display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; align-content: start; 
+            width: 100%; box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
+        .card { background: #FFF; border-radius: 10px; padding: 6px; text-align: center; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.03); min-width: 0; }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 5px; border-radius: 4px; background: #F2F2F7; }
+        .card-name { font-size: 7px; height: 18px; overflow: hidden; line-height: 1.1; color: var(--text-dim); width: 100%; }
+
+        #loading { position: fixed; top: 20px; right: 20px; background: var(--accent); padding: 10px 20px; border-radius: 30px; display: none; z-index: 2000; color: #FFF; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .bulk-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #F2F2F7; gap: 10px; font-size: 9px; }
+        .bulk-group-header { background: #F9F9F9; font-size: 10px; color: var(--accent); padding: 12px; margin-top: 10px; display: flex; align-items: center; gap: 10px; border-radius: 8px; position: sticky; top: 0; z-index: 5; }
     </style>
 </head>
 <body>
 
     <div id="loading">...</div>
-    <div class="sidebar-overlay" onclick="closeMenu()"></div>
+    <div class="sidebar-overlay" onclick="closeDrawer()"></div>
 
     <!-- SETTINGS -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
-            <div class="modal-header"><h2>⚙️ SYSTEM</h2><div class="close-x" onclick="closeModal('settingsModal')">×</div></div>
+            <div class="modal-header"><h2>⚙️ SYSTEM</h2><div class="close-btn" onclick="closeModal('settingsModal')">×</div></div>
             <div class="modal-body">
                 <label style="font-size: 8px;">CORS PROXY URL</label>
                 <input type="text" id="proxyInput" value="https://shy-salad-c986.layasync.workers.dev/?url=">
                 <button class="btn btn-blue" onclick="saveSettings()">SAVE SETTINGS</button>
-                <button class="btn btn-red" onclick="clearAllData()">WIPE WORKSPACE</button>
+                <button class="btn btn-red" onclick="clearAllData()">WIPE ALL DATA</button>
             </div>
         </div>
     </div>
@@ -156,14 +120,12 @@
     <!-- BULK TRASH -->
     <div class="modal-overlay" id="bulkModal">
         <div class="modal">
-            <div class="modal-header"><h2>🗑️ BULK MANAGEMENT</h2><div class="close-x" onclick="closeModal('bulkModal')">×</div></div>
-            <div class="bulk-search">
-                <input type="text" id="bulkSearch" placeholder="SEARCH IN TRASH..." oninput="renderBulkList()">
-                <div class="mode-switch">
-                    <div class="mode-btn active" id="bulk-btn-live" onclick="setBulkMode('live')">LIVE</div>
-                    <div class="mode-btn" id="bulk-btn-movie" onclick="setBulkMode('movie')">VOD</div>
-                    <div class="mode-btn" id="bulk-btn-series" onclick="setBulkMode('series')">SERIES</div>
-                </div>
+            <div class="modal-header"><h2>🗑️ BULK TOOLS</h2><div class="close-btn" onclick="closeModal('bulkModal')">×</div></div>
+            <input type="text" id="bulkSearch" placeholder="SEARCH IN TRASH..." oninput="renderBulkList()">
+            <div class="mode-switch">
+                <div class="mode-btn active" id="bulk-btn-live" onclick="setBulkMode('live')">LIVE</div>
+                <div class="mode-btn" id="bulk-btn-movie" onclick="setBulkMode('movie')">VOD</div>
+                <div class="mode-btn" id="bulk-btn-series" onclick="setBulkMode('series')">SERIES</div>
             </div>
             <div class="modal-body" id="bulkContent"></div>
             <div style="padding-top: 10px;">
@@ -179,14 +141,14 @@
             <div class="modal-header">
                 <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg" style="height:30px; border-radius:8px;">
                 <h2>IPTV Sync</h2>
-                <div class="close-x" onclick="closeModal('importModal')" id="closeImpX" style="display:none;">×</div>
+                <div class="close-btn" onclick="closeModal('importModal')" id="closeImpX" style="display:none;">×</div>
             </div>
             <div class="modal-body">
                 <select id="importType" onchange="toggleImportFields()">
-                    <option value="xtream">XTREAM CODES API</option>
+                    <option value="xtream">XTREAM API</option>
                     <option value="m3u_url">M3U URL</option>
                     <option value="m3u_file">LOCAL FILE</option>
-                    <option value="builder">EMPTY PLAYLIST</option>
+                    <option value="builder">NEW PLAYLIST</option>
                 </select>
                 <div id="xtFields">
                     <input type="text" id="xtHost" placeholder="HOST URL">
@@ -198,7 +160,7 @@
                     <input type="file" id="m3uFileInput">
                 </div>
                 <div id="builderFields" style="display:none;"><input type="text" id="buildName" placeholder="PLAYLIST NAME"></div>
-                <button class="btn btn-blue" onclick="addPlaylist()">IMPORT</button>
+                <button class="btn btn-blue" onclick="addPlaylist()">CONNECT SOURCE</button>
             </div>
         </div>
     </div>
@@ -206,11 +168,11 @@
     <!-- ITEM EDITOR -->
     <div class="modal-overlay" id="itemModal">
         <div class="modal">
-            <div class="modal-header"><h3>🔧 EDIT ITEM</h3><div class="close-x" onclick="closeModal('itemModal')">×</div></div>
+            <div class="modal-header"><h3>🔧 EDIT ITEM</h3><div class="close-btn" onclick="closeModal('itemModal')">×</div></div>
             <div class="modal-body">
-                <input type="text" id="editItemName" placeholder="NAME">
-                <input type="text" id="editItemLogo" placeholder="LOGO URL">
-                <input type="text" id="editItemUrl" placeholder="STREAM URL">
+                <input type="text" id="editItemName">
+                <input type="text" id="editItemLogo">
+                <input type="text" id="editItemUrl">
                 <label style="font-size: 8px;">CATEGORY</label>
                 <select id="editItemCat"></select>
                 <button class="btn btn-blue" onclick="saveItemChanges()">SAVE CHANGES</button>
@@ -219,21 +181,16 @@
         </div>
     </div>
 
-    <div class="app-shell" id="appShell">
-        <!-- SOURCES -->
-        <div class="col-sources">
+    <div class="app-shell" id="shell">
+        <div class="col-sources" id="sourceBar">
             <div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div>
             <div class="source-icon add" onclick="openModal('importModal')">+</div>
             <div class="source-icon settings" onclick="openModal('settingsModal')">⚙️</div>
             <div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>
         </div>
 
-        <!-- CATEGORIES -->
         <div class="col-nav">
-            <div class="nav-header">
-                <div class="traffic-lights"><div class="dot" style="background:#FF5F56"></div><div class="dot" style="background:#FFBD2E"></div><div class="dot" style="background:#27C93F"></div></div>
-                <div class="close-x" onclick="closeMenu()" style="font-size:18px;">✕</div>
-            </div>
+            <div class="modal-header" style="padding:15px;"><div class="light" style="background:#FF5F56; width:12px; height:12px; border-radius:50%"></div><div class="close-btn" onclick="closeDrawer()">×</div></div>
             <div class="mode-switch">
                 <div class="mode-btn active" id="btn-live" onclick="setMode('live')">LIVE</div>
                 <div class="mode-btn" id="btn-movie" onclick="setMode('movie')">VOD</div>
@@ -248,32 +205,30 @@
 
         <main>
             <header>
-                <div class="menu-toggle" onclick="openMenu()">☰</div>
-                <input type="text" class="search-bar" id="search" placeholder="SEARCH..." oninput="handleSearch()">
-                <div style="display:flex; gap:5px;">
-                    <button class="btn btn-blue" style="width:auto; padding:8px 12px;" onclick="openManualItem()">+</button>
-                    <button class="btn btn-ghost" style="width:auto; padding:8px 12px; color: var(--accent); border-color: var(--accent);" onclick="exportM3U()">⤓</button>
-                </div>
+                <div class="menu-toggle" onclick="openDrawer()">☰</div>
+                <input type="text" class="search-bar" id="search" placeholder="SEARCH..." oninput="nitroSearch(this.value)">
+                <div style="display:flex; gap:5px;"><button class="btn btn-blue" style="width:auto; padding:8px 12px;" onclick="openManualItem()">+</button><button class="btn btn-ghost" style="width:auto; padding:8px 12px; color: var(--accent); border-color: var(--accent);" onclick="exportM3U()">⤓</button></div>
             </header>
             <div class="grid" id="mainGrid"></div>
         </main>
     </div>
 
-    <!-- EXTRA MODALS -->
-    <div class="modal-overlay" id="addGroupModal"><div class="modal"><div class="modal-header"><h3>📁 NEW GROUP</h3><div class="close-x" onclick="closeModal('addGroupModal')">×</div></div><div class="modal-body"><input type="text" id="newGroupName"><button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button></div></div></div>
-    <div class="modal-overlay" id="groupModal"><div class="modal"><div class="modal-header"><h3>📁 EDIT GROUP</h3><div class="close-x" onclick="closeModal('groupModal')">×</div></div><div class="modal-body"><input type="text" id="editGroupName"><button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button><button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button></div></div></div>
-    <div class="modal-overlay" id="manualItemModal"><div class="modal"><div class="modal-header"><h3>+ MANUAL</h3><div class="close-x" onclick="closeModal('manualItemModal')">×</div></div><div class="modal-body"><input type="text" id="manName" placeholder="NAME"><input type="text" id="manLogo" placeholder="LOGO"><input type="text" id="manUrl" placeholder="URL"><select id="manCatSelect"></select><button class="btn btn-blue" onclick="saveManualItem()">ADD</button></div></div></div>
+    <!-- MISC -->
+    <div class="modal-overlay" id="addGroupModal"><div class="modal"><div class="modal-header"><h3>📁 NEW GROUP</h3><div class="close-btn" onclick="closeModal('addGroupModal')">×</div></div><div class="modal-body"><input type="text" id="newGroupName"><button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button></div></div></div>
+    <div class="modal-overlay" id="groupModal"><div class="modal"><div class="modal-header"><h3>📁 EDIT GROUP</h3><div class="close-btn" onclick="closeModal('groupModal')">×</div></div><div class="modal-body"><input type="text" id="editGroupName"><button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button><button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button></div></div></div>
+    <div class="modal-overlay" id="manualItemModal"><div class="modal"><div class="modal-header"><h3>+ MANUAL ITEM</h3><div class="close-btn" onclick="closeModal('manualItemModal')">×</div></div><div class="modal-body"><input type="text" id="manName" placeholder="NAME"><input type="text" id="manLogo" placeholder="LOGO"><input type="text" id="manUrl" placeholder="URL"><select id="manCatSelect"></select><button class="btn btn-blue" onclick="saveManualItem()">ADD</button></div></div></div>
 
     <script>
         let playlists = [], activeIdx = -1, activeMode = 'live', activeCatId = null, editingItemId = null, editingCatId = null, bulkMode = 'live';
         let PROXY = localStorage.getItem('iptv_proxy') || "https://shy-salad-c986.layasync.workers.dev/?url=";
+        let searchTimeout;
 
         window.onload = () => { loadWorkspace(); document.getElementById('proxyInput').value = PROXY; };
 
         const openModal = (id) => document.getElementById(id).style.display = 'flex';
         const closeModal = (id) => document.getElementById(id).style.display = 'none';
-        const openMenu = () => document.getElementById('appShell').classList.add('menu-open');
-        const closeMenu = () => document.getElementById('appShell').classList.remove('menu-open');
+        const openDrawer = () => document.getElementById('shell').classList.add('menu-open');
+        const closeDrawer = () => document.getElementById('shell').classList.remove('menu-open');
 
         function toggleImportFields() {
             const v = document.getElementById('importType').value;
@@ -291,11 +246,11 @@
                 if(type === 'xtream') {
                     const h = document.getElementById('xtHost').value, u = document.getElementById('xtUser').value, p = document.getElementById('xtPass').value;
                     const eps = ['get_live_categories','get_live_streams','get_vod_categories','get_vod_streams','get_series_categories','get_series'];
-                    const res = await Promise.allSettled(eps.map(ep => fetch(`${PROXY}${encodeURIComponent(`${h}/player_api.php?username=${u}&password=${p}&action=${ep}`)}`).then(r => r.json())));
+                    const resSettled = await Promise.allSettled(eps.map(ep => fetch(`${PROXY}${encodeURIComponent(`${h}/player_api.php?username=${u}&password=${p}&action=${ep}`)}`).then(r => r.json())));
                     
-                    data.live = {cats:res[0].value||[], items: (res[1].value||[]).map(i => ({...i, url: `${h}/${u}/${p}/${i.stream_id}.ts`})) }; 
-                    data.movie = {cats:res[2].value||[], items: (res[3].value||[]).map(i => ({...i, url: `${h}/movie/${u}/${p}/${i.stream_id}.mp4`})) }; 
-                    data.series = {cats:res[4].value||[], items: (res[5].value||[]).map(i => ({...i, url: `${h}/series/${u}/${p}/${i.series_id}.mp4`})) };
+                    data.live = {cats:resSettled[0].value||[], items: (resSettled[1].value||[]).map(i => ({...i, url: `${h}/${u}/${p}/${i.stream_id}.ts`})) }; 
+                    data.movie = {cats:resSettled[2].value||[], items: (resSettled[3].value||[]).map(i => ({...i, url: `${h}/movie/${u}/${p}/${i.stream_id}.mp4`})) }; 
+                    data.series = {cats:resSettled[4].value||[], items: (resSettled[5].value||[]).map(i => ({...i, url: `${h}/series/${u}/${p}/${i.series_id}.mp4`})) };
                     data.creds = {h, u, p}; data.name = new URL(h).hostname;
                 } else if(type === 'builder') {
                     data.name = document.getElementById('buildName').value || "CUSTOM";
@@ -303,9 +258,10 @@
                 } else {
                     const file = document.getElementById('m3uFileInput').files[0], url = document.getElementById('m3uUrl').value;
                     let raw = file ? await file.text() : await fetch(`${PROXY}${encodeURIComponent(url)}`).then(r => r.text());
-                    data.name = file ? file.name : "M3U SOURCE"; parseM3U(raw, data);
+                    data.name = file ? file.name : "M3U"; parseM3U(raw, data);
                 }
-                playlists.push(data); activeIdx = playlists.length - 1;
+                playlists.push(data);
+                activeIdx = playlists.length - 1;
                 saveWorkspace(); finalizeUI(activeIdx);
                 document.getElementById('closeImpX').style.display = 'block';
             } catch(e) { alert("IMPORT COMPLETED"); finalizeUI(playlists.length-1); }
@@ -320,9 +276,9 @@
                     const url = lines[i+1]?.trim();
                     if (url && !url.startsWith('#')) {
                         const name = (l.match(/,(.*)$/)?.[1] || "CHANNEL").trim();
-                        const group = (l.match(/group-title="([^"]*)"/)?.[1] || "UNSORTED").trim();
+                        const group = (l.match(/group-title="([^"]*)"/)?.[1] || "GENERAL").trim();
                         const logo = (l.match(/tvg-logo="([^"]*)"/)?.[1] || "").trim();
-                        dataObj.live.items.push({ stream_id: Math.random(), name, stream_icon: logo, category_id: group, url: url });
+                        dataObj.live.items.push({ stream_id: 'm3u-'+Math.random(), name, stream_icon: logo, category_id: group, url: url });
                         gMap.add(group); i++;
                     }
                 }
@@ -330,7 +286,7 @@
             gMap.forEach(g => dataObj.live.cats.push({ category_id: g, category_name: g }));
         }
 
-        function finalizeUI(idx) { activeIdx = idx; renderSources(); closeModal('importModal'); setMode('live'); closeMenu(); }
+        function finalizeUI(idx) { activeIdx = idx; renderSources(); closeModal('importModal'); setMode('live'); closeDrawer(); }
         
         function renderSources() {
             const bar = document.querySelector('.col-sources');
@@ -346,25 +302,43 @@
         function renderCategories() {
             const list = document.getElementById('catList'); list.innerHTML = ""; if(activeIdx === -1) return;
             const all = document.createElement('div'); all.className = `cat-item ${activeCatId === null ? 'active' : ''}`;
-            all.innerText = "ALL CONTENT"; all.onclick = () => { loadCategory(null); closeMenu(); }; list.appendChild(all);
+            all.innerText = "ALL CONTENT"; all.onclick = () => { loadCategory(null); closeDrawer(); }; list.appendChild(all);
             playlists[activeIdx][activeMode].cats.forEach(c => {
                 const div = document.createElement('div'); div.className = `cat-item ${activeCatId === c.category_id ? 'active' : ''}`;
                 div.innerHTML = `<span>${c.category_name}</span> <div class="cat-edit-btn" onclick="openCatEditor('${c.category_id}', event)">EDIT</div>`;
-                div.onclick = () => { loadCategory(c.category_id); closeMenu(); }; list.appendChild(div);
+                div.onclick = () => { loadCategory(c.category_id); closeDrawer(); }; list.appendChild(div);
             });
         }
 
         function loadCategory(id) { activeCatId = id; renderCategories(); const items = playlists[activeIdx][activeMode].items; renderGrid(id ? items.filter(i => i.category_id == id) : items); }
         
         function renderGrid(items) {
-            const grid = document.getElementById('mainGrid'); grid.innerHTML = ""; const frag = document.createDocumentFragment();
-            items.slice(0, 1000).forEach(i => {
-                const card = document.createElement('div'); card.className = 'card'; card.onclick = () => openItemEditor(i);
-                const logo = i.stream_icon || i.cover || 'https://via.placeholder.com/150';
-                card.innerHTML = `<img src="${logo}" loading="lazy"><div class="card-name">${i.name}</div>`;
+            const grid = document.getElementById('mainGrid'); 
+            grid.innerHTML = ""; 
+            const frag = document.createDocumentFragment();
+            const limit = Math.min(items.length, 1200);
+
+            // Concurrent Rendering Batch
+            for(let i=0; i<limit; i++){
+                const item = items[i];
+                const card = document.createElement('div'); 
+                card.className = 'card'; 
+                card.onclick = () => openItemEditor(item);
+                const logo = item.stream_icon || item.cover || 'https://via.placeholder.com/150';
+                card.innerHTML = `<img src="${logo}" loading="lazy" decoding="async"><div class="card-name">${item.name}</div>`;
                 frag.appendChild(card);
-            });
-            grid.appendChild(frag);
+            }
+            
+            requestAnimationFrame(() => { grid.appendChild(frag); });
+        }
+
+        function nitroSearch(val) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const q = val.toLowerCase();
+                const filtered = playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q));
+                renderGrid(filtered);
+            }, 150);
         }
 
         function openItemEditor(item) {
@@ -396,7 +370,7 @@
                 const items = playlists[activeIdx][bulkMode].items.filter(i => i.category_id == cat.category_id && i.name.toLowerCase().includes(query));
                 if(items.length === 0) return;
                 const h = document.createElement('div'); h.className = 'bulk-group-header';
-                h.innerHTML = `<input type="checkbox" onchange="document.querySelectorAll('.bulk-item-check[data-catid=\\'${cat.category_id}\\']').forEach(c => c.checked = this.checked)"> <span>${cat.category_name}</span>`;
+                h.innerHTML = `<input type="checkbox" onchange="document.querySelectorAll('.bulk-item-check[data-catid=\\'${cat.category_id.replace(/'/g, "\\'")}\\']').forEach(c => c.checked = this.checked)"> <span>${cat.category_name}</span>`;
                 container.appendChild(h);
                 items.forEach(item => {
                     const row = document.createElement('div'); row.className = 'bulk-row';
@@ -417,19 +391,22 @@
             const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Selected.m3u`; a.click();
         }
         function executeBulkDelete() {
-            if(!confirm("DELETE?")) return;
+            if(!confirm("DELETE SELECTED?")) return;
             const ids = Array.from(document.querySelectorAll('.bulk-item-check:checked')).map(c => c.dataset.id);
             playlists[activeIdx][bulkMode].items = playlists[activeIdx][bulkMode].items.filter(i => !ids.includes((i.stream_id||i.series_id||i.vod_id).toString()));
             saveWorkspace(); renderBulkList(); loadCategory(null);
         }
 
-        function saveWorkspace() { localStorage.setItem('iptv_sync_v12', JSON.stringify(playlists)); }
-        function loadWorkspace() { const saved = localStorage.getItem('iptv_sync_v12'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
+        function saveWorkspace() { localStorage.setItem('iptv_sync_v13', JSON.stringify(playlists)); }
+        function loadWorkspace() { const saved = localStorage.getItem('iptv_sync_v13'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
         function saveSettings() { PROXY = document.getElementById('proxyInput').value; localStorage.setItem('iptv_proxy', PROXY); closeModal('settingsModal'); }
-        function clearAllData() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); } }
-        function handleSearch() { const q = document.getElementById('search').value.toLowerCase(); renderGrid(playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q))); }
+        function clearAllData() { if(confirm("WIPE DATA?")) { localStorage.clear(); location.reload(); } }
         function sortCats() { playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name)); renderCategories(); }
-        function saveManualItem() { const n = document.getElementById('manName').value, u = document.getElementById('manUrl').value, c = document.getElementById('manCatSelect').value; if(n && u) playlists[activeIdx][activeMode].items.push({stream_id:Math.random(), name:n, stream_icon:document.getElementById('manLogo').value, category_id:c, url:u}); saveWorkspace(); closeModal('manualItemModal'); loadCategory(c); }
+        function saveManualItem() {
+            const n = document.getElementById('manName').value, u = document.getElementById('manUrl').value, c = document.getElementById('manCatSelect').value;
+            if(n && u) playlists[activeIdx][activeMode].items.push({stream_id:Math.random(), name:n, stream_icon:document.getElementById('manLogo').value, category_id:c, url:u});
+            saveWorkspace(); closeModal('manualItemModal'); loadCategory(c);
+        }
         function openManualItem() { document.getElementById('manCatSelect').innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join(''); openModal('manualItemModal'); }
         function openCatEditor(id, e) { e.stopPropagation(); editingCatId = id; document.getElementById('editGroupName').value = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id).category_name; openModal('groupModal'); }
         function saveGroupRename() { playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId).category_name = document.getElementById('editGroupName').value; saveWorkspace(); closeModal('groupModal'); renderCategories(); }
