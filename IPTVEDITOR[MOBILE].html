@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="IPTV Sync">
     <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg">
-    <title>IPTV Sync - Nitro Elite</title>
+    <title>IPTV Sync - v15 Elite</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,7 +24,6 @@
             box-sizing: border-box; margin: 0; padding: 0;
             font-family: 'Roboto', sans-serif; text-transform: uppercase;
             font-weight: 900; letter-spacing: 0.5px; -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body { 
@@ -32,80 +31,87 @@
             color: var(--text); height: 100vh; width: 100vw; overflow: hidden; font-size: 10px; 
         }
 
-        .app-shell { display: flex; height: 100vh; width: 100vw; position: relative; overflow: hidden; }
+        .app-shell { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* SIDEBAR / DRAWER */
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 150; backdrop-filter: blur(4px); }
-        .col-sources { width: 65px; min-width: 65px; background: #E5E5EA; display: flex; flex-direction: column; align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 300; }
-        .col-nav { width: 280px; min-width: 280px; background: var(--sidebar); display: flex; flex-direction: column; border-right: 1px solid var(--border); z-index: 200; transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* COLUMN 1: SIDEBAR (SOURCES) */
+        .col-sources {
+            width: 65px; min-width: 65px; background: #E5E5EA; display: flex; flex-direction: column;
+            align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 300;
+        }
+
+        /* COLUMN 2: NAVIGATION (DRAWER) */
+        .col-nav {
+            width: 280px; min-width: 280px; background: var(--sidebar); 
+            display: flex; flex-direction: column; border-right: 1px solid var(--border);
+            z-index: 200; transition: transform 0.3s ease;
+        }
 
         @media (max-width: 768px) {
             .col-nav { position: absolute; left: 0; height: 100%; transform: translateX(-100%); }
             .app-shell.menu-open .col-nav { transform: translateX(65px); }
+            .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 150; backdrop-filter: blur(4px); }
             .app-shell.menu-open .sidebar-overlay { display: block; }
         }
 
+        /* BUTTONS & ICONS */
         .source-icon { width: 44px; height: 44px; background: #FFF; border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); font-size: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; flex-shrink: 0; }
         .source-icon img { width: 100%; height: 100%; object-fit: cover; }
         .source-icon.active { border-color: var(--accent); background: var(--accent); color: #FFF; }
         .source-icon.add { color: var(--accent); border: 1px dashed var(--accent); }
         .source-icon.settings { color: var(--text-dim); }
-        .source-icon.bulk-del { color: var(--danger); }
+        .source-icon.bulk-del { color: var(--text-dim); }
+        .source-icon.bulk-del.active { color: var(--danger); background: #FFF; border-color: var(--danger); }
 
         .nav-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .mode-switch { display: flex; padding: 10px; gap: 5px; }
         .mode-btn { flex: 1; padding: 12px 5px; background: rgba(0,0,0,0.05); border-radius: 8px; text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim); }
         .mode-btn.active { background: var(--accent); color: #fff; }
 
-        .cat-scroll { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
-        .cat-item { padding: 14px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text-dim); font-size: 9px; transition: background 0.1s; }
+        /* LIST ITEMS */
+        .list-container { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
+        .cat-item, .bulk-row {
+            padding: 12px 15px; margin-bottom: 4px; border-radius: 8px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--text-dim); font-size: 9px; transition: 0.2s;
+        }
+        .cat-item:hover, .bulk-row:hover { background: rgba(0,0,0,0.03); color: var(--text); }
         .cat-item.active { background: var(--accent); color: #fff; }
         .cat-edit-btn { font-size: 7px; background: rgba(0,0,0,0.1); padding: 4px 8px; border-radius: 4px; color: #fff; }
 
-        /* CONTENT AREA & GRID */
-        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; position: relative; }
-        header { height: 65px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); z-index: 50; }
-        .menu-toggle { font-size: 24px; cursor: pointer; display: none; padding: 10px; }
+        /* TRASH DRAWER SPECIFIC */
+        .bulk-group-header { background: #F2F2F7; padding: 12px; margin: 10px 0 5px 0; border-radius: 8px; display: flex; align-items: center; gap: 10px; color: var(--accent); font-size: 9px; cursor: pointer; }
+        .bulk-row { gap: 10px; justify-content: flex-start; padding: 10px; border-bottom: 1px solid #F2F2F7; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
+        .trash-footer { padding: 15px; border-top: 1px solid var(--border); background: #FFF; }
+
+        /* GRID: 3 COLUMNS NO OVERLAP */
+        main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        header { height: 65px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
+        .menu-toggle { font-size: 24px; cursor: pointer; display: none; }
         @media (max-width: 768px) { .menu-toggle { display: block; } }
 
-        .search-bar { background: #FFF; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; width: 130px; font-size: 10px; outline: none; transition: width 0.2s; }
-        .search-bar:focus { width: 160px; border-color: var(--accent); }
+        .search-bar { background: #FFF; border: 1px solid var(--border); padding: 10px 15px; border-radius: 10px; width: 140px; font-size: 10px; }
 
-        .grid { 
-            flex: 1; overflow-y: auto; padding: 10px; display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px; align-content: start; 
-            width: 100%; box-sizing: border-box;
-            -webkit-overflow-scrolling: touch;
-            will-change: transform;
-        }
-        .card { 
-            background: #FFF; border-radius: 10px; padding: 6px; 
-            text-align: center; border: 1px solid var(--border); 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            display: flex; flex-direction: column; align-items: center;
-            min-width: 0; transform: translateZ(0); 
-        }
-        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 5px; border-radius: 4px; background: #F2F2F7; pointer-events: none; }
-        .card-name { font-size: 7px; height: 18px; overflow: hidden; line-height: 1.1; color: var(--text-dim); width: 100%; }
+        .grid { flex: 1; overflow-y: auto; padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; align-content: start; -webkit-overflow-scrolling: touch; width: 100%; }
+        .card { background: #FFF; border-radius: 10px; padding: 8px; text-align: center; border: 1px solid var(--border); min-width: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 6px; border-radius: 4px; background: #F2F2F7; }
+        .card-name { font-size: 7px; height: 18px; overflow: hidden; line-height: 1.1; color: var(--text-dim); }
 
         /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 10px; }
-        .modal { background: #FFF; padding: 20px; border-radius: 20px; width: 100%; max-width: 480px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 88vh; display: flex; flex-direction: column; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); padding: 15px; }
+        .modal { background: #FFF; padding: 25px; border-radius: 20px; width: 100%; max-width: 480px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 85vh; display: flex; flex-direction: column; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
         .close-x { font-size: 24px; cursor: pointer; color: var(--text-dim); padding: 5px; line-height: 1; }
-        .modal-body { overflow-y: auto; flex: 1; padding-right: 5px; }
-
-        input, select { width: 100%; padding: 14px; margin: 6px 0; background: #F2F2F7; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-weight: 900; font-size: 11px; }
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; cursor: pointer; color: #fff; font-weight: 900; font-size: 11px; margin-top: 5px; }
+        
+        input[type="text"], input[type="password"], select { width: 100%; padding: 14px; margin: 8px 0; background: #F2F2F7; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-weight: 900; font-size: 11px; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; cursor: pointer; color: #fff; font-weight: 900; font-size: 11px; margin-top: 5px; transition: opacity 0.2s; }
+        .btn:active { opacity: 0.7; }
         .btn-blue { background: var(--accent); }
         .btn-red { background: var(--danger); }
         .btn-green { background: var(--success); }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
 
         #loading { position: fixed; top: 20px; right: 20px; background: var(--accent); padding: 10px 20px; border-radius: 30px; display: none; z-index: 2000; color: #FFF; }
-        .bulk-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #F2F2F7; gap: 10px; font-size: 9px; }
-        .bulk-group-header { background: #F9F9F9; font-size: 10px; color: var(--accent); padding: 12px; margin-top: 10px; display: flex; align-items: center; gap: 10px; border-radius: 8px; position: sticky; top: 0; z-index: 5; }
     </style>
 </head>
 <body>
@@ -113,60 +119,43 @@
     <div id="loading">...</div>
     <div class="sidebar-overlay" onclick="closeMenu()"></div>
 
-    <!-- SETTINGS -->
+    <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <div class="modal-header"><h2>⚙️ SYSTEM</h2><div class="close-x" onclick="closeModal('settingsModal')">×</div></div>
-            <div class="modal-body">
-                <label style="font-size: 8px;">CORS PROXY URL</label>
-                <input type="text" id="proxyInput" value="https://shy-salad-c986.layasync.workers.dev/?url=">
-                <button class="btn btn-blue" onclick="saveSettings()">SAVE SETTINGS</button>
-                <button class="btn btn-red" onclick="clearAllData()">WIPE WORKSPACE</button>
-            </div>
+            <label style="font-size: 8px;">CORS PROXY URL</label>
+            <input type="text" id="proxyInput" value="https://shy-salad-c986.layasync.workers.dev/?url=">
+            <button class="btn btn-blue" onclick="saveSettings()">SAVE SETTINGS</button>
+            <button class="btn btn-red" onclick="clearAllData()">WIPE WORKSPACE</button>
         </div>
     </div>
 
-    <!-- BULK TRASH -->
-    <div class="modal-overlay" id="bulkModal">
-        <div class="modal">
-            <div class="modal-header"><h2>🗑️ BULK TOOLS</h2><div class="close-x" onclick="closeModal('bulkModal')">×</div></div>
-            <input type="text" id="bulkSearchInput" placeholder="SEARCH IN TRASH..." oninput="nitroBulkSearch(this.value)">
-            <div class="mode-switch">
-                <div class="mode-btn active" id="bulk-btn-live" onclick="setBulkMode('live')">LIVE</div>
-                <div class="mode-btn" id="bulk-btn-movie" onclick="setBulkMode('movie')">VOD</div>
-                <div class="mode-btn" id="bulk-btn-series" onclick="setBulkMode('series')">SERIES</div>
-            </div>
-            <div class="modal-body" id="bulkContent"></div>
-            <div style="padding-top: 10px;">
-                <button class="btn btn-green" onclick="executeSelectedExport()">EXPORT SELECTED M3U</button>
-                <button class="btn btn-red" onclick="executeBulkDelete()">DELETE SELECTED ITEMS</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- IMPORT -->
+    <!-- IMPORT MODAL -->
     <div class="modal-overlay" id="importModal" style="display: flex;">
         <div class="modal">
             <div class="modal-header">
-                <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg" style="height:30px; border-radius:5px;">
-                <h2 style="margin-left: 10px;">IPTV Sync</h2>
+                <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg" style="height:30px; border-radius:8px;">
+                <h2>IPTV Sync</h2>
                 <div class="close-x" onclick="closeModal('importModal')" id="closeImpX" style="display:none;">×</div>
             </div>
             <div class="modal-body">
                 <select id="importType" onchange="toggleImportFields()">
-                    <option value="xtream">XTREAM CODES API</option>
+                    <option value="xtream">XTREAM API</option>
                     <option value="m3u_url">M3U URL</option>
                     <option value="m3u_file">LOCAL FILE</option>
-                    <option value="builder">EMPTY PLAYLIST</option>
+                    <option value="builder">NEW PLAYLIST</option>
                 </select>
                 <div id="xtFields">
                     <input type="text" id="xtHost" placeholder="HOST (http://...)">
                     <input type="text" id="xtUser" placeholder="USERNAME">
                     <input type="password" id="xtPass" placeholder="PASSWORD">
                 </div>
-                <div id="m3uFields" style="display:none;"><input type="text" id="m3uUrl" placeholder="PASTE M3U URL"><input type="file" id="m3uFileInput"></div>
+                <div id="m3uFields" style="display:none;">
+                    <input type="text" id="m3uUrl" placeholder="PASTE M3U URL">
+                    <input type="file" id="m3uFileInput">
+                </div>
                 <div id="builderFields" style="display:none;"><input type="text" id="buildName" placeholder="PLAYLIST NAME"></div>
-                <button class="btn btn-blue" onclick="addPlaylist()">LOAD DATA</button>
+                <button class="btn btn-blue" onclick="addPlaylist()">IMPORT</button>
             </div>
         </div>
     </div>
@@ -187,57 +176,76 @@
         </div>
     </div>
 
-    <div class="app-shell" id="shell">
+    <div class="app-shell" id="appShell">
+        <!-- SIDEBAR: SOURCES -->
         <div class="col-sources">
             <div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div>
             <div class="source-icon add" onclick="openModal('importModal')">+</div>
             <div class="source-icon settings" onclick="openModal('settingsModal')">⚙️</div>
-            <div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>
+            <div class="source-icon bulk-del" id="trashBtn" onclick="toggleTrashMode()">🗑️</div>
         </div>
 
+        <!-- NAVIGATION DRAWER (Used for Categories OR Trash) -->
         <div class="col-nav">
             <div class="nav-header">
-                <div class="traffic-lights"><div class="dot" style="background:#FF5F56"></div><div class="dot" style="background:#FFBD2E"></div><div class="dot" style="background:#27C93F"></div></div>
+                <div class="traffic-lights"><div class="light" style="background:#FF5F56; width:12px; height:12px; border-radius:50%"></div></div>
+                <div id="drawerTitle" style="font-size: 9px; color: var(--accent);">CATEGORIES</div>
                 <div class="close-x" onclick="closeMenu()" style="font-size:18px;">✕</div>
             </div>
+            
+            <!-- SEARCH IN DRAWER -->
+            <div style="padding: 10px 10px 0 10px;">
+                <input type="text" id="drawerSearch" placeholder="SEARCH..." oninput="handleDrawerSearch(this.value)">
+            </div>
+
             <div class="mode-switch">
                 <div class="mode-btn active" id="btn-live" onclick="setMode('live')">LIVE</div>
                 <div class="mode-btn" id="btn-movie" onclick="setMode('movie')">VOD</div>
                 <div class="mode-btn" id="btn-series" onclick="setMode('series')">SERIES</div>
             </div>
-            <div style="padding: 10px; display: flex; gap: 5px;">
+
+            <div id="catActions" style="padding: 0 10px; display: flex; gap: 5px;">
                 <button class="btn btn-blue" style="font-size: 7px; padding: 12px;" onclick="openModal('addGroupModal')">+ GROUP</button>
                 <button class="btn btn-ghost" style="font-size: 7px; padding: 12px;" onclick="sortCats()">A-Z</button>
             </div>
-            <div class="cat-scroll" id="catList"></div>
+
+            <div class="list-container" id="drawerList"></div>
+
+            <div id="trashActions" class="trash-footer" style="display: none;">
+                <button class="btn btn-green" onclick="executeSelectedExport()">EXPORT SELECTED</button>
+                <button class="btn btn-red" onclick="executeBulkDelete()">DELETE SELECTED</button>
+            </div>
         </div>
 
         <main>
             <header>
                 <div class="menu-toggle" onclick="openMenu()">☰</div>
-                <input type="text" class="search-bar" id="search" placeholder="SEARCH..." oninput="nitroGridSearch(this.value)">
-                <div style="display:flex; gap:5px;"><button class="btn btn-blue" style="width:auto; padding:8px 12px;" onclick="openManualItem()">+</button><button class="btn btn-ghost" style="width:auto; padding:8px 12px; color: var(--accent); border-color: var(--accent);" onclick="exportM3U()">⤓</button></div>
+                <div id="activeInfo" style="font-size: 10px; color: var(--accent); margin-right: auto; margin-left: 10px;">READY</div>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn btn-blue" style="width:auto; padding:8px 12px;" onclick="openManualItem()">+</button>
+                    <button class="btn btn-ghost" style="width:auto; padding:8px 12px; color: var(--accent); border-color: var(--accent);" onclick="exportM3U()">⤓</button>
+                </div>
             </header>
             <div class="grid" id="mainGrid"></div>
         </main>
     </div>
 
-    <!-- MISC MODALS -->
+    <!-- UTILITY MODALS -->
     <div class="modal-overlay" id="addGroupModal"><div class="modal"><div class="modal-header"><h3>📁 NEW GROUP</h3><div class="close-x" onclick="closeModal('addGroupModal')">×</div></div><div class="modal-body"><input type="text" id="newGroupName"><button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button></div></div></div>
     <div class="modal-overlay" id="groupModal"><div class="modal"><div class="modal-header"><h3>📁 EDIT GROUP</h3><div class="close-x" onclick="closeModal('groupModal')">×</div></div><div class="modal-body"><input type="text" id="editGroupName"><button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button><button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button></div></div></div>
     <div class="modal-overlay" id="manualItemModal"><div class="modal"><div class="modal-header"><h3>+ MANUAL ITEM</h3><div class="close-x" onclick="closeModal('manualItemModal')">×</div></div><div class="modal-body"><input type="text" id="manName" placeholder="NAME"><input type="text" id="manLogo" placeholder="LOGO"><input type="text" id="manUrl" placeholder="URL"><select id="manCatSelect"></select><button class="btn btn-blue" onclick="saveManualItem()">ADD</button></div></div></div>
 
     <script>
-        let playlists = [], activeIdx = -1, activeMode = 'live', activeCatId = null, editingItemId = null, editingCatId = null, bulkMode = 'live';
+        let playlists = [], activeIdx = -1, activeMode = 'live', activeCatId = null, editingItemId = null, editingCatId = null;
+        let isTrashMode = false;
         let PROXY = localStorage.getItem('iptv_proxy') || "https://shy-salad-c986.layasync.workers.dev/?url=";
-        let searchTimeout;
 
         window.onload = () => { loadWorkspace(); document.getElementById('proxyInput').value = PROXY; };
 
         const openModal = (id) => document.getElementById(id).style.display = 'flex';
         const closeModal = (id) => document.getElementById(id).style.display = 'none';
-        const openMenu = () => document.getElementById('shell').classList.add('menu-open');
-        const closeMenu = () => document.getElementById('shell').classList.remove('menu-open');
+        const openMenu = () => document.getElementById('appShell').classList.add('menu-open');
+        const closeMenu = () => document.getElementById('appShell').classList.remove('menu-open');
 
         function toggleImportFields() {
             const v = document.getElementById('importType').value;
@@ -246,18 +254,25 @@
             document.getElementById('builderFields').style.display = v === 'builder' ? 'block' : 'none';
         }
 
+        function toggleTrashMode() {
+            if(activeIdx === -1) return alert("LOAD LIST FIRST");
+            isTrashMode = !isTrashMode;
+            document.getElementById('trashBtn').classList.toggle('active', isTrashMode);
+            document.getElementById('drawerTitle').innerText = isTrashMode ? "🗑️ TRASH TOOLS" : "CATEGORIES";
+            document.getElementById('catActions').style.display = isTrashMode ? 'none' : 'flex';
+            document.getElementById('trashActions').style.display = isTrashMode ? 'block' : 'none';
+            renderDrawer();
+        }
+
         async function addPlaylist() {
             const type = document.getElementById('importType').value;
             let data = { type, name: '', live: {cats:[], items:[]}, movie: {cats:[], items:[]}, series: {cats:[], items:[]} };
             document.getElementById('loading').style.display = 'block';
-
             try {
                 if(type === 'xtream') {
                     const h = document.getElementById('xtHost').value, u = document.getElementById('xtUser').value, p = document.getElementById('xtPass').value;
                     const eps = ['get_live_categories','get_live_streams','get_vod_categories','get_vod_streams','get_series_categories','get_series'];
                     const resSettled = await Promise.allSettled(eps.map(ep => fetch(`${PROXY}${encodeURIComponent(`${h}/player_api.php?username=${u}&password=${p}&action=${ep}`)}`).then(r => r.json())));
-                    
-                    // Pre-Constructing URLs for zero-lag rendering
                     data.live = {cats:resSettled[0].value||[], items: (resSettled[1].value||[]).map(i => ({...i, url: `${h}/${u}/${p}/${i.stream_id}.ts`})) }; 
                     data.movie = {cats:resSettled[2].value||[], items: (resSettled[3].value||[]).map(i => ({...i, url: `${h}/movie/${u}/${p}/${i.stream_id}.mp4`})) }; 
                     data.series = {cats:resSettled[4].value||[], items: (resSettled[5].value||[]).map(i => ({...i, url: `${h}/series/${u}/${p}/${i.series_id}.mp4`})) };
@@ -268,12 +283,12 @@
                 } else {
                     const file = document.getElementById('m3uFileInput').files[0], url = document.getElementById('m3uUrl').value;
                     let raw = file ? await file.text() : await fetch(`${PROXY}${encodeURIComponent(url)}`).then(r => r.text());
-                    data.name = file ? file.name : "M3U SOURCE"; parseM3U(raw, data);
+                    data.name = file ? file.name : "M3U"; parseM3U(raw, data);
                 }
                 playlists.push(data); activeIdx = playlists.length - 1;
                 saveWorkspace(); finalizeUI(activeIdx);
                 document.getElementById('closeImpX').style.display = 'block';
-            } catch(e) { alert("IMPORT COMPLETED"); finalizeUI(playlists.length - 1); }
+            } catch(e) { alert("IMPORT COMPLETED"); finalizeUI(playlists.length-1); }
             document.getElementById('loading').style.display = 'none';
         }
 
@@ -299,56 +314,75 @@
         
         function renderSources() {
             const bar = document.querySelector('.col-sources');
-            bar.innerHTML = '<div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div><div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>';
+            bar.innerHTML = '<div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div><div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" id="trashBtn" onclick="toggleTrashMode()">🗑️</div>';
             playlists.forEach((p, idx) => {
                 const div = document.createElement('div'); div.className = `source-icon ${idx === activeIdx ? 'active' : ''}`;
                 div.innerText = p.name.substring(0, 2); div.onclick = () => { activeIdx = idx; finalizeUI(idx); }; bar.prepend(div);
             });
+            document.getElementById('trashBtn').classList.toggle('active', isTrashMode);
         }
 
-        function setMode(mode) { activeMode = mode; document.querySelectorAll('.col-nav .mode-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+mode)); renderCategories(); loadCategory(null); }
+        function setMode(mode) { 
+            activeMode = mode; 
+            document.querySelectorAll('.col-nav .mode-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+mode)); 
+            renderDrawer(); loadCategory(null); 
+        }
         
-        function renderCategories() {
-            const list = document.getElementById('catList'); list.innerHTML = ""; if(activeIdx === -1) return;
+        function renderDrawer() {
+            const list = document.getElementById('drawerList'); 
+            list.innerHTML = ""; 
+            if(activeIdx === -1) return;
+            const q = document.getElementById('drawerSearch').value.toLowerCase();
+
+            if(isTrashMode) {
+                renderBulkInDrawer(list, q);
+            } else {
+                renderCatsInDrawer(list, q);
+            }
+        }
+
+        function renderCatsInDrawer(list, q) {
             const all = document.createElement('div'); all.className = `cat-item ${activeCatId === null ? 'active' : ''}`;
             all.innerText = "ALL CONTENT"; all.onclick = () => { loadCategory(null); closeMenu(); }; list.appendChild(all);
             playlists[activeIdx][activeMode].cats.forEach(c => {
+                if(q && !c.category_name.toLowerCase().includes(q)) return;
                 const div = document.createElement('div'); div.className = `cat-item ${activeCatId === c.category_id ? 'active' : ''}`;
                 div.innerHTML = `<span>${c.category_name}</span> <div class="cat-edit-btn" onclick="openCatEditor('${c.category_id}', event)">EDIT</div>`;
                 div.onclick = () => { loadCategory(c.category_id); closeMenu(); }; list.appendChild(div);
             });
         }
 
-        function loadCategory(id) { activeCatId = id; renderCategories(); const items = playlists[activeIdx][activeMode].items; renderGrid(id ? items.filter(i => i.category_id == id) : items); }
-        
-        // NITRO GRID ENGINE
-        function renderGrid(items) {
-            const grid = document.getElementById('mainGrid'); 
-            grid.innerHTML = ""; 
-            const frag = document.createDocumentFragment();
-            const limit = Math.min(items.length, 1200);
+        function renderBulkInDrawer(list, q) {
+            const current = playlists[activeIdx][activeMode];
+            current.cats.forEach(cat => {
+                const items = current.items.filter(i => i.category_id == cat.category_id && i.name.toLowerCase().includes(q));
+                if(items.length === 0 && !cat.category_name.toLowerCase().includes(q)) return;
 
-            for (let i = 0; i < limit; i++) {
-                const item = items[i];
-                const card = document.createElement('div'); 
-                card.className = 'card'; 
-                card.onclick = () => openItemEditor(item);
-                const logo = item.stream_icon || item.cover || 'https://via.placeholder.com/150';
-                card.innerHTML = `<img src="${logo}" loading="lazy" decoding="async"><div class="card-name">${item.name}</div>`;
-                frag.appendChild(card);
-            }
-            // Painting grid on next animation frame to prevent UI locking
-            requestAnimationFrame(() => { grid.appendChild(frag); });
+                const h = document.createElement('div'); h.className = 'bulk-group-header';
+                h.innerHTML = `<input type="checkbox" onchange="document.querySelectorAll('.bulk-item-check[data-catid=\\'${cat.category_id}\\']').forEach(c => c.checked = this.checked)"> <span>${cat.category_name}</span>`;
+                list.appendChild(h);
+
+                items.forEach(item => {
+                    const row = document.createElement('div'); row.className = 'bulk-row';
+                    const id = item.stream_id || item.series_id || item.vod_id;
+                    row.innerHTML = `<input type="checkbox" class="bulk-item-check" data-id="${id}" data-catid="${cat.category_id}"> <span>${item.name}</span>`;
+                    list.appendChild(row);
+                });
+            });
         }
 
-        function nitroGridSearch(val) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const q = val.toLowerCase();
-                const items = playlists[activeIdx][activeMode].items;
-                const filtered = items.filter(i => i.name.toLowerCase().includes(q));
-                renderGrid(filtered);
-            }, 150);
+        function handleDrawerSearch() { renderDrawer(); }
+
+        function loadCategory(id) { activeCatId = id; renderDrawer(); renderGrid(id ? playlists[activeIdx][activeMode].items.filter(i => i.category_id == id) : playlists[activeIdx][activeMode].items); document.getElementById('activeInfo').innerText = playlists[activeIdx].name; }
+        
+        function renderGrid(items) {
+            const grid = document.getElementById('mainGrid'); grid.innerHTML = ""; const frag = document.createDocumentFragment();
+            items.slice(0, 900).forEach(i => {
+                const card = document.createElement('div'); card.className = 'card'; card.onclick = () => openItemEditor(i);
+                card.innerHTML = `<img src="${i.stream_icon||i.cover||'https://via.placeholder.com/150'}" loading="lazy"><div class="card-name">${i.name}</div>`;
+                frag.appendChild(card);
+            });
+            grid.appendChild(frag);
         }
 
         function openItemEditor(item) {
@@ -359,7 +393,6 @@
             document.getElementById('editItemCat').innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}" ${c.category_id == item.category_id ? 'selected' : ''}>${c.category_name}</option>`).join('');
             openModal('itemModal');
         }
-
         function saveItemChanges() {
             const item = playlists[activeIdx][activeMode].items.find(i => (i.stream_id || i.series_id || i.vod_id) == editingItemId);
             if(item) {
@@ -368,73 +401,38 @@
                 saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId);
             }
         }
-
         function deleteItem() { if(!confirm("DELETE?")) return; playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => (i.stream_id || i.series_id || i.vod_id) != editingItemId); saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId); }
 
-        function openBulkDeleter() { if(activeIdx === -1) return alert("LOAD LIST"); openModal('bulkModal'); setBulkMode('live'); }
-        function setBulkMode(mode) { bulkMode = mode; document.querySelectorAll('#bulkModal .mode-btn').forEach(b => b.classList.toggle('active', b.id === 'bulk-btn-'+mode)); renderBulkList(); }
-        
-        function nitroBulkSearch(val) {
-             clearTimeout(searchTimeout);
-             searchTimeout = setTimeout(() => renderBulkList(), 150);
-        }
-
-        function renderBulkList() {
-            const container = document.getElementById('bulkContent'); container.innerHTML = "";
-            const query = document.getElementById('bulkSearchInput').value.toLowerCase();
-            const current = playlists[activeIdx][bulkMode];
-
-            current.cats.forEach(cat => {
-                const items = current.items.filter(i => i.category_id == cat.category_id && i.name.toLowerCase().includes(query));
-                if(items.length === 0) return;
-                
-                const h = document.createElement('div'); h.className = 'bulk-group-header';
-                h.innerHTML = `<input type="checkbox" onchange="document.querySelectorAll('.bulk-item-check[data-catid=\\'${cat.category_id}\\']').forEach(c => c.checked = this.checked)"> <span>${cat.category_name}</span>`;
-                container.appendChild(h);
-                
-                items.forEach(item => {
-                    const row = document.createElement('div'); row.className = 'bulk-row';
-                    const id = item.stream_id || item.series_id || item.vod_id;
-                    row.innerHTML = `<input type="checkbox" class="bulk-item-check" data-id="${id}" data-catid="${cat.category_id}"> <span>${item.name}</span>`;
-                    container.appendChild(row);
-                });
-            });
-        }
-        
         function executeSelectedExport() {
             const ids = Array.from(document.querySelectorAll('.bulk-item-check:checked')).map(c => c.dataset.id);
             const p = playlists[activeIdx];
-            const sel = p[bulkMode].items.filter(i => ids.includes((i.stream_id||i.series_id||i.vod_id).toString()));
+            const sel = p[activeMode].items.filter(i => ids.includes((i.stream_id||i.series_id||i.vod_id).toString()));
             let m3u = "#EXTM3U\n";
             sel.forEach(i => {
-                const cat = p[bulkMode].cats.find(c => c.category_id == i.category_id)?.category_name || bulkMode;
+                const cat = p[activeMode].cats.find(c => c.category_id == i.category_id)?.category_name || activeMode;
                 m3u += `#EXTINF:-1 tvg-logo="${i.stream_icon||i.cover||''}" group-title="${cat}",${i.name}\n${i.url}\n`;
             });
-            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Nitro_Export.m3u`; a.click();
+            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Selected.m3u`; a.click();
         }
-        
         function executeBulkDelete() {
-            if(!confirm("DELETE?")) return;
+            if(!confirm("DELETE SELECTED?")) return;
             const ids = Array.from(document.querySelectorAll('.bulk-item-check:checked')).map(c => c.dataset.id);
-            playlists[activeIdx][bulkMode].items = playlists[activeIdx][bulkMode].items.filter(i => !ids.includes((i.stream_id||i.series_id||i.vod_id).toString()));
-            saveWorkspace(); renderBulkList(); loadCategory(null);
+            playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => !ids.includes((i.stream_id||i.series_id||i.vod_id).toString()));
+            saveWorkspace(); renderDrawer(); loadCategory(null);
         }
 
-        function saveWorkspace() { try { localStorage.setItem('iptv_nitro_v14', JSON.stringify(playlists)); } catch(e){} }
-        function loadWorkspace() { const saved = localStorage.getItem('iptv_nitro_v14'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
+        function saveWorkspace() { localStorage.setItem('iptv_sync_v15', JSON.stringify(playlists)); }
+        function loadWorkspace() { const saved = localStorage.getItem('iptv_sync_v15'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
         function saveSettings() { PROXY = document.getElementById('proxyInput').value; localStorage.setItem('iptv_proxy', PROXY); closeModal('settingsModal'); }
-        function clearAllData() { if(confirm("WIPE DATA?")) { localStorage.clear(); location.reload(); } }
-        function sortCats() { if(activeIdx === -1) return; playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name)); renderCategories(); }
-        function saveManualItem() {
-            const n = document.getElementById('manName').value, u = document.getElementById('manUrl').value, c = document.getElementById('manCatSelect').value;
-            if(n && u) playlists[activeIdx][activeMode].items.push({stream_id:Math.random(), name:n, stream_icon:document.getElementById('manLogo').value, category_id:c, url:u});
-            saveWorkspace(); closeModal('manualItemModal'); loadCategory(c);
-        }
-        function openManualItem() { if(activeIdx === -1) return; document.getElementById('manCatSelect').innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join(''); openModal('manualItemModal'); }
+        function clearAllData() { if(confirm("WIPE?")) { localStorage.clear(); location.reload(); } }
+        function handleSearch() { const q = document.getElementById('search').value.toLowerCase(); renderGrid(playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q))); }
+        function sortCats() { playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name)); renderDrawer(); }
+        function saveManualItem() { const n = document.getElementById('manName').value, u = document.getElementById('manUrl').value, c = document.getElementById('manCatSelect').value; if(n && u) playlists[activeIdx][activeMode].items.push({stream_id:Math.random(), name:n, stream_icon:document.getElementById('manLogo').value, category_id:c, url:u}); saveWorkspace(); closeModal('manualItemModal'); loadCategory(c); }
+        function openManualItem() { document.getElementById('manCatSelect').innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join(''); openModal('manualItemModal'); }
         function openCatEditor(id, e) { e.stopPropagation(); editingCatId = id; document.getElementById('editGroupName').value = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id).category_name; openModal('groupModal'); }
-        function saveGroupRename() { playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId).category_name = document.getElementById('editGroupName').value; saveWorkspace(); closeModal('groupModal'); renderCategories(); }
+        function saveGroupRename() { playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId).category_name = document.getElementById('editGroupName').value; saveWorkspace(); closeModal('groupModal'); renderDrawer(); }
         function deleteGroup() { playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => i.category_id != editingCatId); playlists[activeIdx][activeMode].cats = playlists[activeIdx][activeMode].cats.filter(c => c.category_id != editingCatId); saveWorkspace(); closeModal('groupModal'); loadCategory(null); }
-        function saveNewGroup() { const n = document.getElementById('newGroupName').value; if(n) playlists[activeIdx][activeMode].cats.push({category_id:n, category_name:n}); saveWorkspace(); closeModal('addGroupModal'); renderCategories(); }
+        function saveNewGroup() { const n = document.getElementById('newGroupName').value; if(n) playlists[activeIdx][activeMode].cats.push({category_id:n, category_name:n}); saveWorkspace(); closeModal('addGroupModal'); renderDrawer(); }
 
         function exportM3U() {
             if(activeIdx === -1) return;
@@ -446,7 +444,7 @@
                     m3u += `#EXTINF:-1 tvg-logo="${i.stream_icon||i.cover||''}" group-title="${cat}",${i.name}\n${i.url}\n`;
                 });
             });
-            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_Nitro.m3u`; a.click();
+            const b = new Blob([m3u], {type:'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_Edited.m3u`; a.click();
         }
     </script>
 </body>
