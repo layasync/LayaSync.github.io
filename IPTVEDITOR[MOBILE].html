@@ -277,7 +277,7 @@
         
         function renderSources() {
             const bar = document.querySelector('.col-sources');
-            bar.innerHTML = '<div class="source-icon active" style="margin-bottom:20px;"><img src="https://upload.wikimedia.org/wikipedia/en/1/10/Careless_Whisper_UK_single.jpg"></div><div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" id="trashBtn" onclick="toggleTrashMode()">🗑️</div>';
+            bar.innerHTML = '<div class="source-icon active" style="margin-bottom:20px;"><img src="https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/iptv_sync_logo.png"></div><div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" id="trashBtn" onclick="toggleTrashMode()">🗑️</div>';
             playlists.forEach((p, idx) => {
                 const div = document.createElement('div'); div.className = `source-icon ${idx === activeIdx ? 'active' : ''}`;
                 div.innerText = p.name.substring(0, 2); div.onclick = () => { activeIdx = idx; finalizeUI(idx); }; bar.prepend(div);
