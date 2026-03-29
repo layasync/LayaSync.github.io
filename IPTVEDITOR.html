@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV COMMANDER - MASTER ELITE v4</title>
+    <title>IPTV COMMANDER - MASTER ELITE v5</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
 
         .app-shell { display: flex; height: 100vh; }
 
-        /* SIDEBAR LAYOUT */
+        /* SIDEBAR */
         .col-sources {
             width: 70px; background: #E5E5EA; display: flex; flex-direction: column;
             align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 100;
@@ -47,7 +47,6 @@
         .source-icon.add { color: var(--accent); border: 1px dashed var(--accent); }
         .source-icon.settings { color: var(--text-dim); }
         .source-icon.bulk-del { color: var(--danger); }
-        .source-icon:hover { transform: scale(1.05); }
 
         /* NAVIGATION */
         .col-nav {
@@ -72,7 +71,7 @@
         .cat-edit-btn { font-size: 7px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; opacity: 0; color: #fff; }
         .cat-item:hover .cat-edit-btn { opacity: 1; }
 
-        /* CONTENT GRID */
+        /* GRID */
         main { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.4); }
         header {
             height: 65px; padding: 0 25px; display: flex; align-items: center;
@@ -93,7 +92,6 @@
             background: #FFF; border-radius: 14px; padding: 15px;
             text-align: center; border: 1px solid var(--border); transition: 0.2s; cursor: pointer;
         }
-        .card:hover { border-color: var(--accent); transform: translateY(-4px); }
         .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 10px; border-radius: 8px; background: #F2F2F7; }
         .card-name { font-size: 8px; height: 22px; overflow: hidden; color: var(--text-dim); }
 
@@ -119,11 +117,12 @@
         }
         .btn-blue { background: var(--accent); }
         .btn-red { background: var(--danger); margin-top: 10px; }
+        .btn-green { background: var(--success); }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); margin-top: 10px; }
 
-        /* BULK LIST */
+        /* BULK UI */
         .bulk-row { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #EEE; gap: 10px; }
-        .bulk-row input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .bulk-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
         .bulk-group-header { background: #F9F9F9; font-size: 9px; color: var(--accent); padding: 10px; border-radius: 5px; margin-top: 10px; display: flex; align-items: center; gap: 10px;}
 
         #loading {
@@ -141,25 +140,27 @@
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <h2>⚙️ SYSTEM SETTINGS</h2>
-            <label style="font-size: 8px; color: var(--text-dim);">CORS PROXY URL (REQUIRED FOR GITHUB)</label>
+            <label style="font-size: 8px; color: var(--text-dim);">CORS PROXY URL</label>
             <input type="text" id="proxyInput" placeholder="https://your-worker.workers.dev/?url=">
             <button class="btn btn-blue" onclick="saveSettings()">SAVE PROXY</button>
-            <button class="btn btn-red" onclick="clearAllData()">WIPE WORKSPACE</button>
+            <button class="btn btn-red" onclick="clearAllData()">WIPE EVERYTHING</button>
             <button class="btn btn-ghost" onclick="closeModal('settingsModal')">CLOSE</button>
         </div>
     </div>
 
-    <!-- MODAL: BULK DELETER -->
+    <!-- MODAL: BULK DELETER / EXPORTER -->
     <div class="modal-overlay" id="bulkModal">
         <div class="modal">
             <h2 style="text-align: center;">🗑️ BULK MANAGEMENT</h2>
+            <p style="font-size: 8px; text-align: center; opacity: 0.6;">SELECT ITEMS TO DELETE OR EXPORT ALONE</p>
             <div class="mode-switch">
                 <div class="mode-btn active" id="bulk-btn-live" onclick="setBulkMode('live')">LIVE</div>
                 <div class="mode-btn" id="bulk-btn-movie" onclick="setBulkMode('movie')">VOD</div>
                 <div class="mode-btn" id="bulk-btn-series" onclick="setBulkMode('series')">SERIES</div>
             </div>
             <div class="modal-body" id="bulkContent"></div>
-            <button class="btn btn-red" onclick="executeBulkDelete()">DELETE SELECTED</button>
+            <button class="btn btn-green" onclick="executeSelectedExport()">DOWNLOAD SELECTED ONLY</button>
+            <button class="btn btn-red" onclick="executeBulkDelete()">DELETE SELECTED PERMANENTLY</button>
             <button class="btn btn-ghost" onclick="closeModal('bulkModal')">CLOSE</button>
         </div>
     </div>
@@ -169,18 +170,18 @@
         <div class="modal">
             <h2 style="text-align:center; margin-bottom:25px;">IMPORT SOURCE</h2>
             <select id="importType" onchange="toggleImportFields()">
-                <option value="xtream">XTREAM CODES API</option>
+                <option value="xtream">XTREAM API</option>
                 <option value="m3u_url">M3U URL</option>
-                <option value="m3u_file">M3U LOCAL FILE</option>
-                <option value="builder">CUSTOM BUILDER</option>
+                <option value="m3u_file">M3U FILE</option>
+                <option value="builder">EMPTY BUILDER</option>
             </select>
             <div id="xtFields">
-                <input type="text" id="xtHost" placeholder="HOST URL">
+                <input type="text" id="xtHost" placeholder="HOST">
                 <input type="text" id="xtUser" placeholder="USERNAME">
                 <input type="password" id="xtPass" placeholder="PASSWORD">
             </div>
             <div id="m3uFields" style="display:none;">
-                <input type="text" id="m3uUrl" placeholder="PASTE M3U URL">
+                <input type="text" id="m3uUrl" placeholder="URL">
                 <input type="file" id="m3uFileInput">
             </div>
             <div id="builderFields" style="display:none;">
@@ -195,49 +196,14 @@
     <div class="modal-overlay" id="itemModal">
         <div class="modal">
             <h3>🔧 EDIT COMPONENT</h3>
-            <input type="text" id="editItemName" placeholder="NAME">
-            <input type="text" id="editItemLogo" placeholder="LOGO URL">
-            <input type="text" id="editItemUrl" placeholder="URL">
-            <label style="font-size: 8px;">TARGET CATEGORY</label>
+            <input type="text" id="editItemName">
+            <input type="text" id="editItemLogo">
+            <input type="text" id="editItemUrl">
+            <label style="font-size: 8px;">CATEGORY</label>
             <select id="editItemCat"></select>
             <button class="btn btn-blue" onclick="saveItemChanges()">SAVE CHANGES</button>
             <button class="btn btn-red" onclick="deleteItem()">DELETE PERMANENTLY</button>
             <button class="btn btn-ghost" onclick="closeModal('itemModal')">CLOSE</button>
-        </div>
-    </div>
-
-    <!-- MODAL: CATEGORY EDITOR -->
-    <div class="modal-overlay" id="groupModal">
-        <div class="modal">
-            <h3>📁 EDIT CATEGORY</h3>
-            <input type="text" id="editGroupName">
-            <button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button>
-            <button class="btn btn-red" onclick="deleteGroup()">DELETE ALL IN GROUP</button>
-            <button class="btn btn-ghost" onclick="closeModal('groupModal')">CANCEL</button>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD MANUAL ITEM -->
-    <div class="modal-overlay" id="manualItemModal">
-        <div class="modal">
-            <h3>+ ADD NEW ITEM</h3>
-            <input type="text" id="manName" placeholder="NAME">
-            <input type="text" id="manLogo" placeholder="LOGO URL">
-            <input type="text" id="manUrl" placeholder="STREAM URL">
-            <label style="font-size: 8px;">CATEGORY</label>
-            <select id="manCatSelect"></select>
-            <button class="btn btn-blue" onclick="saveManualItem()">ADD TO PLAYLIST</button>
-            <button class="btn btn-ghost" onclick="closeModal('manualItemModal')">CANCEL</button>
-        </div>
-    </div>
-
-    <!-- MODAL: NEW GROUP -->
-    <div class="modal-overlay" id="addGroupModal">
-        <div class="modal">
-            <h3>📁 NEW CATEGORY</h3>
-            <input type="text" id="newGroupName" placeholder="GROUP NAME">
-            <button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button>
-            <button class="btn btn-ghost" onclick="closeModal('addGroupModal')">CANCEL</button>
         </div>
     </div>
 
@@ -269,7 +235,7 @@
         <main>
             <header>
                 <div id="activeInfo" style="color:var(--accent)">READY</div>
-                <input type="text" class="search-bar" id="search" placeholder="SEARCH DIRECTORY..." oninput="handleSearch()">
+                <input type="text" class="search-bar" id="search" placeholder="SEARCH..." oninput="handleSearch()">
                 <div style="display:flex; gap:8px;">
                     <button class="btn btn-blue" style="width:auto; padding:8px 15px;" onclick="openManualItem()">+ ADD ITEM</button>
                     <button class="btn btn-ghost" style="width:auto; padding:8px 15px; color: var(--accent); border-color: var(--accent);" onclick="exportM3U()">EXPORT</button>
@@ -277,6 +243,41 @@
             </header>
             <div class="grid" id="mainGrid"></div>
         </main>
+    </div>
+
+    <!-- MODAL: ADD MANUAL ITEM -->
+    <div class="modal-overlay" id="manualItemModal">
+        <div class="modal">
+            <h3>+ ADD NEW ITEM</h3>
+            <input type="text" id="manName" placeholder="NAME">
+            <input type="text" id="manLogo" placeholder="LOGO URL">
+            <input type="text" id="manUrl" placeholder="STREAM URL">
+            <label style="font-size: 8px;">CATEGORY</label>
+            <select id="manCatSelect"></select>
+            <button class="btn btn-blue" onclick="saveManualItem()">ADD TO PLAYLIST</button>
+            <button class="btn btn-ghost" onclick="closeModal('manualItemModal')">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- MODAL: NEW GROUP -->
+    <div class="modal-overlay" id="addGroupModal">
+        <div class="modal">
+            <h3>📁 NEW CATEGORY</h3>
+            <input type="text" id="newGroupName" placeholder="GROUP NAME">
+            <button class="btn btn-blue" onclick="saveNewGroup()">CREATE</button>
+            <button class="btn btn-ghost" onclick="closeModal('addGroupModal')">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- MODAL: GROUP EDITOR -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal">
+            <h3>📁 EDIT CATEGORY</h3>
+            <input type="text" id="editGroupName">
+            <button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button>
+            <button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button>
+            <button class="btn btn-ghost" onclick="closeModal('groupModal')">CANCEL</button>
+        </div>
     </div>
 
     <script>
@@ -351,7 +352,7 @@
             gMap.forEach(g => dataObj.live.cats.push({ category_id: g, category_name: g }));
         }
 
-        // ITEM ACTIONS POPUP FIX
+        // ITEM POPUP FIX
         function openItemEditor(item) {
             editingItemId = item.stream_id || item.series_id || item.vod_id;
             document.getElementById('editItemName').value = item.name;
@@ -371,18 +372,14 @@
                 if(item.stream_icon !== undefined) item.stream_icon = logo; else item.cover = logo;
                 item.category_id = document.getElementById('editItemCat').value;
                 item.url = document.getElementById('editItemUrl').value;
-                saveWorkspace();
-                closeModal('itemModal');
-                loadCategory(activeCatId);
+                saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId);
             }
         }
 
         function deleteItem() {
             if(!confirm("DELETE ITEM?")) return;
             playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => (i.stream_id || i.series_id || i.vod_id) != editingItemId);
-            saveWorkspace();
-            closeModal('itemModal');
-            loadCategory(activeCatId);
+            saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId);
         }
 
         // BULK ACTIONS
@@ -431,17 +428,36 @@
                 return !itemIds.includes(id.toString()) && !catIds.includes(i.category_id.toString());
             });
             playlists[activeIdx][bulkMode].cats = playlists[activeIdx][bulkMode].cats.filter(c => !catIds.includes(c.category_id.toString()));
-            saveWorkspace(); closeModal('bulkModal'); loadCategory(null);
+            saveWorkspace(); renderBulkList(); loadCategory(null);
         }
 
-        // GROUP ACTIONS
-        function openCatEditor(id, e) {
-            e.stopPropagation(); editingCatId = id;
-            const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id);
-            document.getElementById('editGroupName').value = cat.category_name;
-            openModal('groupModal');
+        // NEW: FETCH/EXPORT SELECTED ONLY
+        function executeSelectedExport() {
+            const itemIds = Array.from(document.querySelectorAll('.bulk-item-check:checked')).map(c => c.dataset.id);
+            const catIds = Array.from(document.querySelectorAll('.bulk-cat-check:checked')).map(c => c.dataset.catid);
+            
+            if(itemIds.length === 0 && catIds.length === 0) return alert("SELECT SOMETHING TO EXPORT");
+
+            const p = playlists[activeIdx];
+            const currentItems = p[bulkMode].items;
+            
+            const selectedItems = currentItems.filter(i => {
+                const id = i.stream_id || i.series_id || i.vod_id;
+                return itemIds.includes(id.toString()) || catIds.includes(i.category_id.toString());
+            });
+
+            let m3u = "#EXTM3U\n";
+            selectedItems.forEach(i => {
+                let url = i.url || `${p.creds.h}/${bulkMode==='live'?'':'movie/'}${p.creds.u}/${p.creds.p}/${i.stream_id||i.series_id||i.vod_id}${bulkMode==='live'?'.ts':'.mp4'}`;
+                const catName = p[bulkMode].cats.find(c => c.category_id == i.category_id)?.category_name || bulkMode;
+                m3u += `#EXTINF:-1 tvg-logo="${i.stream_icon||i.cover||''}" group-title="${catName}",${i.name}\n${url}\n`;
+            });
+
+            const b = new Blob([m3u], {type: 'text/plain'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `Selected_Items.m3u`; a.click();
         }
 
+        // GROUP & ITEM ACTIONS
         function saveGroupRename() {
             const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId);
             cat.category_name = document.getElementById('editGroupName').value;
@@ -476,7 +492,7 @@
             saveWorkspace(); closeModal('manualItemModal'); loadCategory(cat);
         }
 
-        // UI HELPERS
+        // UI
         function finalizeUI(idx) { renderSources(); closeModal('importModal'); switchPlaylist(idx); }
         function renderSources() {
             const bar = document.getElementById('sourceBar');
@@ -516,7 +532,8 @@
             const frag = document.createDocumentFragment();
             items.slice(0, 1000).forEach(i => {
                 const card = document.createElement('div');
-                card.className = 'card'; card.onclick = () => openItemEditor(i);
+                card.className = 'card'; 
+                card.onclick = () => openItemEditor(i);
                 const img = i.stream_icon || i.cover || 'https://via.placeholder.com/150';
                 card.innerHTML = `<img src="${img}" onerror="this.src='https://via.placeholder.com/150'" loading="lazy"><div class="card-name">${i.name}</div>`;
                 frag.appendChild(card);
@@ -524,24 +541,14 @@
             grid.appendChild(frag);
         }
 
-        // STORAGE
+        // HELPERS
+        function openCatEditor(id, e) { e.stopPropagation(); editingCatId = id; const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id); document.getElementById('editGroupName').value = cat.category_name; openModal('groupModal'); }
         function saveSettings() { PROXY = document.getElementById('proxyInput').value; localStorage.setItem('iptv_proxy', PROXY); closeModal('settingsModal'); }
-        function saveWorkspace() { try { localStorage.setItem('iptv_elite_v4_stable', JSON.stringify(playlists)); } catch(e){} }
-        function loadWorkspace() {
-            const saved = localStorage.getItem('iptv_elite_v4_stable');
-            if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); }
-        }
+        function saveWorkspace() { try { localStorage.setItem('iptv_elite_v5', JSON.stringify(playlists)); } catch(e){} }
+        function loadWorkspace() { const saved = localStorage.getItem('iptv_elite_v5'); if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); } }
         function clearAllData() { if(confirm("WIPE DATA?")) { localStorage.clear(); location.reload(); }}
-        function handleSearch() {
-            const q = document.getElementById('search').value.toLowerCase();
-            const filtered = playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q));
-            renderGrid(filtered);
-        }
-        function sortCats() {
-            if(activeIdx === -1) return;
-            playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name));
-            renderCategories();
-        }
+        function handleSearch() { const q = document.getElementById('search').value.toLowerCase(); const filtered = playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q)); renderGrid(filtered); }
+        function sortCats() { if(activeIdx === -1) return; playlists[activeIdx][activeMode].cats.sort((a,b) => a.category_name.localeCompare(b.category_name)); renderCategories(); }
         function exportM3U() {
             if(activeIdx === -1) return;
             let m3u = "#EXTM3U\n";
@@ -554,7 +561,7 @@
                 });
             });
             const b = new Blob([m3u], {type: 'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_MASTER_v4.m3u`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_MASTER_v5.m3u`; a.click();
         }
     </script>
 </body>
