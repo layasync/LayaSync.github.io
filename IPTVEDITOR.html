@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV COMMANDER - MASTER ELITE REFINED</title>
+    <title>IPTV COMMANDER - MASTER ELITE v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
 
         .app-shell { display: flex; height: 100vh; }
 
-        /* COLUMN 1: SOURCES & SETTINGS */
+        /* COLUMN 1: SOURCES & SYSTEM */
         .col-sources {
             width: 70px; background: #E5E5EA; display: flex; flex-direction: column;
             align-items: center; padding: 20px 0; border-right: 1px solid var(--border); z-index: 100;
@@ -45,7 +45,8 @@
         }
         .source-icon.active { border-color: var(--accent); background: var(--accent); color: #FFF; }
         .source-icon.add { color: var(--accent); border: 1px dashed var(--accent); margin-bottom: 10px; }
-        .source-icon.settings { color: var(--text-dim); margin-bottom: 25px; }
+        .source-icon.settings { color: var(--text-dim); margin-bottom: 10px; }
+        .source-icon.bulk-del { color: var(--danger); margin-bottom: 25px; }
 
         /* COLUMN 2: NAVIGATION */
         .col-nav {
@@ -59,7 +60,7 @@
         .mode-switch { display: flex; padding: 10px; gap: 5px; }
         .mode-btn {
             flex: 1; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 8px;
-            text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim); transition: 0.2s;
+            text-align: center; cursor: pointer; font-size: 8px; color: var(--text-dim);
         }
         .mode-btn.active { background: var(--accent); color: #fff; }
 
@@ -69,7 +70,6 @@
             display: flex; justify-content: space-between; align-items: center;
             color: var(--text-dim); font-size: 9px; transition: 0.2s;
         }
-        .cat-item:hover { background: rgba(0,0,0,0.03); color: var(--text); }
         .cat-item.active { background: var(--accent); color: #fff; box-shadow: 0 4px 10px rgba(0,122,255,0.3); }
         .cat-edit-btn { font-size: 7px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px; opacity: 0; color: #fff; }
         .cat-item:hover .cat-edit-btn { opacity: 1; }
@@ -79,7 +79,6 @@
         header {
             height: 65px; padding: 0 25px; display: flex; align-items: center;
             justify-content: space-between; border-bottom: 1px solid var(--border);
-            background: rgba(255,255,255,0.5);
         }
         .search-bar {
             background: #FFF; border: 1px solid var(--border); padding: 12px 20px;
@@ -93,56 +92,76 @@
         }
 
         .card {
-            background: var(--card-bg); border-radius: 14px; padding: 15px;
+            background: #FFF; border-radius: 14px; padding: 15px;
             text-align: center; border: 1px solid var(--border); transition: 0.2s; cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .card:hover { border-color: var(--accent); transform: translateY(-4px); }
         .card img { width: 100%; aspect-ratio: 1; object-fit: contain; margin-bottom: 10px; border-radius: 8px; background: #F2F2F7; }
 
         /* MODALS */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(255,255,255,0.7);
+            position: fixed; inset: 0; background: rgba(255,255,255,0.8);
             display: none; align-items: center; justify-content: center; z-index: 1000;
             backdrop-filter: blur(20px);
         }
         .modal {
-            background: #FFF; padding: 35px; border-radius: 20px;
-            width: 440px; border: 1px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            background: #FFF; padding: 30px; border-radius: 20px;
+            width: 480px; border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-height: 90vh; display: flex; flex-direction: column;
         }
+        .modal-body { overflow-y: auto; flex: 1; padding: 10px 0; }
         input, select {
-            width: 100%; padding: 14px; margin: 10px 0; background: #F2F2F7;
+            width: 100%; padding: 14px; margin: 8px 0; background: #F2F2F7;
             border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-weight: 900;
         }
         .btn {
             width: 100%; padding: 14px; border-radius: 8px; border: none;
-            cursor: pointer; color: #fff; font-weight: 900; font-size: 10px; transition: 0.2s;
+            cursor: pointer; color: #fff; font-weight: 900; font-size: 10px;
         }
         .btn-blue { background: var(--accent); }
         .btn-red { background: var(--danger); margin-top: 10px; }
-        .btn-green { background: var(--success); margin-top: 10px; }
         .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); margin-top: 10px; }
+
+        /* BULK LIST STYLES */
+        .bulk-row { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #EEE; gap: 10px; }
+        .bulk-row input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .bulk-group-header { background: #F9F9F9; font-size: 9px; color: var(--accent); padding: 10px; border-radius: 5px; margin-top: 10px; display: flex; align-items: center; gap: 10px;}
 
         #loading {
             position: fixed; top: 20px; right: 20px; background: var(--accent);
             padding: 10px 25px; border-radius: 30px; display: none; z-index: 2000;
-            color: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            color: #FFF;
         }
     </style>
 </head>
 <body>
 
-    <div id="loading">SYNCING DATA...</div>
+    <div id="loading">WORKING...</div>
+
+    <!-- MODAL: BULK DELETER -->
+    <div class="modal-overlay" id="bulkModal">
+        <div class="modal">
+            <h2 style="text-align: center;">🗑️ BULK MANAGEMENT</h2>
+            <div class="mode-switch" style="margin-top: 10px;">
+                <div class="mode-btn active" id="bulk-btn-live" onclick="setBulkMode('live')">LIVE</div>
+                <div class="mode-btn" id="bulk-btn-movie" onclick="setBulkMode('movie')">VOD</div>
+                <div class="mode-btn" id="bulk-btn-series" onclick="setBulkMode('series')">SERIES</div>
+            </div>
+            <div class="modal-body" id="bulkContent">
+                <!-- Bulk items populate here -->
+            </div>
+            <button class="btn btn-red" onclick="executeBulkDelete()">DELETE SELECTED ITEMS</button>
+            <button class="btn btn-ghost" onclick="closeModal('bulkModal')">CLOSE</button>
+        </div>
+    </div>
 
     <!-- MODAL: SETTINGS -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
-            <h2>⚙️ SETTINGS</h2>
+            <h2>⚙️ SYSTEM SETTINGS</h2>
             <label style="font-size: 8px; color: var(--text-dim);">CORS PROXY (CLOUDFLARE WORKER)</label>
             <input type="text" id="proxyInput" placeholder="https://your-worker.workers.dev/?url=">
-            <button class="btn btn-blue" onclick="saveSettings()">SAVE PROXY</button>
-            <button class="btn btn-red" onclick="clearAllData()">WIPE EVERYTHING</button>
+            <button class="btn btn-blue" onclick="saveSettings()">SAVE SETTINGS</button>
+            <button class="btn btn-red" onclick="clearAllData()">WIPE ALL LOCAL DATA</button>
             <button class="btn btn-ghost" onclick="closeModal('settingsModal')">CLOSE</button>
         </div>
     </div>
@@ -152,39 +171,25 @@
         <div class="modal">
             <h2 style="text-align:center; margin-bottom:25px;">PLAYLIST MANAGER</h2>
             <select id="importType" onchange="toggleImportFields()">
-                <option value="xtream">XTREAM API</option>
+                <option value="xtream">XTREAM CODES API</option>
                 <option value="m3u_url">M3U URL</option>
-                <option value="m3u_file">M3U FILE</option>
-                <option value="builder">CUSTOM BUILDER</option>
+                <option value="m3u_file">M3U LOCAL FILE</option>
+                <option value="builder">EMPTY PLAYLIST BUILDER</option>
             </select>
             <div id="xtFields">
-                <input type="text" id="xtHost" placeholder="SERVER HOST">
+                <input type="text" id="xtHost" placeholder="HOST (http://...)">
                 <input type="text" id="xtUser" placeholder="USERNAME">
                 <input type="password" id="xtPass" placeholder="PASSWORD">
             </div>
             <div id="m3uFields" style="display:none;">
-                <input type="text" id="m3uUrl" placeholder="M3U URL">
+                <input type="text" id="m3uUrl" placeholder="PASTE M3U URL">
                 <input type="file" id="m3uFileInput">
             </div>
             <div id="builderFields" style="display:none;">
                 <input type="text" id="buildName" placeholder="PLAYLIST NAME">
             </div>
-            <button class="btn btn-blue" onclick="addPlaylist()">IMPORT SOURCE</button>
+            <button class="btn btn-blue" onclick="addPlaylist()">LOAD DATA SOURCE</button>
             <button class="btn btn-ghost" onclick="closeModal('importModal')" id="cancelImp" style="display:none;">CANCEL</button>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD ITEM -->
-    <div class="modal-overlay" id="manualItemModal">
-        <div class="modal">
-            <h3>+ ADD NEW ITEM</h3>
-            <input type="text" id="manName" placeholder="NAME">
-            <input type="text" id="manLogo" placeholder="LOGO URL">
-            <input type="text" id="manUrl" placeholder="STREAM URL">
-            <label style="font-size: 8px;">TARGET CATEGORY</label>
-            <select id="manCatSelect"></select>
-            <button class="btn btn-blue" onclick="saveManualItem()">ADD TO LIST</button>
-            <button class="btn btn-ghost" onclick="closeModal('manualItemModal')">CANCEL</button>
         </div>
     </div>
 
@@ -203,21 +208,11 @@
         </div>
     </div>
 
-    <!-- MODAL: CATEGORY EDITOR -->
-    <div class="modal-overlay" id="groupModal">
-        <div class="modal">
-            <h3>📁 EDIT CATEGORY</h3>
-            <input type="text" id="editGroupName">
-            <button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button>
-            <button class="btn btn-red" onclick="deleteGroup()">DELETE ALL</button>
-            <button class="btn btn-ghost" onclick="closeModal('groupModal')">CANCEL</button>
-        </div>
-    </div>
-
     <div class="app-shell">
         <div class="col-sources" id="sourceBar">
             <div class="source-icon add" onclick="openModal('importModal')">+</div>
             <div class="source-icon settings" onclick="openModal('settingsModal')">⚙️</div>
+            <div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>
         </div>
 
         <div class="col-nav">
@@ -251,6 +246,20 @@
         </main>
     </div>
 
+    <!-- MODAL: ADD MANUAL ITEM -->
+    <div class="modal-overlay" id="manualItemModal">
+        <div class="modal">
+            <h3>+ ADD NEW ITEM</h3>
+            <input type="text" id="manName" placeholder="NAME">
+            <input type="text" id="manLogo" placeholder="LOGO URL">
+            <input type="text" id="manUrl" placeholder="STREAM URL">
+            <label style="font-size: 8px;">TARGET CATEGORY</label>
+            <select id="manCatSelect"></select>
+            <button class="btn btn-blue" onclick="saveManualItem()">ADD TO PLAYLIST</button>
+            <button class="btn btn-ghost" onclick="closeModal('manualItemModal')">CANCEL</button>
+        </div>
+    </div>
+
     <!-- MODAL: NEW GROUP -->
     <div class="modal-overlay" id="addGroupModal">
         <div class="modal">
@@ -261,10 +270,22 @@
         </div>
     </div>
 
+    <!-- MODAL: GROUP EDITOR -->
+    <div class="modal-overlay" id="groupModal">
+        <div class="modal">
+            <h3>📁 EDIT CATEGORY</h3>
+            <input type="text" id="editGroupName">
+            <button class="btn btn-blue" onclick="saveGroupRename()">RENAME</button>
+            <button class="btn btn-red" onclick="deleteGroup()">DELETE GROUP & ITEMS</button>
+            <button class="btn btn-ghost" onclick="closeModal('groupModal')">CANCEL</button>
+        </div>
+    </div>
+
     <script>
         let playlists = [];
         let activeIdx = -1, activeMode = 'live', activeCatId = null;
         let editingItemId = null, editingCatId = null;
+        let bulkMode = 'live';
         let PROXY = localStorage.getItem('iptv_proxy') || "https://layasync-proxy.layasync.workers.dev/?url=";
 
         window.onload = () => {
@@ -332,67 +353,79 @@
             gMap.forEach(g => dataObj.live.cats.push({ category_id: g, category_name: g }));
         }
 
-        // CATEGORY ACTIONS
-        function openCatEditor(id, e) {
-            e.stopPropagation();
-            editingCatId = id;
-            const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id);
-            document.getElementById('editGroupName').value = cat.category_name;
-            openModal('groupModal');
+        // BULK DELETER LOGIC
+        function setBulkMode(mode) {
+            bulkMode = mode;
+            document.querySelectorAll('#bulkModal .mode-btn').forEach(b => b.classList.toggle('active', b.id === 'bulk-btn-'+mode));
+            renderBulkList();
         }
 
-        function saveGroupRename() {
-            const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId);
-            cat.category_name = document.getElementById('editGroupName').value;
-            saveWorkspace();
-            closeModal('groupModal');
-            renderCategories();
-        }
-
-        function deleteGroup() {
-            if(!confirm("DELETE GROUP AND ALL CHANNELS?")) return;
-            playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => i.category_id != editingCatId);
-            playlists[activeIdx][activeMode].cats = playlists[activeIdx][activeMode].cats.filter(c => c.category_id != editingCatId);
-            saveWorkspace();
-            closeModal('groupModal');
-            loadCategory(null);
-        }
-
-        function saveNewGroup() {
-            const name = document.getElementById('newGroupName').value;
-            if(!name || activeIdx === -1) return;
-            playlists[activeIdx][activeMode].cats.push({ category_id: name, category_name: name });
-            saveWorkspace();
-            closeModal('addGroupModal');
-            renderCategories();
-        }
-
-        // ITEM ACTIONS
-        function openManualItem() {
+        function openBulkDeleter() {
             if(activeIdx === -1) return alert("SELECT PLAYLIST FIRST");
-            const sel = document.getElementById('manCatSelect');
-            sel.innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join('');
-            openModal('manualItemModal');
+            openModal('bulkModal');
+            setBulkMode('live');
         }
 
+        function renderBulkList() {
+            const container = document.getElementById('bulkContent');
+            container.innerHTML = "";
+            const current = playlists[activeIdx][bulkMode];
+            
+            current.cats.forEach(cat => {
+                const header = document.createElement('div');
+                header.className = 'bulk-group-header';
+                header.innerHTML = `<input type="checkbox" class="bulk-cat-check" data-catid="${cat.category_id}" onchange="toggleBulkGroup('${cat.category_id}', this.checked)"> <span>GROUP: ${cat.category_name}</span>`;
+                container.appendChild(header);
+
+                const items = current.items.filter(i => i.category_id == cat.category_id);
+                items.forEach(item => {
+                    const id = item.stream_id || item.series_id || item.vod_id;
+                    const row = document.createElement('div');
+                    row.className = 'bulk-row';
+                    row.innerHTML = `<input type="checkbox" class="bulk-item-check" data-id="${id}" data-catid="${cat.category_id}"> <span>${item.name}</span>`;
+                    container.appendChild(row);
+                });
+            });
+        }
+
+        function toggleBulkGroup(catId, checked) {
+            const checks = document.querySelectorAll(`.bulk-item-check[data-catid="${catId}"]`);
+            checks.forEach(c => c.checked = checked);
+        }
+
+        function executeBulkDelete() {
+            if(!confirm("DELETE ALL SELECTED ITEMS?")) return;
+            const current = playlists[activeIdx][bulkMode];
+            
+            // Collect selected items
+            const itemChecks = document.querySelectorAll('.bulk-item-check:checked');
+            const itemIds = Array.from(itemChecks).map(c => c.dataset.id);
+
+            // Collect selected groups
+            const catChecks = document.querySelectorAll('.bulk-cat-check:checked');
+            const catIds = Array.from(catChecks).map(c => c.dataset.catid);
+
+            // Perform deletion
+            playlists[activeIdx][bulkMode].items = current.items.filter(i => {
+                const id = i.stream_id || i.series_id || i.vod_id;
+                return !itemIds.includes(id.toString()) && !catIds.includes(i.category_id.toString());
+            });
+
+            playlists[activeIdx][bulkMode].cats = current.cats.filter(c => !catIds.includes(c.category_id.toString()));
+
+            saveWorkspace();
+            closeModal('bulkModal');
+            loadCategory(null);
+            alert("DELETION COMPLETE");
+        }
+
+        // CATEGORY / ITEM ACTIONS
         function saveManualItem() {
             const name = document.getElementById('manName').value, logo = document.getElementById('manLogo').value;
             const url = document.getElementById('manUrl').value, cat = document.getElementById('manCatSelect').value;
-            if(!name || !url) return alert("NAME & URL REQ");
+            if(!name || !url) return alert("REQ NAME/URL");
             playlists[activeIdx][activeMode].items.push({ stream_id: 'man-'+Math.random(), name, stream_icon: logo, category_id: cat, url });
-            saveWorkspace();
-            closeModal('manualItemModal');
-            loadCategory(cat);
-        }
-
-        function openItemEditor(item) {
-            editingItemId = item.stream_id || item.series_id || item.vod_id;
-            document.getElementById('editItemName').value = item.name;
-            document.getElementById('editItemLogo').value = item.stream_icon || item.cover || '';
-            document.getElementById('editItemUrl').value = item.url || "API LINK";
-            const sel = document.getElementById('editItemCat');
-            sel.innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}" ${c.category_id == item.category_id ? 'selected' : ''}>${c.category_name}</option>`).join('');
-            openModal('itemModal');
+            saveWorkspace(); closeModal('manualItemModal'); loadCategory(cat);
         }
 
         function saveItemChanges() {
@@ -403,24 +436,40 @@
             if(item.stream_icon !== undefined) item.stream_icon = logo; else item.cover = logo;
             item.category_id = document.getElementById('editItemCat').value;
             item.url = document.getElementById('editItemUrl').value;
-            saveWorkspace();
-            closeModal('itemModal');
-            loadCategory(activeCatId);
+            saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId);
         }
 
         function deleteItem() {
             if(!confirm("DELETE ITEM?")) return;
             playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => (i.stream_id || i.series_id || i.vod_id) != editingItemId);
-            saveWorkspace();
-            closeModal('itemModal');
-            loadCategory(activeCatId);
+            saveWorkspace(); closeModal('itemModal'); loadCategory(activeCatId);
         }
 
-        // CORE
+        function saveGroupRename() {
+            const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == editingCatId);
+            cat.category_name = document.getElementById('editGroupName').value;
+            saveWorkspace(); closeModal('groupModal'); renderCategories();
+        }
+
+        function deleteGroup() {
+            if(!confirm("DELETE GROUP?")) return;
+            playlists[activeIdx][activeMode].items = playlists[activeIdx][activeMode].items.filter(i => i.category_id != editingCatId);
+            playlists[activeIdx][activeMode].cats = playlists[activeIdx][activeMode].cats.filter(c => c.category_id != editingCatId);
+            saveWorkspace(); closeModal('groupModal'); loadCategory(null);
+        }
+
+        function saveNewGroup() {
+            const name = document.getElementById('newGroupName').value;
+            if(!name || activeIdx === -1) return;
+            playlists[activeIdx][activeMode].cats.push({ category_id: name, category_name: name });
+            saveWorkspace(); closeModal('addGroupModal'); renderCategories();
+        }
+
+        // ENGINE
         function finalizeUI(idx) { renderSources(); closeModal('importModal'); switchPlaylist(idx); }
         function renderSources() {
             const bar = document.getElementById('sourceBar');
-            bar.innerHTML = '<div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div>';
+            bar.innerHTML = '<div class="source-icon add" onclick="openModal(\'importModal\')">+</div><div class="source-icon settings" onclick="openModal(\'settingsModal\')">⚙️</div><div class="source-icon bulk-del" onclick="openBulkDeleter()">🗑️</div>';
             playlists.forEach((p, idx) => {
                 const div = document.createElement('div');
                 div.className = `source-icon ${idx === activeIdx ? 'active' : ''}`;
@@ -430,7 +479,7 @@
             });
         }
         function switchPlaylist(idx) { activeIdx = idx; activeCatId = null; renderSources(); document.getElementById('activeInfo').innerText = playlists[idx].name; setMode('live'); }
-        function setMode(mode) { activeMode = mode; document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+mode)); activeCatId = null; renderCategories(); loadCategory(null); }
+        function setMode(mode) { activeMode = mode; document.querySelectorAll('.col-nav .mode-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-'+mode)); activeCatId = null; renderCategories(); loadCategory(null); }
         function renderCategories() {
             const list = document.getElementById('catList'); list.innerHTML = "";
             if(activeIdx === -1) return;
@@ -465,13 +514,26 @@
         }
 
         // HELPERS
+        function openManualItem() {
+            if(activeIdx === -1) return alert("SELECT PLAYLIST FIRST");
+            const sel = document.getElementById('manCatSelect');
+            sel.innerHTML = playlists[activeIdx][activeMode].cats.map(c => `<option value="${c.category_id}">${c.category_name}</option>`).join('');
+            openModal('manualItemModal');
+        }
+        function openCatEditor(id, e) {
+            e.stopPropagation();
+            editingCatId = id;
+            const cat = playlists[activeIdx][activeMode].cats.find(c => c.category_id == id);
+            document.getElementById('editGroupName').value = cat.category_name;
+            openModal('groupModal');
+        }
         function saveSettings() { PROXY = document.getElementById('proxyInput').value; localStorage.setItem('iptv_proxy', PROXY); closeModal('settingsModal'); }
-        function saveWorkspace() { try { localStorage.setItem('iptv_refined_v2', JSON.stringify(playlists)); } catch(e){} }
+        function saveWorkspace() { try { localStorage.setItem('iptv_master_elite_v3', JSON.stringify(playlists)); } catch(e){} }
         function loadWorkspace() {
-            const saved = localStorage.getItem('iptv_refined_v2');
+            const saved = localStorage.getItem('iptv_master_elite_v3');
             if(saved) { playlists = JSON.parse(saved); if(playlists.length > 0) finalizeUI(0); }
         }
-        function clearAllData() { if(confirm("WIPE?")) { localStorage.clear(); location.reload(); }}
+        function clearAllData() { if(confirm("WIPE EVERYTHING?")) { localStorage.clear(); location.reload(); }}
         function handleSearch() {
             const q = document.getElementById('search').value.toLowerCase();
             const filtered = playlists[activeIdx][activeMode].items.filter(i => i.name.toLowerCase().includes(q));
@@ -489,7 +551,7 @@
                 });
             });
             const b = new Blob([m3u], {type: 'text/plain'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_ELITE.m3u`; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `${p.name}_MASTER_v3.m3u`; a.click();
         }
         function sortCats() {
             if(activeIdx === -1) return;
