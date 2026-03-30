@@ -1,4 +1,0 @@
-#EXTM3U
-
-#EXTINF:-1 tvg-id="ZeeBangla.in" tvg-name="Zee Bangla" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZPIKPX0dZ0piWgr9DKOSLPObW-PGpet6aOg&s" group-title="Bangla",Zee Bangla
-http://tvstar.top:80/live/Cherry123/Cherry321/435.ts
