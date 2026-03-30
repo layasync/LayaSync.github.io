@@ -3,6 +3,7 @@
   "addonName": "Duck Streams",
   "addonLogo": "https://gitlab.com/DuckKota/guides/-/raw/main/pages/static/images/duck.png?ref_type=heads",
   "addonDescription": "Populated by QuickStart tool",
+  "excludedResolutions": [],
   "preferredResolutions": [
     "2160p",
     "1440p",
