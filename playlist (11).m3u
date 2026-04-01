@@ -1,0 +1,89 @@
+#EXTM3U
+#EXTINF:-1 tvg-name="UK: SKY SORTS F1 (4K)" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UK: SKY SORTS F1 (4K)
+Http://premimum.online:80/live/Johannes /Johannes123 /384213.ts
+#EXTINF:-1 tvg-name="UK : SKY SPORTS MAIN EVENTS (4K)" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UK : SKY SPORTS MAIN EVENTS (4K)
+Http://premimum.online:80/live/Johannes /Johannes123 /384215.ts
+#EXTINF:-1 tvg-name="UK: SKY SPORTS 2 (4K)" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UK: SKY SPORTS 2 (4K)
+Http://premimum.online:80/live/Johannes /Johannes123 /384216.ts
+#EXTINF:-1 tvg-name="UK: SKY SPORTS 1 (4K)" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UK: SKY SPORTS 1 (4K)
+Http://premimum.online:80/live/Johannes /Johannes123 /384222.ts
+#EXTINF:-1 tvg-name="UK : TNT 4K ULTIMATE (LIVE EVENT)" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UK : TNT 4K ULTIMATE (LIVE EVENT)
+Http://premimum.online:80/live/Johannes /Johannes123 /384243.ts
+#EXTINF:-1 tvg-name="UHD ▎BLOOMBERG |US|" tvg-logo="https://i.ibb.co/p4knk5y/images-4.png" group-title="REAL 4K (2160P)",UHD ▎BLOOMBERG |US|
+Http://premimum.online:80/live/Johannes /Johannes123 /466663.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORTS MAIN EVENT [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORTS MAIN EVENT [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /581305.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORTS F1 [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORTS F1 [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /581306.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORTS 1 [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORTS 1 [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /581307.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORTS 2 [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORTS 2 [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /688273.ts
+#EXTINF:-1 tvg-name="UHD ▎BLUE SPORT 1 [CH]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎BLUE SPORT 1 [CH]
+Http://premimum.online:80/live/Johannes /Johannes123 /688274.ts
+#EXTINF:-1 tvg-name="UHD ▎BLUE SPORT 2 [CH]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎BLUE SPORT 2 [CH]
+Http://premimum.online:80/live/Johannes /Johannes123 /688275.ts
+#EXTINF:-1 tvg-name="UHD ▎BLUE SPORT 3 [CH]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎BLUE SPORT 3 [CH]
+Http://premimum.online:80/live/Johannes /Johannes123 /688276.ts
+#EXTINF:-1 tvg-name="UHD ▎BLUE SPORT 4 [CH]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎BLUE SPORT 4 [CH]
+Http://premimum.online:80/live/Johannes /Johannes123 /688277.ts
+#EXTINF:-1 tvg-name="UHD ▎QUADRO [RU]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎QUADRO [RU]
+Http://premimum.online:80/live/Johannes /Johannes123 /688278.ts
+#EXTINF:-1 tvg-name="UHD ▎ULTRA REX [RU]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ULTRA REX [RU]
+Http://premimum.online:80/live/Johannes /Johannes123 /688279.ts
+#EXTINF:-1 tvg-name="UHD ▎KINO [RU]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎KINO [RU]
+Http://premimum.online:80/live/Johannes /Johannes123 /688280.ts
+#EXTINF:-1 tvg-name="UHD ▎CINEMA ULTRA HD [RU]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎CINEMA ULTRA HD [RU]
+Http://premimum.online:80/live/Johannes /Johannes123 /688281.ts
+#EXTINF:-1 tvg-name="UHD ▎RTL [DE]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎RTL [DE]
+Http://premimum.online:80/live/Johannes /Johannes123 /688282.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORT [DE]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORT [DE]
+Http://premimum.online:80/live/Johannes /Johannes123 /688283.ts
+#EXTINF:-1 tvg-name="UHD ▎SKY SPORT BUNDESLIGA [DE]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SKY SPORT BUNDESLIGA [DE]
+Http://premimum.online:80/live/Johannes /Johannes123 /688284.ts
+#EXTINF:-1 tvg-name="UHD ▎PRO7SAT.1 [DE]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎PRO7SAT.1 [DE]
+Http://premimum.online:80/live/Johannes /Johannes123 /688285.ts
+#EXTINF:-1 tvg-name="UHD ▎ELEVEN SPORTS 1 [PL]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ELEVEN SPORTS 1 [PL]
+Http://premimum.online:80/live/Johannes /Johannes123 /688286.ts
+#EXTINF:-1 tvg-name="UHD ▎RAI 1 [IT]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎RAI 1 [IT]
+Http://premimum.online:80/live/Johannes /Johannes123 /688287.ts
+#EXTINF:-1 tvg-name="UHD ▎ELEVENSPORT 1 [PL]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ELEVENSPORT 1 [PL]
+Http://premimum.online:80/live/Johannes /Johannes123 /688288.ts
+#EXTINF:-1 tvg-name="UHD ▎LA 1 [ES]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎LA 1 [ES]
+Http://premimum.online:80/live/Johannes /Johannes123 /688290.ts
+#EXTINF:-1 tvg-name="UHD ▎ODISEA [ES]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ODISEA [ES]
+Http://premimum.online:80/live/Johannes /Johannes123 /688291.ts
+#EXTINF:-1 tvg-name="UHD ▎TRT [TR]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎TRT [TR]
+Http://premimum.online:80/live/Johannes /Johannes123 /688292.ts
+#EXTINF:-1 tvg-name="UHD ▎ASTRO SUPERSPORT [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ASTRO SUPERSPORT [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /688294.ts
+#EXTINF:-1 tvg-name="UHD ▎NOW SPORTS [UK]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎NOW SPORTS [UK]
+Http://premimum.online:80/live/Johannes /Johannes123 /688301.ts
+#EXTINF:-1 tvg-name="UHD ▎FASHION TV [AL]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎FASHION TV [AL]
+Http://premimum.online:80/live/Johannes /Johannes123 /688306.ts
+#EXTINF:-1 tvg-name="UHD ▎SPORT TV 1 [PT]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎SPORT TV 1 [PT]
+Http://premimum.online:80/live/Johannes /Johannes123 /688307.ts
+#EXTINF:-1 tvg-name="UHD ▎BENFICA TV [PT]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎BENFICA TV [PT]
+Http://premimum.online:80/live/Johannes /Johannes123 /688308.ts
+#EXTINF:-1 tvg-name="UHD ▎ELEVEN SPORTS 1 [PT]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎ELEVEN SPORTS 1 [PT]
+Http://premimum.online:80/live/Johannes /Johannes123 /688309.ts
+#EXTINF:-1 tvg-name="UHD ▎M+ LALIGA TV [ES]" tvg-logo="" group-title="REAL 4K (2160P)",UHD ▎M+ LALIGA TV [ES]
+Http://premimum.online:80/live/Johannes /Johannes123 /688310.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 1 ENG LOW QUALITY" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 1 ENG LOW QUALITY
+Http://premimum.online:80/live/Johannes /Johannes123 /702533.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 2 ENG LOW QUALITY" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 2 ENG LOW QUALITY
+Http://premimum.online:80/live/Johannes /Johannes123 /702543.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 1 HINDI " tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 1 HINDI 
+Http://premimum.online:80/live/Johannes /Johannes123 /702561.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 1 FHD (50FPS)" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 1 FHD (50FPS)
+Http://premimum.online:80/live/Johannes /Johannes123 /703296.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 2 FHD (50 FPS)" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 2 FHD (50 FPS)
+Http://premimum.online:80/live/Johannes /Johannes123 /703297.ts
+#EXTINF:-1 tvg-name="STAR SPORTS 1 HINDI FHD (50 FPS)" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR SPORTS 1 HINDI FHD (50 FPS)
+Http://premimum.online:80/live/Johannes /Johannes123 /703298.ts
+#EXTINF:-1 tvg-name="STAR 4K" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR 4K
+Http://premimum.online:80/live/Johannes /Johannes123 /703299.ts
+#EXTINF:-1 tvg-name="ADD FREE WILLOW HINDI MATCH 1" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",ADD FREE WILLOW HINDI MATCH 1
+Http://premimum.online:80/live/Johannes /Johannes123 /703300.ts
+#EXTINF:-1 tvg-name="ADD FREE WILLOW ENG MATCH 1" tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",ADD FREE WILLOW ENG MATCH 1
+Http://premimum.online:80/live/Johannes /Johannes123 /703301.ts
