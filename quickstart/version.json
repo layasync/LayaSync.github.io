@@ -1,6 +1,12 @@
 {
-  "current": "2026-03-29",
+  "current": "2026-04-01",
   "history": [
+    {
+      "date": "2026-04-01",
+      "changes": [
+        "Add priortized languages"
+      ]
+    },
     {
       "date": "2026-03-29",
       "changes": [

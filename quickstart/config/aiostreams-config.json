@@ -485,5 +485,15 @@
       "usenet"
     ]
   },
-  "checkOwned": true
+  "checkOwned": true,
+  "requiredLanguages": [],
+  "excludedLanguages": [],
+  "includedLanguages": [],
+  "preferredLanguages": [
+    "English",
+    "Dual Audio",
+    "Multi",
+    "Dubbed",
+    "Unknown"
+  ]
 }
