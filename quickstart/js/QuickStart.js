@@ -10,7 +10,7 @@ class QuickStart {
         this.PROVIDER_CONFIG = {
             torbox: {
                 name: "TorBox",
-                signup: "https://torbox.app/subscription?referral=7a2aa2e2-337b-4302-ab41-7ecf1caf0cf1",
+                signup: "https://torbox.app/subscription?referral=df47b0ad-690c-45df-89af-d1120a6d0a30",
                 api: "https://torbox.app/settings",
             },
             realdebrid: {
