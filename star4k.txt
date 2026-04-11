@@ -1,3 +1,0 @@
-#EXTM3U
-#EXTINF:-1 tvg-logo="https://i.ibb.co/7x1Jw8dL/Chat-GPT-Image-Mar-29-2026-01-03-02-AM.png" group-title="IPL (2026)",STAR 4K
-http://premimum.online:80/9794556/9794556/703299.ts
