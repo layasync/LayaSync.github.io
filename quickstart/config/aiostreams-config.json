@@ -157,7 +157,10 @@
   "posterService": "rpdb",
   "formatter": {
     "id": "custom",
-    "definition": {}
+    "definition": {
+      "name": "Populated by QuickStart tool",
+      "description": " Populated by QuickStart tool"
+    }
   },
   "proxy": {
     "id": "mediaflow",
@@ -192,8 +195,8 @@
   },
   "yearMatching": {
     "enabled": true,
-    "tolerance": 3,
-    "strict": false,
+    "tolerance": 0,
+    "strict": true,
     "requestTypes": [],
     "addons": []
   },

@@ -1,6 +1,12 @@
 {
-  "current": "2026-04-01",
+  "current": "2026-04-11",
   "history": [
+    {
+      "date": "2026-04-11",
+      "changes": [
+        "Turned on strict matching for movies with a 0 year tolerance to improve sorting accuracy"
+      ]
+    },
     {
       "date": "2026-04-01",
       "changes": [
