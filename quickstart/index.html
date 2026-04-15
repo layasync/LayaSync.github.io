@@ -55,7 +55,8 @@
                         </div>
                     </div>
                     <button id="dismissUpdateBtn" class="dismiss-btn" aria-label="Dismiss">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -74,27 +75,48 @@
                 <div class="auth-section">
                     <!-- Tabs -->
                     <div class="tabs">
-                        <button type="button" class="tab-btn active" data-mode="account">Stremio Account</button>
+                        <button type="button" class="tab-btn active" data-mode="account">Direct Install</button>
                         <button type="button" class="tab-btn" data-mode="manifest">Manifest Only</button>
                     </div>
 
                     <!-- Stremio Account Mode -->
                     <div id="mode-account">
-                        <div class="field">
-                            <div class="info-box">
-                                <!-- Icon -->
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-                                </svg>
-                                <p>
-                                    <b>Log In or Sign Up</b>
-                                    <br>
-                                    We'll sign you in or create a new account automatically.
-                                </p>
-                            </div>
 
-                            <label for="email">Stremio Email</label>
+                        <div class="field">
+                            <label>Service</label>
+                            <div class="provider-grid mb-2" id="serviceGroup">
+                                <!-- Stremio -->
+                                <label class="provider-card">
+                                    <input type="radio" name="service" value="stremio" hidden checked>
+                                    <div class="card-content">
+                                        <img src="../common/assets/stremio.png" class="provider-icon" alt="Stremio">
+                                        <span class="provider-name">Stremio</span>
+                                    </div>
+                                    <div class="card-indicator">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                </label>
+
+                                <!-- Nuvio -->
+                                <label class="provider-card">
+                                    <input type="radio" name="service" value="nuvio" hidden>
+                                    <div class="card-content">
+                                        <img src="../common/assets/nuvio.png" class="provider-icon" alt="Nuvio">
+                                        <span class="provider-name">Nuvio</span>
+                                    </div>
+                                    <div class="card-indicator">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="email" id="emailLabel">Stremio Email</label>
                             <div class="input-with-icon">
                                 <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
@@ -108,7 +130,7 @@
                         </div>
 
                         <div class="field">
-                            <label for="password">Stremio Password</label>
+                            <label for="password" id="passwordLabel">Stremio Password</label>
                             <div class="input-with-icon">
                                 <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
@@ -179,7 +201,7 @@
                         <label class="provider-card">
                             <input type="checkbox" value="torbox" hidden>
                             <div class="card-content">
-                                <img src="https://torbox.app/favicon.ico" class="provider-icon" alt="TB">
+                                <img src="../common/assets/torbox.ico" class="provider-icon" alt="TB">
                                 <span class="provider-name">TorBox</span>
                             </div>
                             <div class="card-indicator">
@@ -193,7 +215,7 @@
                         <label class="provider-card">
                             <input type="checkbox" value="realdebrid" hidden>
                             <div class="card-content">
-                                <img src="https://real-debrid.com/favicon.ico" class="provider-icon" alt="RD">
+                                <img src="../common/assets/realdebrid.ico" class="provider-icon" alt="RD">
                                 <span class="provider-name">Real-Debrid</span>
                             </div>
                             <div class="card-indicator">
@@ -207,7 +229,7 @@
                         <label class="provider-card">
                             <input type="checkbox" value="premiumize" hidden>
                             <div class="card-content">
-                                <img src="https://www.premiumize.me/favicon.ico" class="provider-icon" alt="PM">
+                                <img src="../common/assets/premiumize.ico" class="provider-icon" alt="PM">
                                 <span class="provider-name">Premiumize</span>
                             </div>
 
@@ -222,8 +244,7 @@
                         <label class="provider-card">
                             <input type="checkbox" value="alldebrid" hidden>
                             <div class="card-content">
-                                <img src="https://alldebrid.com/lib/images/default/favicon.png" class="provider-icon"
-                                    alt="AD">
+                                <img src="../common/assets/alldebrid.png" class="provider-icon" alt="AD">
                                 <span class="provider-name">AllDebrid</span>
                             </div>
                             <div class="card-indicator">
@@ -250,7 +271,7 @@
                     <!-- Debridio -->
                     <details>
                         <summary>
-                            <img src="https://cdn.lb.debridio.com/site/logo.png" alt="DB" class="debridio-icon">
+                            <img src="../common/assets/debridio.png" alt="DB" class="debridio-icon">
                             Debridio
                         </summary>
                         <div class="field my-1">
@@ -388,7 +409,8 @@
 
                     <!-- Host Selection -->
                     <div class="field settings-card">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                             <label for="aiostreamsHost" class="mb-0">AIOStreams Host</label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="saveAIOStreamsCheckbox">
@@ -403,7 +425,8 @@
                         <div id="customHostSection" class="hidden">
                             <div class="field mt-2">
                                 <label for="customHostURL" class="mb-1 d-block">Custom AIOStreams URL</label>
-                                <input type="url" id="customHostURL" placeholder="https://your-custom-aiostreams-instance.com" required>
+                                <input type="url" id="customHostURL"
+                                    placeholder="https://your-custom-aiostreams-instance.com" required>
                                 <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
                                     Enter the full URL to your private AIOStreams instance.
                                 </div>
@@ -413,7 +436,8 @@
 
                     <!-- Formatter Selection -->
                     <div class="field settings-card">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                             <label for="formatSelect" class="mb-0">Formatter Style</label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="saveFormatterCheckbox">
@@ -433,8 +457,10 @@
                         <div id="customFormatterSection" class="hidden">
                             <div class="field mt-2">
                                 <label for="customFormatterFile" class="mb-1 d-block">Upload Formatter JSON</label>
-                                <input type="file" id="customFormatterFile" accept=".json" placeholder="Select JSON file">
-                                <div id="formatterLoadedIndicator" class="hidden" style="font-size: 0.8rem; color: #377CF4; margin-top: 0.4rem; font-weight: 500;">
+                                <input type="file" id="customFormatterFile" accept=".json"
+                                    placeholder="Select JSON file">
+                                <div id="formatterLoadedIndicator" class="hidden"
+                                    style="font-size: 0.8rem; color: #377CF4; margin-top: 0.4rem; font-weight: 500;">
                                     Loaded: <span id="formatterLoadedName"></span>
                                 </div>
                                 <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.4rem;">
@@ -442,8 +468,9 @@
                                 </div>
                             </div>
 
-                            <p class="text-caption">Want to create a custom formatter? Consider trying <a href="https://crispyduck.xyz/"
-                                    target="_blank" rel="noopener" class="link-clean">crispyduck.xyz</a>.
+                            <p class="text-caption">Want to create a custom formatter? Consider trying <a
+                                    href="https://crispyduck.xyz/" target="_blank" rel="noopener"
+                                    class="link-clean">crispyduck.xyz</a>.
                             </p>
                         </div>
                     </div>
@@ -487,8 +514,10 @@
     <script src="../common/utils/CredentialGenerator.js?v=20260202"></script>
     <script src="../common/utils/UIClipboard.js?v=20260202"></script>
     <script src="../common/utils/UIModal.js?v=20260202"></script>
-    <script src="../common/apis/StremioSession.js?v=20260202"></script>
+    <script src="../common/apis/ServiceSession.js?v=20260202"></script>
+    <script src="../common/apis/StreamingService.js?v=20260202"></script>
     <script src="../common/apis/StremioAPI.js?v=20260202"></script>
+    <script src="../common/apis/NuvioAPI.js?v=20260202"></script>
     <script src="../common/apis/TorBoxAPI.js?v=20260202"></script>
     <script src="../common/apis/AIOStreamsAPI.js?v=20260202"></script>
 

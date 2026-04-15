@@ -59,10 +59,12 @@ class Network {
             try {
                 const resp = await this.fetchWithTimeout(url, options, options.timeout);
                 if (resp.ok) {
+                    if (resp.status === 204) return {};
                     try {
                         return await resp.json();
                     } catch (err) {
                         const text = await resp.text().catch(() => "Unable to read response text");
+                        if (!text || text.trim() === "") return {};
                         throw new Error(`Failed to parse direct response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
                     }
                 }
@@ -118,10 +120,12 @@ class Network {
                     throw apiError;
                 }
 
+                if (resp.status === 204) return {};
                 try {
                     return await resp.json();
                 } catch (err) {
                     const text = await resp.text().catch(() => "Unable to read response text");
+                    if (!text || text.trim() === "") return {};
                     throw new Error(`Failed to parse proxy response as JSON. Status: ${resp.status}. Body preview: ${text.substring(0, 100)}...`);
                 }
             } catch (e) {

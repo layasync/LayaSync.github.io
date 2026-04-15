@@ -32,6 +32,7 @@ class QuickStart {
 
         // State
         this.mode = 'account'; // 'account' or 'manifest'
+        this.service = 'stremio'; // 'stremio' or 'nuvio'
         this.formatters = {}; // Will hold loaded formatter definitions
         this.customFormatterDefinition = null; // Will hold user-uploaded custom formatter
         this.formatterLoadedFromCache = false; // Track if formatter was loaded from localStorage
@@ -50,6 +51,9 @@ class QuickStart {
             modeManifest: document.getElementById("mode-manifest"),
 
             // Account Mode Inputs
+            serviceGroup: document.getElementById("serviceGroup"),
+            emailLabel: document.getElementById("emailLabel"),
+            passwordLabel: document.getElementById("passwordLabel"),
             emailInput: document.getElementById("email"),
             passwordInput: document.getElementById("password"),
             generateBtn: document.getElementById("generateCredsBtn"),
@@ -89,6 +93,9 @@ class QuickStart {
             formatterLoadedIndicator: document.getElementById("formatterLoadedIndicator"),
             formatterLoadedName: document.getElementById("formatterLoadedName"),
         };
+
+        // Active Streaming Service (Default to Stremio)
+        this.api = window.StremioAPI;
     }
 
     // Initialize the app
@@ -115,6 +122,13 @@ class QuickStart {
 
         // Generate Credentials
         this.ui.generateBtn?.addEventListener("click", () => this.handleGenerateCreds());
+
+        // Service change
+        this.ui.serviceGroup?.addEventListener("change", (e) => {
+            if (e.target.name === 'service') {
+                this.handleServiceChange();
+            }
+        });
 
         // Debrid Providers
         this.ui.providerGroup?.addEventListener("change", (e) => {
@@ -418,6 +432,29 @@ class QuickStart {
                 this.ui.formatSelect.value = 'chillio';
                 this.handleFormatterSelection('chillio');
             }
+        }
+    }
+
+    handleServiceChange() {
+        const selectedRadio = this.ui.serviceGroup?.querySelector('input[name="service"]:checked');
+        if (!selectedRadio) return;
+
+        this.service = selectedRadio.value; // 'stremio' or 'nuvio'
+        const serviceName = this.service.charAt(0).toUpperCase() + this.service.slice(1);
+        if (!this.service) return;
+
+        // Switch active API instance
+        if (this.service === 'nuvio') {
+            this.api = window.NuvioAPI;
+        } else {
+            this.api = window.StremioAPI;
+        }
+
+        if (this.ui.emailLabel) {
+            this.ui.emailLabel.textContent = `${serviceName} Email`;
+        }
+        if (this.ui.passwordLabel) {
+            this.ui.passwordLabel.textContent = `${serviceName} Password`;
         }
     }
 
@@ -770,7 +807,7 @@ class QuickStart {
 
     async cleanUpDuckStreams(keepUuid = null) {
         Logger.debug('QuickStart', "Cleaning up Duck Streams addons...");
-        const currentAddons = await StremioAPI.getAddons();
+        const currentAddons = await this.api.getAddons();
         const filteredAddons = currentAddons.filter(a => {
             if (this.isRecognizedDuckStreams(a)) {
                 // It is one of ours.
@@ -778,12 +815,12 @@ class QuickStart {
                 // FORCE DELETE STALE ARTIFACTS
                 // We never want to keep "Restoring Addon..." as it means the install/update failed to complete
                 // or the server returned a temporary placeholder.
-                if (a.manifest.id === 'synth-0' || a.manifest.name === 'Restoring Addon...') {
+                if (a.manifest?.id === 'synth-0' || a.manifest?.name === 'Restoring Addon...') {
                     return false; // Always delete
                 }
 
                 // Keep ONLY if it matches keepUuid
-                if (keepUuid && a.transportUrl.includes(keepUuid)) {
+                if (keepUuid && a.transportUrl?.includes(keepUuid)) {
                     return true;
                 }
                 return false; // Delete
@@ -792,7 +829,7 @@ class QuickStart {
         });
 
         if (filteredAddons.length !== currentAddons.length) {
-            await StremioAPI.setAddons(filteredAddons);
+            await this.api.setAddons(filteredAddons);
         }
     }
 
@@ -927,28 +964,28 @@ class QuickStart {
         return manifestUrl;
     }
 
-    // Log into the user's Stremio account
-    async setupStremioAccount(email, password, cleanupOldInstalls) {
-        // Login to Stremio (registering a new account if needed)
-        const isNewAccount = await StremioAPI.ensureAccount(email, password);
+    // Log into the user's account
+    async setupServiceAccount(email, password, cleanupOldInstalls) {
+        // Login to service (registering a new account if needed)
+        const isNewAccount = await this.api.ensureAccount(email, password);
         let existingAddon = null;
 
         // Configure Account
         if (isNewAccount) {
             // Erase all default addons if the account is new
-            const currentAddons = await StremioAPI.getAddons();
+            const currentAddons = await this.api.getAddons();
             const ALLOWED = ["Cinemeta"];
-            const filteredAddons = currentAddons.filter(a => ALLOWED.includes(a.manifest.name));
-            await StremioAPI.setAddons(filteredAddons);
+            const filteredAddons = currentAddons.filter(a => a.manifest?.name && ALLOWED.includes(a.manifest.name));
+            await this.api.setAddons(filteredAddons);
         }
 
         if (!isNewAccount && cleanupOldInstalls) {
             // User requested to clean up existing "Duck Streams" addons.
             // This is a bit more complex than just deleting them all, as we need to be careful not to delete unrelated addons.
             // Also we will try to reuse an existing Duck Streams addon if possible.
-            const currentAddons = await StremioAPI.getAddons();
+            const currentAddons = await this.api.getAddons();
 
-            // Find valid existing Duck Streams addon to reuse
+            // Find valid existing Duck Streams addon to reuse (primarily for UUID extraction)
             const existingIndex = currentAddons.findIndex(a => this.isRecognizedDuckStreams(a));
 
             if (existingIndex !== -1) {
@@ -957,25 +994,35 @@ class QuickStart {
                 // Format Stremio: https://host/stremio/uuid/encryptedPassword/manifest.json
                 // Format ChillLink: https://host/chilllink/uuid/encryptedPassword
 
-                let match = addon.transportUrl.match(/^(https?:\/\/[^\/]+)\/stremio\/([^\/]+)\/([^\/]+)\/manifest\.json$/);
-                if (!match) {
-                    match = addon.transportUrl.match(/^(https?:\/\/[^\/]+)\/chilllink\/([^\/]+)\/([^\/]+)$/);
+                if (addon.transportUrl) {
+                    try {
+                        const url = new URL(addon.transportUrl);
+                        const segments = url.pathname.split('/').filter(Boolean); // ["stremio", "uuid", "password", "manifest.json"]
+
+                        // Support both /stremio/uuid/password/manifest.json and /chilllink/uuid/password
+                        const type = segments[0]; // "stremio" or "chilllink"
+                        const uuid = segments[1];
+                        const pass = segments[2];
+
+                        if (uuid && pass && (type === 'stremio' || type === 'chilllink')) {
+                            existingAddon = {
+                                host: url.origin,
+                                uuid: uuid,
+                                encryptedPassword: pass,
+                                transportUrl: addon.transportUrl
+                            };
+                            Logger.debug('QuickStart', `Found existing addon to reuse. Host: ${existingAddon.host}, UUID: ${uuid}`);
+                        }
+                    } catch (e) {
+                        Logger.warn('QuickStart', "Failed to parse transportUrl for reuse:", { url: addon.transportUrl, error: e.message });
+                    }
                 }
 
-                if (match) {
-                    existingAddon = {
-                        host: match[1],
-                        uuid: match[2],
-                        encryptedPassword: match[3],
-                        transportUrl: addon.transportUrl
-                    };
-
-                    // Clean up other Duck Streams addons, keeping our reused one
-                    await this.cleanUpDuckStreams(existingAddon.uuid);
-                } else {
-                    // Fallback: Regex failed. Clean up all recognized Duck Streams addons.
-                    await this.cleanUpDuckStreams(null);
-                }
+                // Clean up other Duck Streams addons, keeping our reused one
+                await this.cleanUpDuckStreams(existingAddon?.uuid);
+            } else {
+                // Fallback: Regex failed. Clean up all recognized Duck Streams addons.
+                await this.cleanUpDuckStreams();
             }
         }
 
@@ -993,7 +1040,8 @@ class QuickStart {
             password = this.ui.passwordInput.value.trim();
 
             if (!email || !password) {
-                Modal.error("Please enter a Stremio email and password.");
+                const serviceName = this.service.charAt(0).toUpperCase() + this.service.slice(1);
+                Modal.error(`Please enter a ${serviceName} email and password.`);
                 return null;
             }
         }
@@ -1065,7 +1113,7 @@ class QuickStart {
 
             // 2. Setup Stremio Account (Only if mode is account)
             if (this.mode === 'account') {
-                const result = await this.setupStremioAccount(stremioEmail, password, cleanupOldInstalls);
+                const result = await this.setupServiceAccount(stremioEmail, password, cleanupOldInstalls);
                 isNewAccount = result.isNewAccount;
                 existingAddon = result.existingAddon;
             } else {
@@ -1083,7 +1131,7 @@ class QuickStart {
 
                 if (shouldInstall) {
                     Logger.debug('QuickStart', "Installing new addon manifest...");
-                    await StremioAPI.installAddon(manifestUrl);
+                    await this.api.installAddon(manifestUrl);
                 } else {
                     Logger.debug('QuickStart', "Manifest URL is unchanged, skipping Stremio installation.");
                 }
@@ -1120,8 +1168,9 @@ class QuickStart {
             </div>`;
         }
 
+        const serviceName = this.service.charAt(0).toUpperCase() + this.service.slice(1);
         await Modal.success(
-            `Log into Stremio and enjoy! ${detailsHtml} <br><br>Your Duck Streams password is the same as your Stremio password.`,
+            `Log into ${serviceName} and enjoy! ${detailsHtml} <br><br>Your Duck Streams password is the same as your ${serviceName} password.`,
             "Welcome to Duck Streams!"
         );
     }

@@ -24,8 +24,10 @@ class AIOStreamsAPI {
         }
 
         const options = {
-            method: method,
-            headers: {}
+            method: method.toUpperCase(),
+            headers: {
+                "Accept": "application/json"
+            }
         };
 
         if (payload) {
@@ -36,8 +38,8 @@ class AIOStreamsAPI {
         const json = await Network.request(url, options);
 
         // Check for errors
-        if (json.error) {
-            throw new Error(json.error.message);
+        if (json.success === false && json.error) {
+            throw new Error(json.error.message || "Unknown API error");
         }
 
         return json;
@@ -49,7 +51,7 @@ class AIOStreamsAPI {
             uuid: uuid,
             password: password
         };
-        const json = await this.call(baseUrl, 'GET', '/api/v1/user', null, payload);
+        const json = await this.call(baseUrl, 'POST', '/api/v1/user', payload);
         return json.data.userData;
     }
 
