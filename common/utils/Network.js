@@ -34,7 +34,13 @@ class Network {
         } catch (error) {
             clearTimeout(id);
             if (error.name === 'AbortError') {
-                throw new Error(`Request timed out after ${timeout}ms`);
+                throw new Error(`Request timed out after ${timeout}ms: ${fetchUrl}`);
+            }
+            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                // This is a generic fetch error (Network down, CORS failure, or blocked by extension)
+                const enhancedError = new Error(`Failed to fetch: ${fetchUrl}. This usually indicates a network connection issue, a CORS block, or an adblocker preventing the request.`);
+                enhancedError.originalError = error;
+                throw enhancedError;
             }
             throw error;
         }
@@ -70,7 +76,10 @@ class Network {
                 }
                 Logger.warn('Network', `Direct fetch failed for ${url}: ${resp.status}`);
             } catch (e) {
-                Logger.warn('Network', `Direct fetch error for ${url}, falling back to proxy...`, { error: e.message });
+                Logger.warn('Network', `Direct fetch error for ${url}, falling back to proxy...`, { 
+                    error: e.message,
+                    type: e.name
+                });
                 // Fallthrough to proxy below
             }
         }
