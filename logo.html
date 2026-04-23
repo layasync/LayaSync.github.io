@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LayaSync Logo Store</title>
+    <title>LayaSync | Logo Archive</title>
     <style>
         :root {
-            --bg: #f5f5f7;
-            --sidebar: rgba(255, 255, 255, 0.8);
-            --card: #ffffff;
+            --bg: #ffffff;
             --accent: #007aff;
+            --pill-bg: #f2f2f7;
             --text: #1d1d1f;
         }
 
@@ -19,161 +18,188 @@
             margin: 0;
             background-color: var(--bg);
             color: var(--text);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        /* macOS Sidebar */
-        nav {
-            width: 260px;
-            background: var(--sidebar);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-right: 1px solid rgba(0,0,0,0.1);
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .nav-header { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-        .nav-item { padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; color: #555; }
-        .nav-item:hover { background: rgba(0,0,0,0.05); }
-        .nav-item.active { background: var(--accent); color: white; }
-
-        /* Main Content */
-        main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-
-        /* macOS Search Bar Area */
-        .top-bar {
-            padding: 20px 40px;
+        /* Search Bar Area */
+        .header {
             position: sticky;
             top: 0;
-            background: rgba(245, 245, 247, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            z-index: 1000;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid #f2f2f7;
         }
 
-        .search-input {
+        .search-box {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
+            background: #f2f2f7;
+            border: none;
             padding: 12px 20px;
             border-radius: 12px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: white;
             font-size: 16px;
             outline: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
 
-        /* Responsive Grid */
+        .search-box:focus { background: #e5e5ea; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
+
+        /* Grid System */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
-            padding: 0 40px 40px 40px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 30px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Apple Style Card */
-        .card {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            border: 1px solid rgba(0,0,0,0.03);
-            animation: slideUp 0.5s ease forwards;
+        /* Logo Item - No Card Background */
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: transform 0.2s ease;
         }
 
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
+        .logo-item:hover { transform: translateY(-5px); }
 
-        .card img {
+        /* Image Handling - Full view, no compromise */
+        .img-container {
             width: 100%;
-            height: 140px;
-            object-fit: contain;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            cursor: pointer;
         }
 
-        .card h3 { margin: 10px 0 5px 0; font-size: 16px; font-weight: 600; }
-        .card p { margin: 0; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Shows full image without cropping */
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
         }
 
-        /* Mobile View */
-        @media (max-width: 768px) {
-            nav { display: none; }
-            .top-bar { padding: 20px; }
-            .grid { padding: 20px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        /* Title Pill */
+        .title-pill {
+            background: var(--pill-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        #loader { text-align: center; padding: 50px; font-weight: 500; color: #888; }
+        /* Copy Button */
+        .copy-btn {
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-weight: 700;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            border: 1px solid rgba(0,122,255,0.2);
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .copy-btn:hover { opacity: 1; background: rgba(0,122,255,0.05); }
+
+        /* Smooth Loading Animation */
+        .logo-item {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* MOBILE ADJUSTMENTS: 3 PER ROW */
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr); /* Force 3 per row */
+                gap: 15px;
+                padding: 15px;
+            }
+            .img-container { height: 80px; }
+            .title-pill { font-size: 11px; padding: 4px 10px; }
+            .copy-btn { font-size: 8px; padding: 2px 5px; }
+        }
+
+        #loader { text-align: center; margin-top: 100px; color: #888; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="nav-header">LayaSync</div>
-    <div class="nav-item active">All Assets</div>
-    <div class="nav-item">Logos</div>
-    <div class="nav-item">Icons</div>
-</nav>
+<header class="header">
+    <input type="text" id="search" class="search-box" placeholder="Search logos..." onkeyup="filter()">
+</header>
 
-<main>
-    <div class="top-bar">
-        <input type="text" id="search" class="search-input" placeholder="Search logos..." onkeyup="filterLogos()">
-    </div>
-
-    <div id="loader">Loading library...</div>
-    <div class="grid" id="logoGrid"></div>
-</main>
+<div id="loader">Fetching Assets...</div>
+<div class="grid" id="logoGrid"></div>
 
 <script>
     let logos = [];
-    const jsonUrl = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
+    // Using your actual Raw GitHub Link
+    const source = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
 
-    async function fetchLogos() {
+    async function load() {
         try {
-            const response = await fetch(jsonUrl);
-            if (!response.ok) throw new Error('Network response was not ok');
-            logos = await response.json();
+            const resp = await fetch(source);
+            logos = await resp.json();
             document.getElementById('loader').style.display = 'none';
             render(logos);
-        } catch (error) {
-            document.getElementById('loader').innerHTML = "❌ Failed to load logo.json. Ensure the file exists and is public.";
-            console.error("Fetch error:", error);
+        } catch (err) {
+            document.getElementById('loader').innerText = "Failed to load library.";
         }
     }
 
     function render(data) {
-        const container = document.getElementById('logoGrid');
-        container.innerHTML = data.map((logo, index) => `
-            <div class="card" style="animation-delay: ${index * 0.05}s">
-                <img src="${logo.url}" alt="${logo.name}" loading="lazy">
-                <h3>${logo.name}</h3>
-                <p>${logo.category || 'Asset'}</p>
+        const grid = document.getElementById('logoGrid');
+        grid.innerHTML = data.map(item => `
+            <div class="logo-item">
+                <div class="img-container" onclick="copyLink('${item.url}')">
+                    <img src="${item.url}" alt="${item.name}" loading="lazy">
+                </div>
+                <div class="title-pill">${item.name}</div>
+                <div class="copy-btn" onclick="copyLink('${item.url}')">Copy Link</div>
             </div>
         `).join('');
     }
 
-    function filterLogos() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const filtered = logos.filter(l => 
-            l.name.toLowerCase().includes(query) || 
-            (l.category && l.category.toLowerCase().includes(query))
-        );
+    function filter() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = logos.filter(l => l.name.toLowerCase().includes(q));
         render(filtered);
     }
 
-    fetchLogos();
+    function copyLink(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            // Simple visual feedback
+            const toast = document.createElement('div');
+            toast.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:10px 20px; border-radius:50px; font-size:12px; z-index:10000;";
+            toast.innerText = "Direct Link Copied!";
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        });
+    }
+
+    load();
 </script>
 
 </body>
