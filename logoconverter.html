@@ -1,41 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Link to JSON Converter</title>
+    <meta charset="UTF-8">
+    <title>LayaSync Auto-Title Converter</title>
     <style>
-        body { font-family: sans-serif; padding: 40px; background: #f0f0f0; }
-        textarea { width: 100%; height: 150px; margin-bottom: 10px; border-radius: 8px; padding: 10px; }
-        button { padding: 10px 20px; background: #007aff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        #output { background: #222; color: #0f0; padding: 20px; border-radius: 8px; white-space: pre-wrap; margin-top: 20px; }
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 700px; }
+        textarea { width: 100%; height: 200px; border: 1px solid #ddd; border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; outline: none; margin-bottom: 20px; }
+        button { background: #007aff; color: white; border: none; padding: 15px 30px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        #output { background: #1e1e1e; color: #9cdcfe; margin-top: 20px; }
+        h2 { margin-top: 0; font-weight: 700; letter-spacing: -0.5px; }
     </style>
 </head>
 <body>
-    <h2>Logo JSON Generator</h2>
-    <p>Enter Name and Direct Link (separated by comma) - One per line:</p>
-    <textarea id="inputData" placeholder="Google, https://i.ibb.co/link1.png&#10;Apple, https://i.ibb.co/link2.png"></textarea>
-    <button onclick="generateJSON()">Generate JSON Code</button>
 
-    <div id="output">JSON will appear here...</div>
+<div class="box">
+    <h2>Bulk Link Converter</h2>
+    <p style="color: #666; font-size: 14px;">Paste your ImgBB links below (one per line):</p>
+    
+    <textarea id="inputLinks" placeholder="https://i.ibb.co/.../Netflix.png&#10;https://i.ibb.co/.../Disney.png"></textarea>
+    
+    <button onclick="processLinks()">Convert to JSON Code</button>
 
-    <script>
-        function generateJSON() {
-            const input = document.getElementById('inputData').value;
-            const lines = input.split('\n');
-            const result = [];
+    <p style="color: #666; font-size: 14px; margin-top: 20px;">Resulting JSON:</p>
+    <textarea id="output" readonly></textarea>
+</div>
 
-            lines.forEach(line => {
-                if(line.trim() !== "") {
-                    const parts = line.split(',');
-                    result.push({
-                        name: parts[0].trim(),
-                        category: "General",
-                        url: parts[1].trim()
-                    });
-                }
-            });
+<script>
+    function processLinks() {
+        const input = document.getElementById('inputLinks').value.trim();
+        const lines = input.split('\n');
+        const results = [];
 
-            document.getElementById('output').innerText = JSON.stringify(result, null, 2);
-        }
-    </script>
+        lines.forEach(line => {
+            const url = line.trim();
+            if (url) {
+                // Get filename from URL
+                // Example: https://i.ibb.co/xtg/Netflix.png -> Netflix.png
+                let fileName = url.substring(url.lastIndexOf('/') + 1);
+                
+                // Remove extension (.png, .jpg, etc)
+                // Example: Netflix.png -> Netflix
+                let title = fileName.split('.')[0];
+
+                // Capitalize first letter (optional)
+                title = title.charAt(0).toUpperCase() + title.slice(1);
+
+                results.push({
+                    name: title,
+                    category: "Logos",
+                    url: url
+                });
+            }
+        });
+
+        document.getElementById('output').value = JSON.stringify(results, null, 2);
+    }
+</script>
+
 </body>
-</html> 
+</html>
