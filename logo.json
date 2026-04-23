@@ -1,7 +1,77 @@
 [
   {
-    "name": "LayaSync Logo",
+    "name": "Netflix",
     "category": "Logos",
-    "url": "https://i.ibb.co/xtgjpbbS/erg-XOwu.png"
+    "url": "https://i.ibb.co/FqBSrbZ0/Netflix.png"
+  },
+  {
+    "name": "Primevideo",
+    "category": "Logos",
+    "url": "https://i.ibb.co/ccg0J10c/Primevideo.png"
+  },
+  {
+    "name": "Hbomax",
+    "category": "Logos",
+    "url": "https://i.ibb.co/SX2wsGX1/Hbomax.png"
+  },
+  {
+    "name": "Jiohotstar",
+    "category": "Logos",
+    "url": "https://i.ibb.co/7ddhNqrd/Jiohotstar.png"
+  },
+  {
+    "name": "Appletv",
+    "category": "Logos",
+    "url": "https://i.ibb.co/bgx3M2f0/Appletv.png"
+  },
+  {
+    "name": "Paramount",
+    "category": "Logos",
+    "url": "https://i.ibb.co/8nzrYrPg/Paramount.png"
+  },
+  {
+    "name": "Hulu",
+    "category": "Logos",
+    "url": "https://i.ibb.co/7djvfsdk/Hulu.png"
+  },
+  {
+    "name": "Disney",
+    "category": "Logos",
+    "url": "https://i.ibb.co/qYxHjpxJ/Disney.png"
+  },
+  {
+    "name": "Chaupal",
+    "category": "Logos",
+    "url": "https://i.ibb.co/4n6DmFGD/Chaupal.png"
+  },
+  {
+    "name": "Sonyliv",
+    "category": "Logos",
+    "url": "https://i.ibb.co/kV7qDhPx/Sonyliv.png"
+  },
+  {
+    "name": "Adventure",
+    "category": "Logos",
+    "url": "https://i.ibb.co/ds9cbsGH/Adventure.png"
+  },
+  {
+    "name": "Adventure1",
+    "category": "Logos",
+    "url": "https://i.ibb.co/wN8MnHdB/Adventure1.png"
+  },
+  {
+    "name": "Drama",
+    "category": "Logos",
+    "url": "https://i.ibb.co/wNsDp6PZ/Drama.png"
+  },
+  {
+    "name": "Thriller",
+    "category": "Logos",
+    "url": "https://i.ibb.co/nqkQCBFh/Thriller.png"
+  },
+  {
+    "name": "Horror",
+    "category": "Logos",
+    "url": "https://i.ibb.co/0y2L52g8/Horror.png"
   }
 ]
