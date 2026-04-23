@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync Asset Store</title>
+    <title>LayaSync | Asset Store</title>
     <style>
         :root {
             --bg: #ffffff;
             --accent: #007aff;
             --pill-bg: #f2f2f7;
-            --btn-bg: #007aff;
             --text: #1d1d1f;
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0;
@@ -22,16 +21,15 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Fixed Header */
+        /* macOS Search Header */
         .header {
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
             z-index: 1000;
-            padding: 15px 20px;
-            border-bottom: 1px solid #efeff4;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
         }
 
         .search-box {
@@ -41,179 +39,178 @@
             margin: 0 auto;
             background: #f2f2f7;
             border: none;
-            padding: 14px 18px;
+            padding: 14px 20px;
             border-radius: 14px;
             font-size: 16px;
             outline: none;
         }
 
-        /* The Grid */
+        /* Grid - 2 Per Row on Mobile */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 40px 20px;
-            padding: 20px;
-            max-width: 1400px;
+            padding: 25px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* Logo Item Container */
+        /* Individual Asset Layout */
         .logo-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
         }
 
-        /* Image Box - No Background */
+        /* Image Display - No Card/Casing here */
         .img-container {
             width: 100%;
-            aspect-ratio: 1 / 1; /* Square box to keep grid even */
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
 
         .img-container img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            transition: transform 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Full logo, no compromise */
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08));
+            transition: transform 0.3s ease;
         }
 
-        .logo-item:hover img { transform: scale(1.1); }
-
-        /* Title Pill - Large width handling */
-        .title-pill {
+        /* Wide Pill Cut Casing */
+        .pill-casing {
             background: var(--pill-bg);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #3a3a3c;
-            width: 95%;
-            text-align: center;
+            width: 100%; /* Large width */
+            padding: 12px;
+            border-radius: 18px; /* Cut casing look */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; /* "Cuts" long text with ... */
-            margin-bottom: 10px;
+            text-overflow: ellipsis;
+            width: 90%;
+            text-align: center;
         }
 
-        /* Hard Copy Button - Apple Style */
-        .copy-btn {
-            width: 90%;
-            background: var(--btn-bg);
+        /* Hard Copy Button */
+        .hard-copy-btn {
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 8px 0;
-            border-radius: 8px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.1s;
+            transition: transform 0.1s ease;
         }
 
-        .copy-btn:active { transform: scale(0.95); opacity: 0.8; }
+        .hard-copy-btn:active { transform: scale(0.96); opacity: 0.9; }
 
-        /* MOBILE ADJUSTMENTS: Proper 3-per-row UI */
+        /* Mobile Adaptation: 2 PER ROW */
         @media (max-width: 600px) {
             .grid {
-                grid-template-columns: repeat(3, 1fr); /* 3 Per Row */
-                gap: 20px 10px; /* Tighter horizontal gap for more space */
-                padding: 10px;
+                grid-template-columns: repeat(2, 1fr); /* 2 Per Row */
+                gap: 30px 15px;
+                padding: 15px;
             }
-
-            .img-container { height: 90px; } /* Fixed height to prevent smallness */
-            
-            .title-pill {
-                font-size: 10px;
-                padding: 4px 6px;
-                width: 100%;
-            }
-
-            .copy-btn {
-                font-size: 9px;
-                padding: 6px 0;
-                border-radius: 6px;
-                width: 100%;
-            }
+            .img-container { height: 110px; }
+            .pill-casing { padding: 10px; border-radius: 15px; }
+            .title { font-size: 12px; }
+            .hard-copy-btn { padding: 8px; font-size: 10px; }
         }
 
-        #loader { text-align: center; margin-top: 50px; font-weight: 600; color: #ccc; }
+        #loader { text-align: center; padding: 50px; color: #ccc; font-weight: 600; }
         
-        /* Copy Toast Notification */
+        /* Toast Alert */
         #toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #1d1d1f;
+            background: rgba(0,0,0,0.9);
             color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            z-index: 9999;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+            z-index: 2000;
         }
-        #toast.show { transform: translateX(-50%) translateY(0); }
+        #toast.active { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
 <header class="header">
-    <input type="text" id="search" class="search-box" placeholder="Search Assets..." onkeyup="filter()">
+    <input type="text" id="search" class="search-box" placeholder="Search logos..." onkeyup="filterLogos()">
 </header>
 
-<div id="loader">Loading Library...</div>
+<div id="loader">Syncing Library...</div>
 <div class="grid" id="logoGrid"></div>
 
-<div id="toast">Link Copied to Clipboard</div>
+<div id="toast">Direct Link Copied!</div>
 
 <script>
     let logos = [];
-    const source = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
+    // Link to your logo.json
+    const jsonUrl = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
 
-    async function load() {
+    async function loadData() {
         try {
-            const resp = await fetch(source);
-            logos = await resp.json();
+            const response = await fetch(jsonUrl);
+            logos = await response.json();
             document.getElementById('loader').style.display = 'none';
             render(logos);
-        } catch (err) {
-            document.getElementById('loader').innerText = "Network Error.";
+        } catch (e) {
+            document.getElementById('loader').innerText = "Failed to fetch library.";
         }
     }
 
-    function render(data) {
+    function render(items) {
         const grid = document.getElementById('logoGrid');
-        grid.innerHTML = data.map(item => `
+        grid.innerHTML = items.map(logo => `
             <div class="logo-item">
                 <div class="img-container">
-                    <img src="${item.url}" alt="${item.name}" loading="lazy">
+                    <img src="${logo.url}" alt="${logo.name}" loading="lazy">
                 </div>
-                <div class="title-pill">${item.name}</div>
-                <button class="copy-btn" onclick="copyLink('${item.url}')">Copy Link</button>
+                <div class="pill-casing">
+                    <div class="title">${logo.name}</div>
+                    <button class="hard-copy-btn" onclick="copyLink('${logo.url}')">Copy Link</button>
+                </div>
             </div>
         `).join('');
     }
 
-    function filter() {
-        const q = document.getElementById('search').value.toLowerCase();
-        const filtered = logos.filter(l => l.name.toLowerCase().includes(q));
+    function filterLogos() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filtered = logos.filter(l => l.name.toLowerCase().includes(query));
         render(filtered);
     }
 
     function copyLink(url) {
         navigator.clipboard.writeText(url);
         const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 2000);
     }
 
-    load();
+    loadData();
 </script>
 
 </body>
