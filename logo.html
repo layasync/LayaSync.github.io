@@ -3,169 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logo Archive - macOS</title>
+    <title>LayaSync Logo Store</title>
     <style>
         :root {
-            --bg-color: #f5f5f7;
-            --sidebar-color: rgba(255, 255, 255, 0.6);
-            --card-bg: #ffffff;
+            --bg: #f5f5f7;
+            --sidebar: rgba(255, 255, 255, 0.8);
+            --card: #ffffff;
             --accent: #007aff;
             --text: #1d1d1f;
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
         body {
             margin: 0;
-            background-color: var(--bg-color);
+            background-color: var(--bg);
             color: var(--text);
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Sidebar - macOS Style */
+        /* macOS Sidebar */
         nav {
-            width: 250px;
-            background: var(--sidebar-color);
-            backdrop-filter: blur(20px);
+            width: 260px;
+            background: var(--sidebar);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-right: 1px solid rgba(0,0,0,0.1);
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 20px;
         }
 
-        .logo-title { font-weight: 700; font-size: 20px; margin-bottom: 20px; }
-
-        /* Search Bar */
-        .search-container {
-            padding: 20px;
-            background: rgba(255,255,255,0.3);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.8);
-            outline: none;
-            font-size: 16px;
-        }
+        .nav-header { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-item { padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; color: #555; }
+        .nav-item:hover { background: rgba(0,0,0,0.05); }
+        .nav-item.active { background: var(--accent); color: white; }
 
         /* Main Content */
-        main {
-            flex-grow: 1;
-            overflow-y: auto;
-            scroll-behavior: smooth;
+        main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+        /* macOS Search Bar Area */
+        .top-bar {
+            padding: 20px 40px;
+            position: sticky;
+            top: 0;
+            background: rgba(245, 245, 247, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 100;
         }
 
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: white;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Responsive Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            padding: 0 40px 40px 40px;
         }
 
-        /* Logo Card */
+        /* Apple Style Card */
         .card {
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 15px;
+            background: var(--card);
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
-            animation: fadeIn 0.5s ease forwards;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            animation: slideUp 0.5s ease forwards;
         }
 
-        .card:hover { transform: translateY(-5px); }
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
 
         .card img {
-            max-width: 100%;
-            height: 120px;
+            width: 100%;
+            height: 140px;
             object-fit: contain;
-            margin-bottom: 10px;
-            border-radius: 8px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
         }
 
-        .card p { margin: 5px 0; font-size: 14px; font-weight: 500; }
+        .card h3 { margin: 10px 0 5px 0; font-size: 16px; font-weight: 600; }
+        .card p { margin: 0; font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Mobile Adaptation */
+        /* Mobile View */
         @media (max-width: 768px) {
             nav { display: none; }
-            .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .top-bar { padding: 20px; }
+            .grid { padding: 20px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
+
+        #loader { text-align: center; padding: 50px; font-weight: 500; color: #888; }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="logo-title">Logo Gallery</div>
-    <div style="font-size: 12px; color: gray;">CATEGORIES</div>
-    <div style="cursor:pointer; color: var(--accent);">All Logos</div>
+    <div class="nav-header">LayaSync</div>
+    <div class="nav-item active">All Assets</div>
+    <div class="nav-item">Logos</div>
+    <div class="nav-item">Icons</div>
 </nav>
 
 <main>
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search logos..." onkeyup="searchLogos()">
+    <div class="top-bar">
+        <input type="text" id="search" class="search-input" placeholder="Search logos..." onkeyup="filterLogos()">
     </div>
 
-    <div class="grid" id="logoGrid">
-        <!-- Logos will load here -->
-    </div>
+    <div id="loader">Loading library...</div>
+    <div class="grid" id="logoGrid"></div>
 </main>
 
 <script>
-    let logoData = [];
+    let logos = [];
+    const jsonUrl = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
 
-    // Fetch the JSON file from your GitHub
-    async function loadLogos() {
+    async function fetchLogos() {
         try {
-            const response = await fetch('https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/logo.json'); // Ensure this file is in the same folder
-            logoData = await response.json();
-            displayLogos(logoData);
+            const response = await fetch(jsonUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+            logos = await response.json();
+            document.getElementById('loader').style.display = 'none';
+            render(logos);
         } catch (error) {
-            console.error("Error loading JSON:", error);
+            document.getElementById('loader').innerHTML = "❌ Failed to load logo.json. Ensure the file exists and is public.";
+            console.error("Fetch error:", error);
         }
     }
 
-    function displayLogos(data) {
-        const grid = document.getElementById('logoGrid');
-        grid.innerHTML = '';
-        
-        data.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${item.url}" loading="lazy" alt="${item.name}">
-                <p>${item.name}</p>
-                <small style="color:gray">${item.category}</small>
-            `;
-            grid.appendChild(card);
-        });
+    function render(data) {
+        const container = document.getElementById('logoGrid');
+        container.innerHTML = data.map((logo, index) => `
+            <div class="card" style="animation-delay: ${index * 0.05}s">
+                <img src="${logo.url}" alt="${logo.name}" loading="lazy">
+                <h3>${logo.name}</h3>
+                <p>${logo.category || 'Asset'}</p>
+            </div>
+        `).join('');
     }
 
-    function searchLogos() {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = logoData.filter(logo => 
-            logo.name.toLowerCase().includes(query) || 
-            logo.category.toLowerCase().includes(query)
+    function filterLogos() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const filtered = logos.filter(l => 
+            l.name.toLowerCase().includes(query) || 
+            (l.category && l.category.toLowerCase().includes(query))
         );
-        displayLogos(filtered);
+        render(filtered);
     }
 
-    loadLogos();
+    fetchLogos();
 </script>
 
 </body>
-</html> 
+</html>
