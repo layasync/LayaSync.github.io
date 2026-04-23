@@ -2,160 +2,178 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LayaSync | Logo Archive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LayaSync Asset Store</title>
     <style>
         :root {
             --bg: #ffffff;
             --accent: #007aff;
             --pill-bg: #f2f2f7;
+            --btn-bg: #007aff;
             --text: #1d1d1f;
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0;
             background-color: var(--bg);
             color: var(--text);
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Search Bar Area */
+        /* Fixed Header */
         .header {
             position: sticky;
             top: 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             z-index: 1000;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            border-bottom: 1px solid #f2f2f7;
+            padding: 15px 20px;
+            border-bottom: 1px solid #efeff4;
         }
 
         .search-box {
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
+            display: block;
+            margin: 0 auto;
             background: #f2f2f7;
             border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 14px 18px;
+            border-radius: 14px;
             font-size: 16px;
             outline: none;
-            transition: all 0.2s;
         }
 
-        .search-box:focus { background: #e5e5ea; box-shadow: 0 0 0 4px rgba(0,122,255,0.1); }
-
-        /* Grid System */
+        /* The Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 30px;
-            padding: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 40px 20px;
+            padding: 20px;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* Logo Item - No Card Background */
+        /* Logo Item Container */
         .logo-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            transition: transform 0.2s ease;
+            width: 100%;
         }
 
-        .logo-item:hover { transform: translateY(-5px); }
-
-        /* Image Handling - Full view, no compromise */
+        /* Image Box - No Background */
         .img-container {
             width: 100%;
-            height: 120px;
+            aspect-ratio: 1 / 1; /* Square box to keep grid even */
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 12px;
-            cursor: pointer;
         }
 
         .img-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; /* Shows full image without cropping */
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            transition: transform 0.3s cubic-bezier(0.2, 1, 0.2, 1);
         }
 
-        /* Title Pill */
+        .logo-item:hover img { transform: scale(1.1); }
+
+        /* Title Pill - Large width handling */
         .title-pill {
             background: var(--pill-bg);
-            padding: 5px 15px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
-            color: #555;
-            max-width: 100%;
+            font-weight: 600;
+            color: #3a3a3c;
+            width: 95%;
+            text-align: center;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
+            text-overflow: ellipsis; /* "Cuts" long text with ... */
+            margin-bottom: 10px;
         }
 
-        /* Copy Button */
+        /* Hard Copy Button - Apple Style */
         .copy-btn {
-            margin-top: 8px;
-            font-size: 10px;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
+            width: 90%;
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 8px 0;
+            border-radius: 8px;
+            font-size: 11px;
             font-weight: 700;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-            border: 1px solid rgba(0,122,255,0.2);
-            padding: 3px 8px;
-            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
         }
 
-        .copy-btn:hover { opacity: 1; background: rgba(0,122,255,0.05); }
+        .copy-btn:active { transform: scale(0.95); opacity: 0.8; }
 
-        /* Smooth Loading Animation */
-        .logo-item {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* MOBILE ADJUSTMENTS: 3 PER ROW */
+        /* MOBILE ADJUSTMENTS: Proper 3-per-row UI */
         @media (max-width: 600px) {
             .grid {
-                grid-template-columns: repeat(3, 1fr); /* Force 3 per row */
-                gap: 15px;
-                padding: 15px;
+                grid-template-columns: repeat(3, 1fr); /* 3 Per Row */
+                gap: 20px 10px; /* Tighter horizontal gap for more space */
+                padding: 10px;
             }
-            .img-container { height: 80px; }
-            .title-pill { font-size: 11px; padding: 4px 10px; }
-            .copy-btn { font-size: 8px; padding: 2px 5px; }
+
+            .img-container { height: 90px; } /* Fixed height to prevent smallness */
+            
+            .title-pill {
+                font-size: 10px;
+                padding: 4px 6px;
+                width: 100%;
+            }
+
+            .copy-btn {
+                font-size: 9px;
+                padding: 6px 0;
+                border-radius: 6px;
+                width: 100%;
+            }
         }
 
-        #loader { text-align: center; margin-top: 100px; color: #888; }
+        #loader { text-align: center; margin-top: 50px; font-weight: 600; color: #ccc; }
+        
+        /* Copy Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1d1d1f;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            z-index: 9999;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
 <header class="header">
-    <input type="text" id="search" class="search-box" placeholder="Search logos..." onkeyup="filter()">
+    <input type="text" id="search" class="search-box" placeholder="Search Assets..." onkeyup="filter()">
 </header>
 
-<div id="loader">Fetching Assets...</div>
+<div id="loader">Loading Library...</div>
 <div class="grid" id="logoGrid"></div>
+
+<div id="toast">Link Copied to Clipboard</div>
 
 <script>
     let logos = [];
-    // Using your actual Raw GitHub Link
     const source = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
 
     async function load() {
@@ -165,7 +183,7 @@
             document.getElementById('loader').style.display = 'none';
             render(logos);
         } catch (err) {
-            document.getElementById('loader').innerText = "Failed to load library.";
+            document.getElementById('loader').innerText = "Network Error.";
         }
     }
 
@@ -173,11 +191,11 @@
         const grid = document.getElementById('logoGrid');
         grid.innerHTML = data.map(item => `
             <div class="logo-item">
-                <div class="img-container" onclick="copyLink('${item.url}')">
+                <div class="img-container">
                     <img src="${item.url}" alt="${item.name}" loading="lazy">
                 </div>
                 <div class="title-pill">${item.name}</div>
-                <div class="copy-btn" onclick="copyLink('${item.url}')">Copy Link</div>
+                <button class="copy-btn" onclick="copyLink('${item.url}')">Copy Link</button>
             </div>
         `).join('');
     }
@@ -189,14 +207,10 @@
     }
 
     function copyLink(url) {
-        navigator.clipboard.writeText(url).then(() => {
-            // Simple visual feedback
-            const toast = document.createElement('div');
-            toast.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:10px 20px; border-radius:50px; font-size:12px; z-index:10000;";
-            toast.innerText = "Direct Link Copied!";
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        });
+        navigator.clipboard.writeText(url);
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
     }
 
     load();
