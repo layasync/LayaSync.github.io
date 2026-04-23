@@ -131,7 +131,7 @@
     // Fetch the JSON file from your GitHub
     async function loadLogos() {
         try {
-            const response = await fetch('logos.json'); // Ensure this file is in the same folder
+            const response = await fetch('https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/logo.json'); // Ensure this file is in the same folder
             logoData = await response.json();
             displayLogos(logoData);
         } catch (error) {
