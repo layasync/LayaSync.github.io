@@ -62,7 +62,6 @@
             align-items: center;
         }
 
-        /* Image Display - No Card/Casing here */
         .img-container {
             width: 100%;
             height: 140px;
@@ -75,22 +74,20 @@
         .img-container img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; /* Full logo, no compromise */
+            object-fit: contain;
             filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08));
-            transition: transform 0.3s ease;
         }
 
         /* Wide Pill Cut Casing */
         .pill-casing {
             background: var(--pill-bg);
-            width: 100%; /* Large width */
+            width: 100%;
             padding: 12px;
-            border-radius: 18px; /* Cut casing look */
+            border-radius: 18px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .title {
@@ -117,27 +114,19 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: transform 0.1s ease;
         }
 
-        .hard-copy-btn:active { transform: scale(0.96); opacity: 0.9; }
-
-        /* Mobile Adaptation: 2 PER ROW */
         @media (max-width: 600px) {
             .grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 Per Row */
+                grid-template-columns: repeat(2, 1fr);
                 gap: 30px 15px;
                 padding: 15px;
             }
             .img-container { height: 110px; }
-            .pill-casing { padding: 10px; border-radius: 15px; }
-            .title { font-size: 12px; }
-            .hard-copy-btn { padding: 8px; font-size: 10px; }
         }
 
         #loader { text-align: center; padding: 50px; color: #ccc; font-weight: 600; }
         
-        /* Toast Alert */
         #toast {
             position: fixed;
             bottom: 30px;
@@ -147,8 +136,6 @@
             color: white;
             padding: 12px 25px;
             border-radius: 50px;
-            font-size: 13px;
-            font-weight: 500;
             transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
             z-index: 2000;
         }
@@ -168,17 +155,20 @@
 
 <script>
     let logos = [];
-    // Link to your logo.json
     const jsonUrl = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
 
     async function loadData() {
         try {
-            const response = await fetch(jsonUrl);
+            // FORCE REFRESH: Added timestamp to bypass GitHub/Browser cache
+            const freshUrl = `${jsonUrl}?t=${new Date().getTime()}`;
+            
+            const response = await fetch(freshUrl);
             logos = await response.json();
             document.getElementById('loader').style.display = 'none';
             render(logos);
         } catch (e) {
             document.getElementById('loader').innerText = "Failed to fetch library.";
+            console.error(e);
         }
     }
 
