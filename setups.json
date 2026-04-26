@@ -1,11 +1,44 @@
 [
   {
     "name": "Nuvio Dark Setup",
-    "screenshot": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/Screenshot_20260426_213816_Reddit.jpg",
+    "screenshot": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/Screenshot_20260426_213816_Reddit.jpg",
     "files": [
-      {
-        "url": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/nuvio-collections-profile-1(1).json"
-      }
+      { "url": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/nuvio-collections-profile-1(1).json" }
+    ]
+  },
+  {
+    "name": "Nuvio Minimal White",
+    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "files": [
+      { "url": "PASTE_JSON_LINK_HERE" }
+    ]
+  },
+  {
+    "name": "Neon Night Setup",
+    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "files": [
+      { "url": "PASTE_JSON_LINK_HERE" }
+    ]
+  },
+  {
+    "name": "Aesthetic Pastel",
+    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "files": [
+      { "url": "PASTE_JSON_LINK_HERE" }
+    ]
+  },
+  {
+    "name": "Cyberpunk Edition",
+    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "files": [
+      { "url": "PASTE_JSON_LINK_HERE" }
+    ]
+  },
+  {
+    "name": "Retro Classic",
+    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "files": [
+      { "url": "PASTE_JSON_LINK_HERE" }
     ]
   }
 ]
