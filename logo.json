@@ -1365,7 +1365,6 @@
     "url": "https://i.ibb.co/VWYYGzMs/99a7c210-5bd3-4520-9641-127c1e78bb3b.jpg",
     "group": "Decades"
   },
-
   {
     "name": "Epic",
     "category": "Logos",
@@ -1409,37 +1408,44 @@
   {
     "name": "Hulu",
     "category": "Logos",
-    "url": "https://i.ibb.co/wZ9vxRBs/hulu.gif"
+    "url": "https://i.ibb.co/wZ9vxRBs/hulu.gif",
+    "group": "Gifs"
   },
   {
     "name": "Drama",
     "category": "Logos",
-    "url": "https://i.ibb.co/35VbwbwT/drama.gif"
+    "url": "https://i.ibb.co/35VbwbwT/drama.gif",
+    "group": "Genre"
   },
   {
     "name": "Fantasy",
     "category": "Logos",
-    "url": "https://i.ibb.co/tpQ2hRtb/fantasy.gif"
+    "url": "https://i.ibb.co/tpQ2hRtb/fantasy.gif",
+    "group": "Genre"
   },
   {
     "name": "Comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/7NrnCv0K/comedy.gif"
+    "url": "https://i.ibb.co/7NrnCv0K/comedy.gif",
+    "group": "Genre"
   },
   {
     "name": "Music",
     "category": "Logos",
-    "url": "https://i.ibb.co/0p2xbbg2/music.gif"
+    "url": "https://i.ibb.co/0p2xbbg2/music.gif",
+    "group": "Genre"
   },
   {
     "name": "History",
     "category": "Logos",
-    "url": "https://i.ibb.co/3yBVqvs9/history.gif"
+    "url": "https://i.ibb.co/3yBVqvs9/history.gif",
+    "group": "Genre"
   },
   {
     "name": "Coming-of-age",
     "category": "Logos",
-    "url": "https://i.ibb.co/wFqcVLDz/coming-of-age.jpg"
+    "url": "https://i.ibb.co/wFqcVLDz/coming-of-age.jpg",
+    "group": "Genre"
   },
   {
     "name": "2000s",
@@ -1459,12 +1465,14 @@
   {
     "name": "Treasure-hunt",
     "category": "Logos",
-    "url": "https://i.ibb.co/27j0WD8m/treasure-hunt.gif"
+    "url": "https://i.ibb.co/27j0WD8m/treasure-hunt.gif",
+    "group": "Genre"
   },
   {
     "name": "Revenge",
     "category": "Logos",
-    "url": "https://i.ibb.co/bgP4R6wk/revenge.jpg"
+    "url": "https://i.ibb.co/bgP4R6wk/revenge.jpg",
+    "group": "Genre"
   },
   {
     "name": "Thriller",
@@ -1474,12 +1482,14 @@
   {
     "name": "Anime",
     "category": "Logos",
-    "url": "https://i.ibb.co/tMbDMFGR/anime.gif"
+    "url": "https://i.ibb.co/tMbDMFGR/anime.gif",
+    "group": "Genre"
   },
   {
     "name": "Romantic-comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/d0JNbJqG/romantic-comedy.gif"
+    "url": "https://i.ibb.co/d0JNbJqG/romantic-comedy.gif",
+    "group": "Genre"
   },
   {
     "name": "1980s",
@@ -1489,27 +1499,32 @@
   {
     "name": "Time-travel",
     "category": "Logos",
-    "url": "https://i.ibb.co/V0tTyP6F/time-travel.gif"
+    "url": "https://i.ibb.co/V0tTyP6F/time-travel.gif",
+    "group": "Genre"
   },
   {
     "name": "Mystery",
     "category": "Logos",
-    "url": "https://i.ibb.co/RTwT3K9f/mystery.gif"
+    "url": "https://i.ibb.co/RTwT3K9f/mystery.gif",
+    "group": "Genre"
   },
   {
     "name": "Apple-tv",
     "category": "Logos",
-    "url": "https://i.ibb.co/dwhYQvts/apple-tv.gif"
+    "url": "https://i.ibb.co/dwhYQvts/apple-tv.gif",
+    "group": "Gifs"
   },
   {
     "name": "Vampire",
     "category": "Logos",
-    "url": "https://i.ibb.co/4RrT7Pqj/vampire.jpg"
+    "url": "https://i.ibb.co/4RrT7Pqj/vampire.jpg",
+    "group": "Genre"
   },
   {
     "name": "Tv",
     "category": "Logos",
-    "url": "https://i.ibb.co/nqpzfjB8/tv.jpg"
+    "url": "https://i.ibb.co/nqpzfjB8/tv.jpg",
+    "group": "Genre"
   },
   {
     "name": "Hbo-max",
@@ -1519,62 +1534,74 @@
   {
     "name": "Family",
     "category": "Logos",
-    "url": "https://i.ibb.co/QFGL0dd3/family.jpg"
+    "url": "https://i.ibb.co/QFGL0dd3/family.jpg",
+    "group": "Genre"
   },
   {
     "name": "Documentary",
     "category": "Logos",
-    "url": "https://i.ibb.co/YTQwRWLP/documentary.gif"
+    "url": "https://i.ibb.co/YTQwRWLP/documentary.gif",
+    "group": "Genre"
   },
   {
     "name": "Magic",
     "category": "Logos",
-    "url": "https://i.ibb.co/1tzwfMZb/magic.jpg"
+    "url": "https://i.ibb.co/1tzwfMZb/magic.jpg",
+    "group": "Genre"
   },
   {
     "name": "Spy",
     "category": "Logos",
-    "url": "https://i.ibb.co/5h215Ld1/spy.gif"
+    "url": "https://i.ibb.co/5h215Ld1/spy.gif",
+    "group": "Genre"
   },
   {
     "name": "Crime",
     "category": "Logos",
-    "url": "https://i.ibb.co/jPBdsXyz/crime.jpg"
+    "url": "https://i.ibb.co/jPBdsXyz/crime.jpg",
+    "group": "Genre"
   },
   {
     "name": "Romance",
     "category": "Logos",
-    "url": "https://i.ibb.co/N2gMkgsK/romance.jpg"
+    "url": "https://i.ibb.co/N2gMkgsK/romance.jpg",
+    "group": "Genre"
   },
   {
     "name": "Peacock",
     "category": "Logos",
-    "url": "https://i.ibb.co/mFyHyybG/peacock.gif"
+    "url": "https://i.ibb.co/mFyHyybG/peacock.gif",
+    "group": "Gifs"
   },
   {
     "name": "Animation",
     "category": "Logos",
-    "url": "https://i.ibb.co/8gwb1Wz5/animation.gif"
+    "url": "https://i.ibb.co/8gwb1Wz5/animation.gif",
+    "group": "Genre"
   },
   {
     "name": "Action",
     "category": "Logos",
-    "url": "https://i.ibb.co/Z1kRwvxR/action.gif"
+    "url": "https://i.ibb.co/Z1kRwvxR/action.gif",
+    "group": "Genre"
   },
   {
     "name": "Curiosity-stream",
     "category": "Logos",
-    "url": "https://i.ibb.co/WpRrtxSD/curiosity-stream.gif"
+    "url": "https://i.ibb.co/WpRrtxSD/curiosity-stream.gif",
+    "group": "Gifs"
   },
   {
     "name": "Crunchyroll",
     "category": "Logos",
-    "url": "https://i.ibb.co/RWn4cbr/crunchyroll.gif"
+    "url": "https://i.ibb.co/RWn4cbr/crunchyroll.gif",
+    "group": "Gifs"
   },
   {
     "name": "Time-travel",
     "category": "Logos",
-    "url": "https://i.ibb.co/7xZFxJqP/time-travel.jpg"
+    "url": "https://i.ibb.co/7xZFxJqP/time-travel.jpg",
+    "group": "Genre"
   },
   {
     "name": "1950s",
@@ -1584,7 +1611,8 @@
   {
     "name": "Paramount-plus",
     "category": "Logos",
-    "url": "https://i.ibb.co/cStzyyLB/paramount-plus.gif"
+    "url": "https://i.ibb.co/cStzyyLB/paramount-plus.gif",
+    "group": "Gifs"
   },
   {
     "name": "1990s",
@@ -1594,42 +1622,50 @@
   {
     "name": "Discovery-plus",
     "category": "Logos",
-    "url": "https://i.ibb.co/HDpzTjfc/discovery-plus.gif"
+    "url": "https://i.ibb.co/HDpzTjfc/discovery-plus.gif",
+    "group": "Gifs"
   },
   {
     "name": "Satire",
     "category": "Logos",
-    "url": "https://i.ibb.co/d4MnkWnc/satire.jpg"
+    "url": "https://i.ibb.co/d4MnkWnc/satire.jpg",
+    "group": "Genre"
   },
   {
     "name": "Talk",
     "category": "Logos",
-    "url": "https://i.ibb.co/5gG0PT9y/talk.jpg"
+    "url": "https://i.ibb.co/5gG0PT9y/talk.jpg",
+    "group": "Genre"
   },
   {
     "name": "Western",
     "category": "Logos",
-    "url": "https://i.ibb.co/twzL1RPL/western.jpg"
+    "url": "https://i.ibb.co/twzL1RPL/western.jpg",
+    "group": "Genre"
   },
   {
     "name": "Horror",
     "category": "Logos",
-    "url": "https://i.ibb.co/5g0xcLdp/horror.gif"
+    "url": "https://i.ibb.co/5g0xcLdp/horror.gif",
+    "group": "Genre"
   },
   {
     "name": "Superhero",
     "category": "Logos",
-    "url": "https://i.ibb.co/nN3994v7/superhero.jpg"
+    "url": "https://i.ibb.co/nN3994v7/superhero.jpg",
+    "group": "Genre"
   },
   {
     "name": "Martial-arts",
     "category": "Logos",
-    "url": "https://i.ibb.co/8LC57Y8f/martial-arts.jpg"
+    "url": "https://i.ibb.co/8LC57Y8f/martial-arts.jpg",
+    "group": "Genre"
   },
   {
     "name": "Reality",
     "category": "Logos",
-    "url": "https://i.ibb.co/j9gKsfsG/reality.jpg"
+    "url": "https://i.ibb.co/j9gKsfsG/reality.jpg",
+    "group": "Genre"
   },
   {
     "name": "1960s-1",
@@ -1639,32 +1675,38 @@
   {
     "name": "Space",
     "category": "Logos",
-    "url": "https://i.ibb.co/Wpfd6s89/space.gif"
+    "url": "https://i.ibb.co/Wpfd6s89/space.gif",
+    "group": "Genre"
   },
   {
     "name": "Revenge",
     "category": "Logos",
-    "url": "https://i.ibb.co/Wv2tT1B5/revenge.gif"
+    "url": "https://i.ibb.co/Wv2tT1B5/revenge.gif",
+    "group": "Genre"
   },
   {
     "name": "Drama",
     "category": "Logos",
-    "url": "https://i.ibb.co/WRfY9XX/drama.jpg"
+    "url": "https://i.ibb.co/WRfY9XX/drama.jpg",
+    "group": "Genre"
   },
   {
     "name": "Music",
     "category": "Logos",
-    "url": "https://i.ibb.co/DHBvM1hD/music.jpg"
+    "url": "https://i.ibb.co/DHBvM1hD/music.jpg",
+    "group": "Genre"
   },
   {
     "name": "Comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/hJZ6J1F3/comedy.jpg"
+    "url": "https://i.ibb.co/hJZ6J1F3/comedy.jpg",
+    "group": "Genre"
   },
   {
     "name": "Fantasy",
     "category": "Logos",
-    "url": "https://i.ibb.co/6RDbgky0/fantasy.jpg"
+    "url": "https://i.ibb.co/6RDbgky0/fantasy.jpg",
+    "group": "Genre"
   },
   {
     "name": "Hulu",
@@ -1674,17 +1716,20 @@
   {
     "name": "Treasure-hunt",
     "category": "Logos",
-    "url": "https://i.ibb.co/YTVn266N/treasure-hunt.jpg"
+    "url": "https://i.ibb.co/YTVn266N/treasure-hunt.jpg",
+    "group": "Genre"
   },
   {
     "name": "Thriller",
     "category": "Logos",
-    "url": "https://i.ibb.co/JFx97Gyt/thriller.gif"
+    "url": "https://i.ibb.co/JFx97Gyt/thriller.gif",
+    "group": "Genre"
   },
   {
     "name": "History",
     "category": "Logos",
-    "url": "https://i.ibb.co/273PvfjN/history.jpg"
+    "url": "https://i.ibb.co/273PvfjN/history.jpg",
+    "group": "Genre"
   },
   {
     "name": "2000s",
@@ -1704,12 +1749,14 @@
   {
     "name": "Coming-of-age",
     "category": "Logos",
-    "url": "https://i.ibb.co/Ldc8VHvr/coming-of-age.gif"
+    "url": "https://i.ibb.co/Ldc8VHvr/coming-of-age.gif",
+    "group": "Genre"
   },
   {
     "name": "Anime",
     "category": "Logos",
-    "url": "https://i.ibb.co/mkqt28R/anime.jpg"
+    "url": "https://i.ibb.co/mkqt28R/anime.jpg",
+    "group": "Genre"
   },
   {
     "name": "1980s",
@@ -1719,7 +1766,8 @@
   {
     "name": "Romantic-comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/Q7BqWTSj/romantic-comedy.jpg"
+    "url": "https://i.ibb.co/Q7BqWTSj/romantic-comedy.jpg",
+    "group": "Genre"
   },
   {
     "name": "Apple-tv",
@@ -1729,12 +1777,14 @@
   {
     "name": "Mystery",
     "category": "Logos",
-    "url": "https://i.ibb.co/xKJJW6BK/mystery.jpg"
+    "url": "https://i.ibb.co/xKJJW6BK/mystery.jpg",
+    "group": "Genre"
   },
   {
     "name": "Documentary",
     "category": "Logos",
-    "url": "https://i.ibb.co/XZtKcFTQ/documentary.jpg"
+    "url": "https://i.ibb.co/XZtKcFTQ/documentary.jpg",
+    "group": "Genre"
   },
   {
     "name": "Hbo-max",
@@ -1744,22 +1794,26 @@
   {
     "name": "Vampire",
     "category": "Logos",
-    "url": "https://i.ibb.co/hR1bdJKQ/vampire.gif"
+    "url": "https://i.ibb.co/hR1bdJKQ/vampire.gif",
+    "group": "Genre"
   },
   {
     "name": "Family",
     "category": "Logos",
-    "url": "https://i.ibb.co/7d0p2c2v/family.gif"
+    "url": "https://i.ibb.co/7d0p2c2v/family.gif",
+    "group": "Genre"
   },
   {
     "name": "Tv",
     "category": "Logos",
-    "url": "https://i.ibb.co/xpYTd9C/tv.gif"
+    "url": "https://i.ibb.co/xpYTd9C/tv.gif",
+    "group": "Genre"
   },
   {
     "name": "Spy",
     "category": "Logos",
-    "url": "https://i.ibb.co/0y73CMWM/spy.jpg"
+    "url": "https://i.ibb.co/0y73CMWM/spy.jpg",
+    "group": "Genre"
   },
   {
     "name": "Peacock",
@@ -1769,17 +1823,20 @@
   {
     "name": "Magic",
     "category": "Logos",
-    "url": "https://i.ibb.co/8gBnFPK9/magic.gif"
+    "url": "https://i.ibb.co/8gBnFPK9/magic.gif",
+    "group": "Genre"
   },
   {
     "name": "Crime",
     "category": "Logos",
-    "url": "https://i.ibb.co/hFZGrxv2/crime.gif"
+    "url": "https://i.ibb.co/hFZGrxv2/crime.gif",
+    "group": "Genre"
   },
   {
     "name": "Romance",
     "category": "Logos",
-    "url": "https://i.ibb.co/hJkxn1Fk/romance.gif"
+    "url": "https://i.ibb.co/hJkxn1Fk/romance.gif",
+    "group": "Genre"
   },
   {
     "name": "Crunchyroll",
@@ -1789,12 +1846,14 @@
   {
     "name": "Martial-arts",
     "category": "Logos",
-    "url": "https://i.ibb.co/RknJmBzD/martial-arts.gif"
+    "url": "https://i.ibb.co/RknJmBzD/martial-arts.gif",
+    "group": "Genre"
   },
   {
     "name": "Animation",
     "category": "Logos",
-    "url": "https://i.ibb.co/RTX6N9qC/animation.jpg"
+    "url": "https://i.ibb.co/RTX6N9qC/animation.jpg",
+    "group": "Genre"
   },
   {
     "name": "1950s",
@@ -1809,7 +1868,8 @@
   {
     "name": "Action",
     "category": "Logos",
-    "url": "https://i.ibb.co/Z6zFWSbL/action.jpg"
+    "url": "https://i.ibb.co/Z6zFWSbL/action.jpg",
+    "group": "Genre"
   },
   {
     "name": "1970s",
@@ -1834,12 +1894,14 @@
   {
     "name": "Western",
     "category": "Logos",
-    "url": "https://i.ibb.co/TBSSt4RP/western.gif"
+    "url": "https://i.ibb.co/TBSSt4RP/western.gif",
+    "group": "Genre"
   },
   {
     "name": "Horror",
     "category": "Logos",
-    "url": "https://i.ibb.co/0RyPXSt3/horror.jpg"
+    "url": "https://i.ibb.co/0RyPXSt3/horror.jpg",
+    "group": "Genre"
   },
   {
     "name": "Discovery-plus",
@@ -1849,22 +1911,25 @@
   {
     "name": "Satire",
     "category": "Logos",
-    "url": "https://i.ibb.co/JwQkR3qJ/satire.gif"
+    "url": "https://i.ibb.co/JwQkR3qJ/satire.gif",
+    "group": "Genre"
   },
   {
     "name": "Superhero",
     "category": "Logos",
-    "url": "https://i.ibb.co/DD0Y1tZs/superhero.gif"
+    "url": "https://i.ibb.co/DD0Y1tZs/superhero.gif",
+    "group": "Genre"
   },
   {
     "name": "Reality",
     "category": "Logos",
-    "url": "https://i.ibb.co/xqd1wTFQ/reality.gif"
+    "url": "https://i.ibb.co/xqd1wTFQ/reality.gif",
+    "group": "Genre"
   },
   {
     "name": "Space",
     "category": "Logos",
-    "url": "https://i.ibb.co/nsfsYD26/space.jpg"
+    "url": "https://i.ibb.co/nsfsYD26/space.jpg",
+    "group": "Genre"
   }
-
 ]
