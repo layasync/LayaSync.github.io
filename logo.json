@@ -12,92 +12,110 @@
   {
     "name": "Nature",
     "category": "Logos",
-    "url": "https://i.ibb.co/qMrQkkMv/Nature.png"
+    "url": "https://i.ibb.co/qMrQkkMv/Nature.png",
+    "group": "Genre"
   },
   {
     "name": "Romance",
     "category": "Logos",
-    "url": "https://i.ibb.co/YBRjgXFN/Romance.png"
+    "url": "https://i.ibb.co/YBRjgXFN/Romance.png",
+    "group": "Genre"
   },
   {
     "name": "Sci-Fi",
     "category": "Logos",
-    "url": "https://i.ibb.co/R4yBT0qh/Sci-Fi.png"
+    "url": "https://i.ibb.co/R4yBT0qh/Sci-Fi.png",
+    "group": "Genre"
   },
   {
     "name": "Thriller",
     "category": "Logos",
-    "url": "https://i.ibb.co/0VWVJhGd/Thriller.png"
+    "url": "https://i.ibb.co/0VWVJhGd/Thriller.png",
+    "group": "Genre"
   },
   {
     "name": "Mystery",
     "category": "Logos",
-    "url": "https://i.ibb.co/YTKkL17S/Mystery.png"
+    "url": "https://i.ibb.co/YTKkL17S/Mystery.png",
+    "group": "Genre"
   },
   {
     "name": "Food",
     "category": "Logos",
-    "url": "https://i.ibb.co/b5hmXGJB/Food.png"
+    "url": "https://i.ibb.co/b5hmXGJB/Food.png",
+    "group": "Genre"
   },
   {
     "name": "Family",
     "category": "Logos",
-    "url": "https://i.ibb.co/5hmRXfJg/Family.png"
+    "url": "https://i.ibb.co/5hmRXfJg/Family.png",
+    "group": "Genre"
   },
   {
     "name": "Fantasy",
     "category": "Logos",
-    "url": "https://i.ibb.co/KcXbDp8B/Fantasy.png"
+    "url": "https://i.ibb.co/KcXbDp8B/Fantasy.png",
+    "group": "Genre"
   },
   {
     "name": "Action",
     "category": "Logos",
-    "url": "https://i.ibb.co/j9CSPYHf/Action.png"
+    "url": "https://i.ibb.co/j9CSPYHf/Action.png",
+    "group": "Genre"
   },
   {
     "name": "Animation",
     "category": "Logos",
-    "url": "https://i.ibb.co/HThgZ9dg/Animation.png"
+    "url": "https://i.ibb.co/HThgZ9dg/Animation.png",
+    "group": "Genre"
   },
   {
     "name": "Comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/7d8vj6zp/Comedy.png"
+    "url": "https://i.ibb.co/7d8vj6zp/Comedy.png",
+    "group": "Genre"
   },
   {
     "name": "Drama",
     "category": "Logos",
-    "url": "https://i.ibb.co/nSqN3GQ/Drama.png"
+    "url": "https://i.ibb.co/nSqN3GQ/Drama.png",
+    "group": "Genre"
   },
   {
     "name": "20s",
     "category": "Logos",
-    "url": "https://i.ibb.co/mVMTDwYz/20s.png"
+    "url": "https://i.ibb.co/mVMTDwYz/20s.png",
+    "group": "Decades"
   },
   {
     "name": "90s",
     "category": "Logos",
-    "url": "https://i.ibb.co/dw1L0QBX/90s.png"
+    "url": "https://i.ibb.co/dw1L0QBX/90s.png",
+    "group": "Decades"
   },
   {
     "name": "10s",
     "category": "Logos",
-    "url": "https://i.ibb.co/B50ZfHrZ/10s.png"
+    "url": "https://i.ibb.co/B50ZfHrZ/10s.png",
+    "group": "Decades"
   },
   {
     "name": "00s",
     "category": "Logos",
-    "url": "https://i.ibb.co/5XxHj0Dh/00s.png"
+    "url": "https://i.ibb.co/5XxHj0Dh/00s.png",
+    "group": "Decades"
   },
   {
     "name": "Coen-Brothers",
     "category": "Logos",
-    "url": "https://i.ibb.co/3mz2nGX2/Coen-Brothers.png"
+    "url": "https://i.ibb.co/3mz2nGX2/Coen-Brothers.png",
+    "group": "Directors"
   },
   {
     "name": "M-Night-Shyamalan",
     "category": "Logos",
-    "url": "https://i.ibb.co/fTc37pj/M-Night-Shyamalan.png"
+    "url": "https://i.ibb.co/fTc37pj/M-Night-Shyamalan.png",
+    "group": "Directors"
   },
   {
     "name": "80s",
@@ -107,92 +125,110 @@
   {
     "name": "Directors",
     "category": "Logos",
-    "url": "https://i.ibb.co/TBWvNsP7/Directors.png"
+    "url": "https://i.ibb.co/TBWvNsP7/Directors.png",
+    "group": "Directors"
   },
   {
     "name": "Tim-Burton",
     "category": "Logos",
-    "url": "https://i.ibb.co/Q3jTYcfg/Tim-Burton.png"
+    "url": "https://i.ibb.co/Q3jTYcfg/Tim-Burton.png",
+    "group": "Directors"
   },
   {
     "name": "Ron-Howard",
     "category": "Logos",
-    "url": "https://i.ibb.co/prWqHTn2/Ron-Howard.png"
+    "url": "https://i.ibb.co/prWqHTn2/Ron-Howard.png",
+    "group": "Directors"
   },
   {
     "name": "Danny-Boyle",
     "category": "Logos",
-    "url": "https://i.ibb.co/PshkP4sh/Danny-Boyle.png"
+    "url": "https://i.ibb.co/PshkP4sh/Danny-Boyle.png",
+    "group": "Directors"
   },
   {
     "name": "Oliver-Stone",
     "category": "Logos",
-    "url": "https://i.ibb.co/9H0y51Ct/Oliver-Stone.png"
+    "url": "https://i.ibb.co/9H0y51Ct/Oliver-Stone.png",
+    "group": "Directors"
   },
   {
     "name": "Wes-Anderson",
     "category": "Logos",
-    "url": "https://i.ibb.co/6RCWXftQ/Wes-Anderson.png"
+    "url": "https://i.ibb.co/6RCWXftQ/Wes-Anderson.png",
+    "group": "Directors"
   },
   {
     "name": "Quentin-Tarantino",
     "category": "Logos",
-    "url": "https://i.ibb.co/Kp2GBDpT/Quentin-Tarantino.png"
+    "url": "https://i.ibb.co/Kp2GBDpT/Quentin-Tarantino.png",
+    "group": "Directors"
   },
   {
     "name": "Ridley-Scott",
     "category": "Logos",
-    "url": "https://i.ibb.co/nNyRDP3Q/Ridley-Scott.png"
+    "url": "https://i.ibb.co/nNyRDP3Q/Ridley-Scott.png",
+    "group": "Directors"
   },
   {
     "name": "Stanley-Kubrick",
     "category": "Logos",
-    "url": "https://i.ibb.co/HD0JPKpb/Stanley-Kubrick.png"
+    "url": "https://i.ibb.co/HD0JPKpb/Stanley-Kubrick.png",
+    "group": "Directors"
   },
   {
     "name": "Steven-Spielberg",
     "category": "Logos",
-    "url": "https://i.ibb.co/prXGkfDQ/Steven-Spielberg.png"
+    "url": "https://i.ibb.co/prXGkfDQ/Steven-Spielberg.png",
+    "group": "Directors"
   },
   {
     "name": "Christopher-Nolan",
     "category": "Logos",
-    "url": "https://i.ibb.co/bMSnkKB3/Christopher-Nolan.png"
+    "url": "https://i.ibb.co/bMSnkKB3/Christopher-Nolan.png",
+    "group": "Directors"
   },
   {
     "name": "James-Cameron",
     "category": "Logos",
-    "url": "https://i.ibb.co/cK8sdfSn/James-Cameron.png"
+    "url": "https://i.ibb.co/cK8sdfSn/James-Cameron.png",
+    "group": "Directors"
   },
   {
     "name": "UPlayer",
     "category": "Logos",
-    "url": "https://i.ibb.co/1J2CdGDj/UPlayer.png"
+    "url": "https://i.ibb.co/1J2CdGDj/UPlayer.png",
+    "group": "Streaming"
   },
   {
     "name": "3c471a49-13c3-40e2-8583-b1e9549b1768",
     "category": "Logos",
-    "url": "https://i.ibb.co/DDbqpgYM/3c471a49-13c3-40e2-8583-b1e9549b1768.jpg"
+    "url": "https://i.ibb.co/DDbqpgYM/3c471a49-13c3-40e2-8583-b1e9549b1768.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Itv-xwefbrjsf",
     "category": "Logos",
-    "url": "https://i.ibb.co/VWt4XVcF/itv-xwefbrjsf.jpg"
+    "url": "https://i.ibb.co/VWt4XVcF/itv-xwefbrjsf.jpg",
+    "group": "Streaming"
   },
   {
     "name": "63a2922f-2d1a-42ce-845e-de7e56aaf92f",
     "category": "Logos",
-    "url": "https://i.ibb.co/6chdmS1z/63a2922f-2d1a-42ce-845e-de7e56aaf92f.jpg"
+    "url": "https://i.ibb.co/6chdmS1z/63a2922f-2d1a-42ce-845e-de7e56aaf92f.jpg",
+    "group": "Streaming"
   },
   {
     "name": "5logo",
     "category": "Logos",
-    "url": "https://i.ibb.co/zH5fw63P/5logo.png"
+    "url": "https://i.ibb.co/zH5fw63P/5logo.png",
+    "group": "Streaming"
   },
   {
     "name": "D2b77dfd-c14a-4258-ab0f-b610519c96ef",
     "category": "Logos",
-    "url": "https://i.ibb.co/6CLFm4q/d2b77dfd-c14a-4258-ab0f-b610519c96ef.png"
+    "url": "https://i.ibb.co/6CLFm4q/d2b77dfd-c14a-4258-ab0f-b610519c96ef.png",
+    "group": "Streaming"
   },
   {
     "name": "Hbo-max-1",
@@ -202,152 +238,182 @@
   {
     "name": "A44f64cc-21f9-4f28-ae2e-f8be85f83b4e",
     "category": "Logos",
-    "url": "https://i.ibb.co/MkNDSNfG/a44f64cc-21f9-4f28-ae2e-f8be85f83b4e.png"
+    "url": "https://i.ibb.co/MkNDSNfG/a44f64cc-21f9-4f28-ae2e-f8be85f83b4e.png",
+    "group": "Streaming"
   },
   {
     "name": "Af3c0122-cbd1-49ae-94f1-6da0f9f665a8",
     "category": "Logos",
-    "url": "https://i.ibb.co/bgkYwZX4/af3c0122-cbd1-49ae-94f1-6da0f9f665a8.png"
+    "url": "https://i.ibb.co/bgkYwZX4/af3c0122-cbd1-49ae-94f1-6da0f9f665a8.png",
+    "group": "Streaming"
   },
   {
     "name": "9eb6e9cb-46ae-47e5-886e-0b6a552f776f",
     "category": "Logos",
-    "url": "https://i.ibb.co/CKMv4bdn/9eb6e9cb-46ae-47e5-886e-0b6a552f776f.png"
+    "url": "https://i.ibb.co/CKMv4bdn/9eb6e9cb-46ae-47e5-886e-0b6a552f776f.png",
+    "group": "Streaming"
   },
   {
     "name": "E2155ff8-4939-40d1-8dc2-7d28df3ecaa0",
     "category": "Logos",
-    "url": "https://i.ibb.co/9kwdX3gx/e2155ff8-4939-40d1-8dc2-7d28df3ecaa0.png"
+    "url": "https://i.ibb.co/9kwdX3gx/e2155ff8-4939-40d1-8dc2-7d28df3ecaa0.png",
+    "group": "Streaming"
   },
   {
     "name": "9c848b95-647e-41ca-8852-31294d6eb883",
     "category": "Logos",
-    "url": "https://i.ibb.co/JRRmJ3Qr/9c848b95-647e-41ca-8852-31294d6eb883.webp"
+    "url": "https://i.ibb.co/JRRmJ3Qr/9c848b95-647e-41ca-8852-31294d6eb883.webp",
+    "group": "Streaming"
   },
   {
     "name": "12db31b7-ca2e-4980-9c92-c83e58a22949",
     "category": "Logos",
-    "url": "https://i.ibb.co/4RhPJPV6/12db31b7-ca2e-4980-9c92-c83e58a22949.png"
+    "url": "https://i.ibb.co/4RhPJPV6/12db31b7-ca2e-4980-9c92-c83e58a22949.png",
+    "group": "Streaming"
   },
   {
     "name": "469fb054-cbec-46ca-bc91-6ed73a6d647b",
     "category": "Logos",
-    "url": "https://i.ibb.co/Mk1zJScJ/469fb054-cbec-46ca-bc91-6ed73a6d647b.png"
+    "url": "https://i.ibb.co/Mk1zJScJ/469fb054-cbec-46ca-bc91-6ed73a6d647b.png",
+    "group": "Streaming"
   },
   {
     "name": "Af01cccc-f228-4426-b579-e26f1d1a61ec",
     "category": "Logos",
-    "url": "https://i.ibb.co/8n6w1yKN/af01cccc-f228-4426-b579-e26f1d1a61ec.png"
+    "url": "https://i.ibb.co/8n6w1yKN/af01cccc-f228-4426-b579-e26f1d1a61ec.png",
+    "group": "Streaming"
   },
   {
     "name": "D0476b73-c21d-4c1d-946f-7ce3fef17ccd",
     "category": "Logos",
-    "url": "https://i.ibb.co/CssS13GM/d0476b73-c21d-4c1d-946f-7ce3fef17ccd.png"
+    "url": "https://i.ibb.co/CssS13GM/d0476b73-c21d-4c1d-946f-7ce3fef17ccd.png",
+    "group": "Streaming"
   },
   {
     "name": "A59a188a-d705-41d0-b161-62d9fb1c9192",
     "category": "Logos",
-    "url": "https://i.ibb.co/rKFRCH8Q/a59a188a-d705-41d0-b161-62d9fb1c9192.png"
+    "url": "https://i.ibb.co/rKFRCH8Q/a59a188a-d705-41d0-b161-62d9fb1c9192.png",
+    "group": "Streaming"
   },
   {
     "name": "A385753d-4b43-4ff1-8044-bb6fc4549072",
     "category": "Logos",
-    "url": "https://i.ibb.co/Vc1kfZhM/a385753d-4b43-4ff1-8044-bb6fc4549072.png"
+    "url": "https://i.ibb.co/Vc1kfZhM/a385753d-4b43-4ff1-8044-bb6fc4549072.png",
+    "group": "Streaming"
   },
   {
     "name": "007",
     "category": "Logos",
-    "url": "https://i.ibb.co/bgn30BCZ/007.jpg"
+    "url": "https://i.ibb.co/bgn30BCZ/007.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "B8318dd3-f5b8-4100-8169-df091ddeb60a",
     "category": "Logos",
-    "url": "https://i.ibb.co/C309BR38/b8318dd3-f5b8-4100-8169-df091ddeb60a.jpg"
+    "url": "https://i.ibb.co/C309BR38/b8318dd3-f5b8-4100-8169-df091ddeb60a.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Battlestar-Galactica",
     "category": "Logos",
-    "url": "https://i.ibb.co/7xhNS26Q/Battlestar-Galactica.png"
+    "url": "https://i.ibb.co/7xhNS26Q/Battlestar-Galactica.png",
+    "group": "Movie collection"
   },
   {
     "name": "A453ea55-5840-4dea-a6b8-bc2ba0a1e481",
     "category": "Logos",
-    "url": "https://i.ibb.co/20jCz921/a453ea55-5840-4dea-a6b8-bc2ba0a1e481.webp"
+    "url": "https://i.ibb.co/20jCz921/a453ea55-5840-4dea-a6b8-bc2ba0a1e481.webp",
+    "group": "Movie collection"
   },
   {
     "name": "JWorld",
     "category": "Logos",
-    "url": "https://i.ibb.co/mrSTWrX4/JWorld.jpg"
+    "url": "https://i.ibb.co/mrSTWrX4/JWorld.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Mib-recomposed-1920x1080",
     "category": "Logos",
-    "url": "https://i.ibb.co/XrSGBFny/mib-recomposed-1920x1080.png"
+    "url": "https://i.ibb.co/XrSGBFny/mib-recomposed-1920x1080.png",
+    "group": "Movie collection"
   },
   {
     "name": "Ghostbusters-logo-final-00",
     "category": "Logos",
-    "url": "https://i.ibb.co/pBP00SDt/ghostbusters-logo-final-00.jpg"
+    "url": "https://i.ibb.co/pBP00SDt/ghostbusters-logo-final-00.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "0d7e0b16-0ad8-454e-8de1-31e42781a305-1",
     "category": "Logos",
-    "url": "https://i.ibb.co/wNXTy76T/0d7e0b16-0ad8-454e-8de1-31e42781a305-1.jpg"
+    "url": "https://i.ibb.co/wNXTy76T/0d7e0b16-0ad8-454e-8de1-31e42781a305-1.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Fcc94de1503d92f37b33f9e7cedb6a49",
     "category": "Logos",
-    "url": "https://i.ibb.co/hxpzBbRn/fcc94de1503d92f37b33f9e7cedb6a49.jpg"
+    "url": "https://i.ibb.co/hxpzBbRn/fcc94de1503d92f37b33f9e7cedb6a49.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "BTF",
     "category": "Logos",
-    "url": "https://i.ibb.co/235K2CXw/BTF.jpg"
+    "url": "https://i.ibb.co/235K2CXw/BTF.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "5b8d2a2c-0670-4ef5-a2e2-f045f58e7116",
     "category": "Logos",
-    "url": "https://i.ibb.co/5Whs6gT2/5b8d2a2c-0670-4ef5-a2e2-f045f58e7116.webp"
+    "url": "https://i.ibb.co/5Whs6gT2/5b8d2a2c-0670-4ef5-a2e2-f045f58e7116.webp",
+    "group": "Movie collection"
   },
   {
     "name": "Star-Wars",
     "category": "Logos",
-    "url": "https://i.ibb.co/ks04q85h/Star-Wars.jpg"
+    "url": "https://i.ibb.co/ks04q85h/Star-Wars.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "1775948939458-acbed4cc-a50a-4794-aa1f-72666bdf6467",
     "category": "Logos",
-    "url": "https://i.ibb.co/vvMWsxsk/1775948939458-acbed4cc-a50a-4794-aa1f-72666bdf6467.png"
+    "url": "https://i.ibb.co/vvMWsxsk/1775948939458-acbed4cc-a50a-4794-aa1f-72666bdf6467.png",
+    "group": "Movie collection"
   },
   {
     "name": "5440db5f-be91-4941-b1ba-4b4ea07b0f25",
     "category": "Logos",
-    "url": "https://i.ibb.co/hRyx06Kf/5440db5f-be91-4941-b1ba-4b4ea07b0f25.jpg"
+    "url": "https://i.ibb.co/hRyx06Kf/5440db5f-be91-4941-b1ba-4b4ea07b0f25.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "882cf7a8-9aa6-4673-81c1-d3ed7a859e95",
     "category": "Logos",
-    "url": "https://i.ibb.co/Z1LrLPx4/882cf7a8-9aa6-4673-81c1-d3ed7a859e95.jpg"
+    "url": "https://i.ibb.co/Z1LrLPx4/882cf7a8-9aa6-4673-81c1-d3ed7a859e95.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Star-Trek",
     "category": "Logos",
-    "url": "https://i.ibb.co/sJ3wVr4P/Star-Trek.jpg"
+    "url": "https://i.ibb.co/sJ3wVr4P/Star-Trek.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Professor-Brian-Cox",
     "category": "Logos",
-    "url": "https://i.ibb.co/Kzp5Z75F/Professor-Brian-Cox.png"
+    "url": "https://i.ibb.co/Kzp5Z75F/Professor-Brian-Cox.png",
+    "group": "Movie collection"
   },
   {
     "name": "A75d0754-66e1-46b2-b0a5-112fb894146e",
     "category": "Logos",
-    "url": "https://i.ibb.co/DHQrNZxK/a75d0754-66e1-46b2-b0a5-112fb894146e.jpg"
+    "url": "https://i.ibb.co/DHQrNZxK/a75d0754-66e1-46b2-b0a5-112fb894146e.jpg",
+    "group": "Movie collection"
   },
   {
     "name": "Aliens",
     "category": "Logos",
-    "url": "https://i.ibb.co/v4TpG2Rc/Aliens.png"
+    "url": "https://i.ibb.co/v4TpG2Rc/Aliens.png",
+    "group": "Movie collection"
   },
   {
     "name": "Trending",
@@ -367,7 +433,8 @@
   {
     "name": "0fa17464-c043-48ee-a20d-7ffc657dda43",
     "category": "Logos",
-    "url": "https://i.ibb.co/qMdSrdKn/0fa17464-c043-48ee-a20d-7ffc657dda43.png"
+    "url": "https://i.ibb.co/qMdSrdKn/0fa17464-c043-48ee-a20d-7ffc657dda43.png",
+    "group": "Movie collection"
   },
   {
     "name": "Favourites",
@@ -389,7 +456,6 @@
     "category": "Logos",
     "url": "https://i.ibb.co/SFTzJxs/Latest.png"
   },
-
   {
     "name": "Netflix",
     "category": "Logos",
