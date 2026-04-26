@@ -3,112 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Digital Archive</title>
+    <title>LayaSync | Pro Archive</title>
     <style>
         :root {
             --bg: #ffffff;
             --text: #1c1c1e;
             --accent: #007aff;
-            --card-bg: #f2f2f7; /* Matching your screenshot pill color */
-            --sidebar-silver: linear-gradient(180deg, #e5e5ea 0%, #d1d1d6 100%);
-            --glass: rgba(255, 255, 255, 0.85);
+            --pill: #f2f2f7;
+            --sidebar: linear-gradient(180deg, #e5e5ea 0%, #d1d1d6 100%);
+            --glass: rgba(255, 255, 255, 0.9);
         }
         @media (prefers-color-scheme: dark) {
-            :root { --bg: #000000; --text: #ffffff; --card-bg: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
+            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* 60FPS SMOOTH SCROLLING */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-        html, body { 
-            margin: 0; padding: 0; height: 100%; width: 100vw; 
-            overflow: hidden; background: var(--bg); color: var(--text); 
-        }
+        html, body { margin: 0; padding: 0; height: 100%; width: 100vw; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
-        /* SIDEBAR - MANUAL ONLY */
+        /* SIDEBAR */
         .sidebar {
-            width: 270px; height: 100%; background: var(--sidebar-silver);
+            width: 270px; height: 100%; background: var(--sidebar);
             position: fixed; left: -270px; top: 0; z-index: 3000;
             transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
             padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); 
             overflow-y: auto; will-change: transform;
         }
         .sidebar.active { transform: translateX(270px); }
-        .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
-        
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
-        .group-item {
-            padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600;
-            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: space-between; font-size: 12px;
-        }
+        .group-item { padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; font-size: 13px; }
         .group-item.active { background: var(--accent); color: white; }
-        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; padding: 0 5px; }
 
-        /* MAIN SCROLL AREA */
-        main { 
-            height: 100vh; overflow-y: auto; overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-        }
+        /* MAIN SCROLL */
+        main { height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
 
+        /* HEADER */
         header {
             position: sticky; top: 0; z-index: 2000;
             background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border-bottom: 1px solid rgba(120,120,128,0.2); 
-            padding: 10px 15px; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            padding: 10px 12px; display: flex; align-items: center; gap: 8px;
         }
-        .search-box { flex: 1; background: var(--card-bg); border: none; padding: 10px 15px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
-        .btn-icon { background: var(--card-bg); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px 15px; border-radius: 10px; font-size: 15px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--pill); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 20px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* GRID LOGIC */
-        .grid { display: grid; width: 100%; padding: 12px; gap: 12px; margin: 0; }
+        /* GRID - STRICT 3 PER ROW */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr) !important; gap: 10px; padding: 12px; width: 100%; }
+
+        /* LOGO CARD */
+        .card { display: flex; flex-direction: column; width: 100%; position: relative; }
         
-        /* LOGO GRID: STRICT 3 PER ROW */
-        .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
-        
-        /* SETUP GRID: 1 PER ROW LANDSCAPE */
-        .grid.setups { grid-template-columns: 1fr !important; }
-
-        /* VERTICAL CASING (ONE SINGLE BOX FOR EVERYTHING) */
-        .card { 
-            display: flex; flex-direction: column; width: 100%; 
-            background: var(--card-bg); border-radius: 20px; 
-            padding: 8px; border: 2px solid transparent; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-        .card.selected { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
-
+        /* White Image Box (Top) */
         .img-container {
             width: 100%; aspect-ratio: 1/1; 
+            background: #ffffff; border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; cursor: pointer; border-radius: 15px;
-            background: #fff; /* White background for image as per screenshot */
-            margin-bottom: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 2px solid transparent; overflow: hidden;
         }
-        .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .img-container img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        .card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.05); }
 
-        .name-label { text-align: center; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; color: var(--text); }
-        
-        .action-btn { 
-            background: var(--accent); color: white; border: none; padding: 8px; 
-            border-radius: 10px; font-size: 8px; font-weight: 900; cursor: pointer; 
-            text-align: center; text-decoration: none; text-transform: uppercase; width: 100%;
+        /* Gray Pill Casing (Bottom) */
+        .casing { 
+            width: 100%; background: var(--pill); 
+            padding: 8px 6px; border-radius: 18px; 
+            margin-top: 8px; display: flex; flex-direction: column; 
+            align-items: center; gap: 6px;
         }
+        .name-label { font-size: 10px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        .copy-btn { background: var(--accent); color: white; border: none; width: 100%; padding: 7px 0; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
 
-        /* SETUP CARDS (LANDSCAPE) */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; background: var(--card-bg); padding: 15px; border-radius: 25px; }
-        .landscape-box { width: 100%; height: 200px; border-radius: 18px; overflow: hidden; background: #000; margin-bottom: 10px; }
+        /* SETUPS (1 PER ROW) */
+        .grid.setups { grid-template-columns: 1fr !important; }
+        .setup-card { width: 100%; margin-bottom: 20px; }
+        .landscape-box { width: 100%; height: 200px; border-radius: 20px; overflow: hidden; background: #000; }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* OVERLAY & TOAST */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 9999; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 10px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
         @media (max-width: 600px) {
-            .landscape-box { height: 170px; }
             .grid { gap: 8px; padding: 8px; }
-            .card { padding: 6px; border-radius: 15px; }
+            .img-container { border-radius: 15px; }
+            .casing { border-radius: 15px; padding: 6px; }
+            .landscape-box { height: 170px; }
         }
     </style>
 </head>
@@ -117,30 +97,25 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">LayaSync Admin</div>
-    
-    <div class="nav-label">Mode Selection</div>
+    <div style="font-size: 22px; font-weight: 800; margin-bottom: 20px;">LayaSync Cloud</div>
+    <div class="nav-label">Navigation</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
     <div class="group-item" id="nav-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
     <div id="catBox">
-        <div class="nav-label">Categories</div>
+        <div class="nav-label">Groups</div>
         <div id="catList"></div>
-        <div style="display:flex; gap:5px; padding:5px;">
-            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:11px; outline:none;">
-            <button onclick="addGroup()" style="background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:800;">+</button>
-        </div>
     </div>
 
     <div class="nav-label">Cloud Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 11px; outline: none;">
-    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC DATA</button>
+    <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
+    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
 <main>
     <header>
         <button class="btn-icon" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-box" placeholder="Search by name or group..." onkeyup="renderUI()">
+        <input type="text" id="search" class="search-box" placeholder="Search archive..." onkeyup="renderUI()">
         <button id="multiBtn" class="btn-icon" onclick="toggleMulti()">🔘</button>
     </header>
     <div id="mainGrid" class="grid logos"></div>
@@ -152,8 +127,6 @@
     let logos = []; let setups = [];
     let currentTab = 'logos'; let activeCat = 'All';
     let selectedSet = new Set(); let isMulti = false;
-    let customGroups = JSON.parse(localStorage.getItem('ls_custom_groups')) || [];
-    
     const REPO = { user: 'layasync', repo: 'LayaSync.github.io' };
 
     async function init() {
@@ -166,13 +139,10 @@
             logos = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { console.error("Data Load Failed."); }
+        } catch(e) { console.error("Data fail"); }
     }
 
-    function toggleSidebar() { 
-        document.getElementById('sidebar').classList.toggle('active'); 
-        document.getElementById('overlay').classList.toggle('active'); 
-    }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
 
     function setTab(tab) {
         currentTab = tab; activeCat = 'All';
@@ -185,34 +155,11 @@
         if(window.innerWidth < 600) toggleSidebar();
     }
 
-    function addGroup() {
-        const val = document.getElementById('newGrp').value.trim();
-        if(val && !customGroups.includes(val)) {
-            customGroups.push(val);
-            localStorage.setItem('ls_custom_groups', JSON.stringify(customGroups));
-            document.getElementById('newGrp').value = '';
-            buildCats();
-        }
-    }
-
-    function deleteGroup(e, g) {
-        e.stopPropagation();
-        if(prompt("Pass:") === "123") {
-            customGroups = customGroups.filter(i => i !== g);
-            localStorage.setItem('ls_custom_groups', JSON.stringify(customGroups));
-            buildCats();
-        }
-    }
-
     function buildCats() {
         const list = document.getElementById('catList');
         const jsonCats = [...new Set(logos.map(i => i.group || 'Uncategorized'))];
-        const allCats = [...new Set([...jsonCats, ...customGroups])];
         list.innerHTML = `<div class="group-item ${activeCat==='All'?'active':''}" onclick="setCat('All')">📂 All Logos</div>`;
-        allCats.forEach(c => {
-            if(c !== 'Uncategorized')
-                list.innerHTML += `<div class="group-item ${activeCat===c?'active':''}" onclick="setCat('${c}')"><span>🏷️ ${c}</span><button class="del-btn" onclick="deleteGroup(event, '${c}')">✕</button></div>`;
-        });
+        jsonCats.forEach(c => list.innerHTML += `<div class="group-item ${activeCat===c?'active':''}" onclick="setCat('${c}')">🏷️ ${c}</div>`);
     }
 
     function setCat(c) {
@@ -233,14 +180,15 @@
     function renderUI() {
         const grid = document.getElementById('mainGrid');
         const query = document.getElementById('search').value.toLowerCase();
-        
         if (currentTab === 'logos') {
             const filtered = logos.filter(i => (i.name.toLowerCase().includes(query) || (i.group || '').toLowerCase().includes(query)) && (activeCat === 'All' || i.group === activeCat));
             grid.innerHTML = filtered.map(i => `
                 <div class="card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
-                    <div class="name-label">${i.name}</div>
-                    <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">COPY LINK</button>
+                    <div class="casing">
+                        <div class="name-label">${i.name}</div>
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">COPY LINK</button>
+                    </div>
                 </div>
             `).join('');
         } else {
@@ -248,8 +196,10 @@
             grid.innerHTML = filtered.map(i => `
                 <div class="setup-card">
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
-                    <div class="name-label" style="font-size: 14px; margin-bottom: 5px;">${i.name}</div>
-                    ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="padding: 12px; font-size: 11px;">⬇️ DOWNLOAD COLLECTION JSON</a>`).join('') : ''}
+                    <div class="casing">
+                        <div class="name-label" style="font-size: 14px;">${i.name}</div>
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="margin-top:5px; padding: 10px;">DOWNLOAD JSON</a>`).join('') : ''}
+                    </div>
                 </div>
             `).join('');
         }
@@ -273,9 +223,9 @@
                 method: 'PUT', headers: { Authorization: `token ${token}` },
                 body: JSON.stringify({ message: `Update ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fData.sha })
             });
-            showToast("Successfully Synced!");
-        } catch (e) { alert("Sync Error"); }
-        finally { btn.innerText = "☁️ SYNC DATA"; }
+            showToast("Cloud Synced!");
+        } catch (e) { alert("Error!"); }
+        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
     }
 
     function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
