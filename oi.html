@@ -9,22 +9,22 @@
             --bg: #ffffff;
             --text: #1c1c1e;
             --accent: #007aff;
-            --pill: #f2f2f7;
+            --card-bg: #f2f2f7; /* Matching your screenshot pill color */
             --sidebar-silver: linear-gradient(180deg, #e5e5ea 0%, #d1d1d6 100%);
             --glass: rgba(255, 255, 255, 0.85);
         }
         @media (prefers-color-scheme: dark) {
-            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
+            :root { --bg: #000000; --text: #ffffff; --card-bg: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
         }
 
-        /* 60FPS ZERO-LAG ENGINE */
+        /* 60FPS SMOOTH SCROLLING */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { 
             margin: 0; padding: 0; height: 100%; width: 100vw; 
             overflow: hidden; background: var(--bg); color: var(--text); 
         }
 
-        /* SILVER SIDEBAR - MANUAL ONLY */
+        /* SIDEBAR - MANUAL ONLY */
         .sidebar {
             width: 270px; height: 100%; background: var(--sidebar-silver);
             position: fixed; left: -270px; top: 0; z-index: 3000;
@@ -56,52 +56,48 @@
             border-bottom: 1px solid rgba(120,120,128,0.2); 
             padding: 10px 15px; display: flex; align-items: center; gap: 8px;
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px 15px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
-        .btn-icon { background: var(--pill); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .search-box { flex: 1; background: var(--card-bg); border: none; padding: 10px 15px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--card-bg); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
         /* GRID LOGIC */
-        .grid { display: grid; width: 100%; padding: 10px; gap: 10px; margin: 0; }
+        .grid { display: grid; width: 100%; padding: 12px; gap: 12px; margin: 0; }
         
-        /* LOGO GRID: STRICT 3 PER ROW (PC & MOBILE) */
+        /* LOGO GRID: STRICT 3 PER ROW */
         .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
         
         /* SETUP GRID: 1 PER ROW LANDSCAPE */
         .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* LOGO CARDS (VERTICAL CASING) */
-        .card { display: flex; flex-direction: column; width: 100%; }
+        /* VERTICAL CASING (ONE SINGLE BOX FOR EVERYTHING) */
+        .card { 
+            display: flex; flex-direction: column; width: 100%; 
+            background: var(--card-bg); border-radius: 20px; 
+            padding: 8px; border: 2px solid transparent; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .card.selected { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
+
         .img-container {
             width: 100%; aspect-ratio: 1/1; 
-            background: rgba(128,128,128,0.05); border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 2px solid transparent; cursor: pointer;
+            overflow: hidden; cursor: pointer; border-radius: 15px;
+            background: #fff; /* White background for image as per screenshot */
+            margin-bottom: 8px;
         }
-        .img-container img { max-width: 80%; max-height: 80%; object-fit: contain; }
-        .card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
+        .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
 
-        /* VERTICAL PILL FOR LOGOS */
-        .vertical-casing { 
-            width: 100%; background: var(--pill); padding: 8px; border-radius: 15px; 
-            margin-top: 8px; display: flex; flex-direction: column; gap: 5px; 
-        }
-        .name-label { text-align: center; font-size: 9px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .name-label { text-align: center; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; color: var(--text); }
         
-        /* SETUP CARDS (LANDSCAPE CASING) */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; }
-        .landscape-box { width: 100%; height: 200px; border-radius: 18px; overflow: hidden; background: #000; }
-        .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* WIDE PILL FOR SETUPS */
-        .landscape-casing {
-            width: 100%; background: var(--pill); padding: 15px; border-radius: 20px;
-            margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-
         .action-btn { 
             background: var(--accent); color: white; border: none; padding: 8px; 
-            border-radius: 8px; font-size: 8px; font-weight: 900; cursor: pointer; 
+            border-radius: 10px; font-size: 8px; font-weight: 900; cursor: pointer; 
             text-align: center; text-decoration: none; text-transform: uppercase; width: 100%;
         }
+
+        /* SETUP CARDS (LANDSCAPE) */
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; background: var(--card-bg); padding: 15px; border-radius: 25px; }
+        .landscape-box { width: 100%; height: 200px; border-radius: 18px; overflow: hidden; background: #000; margin-bottom: 10px; }
+        .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
         /* OVERLAY & TOAST */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
@@ -112,6 +108,7 @@
         @media (max-width: 600px) {
             .landscape-box { height: 170px; }
             .grid { gap: 8px; padding: 8px; }
+            .card { padding: 6px; border-radius: 15px; }
         }
     </style>
 </head>
@@ -122,12 +119,12 @@
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">LayaSync Admin</div>
     
-    <div class="nav-label">Archive Mode</div>
+    <div class="nav-label">Mode Selection</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
     <div class="group-item" id="nav-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
     <div id="catBox">
-        <div class="nav-label">Logo Groups</div>
+        <div class="nav-label">Categories</div>
         <div id="catList"></div>
         <div style="display:flex; gap:5px; padding:5px;">
             <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:11px; outline:none;">
@@ -135,15 +132,15 @@
         </div>
     </div>
 
-    <div class="nav-label">GitHub Cloud Sync</div>
+    <div class="nav-label">Cloud Sync</div>
     <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 11px; outline: none;">
-    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
+    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC DATA</button>
 </nav>
 
 <main>
     <header>
         <button class="btn-icon" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-box" placeholder="Search archive..." onkeyup="renderUI()">
+        <input type="text" id="search" class="search-box" placeholder="Search by name or group..." onkeyup="renderUI()">
         <button id="multiBtn" class="btn-icon" onclick="toggleMulti()">🔘</button>
     </header>
     <div id="mainGrid" class="grid logos"></div>
@@ -169,7 +166,7 @@
             logos = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { console.error("Data fetch failed."); }
+        } catch(e) { console.error("Data Load Failed."); }
     }
 
     function toggleSidebar() { 
@@ -242,10 +239,8 @@
             grid.innerHTML = filtered.map(i => `
                 <div class="card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
-                    <div class="vertical-casing">
-                        <div class="name-label">${i.name}</div>
-                        <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy</button>
-                    </div>
+                    <div class="name-label">${i.name}</div>
+                    <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">COPY LINK</button>
                 </div>
             `).join('');
         } else {
@@ -253,10 +248,8 @@
             grid.innerHTML = filtered.map(i => `
                 <div class="setup-card">
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
-                    <div class="landscape-casing">
-                        <div class="name-label" style="font-size: 14px; margin-bottom: 5px;">${i.name}</div>
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="padding: 12px; font-size: 11px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
-                    </div>
+                    <div class="name-label" style="font-size: 14px; margin-bottom: 5px;">${i.name}</div>
+                    ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="padding: 12px; font-size: 11px;">⬇️ DOWNLOAD COLLECTION JSON</a>`).join('') : ''}
                 </div>
             `).join('');
         }
@@ -282,10 +275,10 @@
             });
             showToast("Successfully Synced!");
         } catch (e) { alert("Sync Error"); }
-        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
+        finally { btn.innerText = "☁️ SYNC DATA"; }
     }
 
-    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Copied!"); }
+    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
 
     init();
