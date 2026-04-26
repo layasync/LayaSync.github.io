@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LayaSync | Global Archive</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
+            --sidebar-silver: linear-gradient(180deg, #e5e5ea 0%, #d1d1d6 100%);
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
+        }
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; transition: 0.2s; }
+        body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; display: flex; }
+
+        /* STRICT 3 COLUMN GRID */
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr) !important;
+            gap: 15px; padding: 15px; width: 100%; max-width: 1400px; margin: 0 auto;
+        }
+
+        /* SILVER SIDEBAR */
+        .sidebar {
+            width: 260px; height: 100vh; background: var(--sidebar-silver);
+            position: fixed; left: -260px; top: 0; z-index: 3000;
+            transition: left 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+            padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); overflow-y: auto;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 25px; }
+        .group-item {
+            padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
+            margin-bottom: 8px; background: rgba(255,255,255,0.4); font-size: 13px;
+        }
+        .group-item.active { background: var(--accent); color: white; }
+
+        /* HEADER */
+        header {
+            position: sticky; top: 0; z-index: 2000; width: 100%;
+            background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
+            -webkit-backdrop-filter: saturate(180%) blur(25px);
+            border-bottom: 1px solid rgba(120,120,128,0.2); padding: 12px 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px 15px; border-radius: 12px; font-size: 15px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-size: 20px; color: var(--text); }
+
+        /* ASSET CARDS */
+        .asset-card { display: flex; flex-direction: column; align-items: center; }
+        .img-container { width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .img-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .casing { width: 100%; background: var(--pill); padding: 10px; border-radius: 18px; display: flex; flex-direction: column; gap: 6px; }
+        .name-field { width: 100%; border: none; background: transparent; text-align: center; font-size: 10px; font-weight: 800; color: var(--text); pointer-events: none; }
+        .copy-btn { background: var(--accent); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
+        .overlay.active { display: block; }
+
+        @media (max-width: 600px) { .img-container { height: 110px; } }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: var(--bg); padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 9999; }
+        #toast.active { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">Collections</div>
+    <div id="groupList"></div>
+</nav>
+
+<main style="flex: 1;">
+    <header>
+        <button class="btn-icon" onclick="toggleSidebar()">☰</button>
+        <input type="text" id="search" class="search-box" placeholder="Search logos or groups..." onkeyup="sync()">
+    </header>
+    <div class="grid" id="mainGrid"></div>
+</main>
+
+<div id="toast">Copied</div>
+
+<script>
+    let db = [];
+    let activeG = 'All';
+
+    async function init() {
+        // Cache buster ensures everyone sees updates instantly
+        const res = await fetch(`https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json?v=${Date.now()}`);
+        db = await res.json();
+        renderGroups();
+        sync();
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function renderGroups() {
+        const list = document.getElementById('groupList');
+        // Get all unique categories from the JSON file
+        const categories = [...new Set(db.map(item => item.group || 'Uncategorized'))];
+        
+        list.innerHTML = `<div class="group-item ${activeG==='All'?'active':''}" onclick="setG('All')">📂 All Assets</div>`;
+        categories.forEach(g => {
+            list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">🏷️ ${g}</div>`;
+        });
+    }
+
+    function setG(g) { activeG = g; toggleSidebar(); renderGroups(); sync(); }
+
+    function sync() {
+        const grid = document.getElementById('mainGrid');
+        const q = document.getElementById('search').value.toLowerCase();
+        
+        const filtered = db.filter(i => {
+            const name = i.name.toLowerCase();
+            const grp = (i.group || 'Uncategorized').toLowerCase();
+            return (name.includes(q) || grp.includes(q)) && (activeG === 'All' || i.group === activeG);
+        });
+
+        grid.innerHTML = filtered.map(i => `
+            <div class="asset-card">
+                <div class="img-container"><img src="${i.url}" loading="eager"></div>
+                <div class="casing">
+                    <div class="name-field">${i.name}</div>
+                    <button class="copy-btn" onclick="copy('${i.url}')">Copy Link</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function copy(url) {
+        navigator.clipboard.writeText(url);
+        const t = document.getElementById('toast');
+        t.classList.add('active');
+        setTimeout(() => t.classList.remove('active'), 2000);
+    }
+
+    init();
+</script>
+</body>
+</html>
