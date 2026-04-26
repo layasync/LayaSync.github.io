@@ -2,98 +2,236 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LayaSync AI | Auto-Name Engine</title>
-    <!-- Loading the OCR Engine -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LayaSync | Vision Archive</title>
+    <!-- OCR Engine for reading text inside gibberish-named photos -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
-        :root { --accent: #007aff; }
-        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; padding: 40px; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        .preview-box { width: 100%; height: 200px; background: #fafafa; border: 2px dashed #ddd; border-radius: 15px; margin: 20px 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .preview-box img { max-height: 100%; max-width: 100%; }
-        input[type="file"] { margin-bottom: 20px; }
-        .result-field { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-        .status { font-size: 12px; color: var(--accent); font-weight: 600; text-align: center; height: 20px; }
-        #jsonOutput { width: 100%; height: 100px; background: #1d1d1f; color: #00ff00; padding: 10px; border-radius: 10px; font-family: monospace; font-size: 11px; margin-top: 20px; white-space: pre-wrap; }
+        :root {
+            --bg: #ffffff;
+            --text: #1d1d1f;
+            --accent: #007aff;
+            --pill: #f2f2f7;
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #000000;
+                --text: #ffffff;
+                --pill: #1c1c1e;
+                --glass: rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; transition: 0.2s; }
+        body { margin: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+        /* --- STICKY PRO HEADER --- */
+        .header {
+            position: sticky; top: 0; z-index: 2000;
+            background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
+            -webkit-backdrop-filter: saturate(180%) blur(25px);
+            border-bottom: 1px solid rgba(128,128,128,0.2);
+            padding: 15px 20px;
+        }
+
+        .top-row { display: flex; gap: 12px; align-items: center; margin-bottom: 15px; }
+        .search-input {
+            flex: 1; background: var(--pill); border: none; padding: 12px 18px;
+            border-radius: 12px; font-size: 16px; color: var(--text); outline: none;
+        }
+
+        /* --- DYNAMIC CATEGORY CHIPS --- */
+        .cat-bar {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .cat-bar::-webkit-scrollbar { display: none; }
+        .chip {
+            padding: 7px 15px; background: var(--pill); border-radius: 20px;
+            font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        .chip.active { background: var(--accent); color: white; }
+        .chip.scanning { border: 1px solid var(--accent); color: var(--accent); animation: pulse 1.5s infinite; }
+
+        /* --- 3 PER ROW GRID --- */
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 20px 12px; padding: 15px; max-width: 1200px; margin: 0 auto;
+        }
+
+        .asset-card { display: flex; flex-direction: column; align-items: center; animation: fadeInUp 0.4s ease forwards; }
+
+        .img-container {
+            width: 100%; aspect-ratio: 1/1; display: flex; align-items: center;
+            justify-content: center; margin-bottom: 8px; position: relative;
+        }
+        .img-container img { 
+            max-width: 100%; max-height: 100%; object-fit: contain; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        /* --- LARGE PILL CASING --- */
+        .casing {
+            width: 100%; background: var(--pill); padding: 8px; border-radius: 15px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+
+        /* --- RENAMEABLE TITLE --- */
+        .name-input {
+            width: 100%; border: none; background: transparent; text-align: center;
+            font-size: 10px; font-weight: 800; color: var(--text); outline: none;
+            padding: 2px; border-radius: 5px;
+        }
+        .name-input:focus { background: rgba(0,122,255,0.1); }
+
+        .copy-btn {
+            background: var(--accent); color: white; border: none; width: 100%;
+            padding: 8px; border-radius: 8px; font-size: 9px; font-weight: 900;
+            text-transform: uppercase; cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--text); color: var(--bg); padding: 12px 25px; border-radius: 50px;
+            font-size: 13px; font-weight: 700; transition: transform 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+            z-index: 9999;
+        }
+        #toast.active { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2 style="margin:0 0 10px 0;">AI Logo Reader</h2>
-    <p style="font-size: 13px; color: #666;">Upload a logo and the AI engine will try to read the name written on the picture.</p>
-
-    <div class="preview-box" id="previewBox">
-        <span style="color: #ccc;">Logo Preview</span>
+<header class="header">
+    <div class="top-row">
+        <input type="text" id="search" class="search-input" placeholder="Search library..." onkeyup="uiUpdate()">
     </div>
+    <div class="cat-bar" id="catBar">
+        <div class="chip active" onclick="setCat('All')">All</div>
+        <div id="scanStatus" class="chip scanning" style="display:none">AI Processing Assets...</div>
+    </div>
+</header>
 
-    <input type="file" id="fileInput" accept="image/*">
-    <div class="status" id="status">Ready</div>
-
-    <label style="font-size: 11px; font-weight: 700; color: #888;">AI DETECTED NAME:</label>
-    <input type="text" id="detectedName" class="result-field" placeholder="Waiting for image...">
-
-    <div id="jsonOutput">JSON code will appear here...</div>
-</div>
+<div class="grid" id="mainGrid"></div>
+<div id="toast">Copied to Clipboard</div>
 
 <script>
-    const fileInput = document.getElementById('fileInput');
-    const detectedName = document.getElementById('detectedName');
-    const status = document.getElementById('status');
-    const previewBox = document.getElementById('previewBox');
-    const jsonOutput = document.getElementById('jsonOutput');
+    let library = [];
+    let activeCat = 'All';
+    let detectedCats = new Set(['All']);
 
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+    async function init() {
+        const source = 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json';
+        const res = await fetch(`${source}?v=${Date.now()}`);
+        const data = await res.json();
+        
+        library = data.map(item => ({
+            ...item,
+            processedName: localStorage.getItem(`name-${item.url}`) || item.name,
+            aiCat: 'Processing...'
+        }));
 
-        // 1. Show Preview
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            previewBox.innerHTML = `<img src="${event.target.result}" id="activeImg">`;
-            // 2. Start AI Reading
-            recognizeText(event.target.result);
-        };
-        reader.readAsDataURL(file);
-    });
-
-    async function recognizeText(imageSource) {
-        status.innerText = "🤖 AI is reading the picture...";
-        detectedName.value = "Processing...";
-
-        try {
-            // Tesseract Engine Work
-            const result = await Tesseract.recognize(
-                imageSource,
-                'eng', // Language
-                { logger: m => console.log(m) }
-            );
-
-            // Clean up the text (remove symbols, extra spaces)
-            let cleanText = result.data.text.trim().split('\n')[0];
-            cleanText = cleanText.replace(/[^a-zA-Z0-9 ]/g, ""); // Keep only letters/numbers
-
-            if (cleanText.length < 2) {
-                status.innerText = "⚠️ AI couldn't read clearly. Please type manually.";
-                detectedName.value = "";
-            } else {
-                status.innerText = "✅ Name detected!";
-                detectedName.value = cleanText;
-                
-                // Generate JSON Preview
-                const snippet = {
-                    name: cleanText,
-                    category: "Logos",
-                    url: "PASTE_IBB_LINK_HERE"
-                };
-                jsonOutput.innerText = JSON.stringify(snippet, null, 2);
-            }
-
-        } catch (error) {
-            status.innerText = "❌ AI Error";
-            console.error(error);
-        }
+        uiUpdate();
+        startVisionEngine();
     }
+
+    // THE VISION ENGINE: Processes gibberish photos to find real names and categories
+    async function startVisionEngine() {
+        const status = document.getElementById('scanStatus');
+        status.style.display = 'block';
+
+        for (let item of library) {
+            // Only scan if name looks like gibberish or isn't renamed yet
+            if (item.processedName.length > 12 || /[^a-zA-Z0-9 ]/.test(item.processedName)) {
+                try {
+                    const { data: { text } } = await Tesseract.recognize(item.url, 'eng');
+                    const clean = text.trim().split('\n')[0].replace(/[^a-zA-Z]/g, "");
+                    
+                    if (clean.length > 2) {
+                        item.processedName = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+                        item.aiCat = 'Identified';
+                    } else {
+                        item.aiCat = 'Icons';
+                    }
+                } catch (e) {
+                    item.aiCat = 'Other';
+                }
+            } else {
+                item.aiCat = 'Verified';
+            }
+            
+            detectedCats.add(item.aiCat);
+            updateChips();
+            uiUpdate(); // Re-render as each image finishes
+        }
+        status.style.display = 'none';
+    }
+
+    function updateChips() {
+        const bar = document.getElementById('catBar');
+        const currentChips = Array.from(detectedCats);
+        bar.innerHTML = currentChips.map(c => `
+            <div class="chip ${c === activeCat ? 'active' : ''}" onclick="setCat('${c}')">${c}</div>
+        `).join('') + `<div id="scanStatus" class="chip scanning" style="display:none">AI Processing...</div>`;
+    }
+
+    function setCat(c) {
+        activeCat = c;
+        updateChips();
+        uiUpdate();
+    }
+
+    function uiUpdate() {
+        const grid = document.getElementById('mainGrid');
+        const q = document.getElementById('search').value.toLowerCase();
+        
+        const filtered = library.filter(i => {
+            const matchesCat = activeCat === 'All' || i.aiCat === activeCat;
+            const matchesSearch = i.processedName.toLowerCase().includes(q);
+            return matchesCat && matchesSearch;
+        });
+
+        grid.innerHTML = filtered.map(i => `
+            <div class="asset-card">
+                <div class="img-container">
+                    <img src="${i.url}" loading="eager">
+                </div>
+                <div class="casing">
+                    <input class="name-input" 
+                           value="${i.processedName}" 
+                           onchange="saveName('${i.url}', this.value)"
+                           spellcheck="false">
+                    <button class="copy-btn" onclick="copy('${i.url}')">Copy</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function saveName(url, newName) {
+        localStorage.setItem(`name-${url}`, newName);
+        const item = library.find(i => i.url === url);
+        if(item) item.processedName = newName;
+        showToast("Name Updated");
+    }
+
+    function copy(url) {
+        navigator.clipboard.writeText(url);
+        showToast("Link Copied");
+    }
+
+    function showToast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.classList.add('active');
+        setTimeout(() => t.classList.remove('active'), 2000);
+    }
+
+    init();
 </script>
 
 </body>
