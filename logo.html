@@ -2,107 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Digital Assets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LayaSync | Pro Digital Archive</title>
     <style>
         :root {
             --bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.7);
+            --pill: #f2f2f7;
             --accent: #007aff;
-            --pill-bg: #f2f2f7;
             --text: #1d1d1f;
-            --sidebar-bg: rgba(255, 255, 255, 0.9);
+            --radius: 14px;
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #000000;
+                --header-bg: rgba(0, 0, 0, 0.7);
+                --pill: #1c1c1e;
+                --accent: #0a84ff;
+                --text: #ffffff;
+            }
+        }
+
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; transition: background 0.3s, color 0.3s; }
+        body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            position: fixed;
-            left: -280px; /* Hidden by default */
-            top: 0;
-            width: 280px;
-            height: 100%;
-            background: var(--sidebar-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            z-index: 2000;
-            transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
-            border-right: 1px solid #f2f2f7;
-            padding: 60px 20px;
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: var(--header-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            z-index: 3000; transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+            border-right: 1px solid rgba(120,120,128,0.2); padding: 60px 20px;
         }
-        .sidebar.open { transform: translateX(280px); }
-
-        .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 30px; letter-spacing: -0.5px; }
+        .sidebar.active { transform: translateX(280px); }
         .nav-item { 
-            padding: 12px 15px; border-radius: 12px; cursor: pointer; 
-            font-weight: 600; margin-bottom: 5px; transition: 0.2s;
-            display: flex; align-items: center; gap: 10px;
+            padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 12px; color: var(--text);
         }
-        .nav-item:hover { background: rgba(0,0,0,0.05); }
         .nav-item.active { background: var(--accent); color: white; }
 
-        /* --- HEADER & SEARCH --- */
+        /* --- HEADER --- */
         .header {
-            position: sticky; top: 0; background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            z-index: 1000; padding: 15px 20px; border-bottom: 1px solid #f2f2f7;
+            position: sticky; top: 0; background: var(--header-bg);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 2000; padding: 15px 20px; border-bottom: 1px solid rgba(120,120,128,0.1);
             display: flex; align-items: center; gap: 15px;
         }
-        .menu-btn { 
-            background: #f2f2f7; border: none; padding: 10px; 
-            border-radius: 10px; cursor: pointer; font-size: 20px;
+        .icon-btn { 
+            background: var(--pill); border: none; width: 40px; height: 40px; 
+            border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: var(--text);
         }
-        .search-box {
-            flex: 1; background: #f2f2f7; border: none;
-            padding: 12px 15px; border-radius: 12px; font-size: 16px; outline: none;
+        .search-input {
+            flex: 1; background: var(--pill); border: none; padding: 12px 18px;
+            border-radius: 12px; font-size: 16px; outline: none; color: var(--text);
         }
 
-        /* --- GRID SYSTEM --- */
+        /* --- GRID: 3 PER ROW MOBILE --- */
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 40px 20px; padding: 25px; max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px 20px; padding: 25px; max-width: 1400px; margin: 0 auto;
         }
 
-        .logo-item { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease forwards; }
-
-        .img-container {
-            width: 100%; height: 160px; display: flex; align-items: center;
-            justify-content: center; margin-bottom: 15px;
-        }
-        .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08)); }
-
-        .pill-casing {
-            background: var(--pill-bg); width: 100%; padding: 12px;
-            border-radius: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
-        .title { font-size: 14px; font-weight: 700; text-align: center; width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-        .hard-copy-btn {
-            background: var(--accent); color: white; border: none; width: 100%;
-            padding: 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
-            text-transform: uppercase; cursor: pointer;
+        .asset-card {
+            display: flex; flex-direction: column; align-items: center; 
+            animation: slideUp 0.4s ease-out;
         }
 
-        /* Overlay when sidebar open */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.2); z-index: 1500; display: none;
+        .img-box {
+            width: 100%; aspect-ratio: 1/1; display: flex; align-items: center;
+            justify-content: center; cursor: zoom-in; margin-bottom: 12px;
         }
+        .img-box img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+        /* --- EDITABLE PILL --- */
+        .pill-wrap {
+            width: 100%; background: var(--pill); border-radius: 18px;
+            padding: 10px; display: flex; flex-direction: column; gap: 8px;
+            border: 1px solid rgba(120,120,128,0.1);
+        }
+        .editable-title {
+            font-size: 12px; font-weight: 700; text-align: center; width: 100%;
+            border: none; background: transparent; color: var(--text);
+            outline: none; cursor: text; padding: 2px; border-radius: 4px;
+        }
+        .editable-title:focus { background: rgba(0,122,255,0.15); }
+
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 100%; }
+        .btn {
+            background: var(--accent); color: white; border: none; padding: 8px 0;
+            border-radius: 8px; font-size: 9px; font-weight: 800; text-transform: uppercase;
+            cursor: pointer; transition: 0.1s;
+        }
+        .btn.secondary { background: rgba(120,120,128,0.2); color: var(--text); }
+        .btn:active { transform: scale(0.95); }
+
+        /* --- OVERLAY --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
 
-        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 30px 15px; padding: 15px; }
-            .img-container { height: 120px; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 15px 10px; padding: 10px; }
+            .pill-wrap { padding: 6px; border-radius: 12px; }
+            .editable-title { font-size: 9px; }
+            .btn { font-size: 7px; padding: 6px 0; border-radius: 5px; }
+            .img-box { margin-bottom: 5px; }
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         #toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px;
-            font-size: 13px; z-index: 3000; transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--text); color: var(--bg); padding: 12px 25px; border-radius: 50px;
+            font-size: 13px; font-weight: 600; z-index: 5000; transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
         #toast.active { transform: translateX(-50%) translateY(0); }
     </style>
@@ -111,90 +123,129 @@
 
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header">Collections</div>
-    <div class="nav-item active" id="btn-logos" onclick="switchTab('logos')">🖼️ Logo Archive</div>
-    <div class="nav-item" id="btn-setups" onclick="switchTab('setups')">📱 Nuvio Setups</div>
-</div>
+<nav class="sidebar" id="sidebar">
+    <div style="font-size: 24px; font-weight: 800; margin-bottom: 30px;">Archive</div>
+    <div class="nav-item active" id="tab-logos" onclick="setTab('logos')">🖼️ Logos</div>
+    <div class="nav-item" id="tab-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
+</nav>
 
 <header class="header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <input type="text" id="search" class="search-box" placeholder="Search..." onkeyup="filter()">
+    <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+    <input type="text" id="search" class="search-input" placeholder="Search assets..." onkeyup="doSearch()">
+    <button class="icon-btn" onclick="location.reload()">🔄</button>
 </header>
 
-<div id="logoGrid" class="grid"></div>
+<div id="mainGrid" class="grid"></div>
 
-<div id="toast">Link Copied!</div>
+<div id="toast">Copied to Clipboard</div>
 
 <script>
-    let currentTab = 'logos';
-    let dataStore = { logos: [], setups: [] };
+    let rawData = { logos: [], setups: [] };
+    let activeTab = 'logos';
 
-    const urls = {
+    const API = {
         logos: 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json',
         setups: 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/setups.json'
     };
 
     function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebar').classList.toggle('active');
         document.getElementById('overlay').classList.toggle('active');
     }
 
-    async function loadAllData() {
-        const t = new Date().getTime();
+    async function init() {
+        const cacheBuster = `?v=${Date.now()}`;
         try {
-            const [resLogos, resSetups] = await Promise.all([
-                fetch(`${urls.logos}?t=${t}`).then(r => r.json()),
-                fetch(`${urls.setups}?t=${t}`).then(r => r.json())
+            const [l, s] = await Promise.all([
+                fetch(API.logos + cacheBuster).then(r => r.json()),
+                fetch(API.setups + cacheBuster).then(r => r.json())
             ]);
-            dataStore.logos = resLogos;
-            dataStore.setups = resSetups;
+            rawData.logos = l;
+            rawData.setups = s;
             render();
-        } catch (e) { console.error("Load failed", e); }
+        } catch (e) { console.error("Sync Error", e); }
     }
 
-    function switchTab(tab) {
-        currentTab = tab;
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(`btn-${tab}`).classList.add('active');
+    function render(filter = null) {
+        const grid = document.getElementById('mainGrid');
+        const items = filter || rawData[activeTab];
+        
+        grid.innerHTML = items.map((item, idx) => {
+            const id = `${activeTab}-${item.url || item.image}`;
+            // Load renamed title from local storage if exists
+            const savedName = localStorage.getItem(id) || item.name;
+            const imgUrl = activeTab === 'logos' ? item.url : item.image;
+            const targetUrl = activeTab === 'logos' ? item.url : item.fileUrl;
+
+            return `
+                <div class="asset-card">
+                    <div class="img-box" onclick="window.open('${imgUrl}', '_blank')">
+                        <img src="${imgUrl}" loading="eager" alt="asset">
+                    </div>
+                    <div class="pill-wrap">
+                        <input class="editable-title" 
+                               value="${savedName}" 
+                               onchange="renameAsset('${id}', this.value)"
+                               title="Click to rename locally">
+                        <div class="btn-row">
+                            <button class="btn" onclick="copy('${targetUrl}')">Link</button>
+                            <button class="btn secondary" onclick="downloadImg('${imgUrl}', '${savedName}')">Save</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function setTab(t) {
+        activeTab = t;
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.getElementById('tab-'+t).classList.add('active');
         toggleSidebar();
-        document.getElementById('search').value = "";
         render();
     }
 
-    function render(filteredData = null) {
-        const container = document.getElementById('logoGrid');
-        const items = filteredData || dataStore[currentTab];
-        
-        container.innerHTML = items.map(item => `
-            <div class="logo-item">
-                <div class="img-container">
-                    <img src="${currentTab === 'logos' ? item.url : item.image}" loading="eager">
-                </div>
-                <div class="pill-casing">
-                    <div class="title">${item.name}</div>
-                    <button class="hard-copy-btn" onclick="copyLink('${currentTab === 'logos' ? item.url : item.fileUrl}')">
-                        ${currentTab === 'logos' ? 'Copy Logo Link' : 'Copy Setup JSON'}
-                    </button>
-                </div>
-            </div>
-        `).join('');
+    function renameAsset(id, newName) {
+        localStorage.setItem(id, newName);
+        showToast("Renamed Locally");
     }
 
-    function filter() {
+    function doSearch() {
         const q = document.getElementById('search').value.toLowerCase();
-        const filtered = dataStore[currentTab].filter(i => i.name.toLowerCase().includes(q));
-        render(filtered);
+        const f = rawData[activeTab].filter(i => {
+            const id = `${activeTab}-${i.url || i.image}`;
+            const name = localStorage.getItem(id) || i.name;
+            return name.toLowerCase().includes(q);
+        });
+        render(f);
     }
 
-    function copyLink(url) {
-        navigator.clipboard.writeText(url);
-        const toast = document.getElementById('toast');
-        toast.classList.add('active');
-        setTimeout(() => toast.classList.remove('active'), 2000);
+    function copy(val) {
+        navigator.clipboard.writeText(val);
+        showToast("Link Copied");
     }
 
-    loadAllData();
+    async function downloadImg(url, name) {
+        const image = await fetch(url);
+        const imageBlog = await image.blob();
+        const imageURL = URL.createObjectURL(imageBlog);
+        const link = document.createElement('a');
+        link.href = imageURL;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Downloading...");
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('active');
+        setTimeout(() => t.classList.remove('active'), 2000);
+    }
+
+    init();
 </script>
 
 </body>
