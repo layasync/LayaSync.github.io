@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Digital Archive</title>
+    <title>LayaSync | Cloud Authority</title>
     <style>
         :root {
             --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
@@ -14,7 +14,7 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* --- PREVENT OVERFLOW & ENSURE SMOOTHNESS --- */
+        /* --- HARDWARE ACCELERATED CORE --- */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { margin: 0; padding: 0; width: 100vw; height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
@@ -27,7 +27,6 @@
         }
         .sidebar.active { transform: translateX(280px); }
         .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
-
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
@@ -39,7 +38,7 @@
         header {
             position: sticky; top: 15px; z-index: 2000; 
             width: calc(100% - 30px); margin: 0 auto;
-            background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
+            background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
             border: 1px solid rgba(120,120,128,0.2); border-radius: 12px;
             padding: 10px 15px; display: flex; align-items: center; gap: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -90,9 +89,9 @@
 
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">LayaSync Pro</div>
-    <div class="nav-label">Mode</div>
+    <div class="nav-label">Navigation</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">📂 Logo Archive</div>
-    <div class="group-item" id="nav-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
+    <div class="group-item" id="nav-nuvio" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
     <div id="catArea">
         <div class="nav-label">Groups</div>
@@ -103,7 +102,7 @@
         </div>
     </div>
 
-    <div class="nav-label">Cloud Sync</div>
+    <div class="nav-label">Cloud Sync Engine</div>
     <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; background:#fff;">
     <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
@@ -111,7 +110,7 @@
 <main>
     <header>
         <button class="btn-icon" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-box" placeholder="Search..." onkeyup="renderUI()">
+        <input type="text" id="search" class="search-box" placeholder="Search archive..." onkeyup="renderUI()">
         <button id="multiBtn" class="btn-icon" onclick="toggleMultiSelect()">🔘</button>
     </header>
     <div class="grid logos" id="mainGrid"></div>
@@ -128,23 +127,18 @@
     const GITHUB_REPO = 'LayaSync.github.io';
 
     async function init() {
-        // Load UI first
         setTab('logos');
         const v = Date.now();
-        
         try {
-            // Fetch logos
-            const lRes = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/logo.json?v=${v}`);
-            db = lRes.ok ? await lRes.json() : [];
-            
-            // Fetch setups
-            const sRes = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/setups.json?v=${v}`);
-            setups = sRes.ok ? await sRes.json() : [];
-
+            const [lRes, sRes] = await Promise.all([
+                fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/logo.json?v=${v}`).then(r => r.ok ? r.json() : []),
+                fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/setups.json?v=${v}`).then(r => r.ok ? r.json() : [])
+            ]);
+            db = lRes; setups = sRes;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             renderGroups();
             renderUI();
-        } catch(e) { console.log("Silent error handling"); }
+        } catch(e) { console.warn("Load error handled."); }
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -176,7 +170,7 @@
     function setG(g) {
         if (isMulti && g !== 'All') {
             selectedSet.forEach(url => { const item = db.find(i => i.url === url); if (item) item.group = g; });
-            showToast(`Items Categorized`); toggleMultiSelect();
+            showToast(`Moved to ${g}`); toggleMultiSelect();
         }
         activeG = g; renderGroups(); renderUI();
     }
@@ -188,7 +182,7 @@
 
     function deleteG(e, g) {
         e.stopPropagation();
-        if (prompt("Password:") === "123") {
+        if (prompt("User:") === "123" && prompt("Pass:") === "123") {
             db = db.filter(i => i.group !== g);
             renderGroups();
             setG('All');
@@ -229,28 +223,61 @@
     function updateName(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
     function updateSName(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
 
+    // --- REENGINEERED SYNC ENGINE (FIXES SYNC ISSUES) ---
     async function cloudSync() {
         const token = document.getElementById('ghToken').value;
         if (!token) return alert("Enter Token First");
         localStorage.setItem('ls_token', token);
-        const btn = document.getElementById('syncBtn'); btn.innerText = "Syncing...";
-        const file = currentTab === 'logos' ? 'logo.json' : 'setups.json';
-        const rawData = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
+        
+        const btn = document.getElementById('syncBtn');
+        const filename = currentTab === 'logos' ? 'logo.json' : 'setups.json';
+        const dataToSave = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
+
+        btn.innerText = "Connecting...";
+        btn.disabled = true;
 
         try {
-            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${file}`;
-            const metaRes = await fetch(apiUrl, { headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' } });
-            if (!metaRes.ok) throw new Error("Fetch failed. Check token/repo.");
-            const meta = await metaRes.json();
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(rawData, null, 2))));
-            const putRes = await fetch(apiUrl, {
-                method: 'PUT', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Sync: ${file}`, content: content, sha: meta.sha })
+            // 1. FORCE FETCH FRESH SHA (Bypass Cache)
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${filename}`;
+            const metaRes = await fetch(apiUrl, {
+                headers: { 
+                    'Authorization': `token ${token}`,
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
             });
-            if (putRes.ok) showToast("✅ Global Cloud Updated!");
-            else throw new Error("Push failed");
-        } catch (e) { alert(e.message); }
-        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
+            
+            if (!metaRes.ok) throw new Error("Could not fetch file metadata.");
+            const meta = await metaRes.json();
+
+            // 2. SAFE UTF-8 ENCODING
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataToSave, null, 2))));
+
+            // 3. PUSH COMMIT
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `Cloud Sync: ${filename}`,
+                    content: content,
+                    sha: meta.sha
+                })
+            });
+
+            if (putRes.ok) showToast("✅ Cloud Synchronized!");
+            else {
+                const errJson = await putRes.json();
+                throw new Error(errJson.message);
+            }
+        } catch (e) {
+            alert("Sync Failed: " + e.message);
+        } finally {
+            btn.innerText = "☁️ SYNC TO CLOUD";
+            btn.disabled = false;
+        }
     }
 
     function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
