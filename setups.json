@@ -1,11 +1,9 @@
 [
   {
-    "name": "Nuvio Ultra Setup",
+    "name": "Nuvio Dark Setup",
     "screenshot": "https://i.ibb.co/bgx3M2f0/Appletv.png",
-    "wallpaper": "https://i.ibb.co/wallpaper-link.jpg",
     "files": [
-      { "label": "Backup 1", "url": "https://github.../file1.json" },
-      { "label": "Icon Pack", "url": "https://github.../icons.zip" }
+      { "url": "https://raw.githubusercontent.com/.../setup.json" }
     ]
   }
 ]
