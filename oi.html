@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Cloud Asset Manager</title>
+    <title>LayaSync | Cloud Archive Authority</title>
     <style>
         :root {
             --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
             --sidebar-silver: linear-gradient(180deg, #e5e5ea 0%, #d1d1d6 100%);
-            --glass: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.9);
         }
         @media (prefers-color-scheme: dark) {
-            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
+            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* --- BUTTER SMOOTH PERFORMANCE --- */
+        /* --- PREVENT OVERFLOW & LAG --- */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { margin: 0; padding: 0; width: 100vw; height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
-        /* --- SILVER SIDEBAR (Manual Open Only) --- */
+        /* --- MANUAL SILVER SIDEBAR --- */
         .sidebar {
             width: 280px; height: 100vh; background: var(--sidebar-silver);
             position: fixed; left: -280px; top: 0; z-index: 3000;
@@ -26,36 +26,37 @@
             padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); overflow-y: auto;
         }
         .sidebar.active { transform: translateX(280px); }
-        .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
+        .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
 
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            margin-bottom: 8px; background: rgba(255,255,255,0.4); display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; justify-content: space-between; align-items: center; font-size: 13px;
         }
         .group-item.active { background: var(--accent); color: white; }
 
-        /* --- FLOATING HOVER SEARCH --- */
+        /* --- SQUARE HOVER SEARCH BAR --- */
         header {
             position: sticky; top: 15px; z-index: 2000; 
             width: calc(100% - 30px); margin: 0 auto;
-            background: var(--glass); backdrop-filter: saturate(180%) blur(25px); -webkit-backdrop-filter: saturate(180%) blur(25px);
-            border: 1px solid rgba(120,120,128,0.2); border-radius: 20px;
+            background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
+            border: 1px solid rgba(120,120,128,0.2); 
             padding: 10px 15px; display: flex; align-items: center; gap: 10px;
+            border-radius: 12px; /* Square profile */
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 12px; font-size: 15px; color: var(--text); outline: none; }
-        .btn-icon { background: var(--pill); border: none; width: 44px; height: 44px; border-radius: 12px; cursor: pointer; font-size: 20px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* --- MAIN AREA --- */
-        main { flex: 1; height: 100%; overflow-y: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding-top: 20px; }
+        /* --- CONTENT AREA --- */
+        main { flex: 1; height: 100%; overflow-y: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; padding-top: 25px; }
 
-        /* --- THE GRID: STRICT 3-PER-ROW LOCK --- */
-        .grid { display: grid; width: 100%; padding: 20px 12px; gap: 12px; margin: 0 auto; }
+        /* --- GRID: STRICT 3-PER-ROW LOCK --- */
+        .grid { display: grid; width: 100%; padding: 20px 10px; gap: 10px; margin: 0 auto; }
         .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
         .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* --- LOGO ASSET CARDS --- */
+        /* --- ASSET CARDS --- */
         .asset-card { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .img-container {
             width: 100%; aspect-ratio: 1/1; 
@@ -72,16 +73,16 @@
 
         /* --- SETUP CARDS --- */
         .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; }
-        .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- UTILS --- */
+        /* --- OVERLAY & TOAST --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 13px; font-weight: 700; transition: 0.4s; z-index: 9999; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) { .landscape-box { height: 180px; } }
+        @media (max-width: 600px) { .landscape-box { height: 170px; } .grid { gap: 8px; padding: 25px 8px; } }
     </style>
 </head>
 <body>
@@ -89,24 +90,23 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">LayaSync Admin</div>
-    
+    <div class="sidebar-header">LayaSync Pro</div>
     <div class="nav-label">Navigation</div>
-    <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
+    <div class="group-item active" id="nav-logos" onclick="setTab('logos')">📂 Logo Archive</div>
     <div class="group-item" id="nav-nuvio" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
-    <div id="catBox">
+    <div id="catArea">
         <div class="nav-label">Groups</div>
         <div id="groupList"></div>
         <div style="display:flex; gap:5px; margin-top:10px;">
-            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:10px; border-radius:10px; font-size:12px; outline:none; background:var(--bg);">
+            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:10px; border-radius:10px; outline:none; background:var(--bg); font-size:12px;">
             <button onclick="addGroup()" style="background:var(--accent); color:white; border:none; padding:10px 15px; border-radius:10px; font-weight:800;">+</button>
         </div>
     </div>
 
-    <div class="nav-label">GitHub Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none; background: #fff;">
-    <button onclick="saveToCloud()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
+    <div class="nav-label">Cloud Storage</div>
+    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; background:#fff;">
+    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
 <main>
@@ -118,25 +118,25 @@
     <div class="grid logos" id="mainGrid"></div>
 </main>
 
-<div id="toast">Message</div>
+<div id="toast">Ready</div>
 
 <script>
     let db = []; let setups = [];
     let currentTab = 'logos'; let activeG = 'All';
     let selectedSet = new Set(); let isMulti = false;
-    const GITHUB_REPO = { user: 'layasync', repo: 'LayaSync.github.io' };
+    const GITHUB = { user: 'layasync', repo: 'LayaSync.github.io' };
 
     async function init() {
         const v = Date.now();
         try {
             const [l, s] = await Promise.all([
-                fetch(`https://raw.githubusercontent.com/${GITHUB_REPO.user}/${GITHUB_REPO.repo}/main/logo.json?v=${v}`).then(r => r.json()),
-                fetch(`https://raw.githubusercontent.com/${GITHUB_REPO.user}/${GITHUB_REPO.repo}/main/setups.json?v=${v}`).then(r => r.json())
+                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/logo.json?v=${v}`).then(r => r.json()),
+                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/setups.json?v=${v}`).then(r => r.json())
             ]);
-            db = l || []; setups = s || [];
+            db = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { showToast("Sync Error: Check Connection"); }
+        } catch(e) { showToast("Initial Load Error"); }
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -144,8 +144,8 @@
     function setTab(tab) {
         currentTab = tab; activeG = 'All';
         document.getElementById('nav-logos').classList.toggle('active', tab === 'logos');
-        document.getElementById('nav-nuvio').classList.toggle('active', tab === 'setups');
-        document.getElementById('catBox').style.display = tab === 'logos' ? 'block' : 'none';
+        document.getElementById('nav-setups').classList.toggle('active', tab === 'setups');
+        document.getElementById('catArea').style.display = tab === 'logos' ? 'block' : 'none';
         document.getElementById('mainGrid').className = `grid ${tab}`;
         if(tab === 'logos') renderGroups();
         renderUI();
@@ -195,7 +195,7 @@
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
                         <input class="name-field" style="font-size:14px; margin-bottom:5px;" value="${i.name}" onchange="updateSName('${i.screenshot}', this.value)">
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px; font-size:10px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
@@ -207,26 +207,43 @@
     function updateName(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
     function updateSName(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
 
-    async function saveToCloud() {
+    // --- REENGINEERED SYNC ENGINE ---
+    async function cloudSync() {
         const token = document.getElementById('ghToken').value;
-        if (!token) return alert("GitHub Token Required");
+        if (!token) return alert("Enter GitHub Token");
         localStorage.setItem('ls_token', token);
-        const btn = document.getElementById('syncBtn'); btn.innerText = "Syncing...";
+        const btn = document.getElementById('syncBtn');
         const file = currentTab === 'logos' ? 'logo.json' : 'setups.json';
         const rawData = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
 
+        btn.innerText = "Connecting..."; btn.disabled = true;
+
         try {
-            const url = `https://api.github.com/repos/${GITHUB_REPO.user}/${GITHUB_REPO.repo}/contents/${file}`;
-            const res = await fetch(url, { headers: { Authorization: `token ${token}`, 'Cache-Control': 'no-cache' } });
-            const fData = await res.json();
-            const pushRes = await fetch(url, {
-                method: 'PUT', headers: { Authorization: `token ${token}` },
-                body: JSON.stringify({ message: `LayaSync Cloud Update: ${file}`, content: btoa(unescape(encodeURIComponent(JSON.stringify(rawData, null, 2)))), sha: fData.sha })
+            const url = `https://api.github.com/repos/${GITHUB.user}/${GITHUB.repo}/contents/${file}`;
+            
+            // 1. FRESH HANDSHAKE: Get absolute latest SHA from GitHub
+            const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' } });
+            const meta = await getRes.json();
+            
+            if (!getRes.ok) throw new Error("GitHub Error: " + meta.message);
+
+            // 2. SAFE UTF-8 ENCODING
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(rawData, null, 2))));
+
+            // 3. COMMIT TO CLOUD
+            const putRes = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `LayaSync Authority Sync: ${file}`, content: content, sha: meta.sha })
             });
-            if (pushRes.ok) showToast("✅ Successfully Synced!");
-            else throw new Error();
-        } catch (e) { alert("Sync Error: Check token permissions or network."); }
-        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
+
+            if (putRes.ok) showToast("✅ Global Cloud Updated!");
+            else {
+                const errorData = await putRes.json();
+                throw new Error(errorData.message);
+            }
+        } catch (e) { alert("FAIL: " + e.message); }
+        finally { btn.innerText = "☁️ SYNC TO CLOUD"; btn.disabled = false; }
     }
 
     function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
