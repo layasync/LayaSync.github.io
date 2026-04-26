@@ -1848,21 +1848,25 @@
   {
     "name": "Satire",
     "category": "Logos",
-    "url": "https://i.ibb.co/JwQkR3qJ/satire.gif"
+    "url": "https://i.ibb.co/JwQkR3qJ/satire.gif",
+    "group": "Genre"
   },
   {
     "name": "Superhero",
     "category": "Logos",
-    "url": "https://i.ibb.co/DD0Y1tZs/superhero.gif"
+    "url": "https://i.ibb.co/DD0Y1tZs/superhero.gif",
+    "group": "Genre"
   },
   {
     "name": "Reality",
     "category": "Logos",
-    "url": "https://i.ibb.co/xqd1wTFQ/reality.gif"
+    "url": "https://i.ibb.co/xqd1wTFQ/reality.gif",
+    "group": "Genre"
   },
   {
     "name": "Space",
     "category": "Logos",
-    "url": "https://i.ibb.co/nsfsYD26/space.jpg"
+    "url": "https://i.ibb.co/nsfsYD26/space.jpg",
+    "group": "Genre"
   }
 ]
