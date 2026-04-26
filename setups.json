@@ -1,7 +1,10 @@
 [
   {
-    "name": "Nuvio Dark Setup",
-    "image": "https://i.ibb.co/screenshot-link.png",
-    "fileUrl": "https://raw.githubusercontent.com/username/repo/main/setup1.json"
+    "name": "Nuvio Pro Setup",
+    "screenshot": "https://i.ibb.co/landscape-image.png",
+    "files": [
+      { "label": "Backup File", "url": "https://raw.../backup.json" },
+      { "label": "Wallpaper", "url": "https://i.ibb.co/wall.jpg" }
+    ]
   }
 ]
