@@ -2039,16 +2039,19 @@
   {
     "name": "Anime-wide",
     "category": "Logos",
-    "url": "https://i.ibb.co/pvPyCRCz/anime-wide.webp"
+    "url": "https://i.ibb.co/pvPyCRCz/anime-wide.webp",
+    "group": "Genre"
   },
   {
     "name": "4990ba5a-f7bb-425f-bb4e-dafe331ed8fb",
     "category": "Logos",
-    "url": "https://i.ibb.co/WWkNDFWH/4990ba5a-f7bb-425f-bb4e-dafe331ed8fb.jpg"
+    "url": "https://i.ibb.co/WWkNDFWH/4990ba5a-f7bb-425f-bb4e-dafe331ed8fb.jpg",
+    "group": "Genre"
   },
   {
     "name": "Romance-wide-1",
     "category": "Logos",
-    "url": "https://i.ibb.co/v6CWXmK4/romance-wide-1.webp"
+    "url": "https://i.ibb.co/v6CWXmK4/romance-wide-1.webp",
+    "group": "Genre"
   }
 ]
