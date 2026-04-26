@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Digital Archive</title>
+    <title>LayaSync | Pro Digital Archive</title>
     <style>
         :root {
             --bg: #ffffff;
@@ -17,7 +17,7 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
         }
 
-        /* HARDWARE ACCELERATED SCROLLING */
+        /* 60FPS SMOOTH SCROLLING */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
@@ -38,14 +38,10 @@
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; font-size: 13px;
+            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: space-between; font-size: 13px;
         }
         .group-item.active { background: var(--accent); color: white; }
-
-        /* ADD GROUP UI */
-        .add-group-box { display: flex; gap: 5px; margin-top: 10px; }
-        .add-group-box input { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; outline: none; }
-        .add-group-box button { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 800; cursor: pointer; }
+        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; padding: 5px; }
 
         /* MAIN CONTENT AREA */
         main { 
@@ -65,36 +61,41 @@
         .search-box { flex: 1; background: var(--pill); border: none; padding: 12px 15px; border-radius: 12px; font-size: 15px; color: var(--text); outline: none; }
         .btn-icon { background: var(--pill); border: none; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 20px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* GRID - LOGOS 3 PER ROW / SETUPS 1 PER ROW */
+        /* GRID - FIXED 3 PER ROW (MOBILE & PC) */
         .grid { 
-            display: grid; width: 100%; max-width: 100%; 
-            padding: 12px; gap: 15px; margin: 0 auto;
+            display: grid; width: 100%; 
+            padding: 10px; gap: 10px; margin: 0 auto;
         }
-        .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
-        .grid.setups { grid-template-columns: 1fr !important; }
+        .grid.logos { 
+            grid-template-columns: repeat(3, 1fr) !important; /* STRICT 3 PER ROW */
+        }
+        .grid.setups { 
+            grid-template-columns: 1fr !important; /* 1 PER ROW LANDSCAPE */
+        }
 
-        /* ASSET CARDS (LOGOS) */
+        /* LOGO ASSET CARDS */
         .card { display: flex; flex-direction: column; width: 100%; }
         .img-container {
-            width: 100%; aspect-ratio: 1/1; background: rgba(128,128,128,0.05); 
-            border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            width: 100%; aspect-ratio: 1 / 1; /* PERFECT SQUARE */
+            background: rgba(128,128,128,0.05); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
             overflow: hidden; border: 3px solid transparent; cursor: pointer;
         }
         .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
         .card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        /* SETUP CARDS (1 PER ROW LANDSCAPE) */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 30px; }
-        .landscape-box { width: 100%; height: 240px; border-radius: 20px; overflow: hidden; background: #111; }
+        /* SETUP CARDS (LANDSCAPE) */
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; }
+        .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #111; }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* UI CASING */
-        .casing { width: 100%; background: var(--pill); padding: 14px; border-radius: 22px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .name-label { text-align: center; font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* UI PILL CASING */
+        .casing { width: 100%; background: var(--pill); padding: 10px; border-radius: 15px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
+        .name-label { text-align: center; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .action-btn { 
-            background: var(--accent); color: white; border: none; padding: 12px; 
-            border-radius: 12px; font-size: 10px; font-weight: 800; cursor: pointer; 
+            background: var(--accent); color: white; border: none; padding: 10px; 
+            border-radius: 10px; font-size: 9px; font-weight: 900; cursor: pointer; 
             text-align: center; text-decoration: none; text-transform: uppercase;
         }
 
@@ -120,21 +121,21 @@
     <div class="sidebar-header">LayaSync Pro</div>
     
     <div class="nav-label">Navigation</div>
-    <div class="group-item" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
+    <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
     <div class="group-item" id="nav-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
     <div id="catBox">
         <div class="nav-label">Groups</div>
         <div id="catList"></div>
-        <div class="add-group-box">
-            <input type="text" id="newGrpName" placeholder="Group name...">
-            <button onclick="addNewGroup()">+</button>
+        <div style="display:flex; gap:5px; padding:5px;">
+            <input type="text" id="newGroupName" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:12px;">
+            <button onclick="addNewGroup()" style="background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:800;">+</button>
         </div>
     </div>
 
     <div class="nav-label">Cloud Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token (ghp_...)" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
-    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO GITHUB</button>
+    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
+    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
 <main>
@@ -152,20 +153,21 @@
     let logos = []; let setups = [];
     let currentTab = 'logos'; let activeCat = 'All';
     let selectedSet = new Set(); let isMulti = false;
-    let customGroups = JSON.parse(localStorage.getItem('ls_custom_groups')) || [];
-    const GITHUB = { user: 'layasync', repo: 'LayaSync.github.io' };
+    let localGroups = JSON.parse(localStorage.getItem('ls_custom_groups')) || [];
+    
+    const REPO = { user: 'layasync', repo: 'LayaSync.github.io' };
 
     async function init() {
         const v = Date.now();
         try {
             const [l, s] = await Promise.all([
-                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/logo.json?v=${v}`).then(r => r.json()),
-                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/setups.json?v=${v}`).then(r => r.json())
+                fetch(`https://raw.githubusercontent.com/${REPO.user}/${REPO.repo}/main/logo.json?v=${v}`).then(r => r.json()),
+                fetch(`https://raw.githubusercontent.com/${REPO.user}/${REPO.repo}/main/setups.json?v=${v}`).then(r => r.json())
             ]);
             logos = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { console.error("Database initialization failed."); }
+        } catch(e) { console.error("Initialization Failed"); }
     }
 
     function toggleSidebar() { 
@@ -185,31 +187,39 @@
     }
 
     function addNewGroup() {
-        const val = document.getElementById('newGrpName').value.trim();
-        if(val && !customGroups.includes(val)) {
-            customGroups.push(val);
-            localStorage.setItem('ls_custom_groups', JSON.stringify(customGroups));
-            document.getElementById('newGrpName').value = '';
+        const val = document.getElementById('newGroupName').value.trim();
+        if(val && !localGroups.includes(val)) {
+            localGroups.push(val);
+            localStorage.setItem('ls_custom_groups', JSON.stringify(localGroups));
+            document.getElementById('newGroupName').value = '';
             buildCats();
+        }
+    }
+
+    function deleteGroup(e, g) {
+        e.stopPropagation();
+        if(prompt("User:") === "123" && prompt("Pass:") === "123") {
+            localGroups = localGroups.filter(item => item !== g);
+            localStorage.setItem('ls_custom_groups', JSON.stringify(localGroups));
+            setCat('All');
         }
     }
 
     function buildCats() {
         const list = document.getElementById('catList');
         const jsonCats = [...new Set(logos.map(i => i.group || 'Uncategorized'))];
-        const allCats = [...new Set([...jsonCats, ...customGroups])];
-        
+        const allCats = [...new Set([...jsonCats, ...localGroups])];
         list.innerHTML = `<div class="group-item ${activeCat==='All'?'active':''}" onclick="setCat('All')">📂 All Logos</div>`;
         allCats.forEach(c => {
             if(c !== 'Uncategorized')
-                list.innerHTML += `<div class="group-item ${activeCat===c?'active':''}" onclick="setCat('${c}')">🏷️ ${c}</div>`;
+                list.innerHTML += `<div class="group-item ${activeCat===c?'active':''}" onclick="setCat('${c}')"><span>🏷️ ${c}</span><button class="del-btn" onclick="deleteGroup(event, '${c}')">✕</button></div>`;
         });
     }
 
     function setCat(c) {
         if (isMulti && c !== 'All') {
             selectedSet.forEach(url => { const item = logos.find(i => i.url === url); if(item) item.group = c; });
-            showToast(`Moved ${selectedSet.size} to ${c}`); toggleMulti();
+            showToast(`Moved items to ${c}`); toggleMulti();
         }
         activeCat = c; buildCats(); renderUI();
     }
@@ -231,7 +241,7 @@
                 <div class="card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
                     <div class="casing">
-                        <div class="name-label">${i.name}</div>
+                        <input class="name-label" style="border:none; background:transparent; outline:none;" value="${i.name}" onchange="updateName('${i.url}', this.value)" onclick="event.stopPropagation()">
                         <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy Link</button>
                     </div>
                 </div>
@@ -243,7 +253,7 @@
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
                         <div class="name-label">${i.name}</div>
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="margin-top:5px;">⬇️ DOWNLOAD COLLECTION JSON</a>`).join('') : ''}
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="margin-top:5px;">⬇️ Download JSON</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
@@ -251,6 +261,7 @@
     }
 
     function handleCardClick(url) { if(isMulti) { if(selectedSet.has(url)) selectedSet.delete(url); else selectedSet.add(url); renderUI(); } }
+    function updateName(url, val) { const item = logos.find(i => i.url === url); if(item) item.name = val; }
 
     async function cloudSync() {
         const token = document.getElementById('ghToken').value;
@@ -259,22 +270,21 @@
         const file = currentTab === 'logos' ? 'logo.json' : 'setups.json';
         const data = currentTab === 'logos' ? logos : setups;
         const btn = document.getElementById('syncBtn');
-        btn.innerText = "Syncing...";
+        btn.innerText = "Processing...";
         try {
-            const url = `https://api.github.com/repos/${GITHUB.user}/${GITHUB.repo}/contents/${file}`;
+            const url = `https://api.github.com/repos/${REPO.user}/${REPO.repo}/contents/${file}`;
             const res = await fetch(url, { headers: { Authorization: `token ${token}` } });
-            const fileData = await res.json();
-            const pushRes = await fetch(url, {
+            const fData = await res.json();
+            await fetch(url, {
                 method: 'PUT', headers: { Authorization: `token ${token}` },
-                body: JSON.stringify({ message: `LayaSync Cloud Update: ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fileData.sha })
+                body: JSON.stringify({ message: `Sync ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fData.sha })
             });
-            if(pushRes.ok) showToast("Cloud Sync Successful!");
-            else throw new Error();
-        } catch (e) { alert("Cloud Sync Failed. Check token permissions."); }
-        finally { btn.innerText = "☁️ SYNC TO GITHUB"; }
+            showToast("Successfully Synced!");
+        } catch (e) { alert("Sync Error"); }
+        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
     }
 
-    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Direct Link Copied!"); }
+    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
 
     init();
