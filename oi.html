@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Cloud Authority</title>
+    <title>LayaSync | Cloud Archive</title>
     <style>
         :root {
             --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
@@ -14,11 +14,11 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* --- HARDWARE ACCELERATED CORE --- */
+        /* --- PREVENT OVERFLOW & ENSURE SMOOTHNESS --- */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { margin: 0; padding: 0; width: 100vw; height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
-        /* --- SILVER SIDEBAR --- */
+        /* --- SILVER SIDEBAR (Manual Open Only) --- */
         .sidebar {
             width: 280px; height: 100vh; background: var(--sidebar-silver);
             position: fixed; left: -280px; top: 0; z-index: 3000;
@@ -27,6 +27,7 @@
         }
         .sidebar.active { transform: translateX(280px); }
         .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
+
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
@@ -34,7 +35,7 @@
         }
         .group-item.active { background: var(--accent); color: white; }
 
-        /* --- FLOATING HOVER SQUARE SEARCH --- */
+        /* --- FLOATING HOVER SEARCH --- */
         header {
             position: sticky; top: 15px; z-index: 2000; 
             width: calc(100% - 30px); margin: 0 auto;
@@ -43,7 +44,7 @@
             padding: 10px 15px; display: flex; align-items: center; gap: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
         .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
         /* --- CONTENT AREA --- */
@@ -74,7 +75,7 @@
         .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- UTILS --- */
+        /* --- OVERLAY & TOAST --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 9999; }
@@ -102,7 +103,7 @@
         </div>
     </div>
 
-    <div class="nav-label">Cloud Sync Engine</div>
+    <div class="nav-label">Admin Sync</div>
     <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; background:#fff;">
     <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
@@ -127,18 +128,24 @@
     const GITHUB_REPO = 'LayaSync.github.io';
 
     async function init() {
-        setTab('logos');
+        // UI Shell Initializer
+        renderUI();
         const v = Date.now();
+        
         try {
-            const [lRes, sRes] = await Promise.all([
-                fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/logo.json?v=${v}`).then(r => r.ok ? r.json() : []),
-                fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/setups.json?v=${v}`).then(r => r.ok ? r.json() : [])
-            ]);
-            db = lRes; setups = sRes;
+            const logoUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/logo.json?v=${v}`;
+            const setupUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/setups.json?v=${v}`;
+            
+            const lRes = await fetch(logoUrl);
+            if(lRes.ok) db = await lRes.json();
+            
+            const sRes = await fetch(setupUrl);
+            if(sRes.ok) setups = await sRes.json();
+
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             renderGroups();
             renderUI();
-        } catch(e) { console.warn("Load error handled."); }
+        } catch(e) { console.log("Data fetch failed. Showing empty UI."); }
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -151,7 +158,7 @@
         document.getElementById('mainGrid').className = `grid ${tab}`;
         renderGroups();
         renderUI();
-        if(window.innerWidth < 600 && document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+        if(window.innerWidth < 600) { if(document.getElementById('sidebar').classList.contains('active')) toggleSidebar(); }
     }
 
     function renderGroups() {
@@ -177,12 +184,16 @@
 
     function addGroup() {
         const name = document.getElementById('newGrp').value.trim();
-        if (name) { db.push({ name: "Dummy", url: "", group: name }); document.getElementById('newGrp').value = ''; renderGroups(); }
+        if (name) { 
+            db.push({ name: "Dummy", url: "", group: name }); 
+            document.getElementById('newGrp').value = ''; 
+            renderGroups(); 
+        }
     }
 
     function deleteG(e, g) {
         e.stopPropagation();
-        if (prompt("User:") === "123" && prompt("Pass:") === "123") {
+        if (prompt("Password:") === "123") {
             db = db.filter(i => i.group !== g);
             renderGroups();
             setG('All');
@@ -211,7 +222,7 @@
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
                         <input class="name-field" style="font-size:14px;" value="${i.name}" onchange="updateSName('${i.screenshot}', this.value)">
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD COLLECTION JSON</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
@@ -223,31 +234,31 @@
     function updateName(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
     function updateSName(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
 
-    // --- REENGINEERED SYNC ENGINE (FIXES SYNC ISSUES) ---
+    // --- REENGINEERED SYNC ENGINE (DIRECT SHA HANDSHAKE) ---
     async function cloudSync() {
         const token = document.getElementById('ghToken').value;
-        if (!token) return alert("Enter Token First");
+        if (!token) return alert("GitHub Token Required");
         localStorage.setItem('ls_token', token);
         
         const btn = document.getElementById('syncBtn');
         const filename = currentTab === 'logos' ? 'logo.json' : 'setups.json';
         const dataToSave = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
 
-        btn.innerText = "Connecting...";
+        btn.innerText = "Syncing...";
         btn.disabled = true;
 
         try {
-            // 1. FORCE FETCH FRESH SHA (Bypass Cache)
             const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${filename}`;
+            
+            // 1. FRESH METADATA FETCH (Bypass Cache)
             const metaRes = await fetch(apiUrl, {
                 headers: { 
                     'Authorization': `token ${token}`,
-                    'Cache-Control': 'no-cache',
-                    'Pragma': 'no-cache'
+                    'Cache-Control': 'no-cache'
                 }
             });
             
-            if (!metaRes.ok) throw new Error("Could not fetch file metadata.");
+            if (!metaRes.ok) throw new Error("Connection failed. Check token.");
             const meta = await metaRes.json();
 
             // 2. SAFE UTF-8 ENCODING
@@ -261,19 +272,19 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: `Cloud Sync: ${filename}`,
+                    message: `LayaSync Cloud Update: ${filename}`,
                     content: content,
                     sha: meta.sha
                 })
             });
 
-            if (putRes.ok) showToast("✅ Cloud Synchronized!");
+            if (putRes.ok) showToast("✅ Cloud Updated!");
             else {
-                const errJson = await putRes.json();
-                throw new Error(errJson.message);
+                const err = await putRes.json();
+                throw new Error(err.message);
             }
         } catch (e) {
-            alert("Sync Failed: " + e.message);
+            alert("GitHub Error: " + e.message);
         } finally {
             btn.innerText = "☁️ SYNC TO CLOUD";
             btn.disabled = false;
