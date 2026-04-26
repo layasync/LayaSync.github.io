@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Ultra Digital Archive</title>
+    <title>LayaSync | AI Blaster Archive</title>
     
-    <!-- AI VISION ENGINE -->
+    <!-- Tesseract AI Vision Engine -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
     <style>
@@ -14,7 +14,7 @@
             --text: #1d1d1f;
             --accent: #007aff;
             --pill: #f2f2f7;
-            --glass: rgba(255, 255, 255, 0.7);
+            --glass: rgba(255, 255, 255, 0.75);
             --sidebar: rgba(255, 255, 255, 0.95);
         }
 
@@ -23,23 +23,22 @@
                 --bg: #000000;
                 --text: #ffffff;
                 --pill: #1c1c1e;
-                --glass: rgba(0, 0, 0, 0.7);
+                --glass: rgba(0, 0, 0, 0.75);
                 --sidebar: rgba(28, 28, 30, 0.95);
             }
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         body { margin: 0; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* --- SIDEBAR --- */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: var(--sidebar); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            z-index: 3000; border-right: 1px solid rgba(128,128,128,0.2);
-            padding: 60px 20px;
+            z-index: 3000; border-right: 1px solid rgba(128,128,128,0.2); padding: 60px 20px;
         }
         .sidebar.active { transform: translateX(280px); }
-        .sidebar-title { font-size: 22px; font-weight: 800; margin-bottom: 30px; letter-spacing: -0.5px; }
+        .sidebar-title { font-size: 24px; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
         .nav-item { 
             padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 600; 
             margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
@@ -51,47 +50,47 @@
             position: sticky; top: 0; z-index: 2000;
             background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
             -webkit-backdrop-filter: saturate(180%) blur(25px);
-            border-bottom: 1px solid rgba(128,128,128,0.2);
-            padding: 12px 15px;
+            border-bottom: 1px solid rgba(128,128,128,0.2); padding: 12px 15px;
         }
-        .top-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
-        .menu-toggle { background: var(--pill); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; color: var(--text); font-size: 18px; }
+        .top-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+        .menu-btn { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; color: var(--text); font-size: 20px; }
         .search-input { flex: 1; background: var(--pill); border: none; padding: 12px 18px; border-radius: 12px; font-size: 16px; color: var(--text); outline: none; }
 
-        /* --- AUTO-CATEGORY BAR --- */
+        /* --- AUTO-CATEGORY CHIPS --- */
         .cat-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .cat-bar::-webkit-scrollbar { display: none; }
-        .chip { padding: 7px 15px; background: var(--pill); border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .chip { padding: 7px 16px; background: var(--pill); border-radius: 20px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap; text-transform: uppercase; }
         .chip.active { background: var(--accent); color: white; }
-        .chip.scanning { border: 1px solid var(--accent); color: var(--accent); animation: pulse 2s infinite; }
+        .chip.blaster { border: 1px solid var(--accent); color: var(--accent); animation: pulse 2s infinite; }
 
         /* --- GRID: 3 PER ROW MOBILE --- */
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px 12px; padding: 15px; max-width: 1400px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px 12px; padding: 15px; max-width: 1600px; margin: 0 auto;
         }
 
-        .card { display: flex; flex-direction: column; align-items: center; animation: slideUp 0.4s ease forwards; }
+        .card { display: flex; flex-direction: column; align-items: center; animation: slideIn 0.4s ease; }
         .img-wrap { 
             width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-            margin-bottom: 10px; background: rgba(128,128,128,0.03); border-radius: 15px;
+            margin-bottom: 10px; background: rgba(128,128,128,0.05); border-radius: 18px; overflow: hidden;
         }
-        .img-wrap img { max-width: 90%; max-height: 90%; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .img-wrap img { max-width: 95%; max-height: 95%; object-fit: contain; filter: drop-shadow(0 5px 12px rgba(0,0,0,0.12)); }
 
-        /* --- WIDE PILL CUT CASING --- */
+        /* --- PILL CUT CASING --- */
         .casing {
-            width: 100%; background: var(--pill); padding: 10px; border-radius: 18px;
+            width: 100%; background: var(--pill); padding: 12px; border-radius: 22px;
             display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(128,128,128,0.1);
         }
-        .name-field {
+        .name-input {
             width: 100%; border: none; background: transparent; text-align: center;
-            font-size: 11px; font-weight: 800; color: var(--text); outline: none; padding: 2px;
+            font-size: 11px; font-weight: 800; color: var(--text); outline: none;
         }
-        .copy-btn {
+        .hard-btn {
             background: var(--accent); color: white; border: none; width: 100%;
-            padding: 9px; border-radius: 10px; font-size: 9px; font-weight: 900;
-            text-transform: uppercase; cursor: pointer; letter-spacing: 0.5px;
+            padding: 10px; border-radius: 12px; font-size: 10px; font-weight: 900;
+            text-transform: uppercase; cursor: pointer; letter-spacing: 0.8px;
         }
+        .hard-btn:active { transform: scale(0.95); }
 
         /* --- OVERLAY --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
@@ -99,18 +98,19 @@
 
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(3, 1fr); gap: 15px 8px; padding: 10px; }
-            .casing { padding: 7px; border-radius: 12px; }
-            .name-field { font-size: 9px; }
-            .copy-btn { padding: 7px; font-size: 8px; border-radius: 7px; }
+            .casing { padding: 8px; border-radius: 14px; gap: 6px; }
+            .name-input { font-size: 9px; }
+            .hard-btn { padding: 8px; font-size: 8px; border-radius: 8px; }
+            .img-wrap { border-radius: 12px; }
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--text); color: var(--bg); padding: 12px 25px; border-radius: 50px;
-            font-size: 13px; font-weight: 700; z-index: 9999; transition: 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+            background: var(--text); color: var(--bg); padding: 12px 28px; border-radius: 50px;
+            font-size: 13px; font-weight: 800; z-index: 9999; transition: 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28);
         }
         #toast.active { transform: translateX(-50%) translateY(0); }
     </style>
@@ -120,19 +120,19 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="sidebar-title">LayaSync</div>
-    <div class="nav-item active" id="tab-logos" onclick="switchTab('logos')">🖼️ Asset Archive</div>
-    <div class="nav-item" id="tab-setups" onclick="switchTab('setups')">📱 Nuvio Setups</div>
+    <div class="sidebar-title">LayaSync AI</div>
+    <div class="nav-item active" onclick="switchTab('logos')">🖼️ Asset Archive</div>
+    <div class="nav-item" onclick="switchTab('setups')">📱 Nuvio Setups</div>
 </nav>
 
 <header class="header">
     <div class="top-row">
-        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-input" placeholder="Search library..." onkeyup="refreshUI()">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <input type="text" id="search" class="search-input" placeholder="Search AI library..." onkeyup="syncUI()">
     </div>
     <div class="cat-bar" id="catBar">
         <div class="chip active" onclick="setFilter('All')">All</div>
-        <div id="aiStatus" class="chip scanning" style="display:none">AI Processing Assets...</div>
+        <div id="aiStatus" class="chip blaster" style="display:none">Processing AI Blaster...</div>
     </div>
 </header>
 
@@ -140,20 +140,21 @@
 <div id="toast">Copied to Clipboard</div>
 
 <script>
+    let library = [];
+    let setups = [];
     let activeTab = 'logos';
     let activeFilter = 'All';
-    let dataStore = { logos: [], setups: [] };
-    let dynamicCats = new Set(['All']);
+    let categories = new Set(['All']);
 
-    // THE CONTEXTUAL BRAIN
-    const RULES = {
-        Streaming: ['netflix', 'disney', 'hulu', 'prime', 'hbo', 'hotstar', 'apple', 'paramount', 'sonyliv', 'zee5'],
-        Movies: ['film', 'movie', 'cinema', '2024', '2023', 'collection', 'poster', 'directed'],
-        Series: ['season', 'episode', 'series', 'tv', 'show'],
-        Actors: ['dicaprio', 'pitt', 'bale', 'cruise', 'hanks', 'deniro', 'rock', 'srk', 'actor'],
-        Actresses: ['johansson', 'robbie', 'streep', 'lawrence', 'gadot', 'zendaya', 'actress'],
+    // BLASTER ENGINE RULES
+    const AI_BRAIN = {
+        Streaming: ['netflix', 'disney', 'hulu', 'prime', 'hbo', 'hotstar', 'apple', 'sonyliv', 'paramount', 'zee5', 'chaupal'],
+        Movies: ['film', 'movie', 'cinema', 'poster', 'theatrical', 'collection', 'directed by'],
+        Series: ['season', 'episode', 'series', 'tv show', 's0', 'e0'],
+        Actors: ['dicaprio', 'pitt', 'bale', 'cruise', 'hanks', 'deniro', 'rock', 'actor', 'srk'],
+        Actresses: ['johansson', 'zendaya', 'robbie', 'gadot', 'lawrence', 'actress'],
         Directors: ['nolan', 'spielberg', 'tarantino', 'scorsese', 'cameron', 'director'],
-        Gaming: ['xbox', 'playstation', 'nintendo', 'steam', 'pubg', 'fortnite']
+        '80s': ['198'], '90s': ['199'], '20s': ['202']
     };
 
     function toggleSidebar() {
@@ -162,61 +163,58 @@
     }
 
     async function init() {
-        const t = Date.now();
-        const urls = {
-            logos: 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json',
-            setups: 'https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/setups.json'
-        };
+        const timestamp = Date.now();
+        const logoUrl = `https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json?v=${timestamp}`;
+        const setupUrl = `https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/setups.json?v=${timestamp}`;
 
         try {
-            const [l, s] = await Promise.all([
-                fetch(`${urls.logos}?v=${t}`).then(r => r.json()),
-                fetch(`${urls.setups}?v=${t}`).then(r => r.json())
+            const [lRes, sRes] = await Promise.all([
+                fetch(logoUrl).then(r => r.json()),
+                fetch(setupUrl).then(r => r.json())
             ]);
-            
-            dataStore.logos = l.map(i => ({
+
+            library = lRes.map(i => ({
                 ...i,
-                viewName: localStorage.getItem(`n-${i.url}`) || i.name,
-                smartCat: i.url.toLowerCase().includes('.gif') ? 'GIFs' : 'Unsorted'
+                aiName: localStorage.getItem(`n-${i.url}`) || i.name,
+                aiCat: i.url.toLowerCase().includes('.gif') ? 'GIFs' : 'Scanning'
             }));
-            
-            dataStore.setups = s;
-            refreshUI();
-            if (activeTab === 'logos') runVisionAI();
+            setups = sRes;
+
+            syncUI();
+            if (activeTab === 'logos') runBlaster();
         } catch (e) { console.error("Sync Error", e); }
     }
 
-    async function runVisionAI() {
+    async function runBlaster() {
         const status = document.getElementById('aiStatus');
         status.style.display = 'block';
 
-        for (let item of dataStore.logos) {
-            // Process if name looks like gibberish
-            if (item.viewName.length > 12 || /[^a-zA-Z0-9 ]/.test(item.viewName)) {
+        for (let item of library) {
+            if (item.aiCat === 'Scanning') {
                 try {
+                    // Vision Processing
                     const { data: { text } } = await Tesseract.recognize(item.url, 'eng');
                     const raw = text.toLowerCase();
-                    const clean = text.trim().split('\n')[0].replace(/[^a-zA-Z]/g, "");
+                    const clean = text.trim().split('\n')[0].replace(/[^a-zA-Z0-9 ]/g, "");
 
                     if (clean.length > 2) {
-                        item.viewName = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
-                        item.smartCat = 'General';
-                        for (let [cat, keys] of Object.entries(RULES)) {
-                            if (keys.some(k => raw.includes(k))) { item.smartCat = cat; break; }
+                        item.aiName = clean.charAt(0).toUpperCase() + clean.slice(1);
+                        item.aiCat = 'Other';
+                        for (let [cat, keys] of Object.entries(AI_BRAIN)) {
+                            if (keys.some(k => raw.includes(k))) {
+                                item.aiCat = cat;
+                                break;
+                            }
                         }
-                    } else { item.smartCat = 'Icons'; }
-                } catch (e) { item.smartCat = 'Others'; }
-            } else {
-                // If name was already fine, just categorize it
-                for (let [cat, keys] of Object.entries(RULES)) {
-                    if (keys.some(k => item.viewName.toLowerCase().includes(k))) { item.smartCat = cat; break; }
-                }
-                if(item.smartCat === 'Unsorted') item.smartCat = 'Verified';
+                    } else {
+                        item.aiCat = 'Logos';
+                    }
+                } catch (e) { item.aiCat = 'Unprocessed'; }
+                
+                categories.add(item.aiCat);
+                updateChips();
+                syncUI();
             }
-
-            dynamicCats.add(item.smartCat);
-            updateChips();
-            refreshUI();
         }
         status.style.display = 'none';
     }
@@ -224,61 +222,58 @@
     function updateChips() {
         const bar = document.getElementById('catBar');
         bar.style.display = activeTab === 'logos' ? 'flex' : 'none';
-        bar.innerHTML = Array.from(dynamicCats).map(c => `
+        bar.innerHTML = Array.from(categories).map(c => `
             <div class="chip ${c === activeFilter ? 'active' : ''}" onclick="setFilter('${c}')">${c}</div>
-        `).join('') + `<div id="aiStatus" class="chip scanning" style="display:none">AI Processing...</div>`;
+        `).join('') + `<div id="aiStatus" class="chip blaster" style="display:none">Processing...</div>`;
     }
 
     function switchTab(t) {
         activeTab = t;
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        document.getElementById('tab-'+t).classList.add('active');
         toggleSidebar();
         updateChips();
-        refreshUI();
+        syncUI();
     }
 
     function setFilter(c) {
         activeFilter = c;
         updateChips();
-        refreshUI();
+        syncUI();
     }
 
-    function refreshUI() {
+    function syncUI() {
         const grid = document.getElementById('mainGrid');
         const q = document.getElementById('search').value.toLowerCase();
-        const items = activeTab === 'logos' ? dataStore.logos : dataStore.setups;
+        const currentData = activeTab === 'logos' ? library : setups;
 
-        const filtered = items.filter(i => {
-            const name = i.viewName || i.name;
-            const matchesSearch = name.toLowerCase().includes(q);
-            const matchesCat = activeTab === 'setups' || activeFilter === 'All' || i.smartCat === activeFilter;
+        const filtered = currentData.filter(i => {
+            const name = (i.aiName || i.name).toLowerCase();
+            const matchesSearch = name.includes(q);
+            const matchesCat = activeTab === 'setups' || activeFilter === 'All' || i.aiCat === activeFilter;
             return matchesSearch && matchesCat;
         });
 
         grid.innerHTML = filtered.map(i => {
             const img = activeTab === 'logos' ? i.url : i.image;
-            const link = activeTab === 'logos' ? i.url : i.fileUrl;
-            const name = i.viewName || i.name;
+            const copyUrl = activeTab === 'logos' ? i.url : i.fileUrl;
+            const name = i.aiName || i.name;
 
             return `
                 <div class="card">
                     <div class="img-wrap"><img src="${img}" loading="eager"></div>
                     <div class="casing">
-                        <input class="name-field" value="${name}" 
-                               onchange="saveName('${img}', this.value)" spellcheck="false">
-                        <button class="copy-btn" onclick="copy('${link}')">
-                            ${activeTab === 'logos' ? 'Copy Link' : 'Copy Setup'}
-                        </button>
+                        <input class="name-input" value="${name}" onchange="saveName('${img}', this.value)" spellcheck="false">
+                        <button class="hard-btn" onclick="copy('${copyUrl}')">Copy Link</button>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    function saveName(id, val) {
-        localStorage.setItem(`n-${id}`, val);
-        toast("Renamed Locally");
+    function saveName(url, val) {
+        localStorage.setItem(`n-${url}`, val);
+        const item = library.find(i => i.url === url);
+        if(item) item.aiName = val;
+        toast("Updated Successfully");
     }
 
     function copy(url) {
