@@ -2,47 +2,56 @@
   {
     "name": "Netflix",
     "category": "Logos",
-    "url": "https://i.ibb.co/FqBSrbZ0/Netflix.png"
+    "url": "https://i.ibb.co/FqBSrbZ0/Netflix.png",
+    "group": "Streaming"
   },
   {
     "name": "Primevideo",
     "category": "Logos",
-    "url": "https://i.ibb.co/ccg0J10c/Primevideo.png"
+    "url": "https://i.ibb.co/ccg0J10c/Primevideo.png",
+    "group": "Streaming"
   },
   {
     "name": "Hbomax",
     "category": "Logos",
-    "url": "https://i.ibb.co/SX2wsGX1/Hbomax.png"
+    "url": "https://i.ibb.co/SX2wsGX1/Hbomax.png",
+    "group": "Streaming"
   },
   {
     "name": "Jiohotstar",
     "category": "Logos",
-    "url": "https://i.ibb.co/7ddhNqrd/Jiohotstar.png"
+    "url": "https://i.ibb.co/7ddhNqrd/Jiohotstar.png",
+    "group": "Streaming"
   },
   {
     "name": "Appletv",
     "category": "Logos",
-    "url": "https://i.ibb.co/bgx3M2f0/Appletv.png"
+    "url": "https://i.ibb.co/bgx3M2f0/Appletv.png",
+    "group": "Streaming"
   },
   {
     "name": "Paramount",
     "category": "Logos",
-    "url": "https://i.ibb.co/8nzrYrPg/Paramount.png"
+    "url": "https://i.ibb.co/8nzrYrPg/Paramount.png",
+    "group": "Streaming"
   },
   {
     "name": "Hulu",
     "category": "Logos",
-    "url": "https://i.ibb.co/7djvfsdk/Hulu.png"
+    "url": "https://i.ibb.co/7djvfsdk/Hulu.png",
+    "group": "Streaming"
   },
   {
     "name": "Disney",
     "category": "Logos",
-    "url": "https://i.ibb.co/qYxHjpxJ/Disney.png"
+    "url": "https://i.ibb.co/qYxHjpxJ/Disney.png",
+    "group": "Streaming"
   },
   {
     "name": "Chaupal",
     "category": "Logos",
-    "url": "https://i.ibb.co/4n6DmFGD/Chaupal.png"
+    "url": "https://i.ibb.co/4n6DmFGD/Chaupal.png",
+    "group": "Streaming"
   },
   {
     "name": "Sonyliv",
@@ -134,7 +143,7 @@
     "category": "Logos",
     "url": "https://i.ibb.co/TMjF642d/Sports.png"
   },
- {
+  {
     "name": "Anime",
     "category": "Logos",
     "url": "https://i.ibb.co/m7fFXsR/Anime.png"
@@ -179,7 +188,6 @@
     "category": "Logos",
     "url": "https://i.ibb.co/KjMqCxvG/Superhero.png"
   },
-
   {
     "name": "36888a03-03ad-4d11-bdeb-86947d7a42d9",
     "category": "Logos",
@@ -495,7 +503,6 @@
     "category": "Logos",
     "url": "https://i.ibb.co/r2SPT4vm/dc-2.jpg"
   },
-
   {
     "name": "Chris-Evans-2019-r",
     "category": "Logos",
@@ -721,7 +728,6 @@
     "category": "Logos",
     "url": "https://i.ibb.co/x8SMXfTF/Felicity-Jones-2024-r.jpg"
   },
-
   {
     "name": "HISTOIRE-1",
     "category": "Logos",
@@ -1162,7 +1168,4 @@
     "category": "Logos",
     "url": "https://i.ibb.co/VWYYGzMs/99a7c210-5bd3-4520-9641-127c1e78bb3b.jpg"
   }
-
-
-
 ]
