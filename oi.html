@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Cloud Archive Authority</title>
+    <title>LayaSync | Digital Archive</title>
     <style>
         :root {
             --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
@@ -14,19 +14,19 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* --- PREVENT OVERFLOW & LAG --- */
+        /* --- ZERO LAG CORE --- */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { margin: 0; padding: 0; width: 100vw; height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
-        /* --- MANUAL SILVER SIDEBAR --- */
+        /* --- SILVER SIDEBAR (Manual) --- */
         .sidebar {
-            width: 280px; height: 100vh; background: var(--sidebar-silver);
-            position: fixed; left: -280px; top: 0; z-index: 3000;
+            width: 270px; height: 100vh; background: var(--sidebar-silver);
+            position: fixed; left: -270px; top: 0; z-index: 3000;
             transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
             padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); overflow-y: auto;
         }
-        .sidebar.active { transform: translateX(280px); }
-        .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
+        .sidebar.active { transform: translateX(270px); }
+        .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
 
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
@@ -35,17 +35,16 @@
         }
         .group-item.active { background: var(--accent); color: white; }
 
-        /* --- SQUARE HOVER SEARCH BAR --- */
+        /* --- FLOATING HOVER SEARCH --- */
         header {
             position: sticky; top: 15px; z-index: 2000; 
             width: calc(100% - 30px); margin: 0 auto;
-            background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
-            border: 1px solid rgba(120,120,128,0.2); 
+            background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
+            border: 1px solid rgba(120,120,128,0.2); border-radius: 12px;
             padding: 10px 15px; display: flex; align-items: center; gap: 10px;
-            border-radius: 12px; /* Square profile */
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
         .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
         /* --- CONTENT AREA --- */
@@ -56,7 +55,7 @@
         .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
         .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* --- ASSET CARDS --- */
+        /* --- LOGO ASSET CARDS --- */
         .asset-card { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .img-container {
             width: 100%; aspect-ratio: 1/1; 
@@ -72,14 +71,14 @@
         .copy-btn { background: var(--accent); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
 
         /* --- SETUP CARDS --- */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; }
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; padding: 0 5px; }
         .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- OVERLAY & TOAST --- */
+        /* --- UTILS --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
         @media (max-width: 600px) { .landscape-box { height: 170px; } .grid { gap: 8px; padding: 25px 8px; } }
@@ -129,14 +128,20 @@
     async function init() {
         const v = Date.now();
         try {
-            const [l, s] = await Promise.all([
-                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/logo.json?v=${v}`).then(r => r.json()),
-                fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/setups.json?v=${v}`).then(r => r.json())
-            ]);
-            db = l; setups = s;
+            // Attempt to load logo.json
+            const lRes = await fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/logo.json?v=${v}`);
+            if(lRes.ok) db = await lRes.json();
+            
+            // Attempt to load setups.json
+            const sRes = await fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/setups.json?v=${v}`);
+            if(sRes.ok) setups = await sRes.json();
+
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { showToast("Initial Load Error"); }
+        } catch(e) { 
+            console.error("Critical Load Error", e);
+            renderUI(); // Render empty grid if fetch fails
+        }
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -144,7 +149,7 @@
     function setTab(tab) {
         currentTab = tab; activeG = 'All';
         document.getElementById('nav-logos').classList.toggle('active', tab === 'logos');
-        document.getElementById('nav-setups').classList.toggle('active', tab === 'setups');
+        document.getElementById('nav-nuvio').classList.toggle('active', tab === 'setups');
         document.getElementById('catArea').style.display = tab === 'logos' ? 'block' : 'none';
         document.getElementById('mainGrid').className = `grid ${tab}`;
         if(tab === 'logos') renderGroups();
@@ -154,24 +159,34 @@
 
     function renderGroups() {
         const list = document.getElementById('groupList');
-        const categories = [...new Set(db.map(i => i.group || 'Uncategorized'))];
+        const categories = [...new Set(db.filter(i=>i.group).map(i => i.group))];
         list.innerHTML = `<div class="group-item ${activeG==='All'?'active':''}" onclick="setG('All')">📂 All Logos</div>`;
         categories.forEach(g => {
-            if(g !== 'Dummy')
-                list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">🏷️ ${g} <span onclick="delGrp(event, '${g}')" style="color:red">✕</span></div>`;
+            list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">
+                <span>🏷️ ${g}</span>
+                <button onclick="deleteG(event, '${g}')" style="color:red; background:none; border:none; font-weight:800; cursor:pointer;">✕</button>
+            </div>`;
         });
     }
 
     function setG(g) {
         if (isMulti && g !== 'All') {
             selectedSet.forEach(url => { const item = db.find(i => i.url === url); if (item) item.group = g; });
-            showToast(`Moved to ${g}`); toggleMultiSelect();
+            showToast(`Items Categorized`); toggleMultiSelect();
         }
         activeG = g; renderGroups(); renderUI();
     }
 
     function addGroup() { const n = document.getElementById('newGrp').value.trim(); if (n) { db.push({ name: "Dummy", url: "", group: n }); document.getElementById('newGrp').value = ''; renderGroups(); } }
-    function delGrp(e, g) { e.stopPropagation(); if (prompt("User: 123, Pass: 123") === "123123") { db = db.filter(i => i.group !== g); renderGroups(); setG('All'); } }
+
+    function deleteG(e, g) {
+        e.stopPropagation();
+        if (prompt("User:") === "123" && prompt("Pass:") === "123") {
+            db = db.filter(i => i.group !== g);
+            renderGroups();
+            setG('All');
+        }
+    }
 
     function renderUI() {
         const grid = document.getElementById('mainGrid');
@@ -194,7 +209,7 @@
                 <div class="setup-card">
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
-                        <input class="name-field" style="font-size:14px; margin-bottom:5px;" value="${i.name}" onchange="updateSName('${i.screenshot}', this.value)">
+                        <input class="name-field" style="font-size:14px;" value="${i.name}" onchange="updateSName('${i.screenshot}', this.value)">
                         ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
                     </div>
                 </div>
@@ -207,7 +222,6 @@
     function updateName(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
     function updateSName(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
 
-    // --- REENGINEERED SYNC ENGINE ---
     async function cloudSync() {
         const token = document.getElementById('ghToken').value;
         if (!token) return alert("Enter GitHub Token");
@@ -221,27 +235,23 @@
         try {
             const url = `https://api.github.com/repos/${GITHUB.user}/${GITHUB.repo}/contents/${file}`;
             
-            // 1. FRESH HANDSHAKE: Get absolute latest SHA from GitHub
+            // 1. RE-FETCH FRESH SHA (Fixes sync error)
             const getRes = await fetch(url, { headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' } });
             const meta = await getRes.json();
-            
-            if (!getRes.ok) throw new Error("GitHub Error: " + meta.message);
+            if (!getRes.ok) throw new Error(meta.message);
 
-            // 2. SAFE UTF-8 ENCODING
+            // 2. Safe Encode
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(rawData, null, 2))));
 
-            // 3. COMMIT TO CLOUD
+            // 3. PUT
             const putRes = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `LayaSync Authority Sync: ${file}`, content: content, sha: meta.sha })
+                body: JSON.stringify({ message: `LayaSync Cloud Update: ${file}`, content: content, sha: meta.sha })
             });
 
             if (putRes.ok) showToast("✅ Global Cloud Updated!");
-            else {
-                const errorData = await putRes.json();
-                throw new Error(errorData.message);
-            }
+            else throw new Error("Push failed");
         } catch (e) { alert("FAIL: " + e.message); }
         finally { btn.innerText = "☁️ SYNC TO CLOUD"; btn.disabled = false; }
     }
