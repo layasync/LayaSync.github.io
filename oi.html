@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Cloud Manager</title>
+    <title>LayaSync | Digital Vault</title>
     <style>
         :root {
             --bg: #ffffff; --text: #1c1c1e; --accent: #007aff; --pill: #f2f2f7;
@@ -14,87 +14,80 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
         }
         
-        /* SMOOTH SCROLL ENGINE */
-        html { scroll-behavior: smooth; }
+        /* ZERO-LAG SMOOTH SCROLL */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-        
-        body { 
-            margin: 0; background: var(--bg); color: var(--text); 
-            overflow-x: hidden; display: flex; 
-            height: 100vh;
-        }
+        html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); }
 
         /* SIDEBAR */
         .sidebar {
-            width: 280px; height: 100vh; background: var(--sidebar-silver);
+            width: 280px; height: 100%; background: var(--sidebar-silver);
             position: fixed; left: -280px; top: 0; z-index: 3000;
             transition: left 0.4s cubic-bezier(0.2, 1, 0.2, 1);
-            padding: 40px 15px; border-right: 1px solid rgba(0,0,0,0.1); overflow-y: auto;
+            padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); overflow-y: auto;
         }
         .sidebar.active { left: 0; }
-        .nav-section { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
+        .nav-head { font-size: 11px; font-weight: 800; color: #888; margin: 25px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; justify-content: space-between; align-items: center; font-size: 13px;
+            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; font-size: 13px;
         }
         .group-item.active { background: var(--accent); color: white; }
 
-        /* MAIN CONTENT */
+        /* MAIN PAGE */
         main { 
-            flex: 1; height: 100vh; overflow-y: scroll; 
-            -webkit-overflow-scrolling: touch; /* High speed scroll for iOS */
-            will-change: transform;
+            height: 100%; overflow-y: auto; overflow-x: hidden;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch; 
+            padding-bottom: 50px;
         }
 
-        /* HEADER */
         header {
             position: sticky; top: 0; z-index: 2000;
             background: var(--glass); backdrop-filter: saturate(180%) blur(25px);
-            -webkit-backdrop-filter: saturate(180%) blur(25px);
             border-bottom: 1px solid rgba(120,120,128,0.2); padding: 12px 15px;
             display: flex; align-items: center; gap: 10px;
         }
         .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 12px; font-size: 15px; color: var(--text); outline: none; }
         .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-size: 20px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* GRID - LOCKED 3 COLUMN */
-        .grid {
-            display: grid; grid-template-columns: repeat(3, 1fr) !important;
-            gap: 15px; padding: 15px; width: 100%; max-width: 1400px; margin: 0 auto;
-        }
+        /* GRID LOGIC */
+        .grid { display: grid; padding: 15px; width: 100%; max-width: 1400px; margin: 0 auto; gap: 15px; }
+        .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
+        .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* CARDS */
-        .asset-card { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
+        /* LOGO CARDS */
+        .asset-card { display: flex; flex-direction: column; }
         .img-container {
             width: 100%; height: 200px; background: rgba(128,128,128,0.05); 
             border-radius: 18px; display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 3px solid transparent; cursor: pointer;
+            overflow: hidden; cursor: pointer; border: 3px solid transparent;
         }
-        .img-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
-        
-        /* Landscape specific for setups */
-        .setup-img { height: 160px !important; }
-        .setup-img img { max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; }
-
+        .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
         .asset-card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        .casing { width: 100%; background: var(--pill); padding: 10px; border-radius: 18px; margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
-        .name-label { text-align: center; font-size: 11px; font-weight: 800; padding: 2px; }
+        /* SETUP CARDS (1 PER ROW) */
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; }
+        .landscape-img { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; }
+        .landscape-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        .casing { width: 100%; background: var(--pill); padding: 15px; border-radius: 22px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .name-label { text-align: center; font-size: 13px; font-weight: 800; }
         
-        /* FILE BUTTONS */
-        .file-links { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; }
-        .dl-btn { 
-            background: var(--accent); color: white; border: none; padding: 8px; 
-            border-radius: 8px; font-size: 9px; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none;
+        /* ATTACHMENT BUTTONS */
+        .attach-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-action { 
+            background: var(--accent); color: white; border: none; padding: 12px; 
+            border-radius: 12px; font-size: 10px; font-weight: 800; cursor: pointer; text-align: center; text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
         }
+        .btn-wall { background: #34c759; } /* Green for Wallpapers */
+        .btn-full { grid-column: span 2; background: #5856d6; } /* Purple for main files */
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) { .img-container { height: 130px; } .setup-img { height: 90px !important; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { .img-container { height: 120px; } .landscape-img { height: 180px; } }
     </style>
 </head>
 <body>
@@ -102,117 +95,109 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">LayaSync</div>
+    <div style="font-size: 22px; font-weight: 800; margin-bottom: 20px;">LayaSync Cloud</div>
     
-    <div class="nav-section">Main Collections</div>
-    <div class="group-item" id="tab-archive" onclick="switchMainTab('archive')">📂 Logo Archive</div>
-    <div class="group-item" id="tab-nuvio" onclick="switchMainTab('nuvio')">📱 Nuvio Setups</div>
+    <div class="nav-head">Collections</div>
+    <div class="group-item" id="btn-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
+    <div class="group-item" id="btn-nuvio" onclick="setTab('nuvio')">📱 Nuvio Collection</div>
 
-    <div id="logoGroupSection">
-        <div class="nav-section">Categories</div>
-        <div id="groupList"></div>
+    <div id="catSection">
+        <div class="nav-head">Categories</div>
+        <div id="catList"></div>
     </div>
 
-    <div class="nav-section">Cloud Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 5px;">
-    <button onclick="saveToCloud()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC DATA</button>
+    <div class="nav-head">GitHub Admin</div>
+    <input type="password" id="ghToken" placeholder="Paste Token (ghp_...)" style="width: 100%; padding: 12px; border-radius: 12px; border: none; margin-bottom: 10px; font-size: 12px;">
+    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 15px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
-<main>
+<main id="scrollArea">
     <header>
         <button class="btn-icon" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-box" placeholder="Search..." onkeyup="syncUI()">
-        <button id="multiBtn" class="btn-icon" onclick="toggleMultiSelect()">🔘</button>
+        <input type="text" id="search" class="search-box" placeholder="Search..." onkeyup="refresh()">
+        <button id="multiBtn" class="btn-icon" onclick="toggleMulti()">🔘</button>
     </header>
-    <div class="grid" id="mainGrid"></div>
+    <div id="mainGrid" class="grid logos"></div>
 </main>
 
-<div id="toast">Message</div>
+<div id="toast">Copied</div>
 
 <script>
-    let logos = [];
-    let setups = [];
-    let currentMode = 'archive'; // 'archive' or 'nuvio'
-    let activeG = 'All';
-    let selectedSet = new Set();
-    let isMulti = false;
-
-    const GITHUB = { user: 'layasync', repo: 'LayaSync.github.io' };
+    let logos = []; let setups = [];
+    let currentTab = 'logos'; let activeCat = 'All';
+    let selectedSet = new Set(); let isMulti = false;
+    const CONFIG = { user: 'layasync', repo: 'LayaSync.github.io' };
 
     async function init() {
-        const t = Date.now();
-        const [lRes, sRes] = await Promise.all([
-            fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/logo.json?v=${t}`).then(r => r.json()),
-            fetch(`https://raw.githubusercontent.com/${GITHUB.user}/${GITHUB.repo}/main/setups.json?v=${t}`).then(r => r.json())
+        const v = Date.now();
+        const [l, s] = await Promise.all([
+            fetch(`https://raw.githubusercontent.com/${CONFIG.user}/${CONFIG.repo}/main/logo.json?v=${v}`).then(r => r.json()),
+            fetch(`https://raw.githubusercontent.com/${CONFIG.user}/${CONFIG.repo}/main/setups.json?v=${v}`).then(r => r.json())
         ]);
-        logos = lRes; setups = sRes;
+        logos = l; setups = s;
         document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
-        switchMainTab('archive');
+        setTab('logos');
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
 
-    function switchMainTab(tab) {
-        currentMode = tab;
-        activeG = 'All';
-        document.getElementById('tab-archive').classList.toggle('active', tab === 'archive');
-        document.getElementById('tab-nuvio').classList.toggle('active', tab === 'nuvio');
-        document.getElementById('logoGroupSection').style.display = tab === 'archive' ? 'block' : 'none';
-        if(tab === 'archive') renderGroups();
-        syncUI();
-        if(window.innerWidth < 600) toggleSidebar();
+    function setTab(tab) {
+        currentTab = tab; activeCat = 'All';
+        document.getElementById('btn-logos').classList.toggle('active', tab === 'logos');
+        document.getElementById('btn-nuvio').classList.toggle('active', tab === 'nuvio');
+        document.getElementById('catSection').style.display = tab === 'logos' ? 'block' : 'none';
+        document.getElementById('mainGrid').className = `grid ${tab}`;
+        if(tab === 'logos') renderCats();
+        refresh(); if(window.innerWidth < 600) toggleSidebar();
     }
 
-    function renderGroups() {
-        const list = document.getElementById('groupList');
-        const categories = [...new Set(logos.map(i => i.group || 'Uncategorized'))];
-        list.innerHTML = `<div class="group-item ${activeG==='All'?'active':''}" onclick="setG('All')">📂 All Logos</div>`;
-        categories.forEach(g => {
-            list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">🏷️ ${g}</div>`;
-        });
+    function renderCats() {
+        const list = document.getElementById('catList');
+        const cats = [...new Set(logos.map(i => i.group || 'Uncategorized'))];
+        list.innerHTML = `<div class="group-item ${activeCat==='All'?'active':''}" onclick="setCat('All')">📂 All Logos</div>`;
+        cats.forEach(c => list.innerHTML += `<div class="group-item ${activeCat===c?'active':''}" onclick="setCat('${c}')">🏷️ ${c}</div>`);
     }
 
-    function setG(g) {
-        if (isMulti && g !== 'All') {
-            selectedSet.forEach(url => { const item = logos.find(i => i.url === url); if (item) item.group = g; });
-            showToast(`Moved to ${g}`);
-            toggleMultiSelect();
+    function setCat(c) {
+        if (isMulti && c !== 'All') {
+            selectedSet.forEach(url => { const item = logos.find(i => i.url === url); if(item) item.group = c; });
+            showToast(`Moved to ${c}`); toggleMulti();
         }
-        activeG = g; renderGroups(); syncUI();
+        activeCat = c; renderCats(); refresh();
     }
 
-    function toggleMultiSelect() {
-        if(currentMode !== 'archive') return alert("Multi-select only for Logos");
-        isMulti = !isMulti;
-        selectedSet.clear();
+    function toggleMulti() {
+        if(currentTab !== 'logos') return;
+        isMulti = !isMulti; selectedSet.clear();
         document.getElementById('multiBtn').style.background = isMulti ? 'var(--accent)' : 'var(--pill)';
-        syncUI();
+        refresh();
     }
 
-    function syncUI() {
+    function refresh() {
         const grid = document.getElementById('mainGrid');
         const q = document.getElementById('search').value.toLowerCase();
         
-        if (currentMode === 'archive') {
-            const filtered = logos.filter(i => (i.name.toLowerCase().includes(q) || (i.group || '').toLowerCase().includes(q)) && (activeG === 'All' || i.group === activeG));
+        if (currentTab === 'logos') {
+            const filtered = logos.filter(i => (i.name.toLowerCase().includes(q) || (i.group || '').toLowerCase().includes(q)) && (activeCat === 'All' || i.group === activeCat));
             grid.innerHTML = filtered.map(i => `
-                <div class="asset-card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
+                <div class="asset-card ${selectedSet.has(i.url)?'selected':''}" onclick="handleSelect('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
                     <div class="casing">
                         <div class="name-label">${i.name}</div>
-                        <button class="dl-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy Link</button>
+                        <button class="btn-action" onclick="event.stopPropagation(); copy('${i.url}')">COPY LINK</button>
                     </div>
                 </div>
             `).join('');
         } else {
             const filtered = setups.filter(i => i.name.toLowerCase().includes(q));
             grid.innerHTML = filtered.map(i => `
-                <div class="asset-card">
-                    <div class="img-container setup-img"><img src="${i.screenshot}" loading="eager"></div>
+                <div class="setup-card">
+                    <div class="landscape-img"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
                         <div class="name-label">${i.name}</div>
-                        <div class="file-links">
-                            ${i.files.map(f => `<a href="${f.url}" download class="dl-btn">⬇ ${f.label}</a>`).join('')}
+                        <div class="attach-list">
+                            ${i.wallpaper ? `<a href="${i.wallpaper}" download class="btn-action btn-wall">🖼️ Wallpaper</a>` : ''}
+                            ${i.files ? i.files.map(f => `<a href="${f.url}" download class="btn-action">⬇️ ${f.label}</a>`).join('') : ''}
                         </div>
                     </div>
                 </div>
@@ -220,37 +205,30 @@
         }
     }
 
-    function handleCardClick(url) {
-        if (!isMulti) return;
-        if (selectedSet.has(url)) selectedSet.delete(url); else selectedSet.add(url);
-        syncUI();
-    }
+    function handleSelect(url) { if(isMulti) { if(selectedSet.has(url)) selectedSet.delete(url); else selectedSet.add(url); refresh(); } }
 
-    async function saveToCloud() {
+    async function cloudSync() {
         const token = document.getElementById('ghToken').value;
-        if (!token) return alert("Enter Token");
+        if(!token) return alert("Enter Token");
         localStorage.setItem('ls_token', token);
-        const file = currentMode === 'archive' ? 'logo.json' : 'setups.json';
-        const data = currentMode === 'archive' ? logos : setups;
-        
+        const file = currentTab === 'logos' ? 'logo.json' : 'setups.json';
+        const data = currentTab === 'logos' ? logos : setups;
         const btn = document.getElementById('syncBtn');
         btn.innerText = "Syncing...";
-
         try {
-            const url = `https://api.github.com/repos/${GITHUB.user}/${GITHUB.repo}/contents/${file}`;
+            const url = `https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${file}`;
             const res = await fetch(url, { headers: { Authorization: `token ${token}` } });
             const fileData = await res.json();
-            const pushRes = await fetch(url, {
-                method: 'PUT',
-                headers: { Authorization: `token ${token}` },
+            await fetch(url, {
+                method: 'PUT', headers: { Authorization: `token ${token}` },
                 body: JSON.stringify({ message: `Update ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fileData.sha })
             });
-            if (pushRes.ok) showToast("Cloud Sync Ready!");
-        } catch (e) { alert("Sync Error"); }
-        finally { btn.innerText = "☁️ SYNC DATA"; }
+            showToast("Cloud Synced!");
+        } catch (e) { alert("Error!"); }
+        finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
     }
 
-    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
+    function copy(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
 
     init();
