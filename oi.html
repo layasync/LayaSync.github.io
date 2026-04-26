@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Pro Digital Archive</title>
+    <title>LayaSync | Pro Archive</title>
     <style>
         :root {
             --bg: #ffffff;
@@ -17,99 +17,94 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
         }
 
-        /* 60FPS SMOOTH SCROLLING */
+        /* PREVENT HORIZONTAL OVERFLOW */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
-            overflow: hidden; background: var(--bg); color: var(--text); 
+            margin: 0; padding: 0; height: 100%; width: 100vw; 
+            overflow-x: hidden; /* Fixes horizontal scroll bug */
+            background: var(--bg); color: var(--text); 
         }
 
-        /* SILVER SIDEBAR - MANUAL ONLY */
+        /* SILVER SIDEBAR */
         .sidebar {
-            width: 280px; height: 100%; background: var(--sidebar-silver);
-            position: fixed; left: -280px; top: 0; z-index: 3000;
+            width: 260px; height: 100%; background: var(--sidebar-silver);
+            position: fixed; left: -260px; top: 0; z-index: 3000;
             transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
             padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); 
             overflow-y: auto; will-change: transform;
         }
-        .sidebar.active { transform: translateX(280px); }
-        .sidebar-header { font-size: 24px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
+        .sidebar.active { transform: translateX(260px); }
+        .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
         
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
-            padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
-            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: space-between; font-size: 13px;
+            padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600;
+            margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: space-between; font-size: 12px;
         }
         .group-item.active { background: var(--accent); color: white; }
-        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; padding: 5px; }
+        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; }
 
-        /* MAIN CONTENT AREA */
+        /* MAIN AREA */
         main { 
-            height: 100%; overflow-y: auto; overflow-x: hidden;
+            height: 100vh; overflow-y: auto; overflow-x: hidden;
             -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-            padding-bottom: 80px;
         }
 
-        /* STICKY HEADER */
         header {
             position: sticky; top: 0; z-index: 2000;
             background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
             border-bottom: 1px solid rgba(120,120,128,0.2); 
-            padding: 12px 15px; display: flex; align-items: center; gap: 10px;
+            padding: 10px; display: flex; align-items: center; gap: 8px;
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 12px 15px; border-radius: 12px; font-size: 15px; color: var(--text); outline: none; }
-        .btn-icon { background: var(--pill); border: none; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 20px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--pill); border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* GRID - FIXED 3 PER ROW (MOBILE & PC) */
+        /* GRID - FIXED 3 PER ROW WITHOUT OVERFLOW */
         .grid { 
             display: grid; width: 100%; 
-            padding: 10px; gap: 10px; margin: 0 auto;
+            padding: 10px; gap: 10px; margin: 0;
         }
         .grid.logos { 
-            grid-template-columns: repeat(3, 1fr) !important; /* STRICT 3 PER ROW */
+            grid-template-columns: repeat(3, 1fr) !important;
         }
         .grid.setups { 
-            grid-template-columns: 1fr !important; /* 1 PER ROW LANDSCAPE */
+            grid-template-columns: 1fr !important;
         }
 
-        /* LOGO ASSET CARDS */
+        /* SMALL LOGO CARDS */
         .card { display: flex; flex-direction: column; width: 100%; }
         .img-container {
-            width: 100%; aspect-ratio: 1 / 1; /* PERFECT SQUARE */
-            background: rgba(128,128,128,0.05); border-radius: 12px;
+            width: 100%; 
+            height: 90px; /* FIXED SMALLER SIZE */
+            background: rgba(128,128,128,0.05); border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 3px solid transparent; cursor: pointer;
+            overflow: hidden; border: 2px solid transparent; cursor: pointer;
         }
-        .img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .img-container img { max-width: 70%; max-height: 70%; object-fit: contain; }
         .card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        /* SETUP CARDS (LANDSCAPE) */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; }
-        .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #111; }
+        /* SETUP CARDS (1 PER ROW) */
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; }
+        .landscape-box { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #111; }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* UI PILL CASING */
-        .casing { width: 100%; background: var(--pill); padding: 10px; border-radius: 15px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
-        .name-label { text-align: center; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* UI PILL */
+        .casing { width: 100%; background: var(--pill); padding: 8px; border-radius: 12px; margin-top: 5px; display: flex; flex-direction: column; gap: 5px; }
+        .name-label { text-align: center; font-size: 9px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .action-btn { 
-            background: var(--accent); color: white; border: none; padding: 10px; 
-            border-radius: 10px; font-size: 9px; font-weight: 900; cursor: pointer; 
+            background: var(--accent); color: white; border: none; padding: 8px; 
+            border-radius: 8px; font-size: 8px; font-weight: 900; cursor: pointer; 
             text-align: center; text-decoration: none; text-transform: uppercase;
         }
 
-        /* OVERLAY */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
-        
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 9999; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 10px 20px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.3s; z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) {
-            .grid.logos { gap: 8px; padding: 8px; }
-            .img-container { border-radius: 10px; }
-            .landscape-box { height: 180px; }
+        @media (min-width: 768px) {
+            .img-container { height: 150px; } /* Slightly larger for PC but still 3-row */
         }
     </style>
 </head>
@@ -118,7 +113,7 @@
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">LayaSync Pro</div>
+    <div class="sidebar-header">LayaSync Admin</div>
     
     <div class="nav-label">Navigation</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
@@ -128,13 +123,13 @@
         <div class="nav-label">Groups</div>
         <div id="catList"></div>
         <div style="display:flex; gap:5px; padding:5px;">
-            <input type="text" id="newGroupName" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:12px;">
-            <button onclick="addNewGroup()" style="background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:800;">+</button>
+            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:12px; outline:none;">
+            <button onclick="addGroup()" style="background:var(--accent); color:white; border:none; padding:8px; border-radius:8px; font-weight:800;">+</button>
         </div>
     </div>
 
-    <div class="nav-label">Cloud Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
+    <div class="nav-label">Sync</div>
+    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
     <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
@@ -153,7 +148,7 @@
     let logos = []; let setups = [];
     let currentTab = 'logos'; let activeCat = 'All';
     let selectedSet = new Set(); let isMulti = false;
-    let localGroups = JSON.parse(localStorage.getItem('ls_custom_groups')) || [];
+    let customGroups = JSON.parse(localStorage.getItem('ls_custom_groups')) || [];
     
     const REPO = { user: 'layasync', repo: 'LayaSync.github.io' };
 
@@ -167,7 +162,7 @@
             logos = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { console.error("Initialization Failed"); }
+        } catch(e) { console.error("Load Failed"); }
     }
 
     function toggleSidebar() { 
@@ -186,29 +181,29 @@
         if(window.innerWidth < 600) toggleSidebar();
     }
 
-    function addNewGroup() {
-        const val = document.getElementById('newGroupName').value.trim();
-        if(val && !localGroups.includes(val)) {
-            localGroups.push(val);
-            localStorage.setItem('ls_custom_groups', JSON.stringify(localGroups));
-            document.getElementById('newGroupName').value = '';
+    function addGroup() {
+        const val = document.getElementById('newGrp').value.trim();
+        if(val && !customGroups.includes(val)) {
+            customGroups.push(val);
+            localStorage.setItem('ls_custom_groups', JSON.stringify(customGroups));
+            document.getElementById('newGrp').value = '';
             buildCats();
         }
     }
 
     function deleteGroup(e, g) {
         e.stopPropagation();
-        if(prompt("User:") === "123" && prompt("Pass:") === "123") {
-            localGroups = localGroups.filter(item => item !== g);
-            localStorage.setItem('ls_custom_groups', JSON.stringify(localGroups));
-            setCat('All');
+        if(prompt("Pass:") === "123") {
+            customGroups = customGroups.filter(i => i !== g);
+            localStorage.setItem('ls_custom_groups', JSON.stringify(customGroups));
+            buildCats();
         }
     }
 
     function buildCats() {
         const list = document.getElementById('catList');
         const jsonCats = [...new Set(logos.map(i => i.group || 'Uncategorized'))];
-        const allCats = [...new Set([...jsonCats, ...localGroups])];
+        const allCats = [...new Set([...jsonCats, ...customGroups])];
         list.innerHTML = `<div class="group-item ${activeCat==='All'?'active':''}" onclick="setCat('All')">📂 All Logos</div>`;
         allCats.forEach(c => {
             if(c !== 'Uncategorized')
@@ -219,7 +214,7 @@
     function setCat(c) {
         if (isMulti && c !== 'All') {
             selectedSet.forEach(url => { const item = logos.find(i => i.url === url); if(item) item.group = c; });
-            showToast(`Moved items to ${c}`); toggleMulti();
+            showToast(`Moved to ${c}`); toggleMulti();
         }
         activeCat = c; buildCats(); renderUI();
     }
@@ -241,8 +236,8 @@
                 <div class="card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
                     <div class="casing">
-                        <input class="name-label" style="border:none; background:transparent; outline:none;" value="${i.name}" onchange="updateName('${i.url}', this.value)" onclick="event.stopPropagation()">
-                        <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy Link</button>
+                        <div class="name-label">${i.name}</div>
+                        <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy</button>
                     </div>
                 </div>
             `).join('');
@@ -253,7 +248,7 @@
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
                         <div class="name-label">${i.name}</div>
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="margin-top:5px;">⬇️ Download JSON</a>`).join('') : ''}
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="margin-top:5px;">Download JSON</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
@@ -261,7 +256,6 @@
     }
 
     function handleCardClick(url) { if(isMulti) { if(selectedSet.has(url)) selectedSet.delete(url); else selectedSet.add(url); renderUI(); } }
-    function updateName(url, val) { const item = logos.find(i => i.url === url); if(item) item.name = val; }
 
     async function cloudSync() {
         const token = document.getElementById('ghToken').value;
@@ -270,7 +264,7 @@
         const file = currentTab === 'logos' ? 'logo.json' : 'setups.json';
         const data = currentTab === 'logos' ? logos : setups;
         const btn = document.getElementById('syncBtn');
-        btn.innerText = "Processing...";
+        btn.innerText = "Syncing...";
         try {
             const url = `https://api.github.com/repos/${REPO.user}/${REPO.repo}/contents/${file}`;
             const res = await fetch(url, { headers: { Authorization: `token ${token}` } });
@@ -284,7 +278,7 @@
         finally { btn.innerText = "☁️ SYNC TO CLOUD"; }
     }
 
-    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
+    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
 
     init();
