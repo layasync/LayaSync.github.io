@@ -1413,32 +1413,38 @@
   {
     "name": "Drama",
     "category": "Logos",
-    "url": "https://i.ibb.co/35VbwbwT/drama.gif"
+    "url": "https://i.ibb.co/35VbwbwT/drama.gif",
+    "group": "Genre"
   },
   {
     "name": "Fantasy",
     "category": "Logos",
-    "url": "https://i.ibb.co/tpQ2hRtb/fantasy.gif"
+    "url": "https://i.ibb.co/tpQ2hRtb/fantasy.gif",
+    "group": "Genre"
   },
   {
     "name": "Comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/7NrnCv0K/comedy.gif"
+    "url": "https://i.ibb.co/7NrnCv0K/comedy.gif",
+    "group": "Genre"
   },
   {
     "name": "Music",
     "category": "Logos",
-    "url": "https://i.ibb.co/0p2xbbg2/music.gif"
+    "url": "https://i.ibb.co/0p2xbbg2/music.gif",
+    "group": "Genre"
   },
   {
     "name": "History",
     "category": "Logos",
-    "url": "https://i.ibb.co/3yBVqvs9/history.gif"
+    "url": "https://i.ibb.co/3yBVqvs9/history.gif",
+    "group": "Genre"
   },
   {
     "name": "Coming-of-age",
     "category": "Logos",
-    "url": "https://i.ibb.co/wFqcVLDz/coming-of-age.jpg"
+    "url": "https://i.ibb.co/wFqcVLDz/coming-of-age.jpg",
+    "group": "Genre"
   },
   {
     "name": "2000s",
@@ -1458,27 +1464,32 @@
   {
     "name": "Treasure-hunt",
     "category": "Logos",
-    "url": "https://i.ibb.co/27j0WD8m/treasure-hunt.gif"
+    "url": "https://i.ibb.co/27j0WD8m/treasure-hunt.gif",
+    "group": "Genre"
   },
   {
     "name": "Revenge",
     "category": "Logos",
-    "url": "https://i.ibb.co/bgP4R6wk/revenge.jpg"
+    "url": "https://i.ibb.co/bgP4R6wk/revenge.jpg",
+    "group": "Genre"
   },
   {
     "name": "Thriller",
     "category": "Logos",
-    "url": "https://i.ibb.co/Q7k8XtCZ/thriller.jpg"
+    "url": "https://i.ibb.co/Q7k8XtCZ/thriller.jpg",
+    "group": "Genre"
   },
   {
     "name": "Anime",
     "category": "Logos",
-    "url": "https://i.ibb.co/tMbDMFGR/anime.gif"
+    "url": "https://i.ibb.co/tMbDMFGR/anime.gif",
+    "group": "Genre"
   },
   {
     "name": "Romantic-comedy",
     "category": "Logos",
-    "url": "https://i.ibb.co/d0JNbJqG/romantic-comedy.gif"
+    "url": "https://i.ibb.co/d0JNbJqG/romantic-comedy.gif",
+    "group": "Genre"
   },
   {
     "name": "1980s",
@@ -1488,12 +1499,14 @@
   {
     "name": "Time-travel",
     "category": "Logos",
-    "url": "https://i.ibb.co/V0tTyP6F/time-travel.gif"
+    "url": "https://i.ibb.co/V0tTyP6F/time-travel.gif",
+    "group": "Genre"
   },
   {
     "name": "Mystery",
     "category": "Logos",
-    "url": "https://i.ibb.co/RTwT3K9f/mystery.gif"
+    "url": "https://i.ibb.co/RTwT3K9f/mystery.gif",
+    "group": "Genre"
   },
   {
     "name": "Apple-tv",
@@ -1503,12 +1516,14 @@
   {
     "name": "Vampire",
     "category": "Logos",
-    "url": "https://i.ibb.co/4RrT7Pqj/vampire.jpg"
+    "url": "https://i.ibb.co/4RrT7Pqj/vampire.jpg",
+    "group": "Genre"
   },
   {
     "name": "Tv",
     "category": "Logos",
-    "url": "https://i.ibb.co/nqpzfjB8/tv.jpg"
+    "url": "https://i.ibb.co/nqpzfjB8/tv.jpg",
+    "group": "Genre"
   },
   {
     "name": "Hbo-max",
@@ -1518,32 +1533,38 @@
   {
     "name": "Family",
     "category": "Logos",
-    "url": "https://i.ibb.co/QFGL0dd3/family.jpg"
+    "url": "https://i.ibb.co/QFGL0dd3/family.jpg",
+    "group": "Genre"
   },
   {
     "name": "Documentary",
     "category": "Logos",
-    "url": "https://i.ibb.co/YTQwRWLP/documentary.gif"
+    "url": "https://i.ibb.co/YTQwRWLP/documentary.gif",
+    "group": "Genre"
   },
   {
     "name": "Magic",
     "category": "Logos",
-    "url": "https://i.ibb.co/1tzwfMZb/magic.jpg"
+    "url": "https://i.ibb.co/1tzwfMZb/magic.jpg",
+    "group": "Genre"
   },
   {
     "name": "Spy",
     "category": "Logos",
-    "url": "https://i.ibb.co/5h215Ld1/spy.gif"
+    "url": "https://i.ibb.co/5h215Ld1/spy.gif",
+    "group": "Genre"
   },
   {
     "name": "Crime",
     "category": "Logos",
-    "url": "https://i.ibb.co/jPBdsXyz/crime.jpg"
+    "url": "https://i.ibb.co/jPBdsXyz/crime.jpg",
+    "group": "Genre"
   },
   {
     "name": "Romance",
     "category": "Logos",
-    "url": "https://i.ibb.co/N2gMkgsK/romance.jpg"
+    "url": "https://i.ibb.co/N2gMkgsK/romance.jpg",
+    "group": "Genre"
   },
   {
     "name": "Peacock",
@@ -1553,12 +1574,14 @@
   {
     "name": "Animation",
     "category": "Logos",
-    "url": "https://i.ibb.co/8gwb1Wz5/animation.gif"
+    "url": "https://i.ibb.co/8gwb1Wz5/animation.gif",
+    "group": "Genre"
   },
   {
     "name": "Action",
     "category": "Logos",
-    "url": "https://i.ibb.co/Z1kRwvxR/action.gif"
+    "url": "https://i.ibb.co/Z1kRwvxR/action.gif",
+    "group": "Genre"
   },
   {
     "name": "Curiosity-stream",
