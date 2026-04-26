@@ -11,10 +11,10 @@
             --glass: rgba(255, 255, 255, 0.95);
         }
         @media (prefers-color-scheme: dark) {
-            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.95); }
+            :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.9); }
         }
 
-        /* --- STABILIZED CORE --- */
+        /* --- UI LOCK: HARDWARE ACCELERATED --- */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { margin: 0; padding: 0; width: 100vw; height: 100%; overflow-x: hidden; background: var(--bg); color: var(--text); }
 
@@ -28,7 +28,7 @@
         .sidebar.active { transform: translateX(280px); }
         .sidebar-header { font-size: 26px; font-weight: 800; margin-bottom: 30px; letter-spacing: -1.5px; }
 
-        .nav-label { font-size: 11px; font-weight: 800; color: #666; margin: 25px 0 10px 5px; text-transform: uppercase; }
+        .nav-label { font-size: 11px; font-weight: 800; color: #666; margin: 20px 0 10px 5px; text-transform: uppercase; }
         .group-item {
             padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 700;
             margin-bottom: 8px; background: rgba(255,255,255,0.4); display: flex; justify-content: space-between; align-items: center; 
@@ -47,7 +47,7 @@
         .search-box { flex: 1; background: var(--pill); border: none; padding: 12px; border-radius: 8px; font-size: 15px; color: var(--text); outline: none; }
         .btn-icon { background: var(--pill); border: none; width: 42px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* --- SCROLL CONTENT --- */
+        /* --- CONTENT --- */
         main { flex: 1; height: 100%; overflow-y: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
 
         /* --- GRID: STRICT 3-PER-ROW LOCK --- */
@@ -55,7 +55,7 @@
         .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
         .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* --- ASSET CARDS --- */
+        /* --- LOGO ASSET CARDS --- */
         .asset-card { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .img-container {
             width: 100%; aspect-ratio: 1/1; 
@@ -71,7 +71,7 @@
         .copy-btn { background: var(--accent); color: white; border: none; padding: 8px; border-radius: 10px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
 
         /* --- LANDSCAPE SETUP CARDS --- */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; }
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 25px; padding: 0 5px; }
         .landscape-box { width: 100%; height: 220px; border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -81,7 +81,7 @@
         #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
-        @media (max-width: 600px) { .landscape-box { height: 170px; } .grid { gap: 8px; padding: 15px 8px; } }
+        @media (max-width: 600px) { .landscape-box { height: 170px; } .grid { gap: 8px; padding: 25px 8px; } }
     </style>
 </head>
 <body>
@@ -90,7 +90,7 @@
 
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">LayaSync Pro</div>
-    <div class="nav-label">Mode Selection</div>
+    <div class="nav-label">Navigation</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">📂 Logo Archive</div>
     <div class="group-item" id="nav-nuvio" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
@@ -103,15 +103,15 @@
         </div>
     </div>
 
-    <div class="nav-label">Cloud Sync</div>
+    <div class="nav-label">Admin Sync</div>
     <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; background:#fff; font-size: 11px;">
-    <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
+    <button onclick="saveToCloud()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
 <main>
     <header>
         <button class="btn-icon" onclick="toggleSidebar()">☰</button>
-        <input type="text" id="search" class="search-box" placeholder="Search archive..." onkeyup="renderUI()">
+        <input type="text" id="search" class="search-box" placeholder="Search archive..." onkeyup="syncUI()">
         <button id="multiBtn" class="btn-icon" onclick="toggleMultiSelect()">🔘</button>
     </header>
     <div class="grid logos" id="mainGrid"></div>
@@ -120,32 +120,27 @@
 <div id="toast">Ready</div>
 
 <script>
-    let db = []; let setups = [];
-    let currentTab = 'logos'; let activeG = 'All';
-    let selectedSet = new Set(); let isMulti = false;
-    
-    // GITHUB INFO
-    const G_USER = 'layasync';
-    const G_REPO = 'LayaSync.github.io';
+    let db = [];
+    let setups = [];
+    let selectedSet = new Set();
+    let isMulti = false;
+    let activeG = 'All';
+    let currentTab = 'logos';
 
-    // 1. INITIALIZE ENGINE
+    const GITHUB_CONFIG = {
+        user: 'layasync',
+        repo: 'LayaSync.github.io'
+    };
+
     async function init() {
         const v = Date.now();
+        // Load Logos
+        fetch(`https://raw.githubusercontent.com/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/main/logo.json?v=${v}`)
+            .then(r => r.json()).then(data => { db = data; renderGroups(); syncUI(); });
         
-        // Fetch Logos
-        fetch(`https://raw.githubusercontent.com/${G_USER}/${G_REPO}/main/logo.json?v=${v}`)
-            .then(r => r.json()).then(data => { 
-                db = Array.isArray(data) ? data : []; 
-                renderGroups(); 
-                renderUI(); 
-            }).catch(e => console.log("logo.json fetch error"));
-
-        // Fetch Setups
-        fetch(`https://raw.githubusercontent.com/${G_USER}/${G_REPO}/main/setups.json?v=${v}`)
-            .then(r => r.json()).then(data => { 
-                setups = Array.isArray(data) ? data : []; 
-                if(currentTab === 'setups') renderUI();
-            }).catch(e => console.log("setups.json fetch error"));
+        // Load Setups
+        fetch(`https://raw.githubusercontent.com/${GITHUB_CONFIG.user}/${GITHUB_REPO}/main/setups.json?v=${v}`)
+            .then(r => r.json()).then(data => { setups = data; });
 
         document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
     }
@@ -155,54 +150,83 @@
     function setTab(tab) {
         currentTab = tab; activeG = 'All';
         document.getElementById('nav-logos').classList.toggle('active', tab === 'logos');
-        document.getElementById('nav-setups').classList.toggle('active', tab === 'setups');
+        document.getElementById('nav-nuvio').classList.toggle('active', tab === 'setups');
         document.getElementById('catArea').style.display = tab === 'logos' ? 'block' : 'none';
         document.getElementById('mainGrid').className = `grid ${tab}`;
-        renderUI();
+        syncUI();
         if(window.innerWidth < 600 && document.getElementById('sidebar').classList.contains('active')) toggleSidebar();
+    }
+
+    function toggleMultiSelect() {
+        if(currentTab !== 'logos') return;
+        isMulti = !isMulti;
+        selectedSet.clear();
+        document.getElementById('multiBtn').style.background = isMulti ? 'var(--accent)' : 'var(--pill)';
+        syncUI();
     }
 
     function renderGroups() {
         const list = document.getElementById('groupList');
-        if(!list) return;
-        const categories = [...new Set(db.filter(i => i.group).map(i => i.group))];
+        const categories = [...new Set(db.map(i => i.group || 'Uncategorized'))];
         list.innerHTML = `<div class="group-item ${activeG==='All'?'active':''}" onclick="setG('All')">📂 All Logos</div>`;
         categories.forEach(g => {
-            list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">🏷️ ${g} <span onclick="deleteG(event, '${g}')" style="color:red">✕</span></div>`;
+            list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">
+                <span>🏷️ ${g}</span>
+                <button onclick="deleteG(event, '${g}')" style="color:red; background:none; border:none; font-weight:800; cursor:pointer;">✕</button>
+            </div>`;
         });
     }
 
     function setG(g) {
         if (isMulti && g !== 'All') {
-            selectedSet.forEach(url => { const item = db.find(i => i.url === url); if (item) item.group = g; });
-            showToast(`Items Categorized`); toggleMultiSelect();
+            selectedSet.forEach(url => {
+                const item = db.find(i => i.url === url);
+                if (item) item.group = g;
+            });
+            showToast(`Categorized ${selectedSet.size} items`);
+            toggleMultiSelect();
         }
-        activeG = g; renderGroups(); renderUI();
+        activeG = g;
+        renderGroups();
+        syncUI();
     }
 
     function addGroup() {
         const name = document.getElementById('newGrp').value.trim();
-        if (name) { db.push({ name: "Dummy", url: "", group: name }); document.getElementById('newGrp').value = ''; renderGroups(); }
+        if (name) { 
+            db.push({ name: "Dummy", url: "", group: name }); 
+            document.getElementById('newGrp').value = '';
+            renderGroups();
+        }
     }
 
     function deleteG(e, g) {
         e.stopPropagation();
-        if (prompt("Password:") === "123") { db = db.filter(i => i.group !== g); renderGroups(); setG('All'); }
+        if (prompt("Password:") === "123") {
+            db = db.filter(i => i.group !== g);
+            renderGroups();
+            setG('All');
+        }
     }
 
-    function renderUI() {
+    function syncUI() {
         const grid = document.getElementById('mainGrid');
-        if(!grid) return;
         const q = document.getElementById('search').value.toLowerCase();
         
-        if (currentTab === 'logos') {
-            const filtered = db.filter(i => i.url && (i.name.toLowerCase().includes(q) || (i.group || '').toLowerCase().includes(q)) && (activeG === 'All' || i.group === activeG));
+        if(currentTab === 'logos') {
+            const filtered = db.filter(i => {
+                if (!i.url) return false;
+                const matchesSearch = i.name.toLowerCase().includes(q) || (i.group || '').toLowerCase().includes(q);
+                const matchesTab = activeG === 'All' || i.group === activeG;
+                return matchesSearch && matchesTab;
+            });
+
             grid.innerHTML = filtered.map(i => `
                 <div class="asset-card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
                     <div class="casing">
-                        <input class="name-field" value="${i.name}" onchange="updateNameL('${i.url}', this.value)" onclick="event.stopPropagation()">
-                        <button class="copy-btn" onclick="event.stopPropagation(); copyL('${i.url}')">Copy Link</button>
+                        <input class="name-field" value="${i.name}" onchange="updateName('${i.url}', this.value)" onclick="event.stopPropagation()">
+                        <button class="copy-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy Link</button>
                     </div>
                 </div>
             `).join('');
@@ -212,61 +236,62 @@
                 <div class="setup-card">
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
                     <div class="casing">
-                        <input class="name-field" style="font-size:14px;" value="${i.name}" onchange="updateNameS('${i.screenshot}', this.value)">
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
+                        <input class="name-field" style="font-size:14px;" value="${i.name}" onchange="updateSName('${i.screenshot}', this.value)">
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="copy-btn" style="padding:12px; margin-top:5px;">⬇️ DOWNLOAD COLLECTION</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
         }
     }
 
-    function toggleMultiSelect() { if(currentTab !== 'logos') return; isMulti = !isMulti; selectedSet.clear(); document.getElementById('multiBtn').style.background = isMulti ? 'var(--accent)' : 'var(--pill)'; renderUI(); }
-    function handleCardClick(url) { if (isMulti) { if (selectedSet.has(url)) selectedSet.delete(url); else selectedSet.add(url); renderUI(); } }
-    function updateNameL(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
-    function updateNameS(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
+    function handleCardClick(url) {
+        if (!isMulti) return;
+        if (selectedSet.has(url)) selectedSet.delete(url);
+        else selectedSet.add(url);
+        syncUI();
+    }
 
-    // --- REENGINEERED CLOUD SYNC ENGINE ---
-    async function cloudSync() {
+    function updateName(url, val) { const item = db.find(i => i.url === url); if (item) item.name = val; }
+    function updateSName(src, val) { const item = setups.find(i => i.screenshot === src); if (item) item.name = val; }
+
+    async function saveToCloud() {
         const token = document.getElementById('ghToken').value;
-        if (!token) return alert("Paste GitHub Token First");
+        const btn = document.getElementById('syncBtn');
+        if (!token) return alert("Please enter GitHub Token");
         localStorage.setItem('ls_token', token);
         
-        const btn = document.getElementById('syncBtn');
-        const filename = currentTab === 'logos' ? 'logo.json' : 'setups.json';
+        const path = currentTab === 'logos' ? 'logo.json' : 'setups.json';
         const dataToSave = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
 
         btn.innerText = "Syncing...";
         btn.disabled = true;
 
         try {
-            const apiUrl = `https://api.github.com/repos/${G_USER}/${G_REPO}/contents/${filename}`;
-            
-            // Step 1: Force get latest SHA from GitHub directly
-            const getRes = await fetch(apiUrl + "?t=" + Date.now(), {
-                headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' }
+            // Step 1: Force fetch newest SHA (prevents 409 error)
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.user}/${GITHUB_CONFIG.repo}/contents/${path}`;
+            const resMeta = await fetch(apiUrl + "?t=" + Date.now(), { 
+                headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' } 
             });
-            const meta = await getRes.json();
-            if (!getRes.ok) throw new Error(meta.message);
+            const fileData = await resMeta.json();
 
-            // Step 2: Push
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataToSave, null, 2))));
-            const putRes = await fetch(apiUrl, {
+            // Step 2: Push commit
+            const pushRes = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: `LayaSync Cloud Update: ${filename}`,
-                    content: content,
-                    sha: meta.sha
+                    message: "LayaSync Cloud Update",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(dataToSave, null, 2)))),
+                    sha: fileData.sha
                 })
             });
 
-            if (putRes.ok) showToast("✅ Global Cloud Updated!");
-            else throw new Error("Sync Fail");
-        } catch (e) { alert("GitHub Error: " + e.message); }
+            if (pushRes.ok) showToast("✅ Global Sync Successful!");
+            else throw new Error("Push Failed");
+        } catch (e) { alert("Sync Error: " + e.message); }
         finally { btn.innerText = "☁️ SYNC TO CLOUD"; btn.disabled = false; }
     }
 
-    function copyL(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
+    function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
 
     init();
