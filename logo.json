@@ -1368,42 +1368,50 @@
   {
     "name": "Epic",
     "category": "Logos",
-    "url": "https://i.ibb.co/8gTJVjYP/epic.gif"
+    "url": "https://i.ibb.co/8gTJVjYP/epic.gif",
+    "group": "Decades"
   },
   {
     "name": "Epic",
     "category": "Logos",
-    "url": "https://i.ibb.co/1fPDJBTL/epic.jpg"
+    "url": "https://i.ibb.co/1fPDJBTL/epic.jpg",
+    "group": "Decades"
   },
   {
     "name": "Long",
     "category": "Logos",
-    "url": "https://i.ibb.co/nM064fKF/long.gif"
+    "url": "https://i.ibb.co/nM064fKF/long.gif",
+    "group": "Decades"
   },
   {
     "name": "Long",
     "category": "Logos",
-    "url": "https://i.ibb.co/Pz0wdKhJ/long.jpg"
+    "url": "https://i.ibb.co/Pz0wdKhJ/long.jpg",
+    "group": "Decades"
   },
   {
     "name": "Standard",
     "category": "Logos",
-    "url": "https://i.ibb.co/hFyFgbrR/standard.gif"
+    "url": "https://i.ibb.co/hFyFgbrR/standard.gif",
+    "group": "Decades"
   },
   {
     "name": "Standard",
     "category": "Logos",
-    "url": "https://i.ibb.co/qY9C8kSj/standard.jpg"
+    "url": "https://i.ibb.co/qY9C8kSj/standard.jpg",
+    "group": "Decades"
   },
   {
     "name": "Short",
     "category": "Logos",
-    "url": "https://i.ibb.co/NnCYzhGw/short.gif"
+    "url": "https://i.ibb.co/NnCYzhGw/short.gif",
+    "group": "Decades"
   },
   {
     "name": "Short",
     "category": "Logos",
-    "url": "https://i.ibb.co/Q31nQFpc/short.jpg"
+    "url": "https://i.ibb.co/Q31nQFpc/short.jpg",
+    "group": "Decades"
   },
   {
     "name": "Hulu",
@@ -1450,17 +1458,20 @@
   {
     "name": "2000s",
     "category": "Logos",
-    "url": "https://i.ibb.co/VcJq8cwK/2000s.gif"
+    "url": "https://i.ibb.co/VcJq8cwK/2000s.gif",
+    "group": "Decades"
   },
   {
     "name": "2010s",
     "category": "Logos",
-    "url": "https://i.ibb.co/NgNDJPD8/2010s.gif"
+    "url": "https://i.ibb.co/NgNDJPD8/2010s.gif",
+    "group": "Decades"
   },
   {
     "name": "2020s",
     "category": "Logos",
-    "url": "https://i.ibb.co/99tjNLtW/2020s.gif"
+    "url": "https://i.ibb.co/99tjNLtW/2020s.gif",
+    "group": "Decades"
   },
   {
     "name": "Treasure-hunt",
@@ -1495,7 +1506,8 @@
   {
     "name": "1980s",
     "category": "Logos",
-    "url": "https://i.ibb.co/4g7CYYfL/1980s.jpg"
+    "url": "https://i.ibb.co/4g7CYYfL/1980s.jpg",
+    "group": "Decades"
   },
   {
     "name": "Time-travel",
@@ -1607,7 +1619,8 @@
   {
     "name": "1950s",
     "category": "Logos",
-    "url": "https://i.ibb.co/gbBfYNQT/1950s.gif"
+    "url": "https://i.ibb.co/gbBfYNQT/1950s.gif",
+    "group": "Decades"
   },
   {
     "name": "Paramount-plus",
@@ -1618,7 +1631,8 @@
   {
     "name": "1990s",
     "category": "Logos",
-    "url": "https://i.ibb.co/hJBvXQsZ/1990s.gif"
+    "url": "https://i.ibb.co/hJBvXQsZ/1990s.gif",
+    "group": "Decades"
   },
   {
     "name": "Discovery-plus",
@@ -1736,17 +1750,20 @@
   {
     "name": "2000s",
     "category": "Logos",
-    "url": "https://i.ibb.co/jk7MT4D0/2000s.jpg"
+    "url": "https://i.ibb.co/jk7MT4D0/2000s.jpg",
+    "group": "Decades"
   },
   {
     "name": "2010s",
     "category": "Logos",
-    "url": "https://i.ibb.co/21W3r9bM/2010s.jpg"
+    "url": "https://i.ibb.co/21W3r9bM/2010s.jpg",
+    "group": "Decades"
   },
   {
     "name": "2020s",
     "category": "Logos",
-    "url": "https://i.ibb.co/PZv2TnXb/2020s.jpg"
+    "url": "https://i.ibb.co/PZv2TnXb/2020s.jpg",
+    "group": "Decades"
   },
   {
     "name": "Coming-of-age",
@@ -1763,7 +1780,8 @@
   {
     "name": "1980s",
     "category": "Logos",
-    "url": "https://i.ibb.co/Ps87HqHm/1980s.gif"
+    "url": "https://i.ibb.co/Ps87HqHm/1980s.gif",
+    "group": "Decades"
   },
   {
     "name": "Romantic-comedy",
@@ -1863,12 +1881,14 @@
   {
     "name": "1950s",
     "category": "Logos",
-    "url": "https://i.ibb.co/VYt37ZnC/1950s.jpg"
+    "url": "https://i.ibb.co/VYt37ZnC/1950s.jpg",
+    "group": "Decades"
   },
   {
     "name": "1960s",
     "category": "Logos",
-    "url": "https://i.ibb.co/rGPtb0Ds/1960s.gif"
+    "url": "https://i.ibb.co/rGPtb0Ds/1960s.gif",
+    "group": "Decades"
   },
   {
     "name": "Action",
@@ -1879,7 +1899,8 @@
   {
     "name": "1970s",
     "category": "Logos",
-    "url": "https://i.ibb.co/XfpPwZrK/1970s.gif"
+    "url": "https://i.ibb.co/XfpPwZrK/1970s.gif",
+    "group": "Decades"
   },
   {
     "name": "Curiosity-stream",
