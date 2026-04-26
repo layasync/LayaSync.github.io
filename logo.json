@@ -1528,7 +1528,8 @@
   {
     "name": "Hbo-max",
     "category": "Logos",
-    "url": "https://i.ibb.co/RGLcFh3R/hbo-max.jpg"
+    "url": "https://i.ibb.co/RGLcFh3R/hbo-max.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Family",
@@ -1704,7 +1705,8 @@
   {
     "name": "Hulu",
     "category": "Logos",
-    "url": "https://i.ibb.co/NgRL4bfw/hulu.jpg"
+    "url": "https://i.ibb.co/NgRL4bfw/hulu.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Treasure-hunt",
@@ -1765,7 +1767,8 @@
   {
     "name": "Apple-tv",
     "category": "Logos",
-    "url": "https://i.ibb.co/h1MdXmYj/apple-tv.jpg"
+    "url": "https://i.ibb.co/h1MdXmYj/apple-tv.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Mystery",
@@ -1811,7 +1814,8 @@
   {
     "name": "Peacock",
     "category": "Logos",
-    "url": "https://i.ibb.co/mV7L4QdV/peacock.jpg"
+    "url": "https://i.ibb.co/mV7L4QdV/peacock.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Magic",
@@ -1834,7 +1838,8 @@
   {
     "name": "Crunchyroll",
     "category": "Logos",
-    "url": "https://i.ibb.co/PsqdqBhV/crunchyroll.jpg"
+    "url": "https://i.ibb.co/PsqdqBhV/crunchyroll.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Martial-arts",
@@ -1872,7 +1877,8 @@
   {
     "name": "Curiosity-stream",
     "category": "Logos",
-    "url": "https://i.ibb.co/tPmx6PyS/curiosity-stream.jpg"
+    "url": "https://i.ibb.co/tPmx6PyS/curiosity-stream.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Talk",
@@ -1883,7 +1889,8 @@
   {
     "name": "Paramount-plus",
     "category": "Logos",
-    "url": "https://i.ibb.co/rG4bC8r8/paramount-plus.jpg"
+    "url": "https://i.ibb.co/rG4bC8r8/paramount-plus.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Western",
@@ -1900,7 +1907,8 @@
   {
     "name": "Discovery-plus",
     "category": "Logos",
-    "url": "https://i.ibb.co/Z6pvD8wn/discovery-plus.jpg"
+    "url": "https://i.ibb.co/Z6pvD8wn/discovery-plus.jpg",
+    "group": "Streaming"
   },
   {
     "name": "Satire",
