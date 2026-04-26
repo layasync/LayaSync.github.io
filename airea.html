@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LayaSync AI | Auto-Name Engine</title>
+    <!-- Loading the OCR Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        :root { --accent: #007aff; }
+        body { font-family: -apple-system, sans-serif; background: #f5f5f7; display: flex; justify-content: center; padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .preview-box { width: 100%; height: 200px; background: #fafafa; border: 2px dashed #ddd; border-radius: 15px; margin: 20px 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .preview-box img { max-height: 100%; max-width: 100%; }
+        input[type="file"] { margin-bottom: 20px; }
+        .result-field { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+        .status { font-size: 12px; color: var(--accent); font-weight: 600; text-align: center; height: 20px; }
+        #jsonOutput { width: 100%; height: 100px; background: #1d1d1f; color: #00ff00; padding: 10px; border-radius: 10px; font-family: monospace; font-size: 11px; margin-top: 20px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 style="margin:0 0 10px 0;">AI Logo Reader</h2>
+    <p style="font-size: 13px; color: #666;">Upload a logo and the AI engine will try to read the name written on the picture.</p>
+
+    <div class="preview-box" id="previewBox">
+        <span style="color: #ccc;">Logo Preview</span>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*">
+    <div class="status" id="status">Ready</div>
+
+    <label style="font-size: 11px; font-weight: 700; color: #888;">AI DETECTED NAME:</label>
+    <input type="text" id="detectedName" class="result-field" placeholder="Waiting for image...">
+
+    <div id="jsonOutput">JSON code will appear here...</div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const detectedName = document.getElementById('detectedName');
+    const status = document.getElementById('status');
+    const previewBox = document.getElementById('previewBox');
+    const jsonOutput = document.getElementById('jsonOutput');
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // 1. Show Preview
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            previewBox.innerHTML = `<img src="${event.target.result}" id="activeImg">`;
+            // 2. Start AI Reading
+            recognizeText(event.target.result);
+        };
+        reader.readAsDataURL(file);
+    });
+
+    async function recognizeText(imageSource) {
+        status.innerText = "🤖 AI is reading the picture...";
+        detectedName.value = "Processing...";
+
+        try {
+            // Tesseract Engine Work
+            const result = await Tesseract.recognize(
+                imageSource,
+                'eng', // Language
+                { logger: m => console.log(m) }
+            );
+
+            // Clean up the text (remove symbols, extra spaces)
+            let cleanText = result.data.text.trim().split('\n')[0];
+            cleanText = cleanText.replace(/[^a-zA-Z0-9 ]/g, ""); // Keep only letters/numbers
+
+            if (cleanText.length < 2) {
+                status.innerText = "⚠️ AI couldn't read clearly. Please type manually.";
+                detectedName.value = "";
+            } else {
+                status.innerText = "✅ Name detected!";
+                detectedName.value = cleanText;
+                
+                // Generate JSON Preview
+                const snippet = {
+                    name: cleanText,
+                    category: "Logos",
+                    url: "PASTE_IBB_LINK_HERE"
+                };
+                jsonOutput.innerText = JSON.stringify(snippet, null, 2);
+            }
+
+        } catch (error) {
+            status.innerText = "❌ AI Error";
+            console.error(error);
+        }
+    }
+</script>
+
+</body>
+</html>
