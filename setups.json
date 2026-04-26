@@ -3,7 +3,9 @@
     "name": "Nuvio Dark Setup",
     "screenshot": "https://i.ibb.co/bgx3M2f0/Appletv.png",
     "files": [
-      { "url": "https://raw.githubusercontent.com/.../setup.json" }
+      {
+        "url": "https://raw.githubusercontent.com/.../setup.json"
+      }
     ]
   }
 ]
