@@ -169,7 +169,7 @@
         container.innerHTML = items.map(item => `
             <div class="logo-item">
                 <div class="img-container">
-                    <img src="${currentTab === 'logos' ? item.url : item.image}" loading="lazy">
+                    <img src="${currentTab === 'logos' ? item.url : item.image}" loading="eager">
                 </div>
                 <div class="pill-casing">
                     <div class="title">${item.name}</div>
