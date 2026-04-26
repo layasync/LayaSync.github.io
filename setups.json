@@ -1,10 +1,11 @@
 [
   {
-    "name": "Nuvio Pro Setup",
-    "screenshot": "https://i.ibb.co/landscape-image.png",
+    "name": "Nuvio Ultra Setup",
+    "screenshot": "https://i.ibb.co/screenshot.png",
+    "wallpaper": "https://i.ibb.co/wallpaper-link.jpg",
     "files": [
-      { "label": "Backup File", "url": "https://raw.../backup.json" },
-      { "label": "Wallpaper", "url": "https://i.ibb.co/wall.jpg" }
+      { "label": "Backup 1", "url": "https://github.../file1.json" },
+      { "label": "Icon Pack", "url": "https://github.../icons.zip" }
     ]
   }
 ]
