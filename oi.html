@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LayaSync | Pro Archive</title>
+    <title>LayaSync | Digital Archive</title>
     <style>
         :root {
             --bg: #ffffff;
@@ -17,23 +17,22 @@
             :root { --bg: #000000; --text: #ffffff; --pill: #1c1c1e; --sidebar-silver: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%); --glass: rgba(0, 0, 0, 0.85); }
         }
 
-        /* PREVENT HORIZONTAL OVERFLOW */
+        /* 60FPS ZERO-LAG ENGINE */
         * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
         html, body { 
             margin: 0; padding: 0; height: 100%; width: 100vw; 
-            overflow-x: hidden; /* Fixes horizontal scroll bug */
-            background: var(--bg); color: var(--text); 
+            overflow: hidden; background: var(--bg); color: var(--text); 
         }
 
-        /* SILVER SIDEBAR */
+        /* SILVER SIDEBAR - MANUAL ONLY */
         .sidebar {
-            width: 260px; height: 100%; background: var(--sidebar-silver);
-            position: fixed; left: -260px; top: 0; z-index: 3000;
+            width: 270px; height: 100%; background: var(--sidebar-silver);
+            position: fixed; left: -270px; top: 0; z-index: 3000;
             transition: transform 0.4s cubic-bezier(0.2, 1, 0.2, 1);
             padding: 50px 15px; border-right: 1px solid rgba(0,0,0,0.1); 
             overflow-y: auto; will-change: transform;
         }
-        .sidebar.active { transform: translateX(260px); }
+        .sidebar.active { transform: translateX(270px); }
         .sidebar-header { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
         
         .nav-label { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 5px; text-transform: uppercase; }
@@ -42,9 +41,9 @@
             margin-bottom: 5px; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: space-between; font-size: 12px;
         }
         .group-item.active { background: var(--accent); color: white; }
-        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; }
+        .del-btn { color: #ff3b30; font-weight: 800; border: none; background: none; cursor: pointer; padding: 0 5px; }
 
-        /* MAIN AREA */
+        /* MAIN SCROLL AREA */
         main { 
             height: 100vh; overflow-y: auto; overflow-x: hidden;
             -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
@@ -53,58 +52,66 @@
         header {
             position: sticky; top: 0; z-index: 2000;
             background: var(--glass); backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
             border-bottom: 1px solid rgba(120,120,128,0.2); 
-            padding: 10px; display: flex; align-items: center; gap: 8px;
+            padding: 10px 15px; display: flex; align-items: center; gap: 8px;
         }
-        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
-        .btn-icon { background: var(--pill); border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
+        .search-box { flex: 1; background: var(--pill); border: none; padding: 10px 15px; border-radius: 10px; font-size: 14px; color: var(--text); outline: none; }
+        .btn-icon { background: var(--pill); border: none; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--text); display: flex; align-items: center; justify-content: center; }
 
-        /* GRID - FIXED 3 PER ROW WITHOUT OVERFLOW */
-        .grid { 
-            display: grid; width: 100%; 
-            padding: 10px; gap: 10px; margin: 0;
-        }
-        .grid.logos { 
-            grid-template-columns: repeat(3, 1fr) !important;
-        }
-        .grid.setups { 
-            grid-template-columns: 1fr !important;
-        }
+        /* GRID LOGIC */
+        .grid { display: grid; width: 100%; padding: 10px; gap: 10px; margin: 0; }
+        
+        /* LOGO GRID: STRICT 3 PER ROW (PC & MOBILE) */
+        .grid.logos { grid-template-columns: repeat(3, 1fr) !important; }
+        
+        /* SETUP GRID: 1 PER ROW LANDSCAPE */
+        .grid.setups { grid-template-columns: 1fr !important; }
 
-        /* SMALL LOGO CARDS */
+        /* LOGO CARDS (VERTICAL CASING) */
         .card { display: flex; flex-direction: column; width: 100%; }
         .img-container {
-            width: 100%; 
-            height: 90px; /* FIXED SMALLER SIZE */
-            background: rgba(128,128,128,0.05); border-radius: 10px;
+            width: 100%; aspect-ratio: 1/1; 
+            background: rgba(128,128,128,0.05); border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; border: 2px solid transparent; cursor: pointer;
         }
-        .img-container img { max-width: 70%; max-height: 70%; object-fit: contain; }
+        .img-container img { max-width: 80%; max-height: 80%; object-fit: contain; }
         .card.selected .img-container { border-color: var(--accent); background: rgba(0, 122, 255, 0.1); }
 
-        /* SETUP CARDS (1 PER ROW) */
-        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; }
-        .landscape-box { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #111; }
-        .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* UI PILL */
-        .casing { width: 100%; background: var(--pill); padding: 8px; border-radius: 12px; margin-top: 5px; display: flex; flex-direction: column; gap: 5px; }
+        /* VERTICAL PILL FOR LOGOS */
+        .vertical-casing { 
+            width: 100%; background: var(--pill); padding: 8px; border-radius: 15px; 
+            margin-top: 8px; display: flex; flex-direction: column; gap: 5px; 
+        }
         .name-label { text-align: center; font-size: 9px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
+        /* SETUP CARDS (LANDSCAPE CASING) */
+        .setup-card { width: 100%; display: flex; flex-direction: column; margin-bottom: 20px; }
+        .landscape-box { width: 100%; height: 200px; border-radius: 18px; overflow: hidden; background: #000; }
+        .landscape-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* WIDE PILL FOR SETUPS */
+        .landscape-casing {
+            width: 100%; background: var(--pill); padding: 15px; border-radius: 20px;
+            margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+
         .action-btn { 
             background: var(--accent); color: white; border: none; padding: 8px; 
             border-radius: 8px; font-size: 8px; font-weight: 900; cursor: pointer; 
-            text-align: center; text-decoration: none; text-transform: uppercase;
+            text-align: center; text-decoration: none; text-transform: uppercase; width: 100%;
         }
 
+        /* OVERLAY & TOAST */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2500; display: none; }
         .overlay.active { display: block; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 10px 20px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.3s; z-index: 9999; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1d1d1f; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; transition: 0.3s cubic-bezier(0.17, 0.89, 0.32, 1.28); z-index: 9999; }
         #toast.active { transform: translateX(-50%) translateY(0); }
 
-        @media (min-width: 768px) {
-            .img-container { height: 150px; } /* Slightly larger for PC but still 3-row */
+        @media (max-width: 600px) {
+            .landscape-box { height: 170px; }
+            .grid { gap: 8px; padding: 8px; }
         }
     </style>
 </head>
@@ -115,21 +122,21 @@
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">LayaSync Admin</div>
     
-    <div class="nav-label">Navigation</div>
+    <div class="nav-label">Archive Mode</div>
     <div class="group-item active" id="nav-logos" onclick="setTab('logos')">🖼️ Logo Archive</div>
     <div class="group-item" id="nav-setups" onclick="setTab('setups')">📱 Nuvio Setups</div>
 
     <div id="catBox">
-        <div class="nav-label">Groups</div>
+        <div class="nav-label">Logo Groups</div>
         <div id="catList"></div>
         <div style="display:flex; gap:5px; padding:5px;">
-            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:12px; outline:none;">
-            <button onclick="addGroup()" style="background:var(--accent); color:white; border:none; padding:8px; border-radius:8px; font-weight:800;">+</button>
+            <input type="text" id="newGrp" placeholder="Add Group..." style="flex:1; border:none; padding:8px; border-radius:8px; font-size:11px; outline:none;">
+            <button onclick="addGroup()" style="background:var(--accent); color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:800;">+</button>
         </div>
     </div>
 
-    <div class="nav-label">Sync</div>
-    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 12px; outline: none;">
+    <div class="nav-label">GitHub Cloud Sync</div>
+    <input type="password" id="ghToken" placeholder="GitHub Token" style="width: 100%; padding: 10px; border-radius: 10px; border: none; margin-bottom: 10px; font-size: 11px; outline: none;">
     <button onclick="cloudSync()" id="syncBtn" style="width: 100%; background: #34c759; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer;">☁️ SYNC TO CLOUD</button>
 </nav>
 
@@ -162,7 +169,7 @@
             logos = l; setups = s;
             document.getElementById('ghToken').value = localStorage.getItem('ls_token') || '';
             setTab('logos');
-        } catch(e) { console.error("Load Failed"); }
+        } catch(e) { console.error("Data fetch failed."); }
     }
 
     function toggleSidebar() { 
@@ -235,7 +242,7 @@
             grid.innerHTML = filtered.map(i => `
                 <div class="card ${selectedSet.has(i.url)?'selected':''}" onclick="handleCardClick('${i.url}')">
                     <div class="img-container"><img src="${i.url}" loading="eager"></div>
-                    <div class="casing">
+                    <div class="vertical-casing">
                         <div class="name-label">${i.name}</div>
                         <button class="action-btn" onclick="event.stopPropagation(); copyLink('${i.url}')">Copy</button>
                     </div>
@@ -246,9 +253,9 @@
             grid.innerHTML = filtered.map(i => `
                 <div class="setup-card">
                     <div class="landscape-box"><img src="${i.screenshot}" loading="eager"></div>
-                    <div class="casing">
-                        <div class="name-label">${i.name}</div>
-                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="margin-top:5px;">Download JSON</a>`).join('') : ''}
+                    <div class="landscape-casing">
+                        <div class="name-label" style="font-size: 14px; margin-bottom: 5px;">${i.name}</div>
+                        ${i.files ? i.files.map(f => `<a href="${f.url}" download class="action-btn" style="padding: 12px; font-size: 11px;">⬇️ DOWNLOAD JSON COLLECTION</a>`).join('') : ''}
                     </div>
                 </div>
             `).join('');
@@ -271,7 +278,7 @@
             const fData = await res.json();
             await fetch(url, {
                 method: 'PUT', headers: { Authorization: `token ${token}` },
-                body: JSON.stringify({ message: `Sync ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fData.sha })
+                body: JSON.stringify({ message: `Update ${file}`, content: btoa(JSON.stringify(data, null, 2)), sha: fData.sha })
             });
             showToast("Successfully Synced!");
         } catch (e) { alert("Sync Error"); }
