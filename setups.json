@@ -8,9 +8,9 @@
   },
   {
     "name": "Nuvio Minimal White",
-    "screenshot": "PASTE_SCREENSHOT_LINK_HERE",
+    "screenshot": "https://i.ibb.co/FqBSrbZ0/Netflix.png",
     "files": [
-      { "url": "PASTE_JSON_LINK_HERE" }
+      { "url": "https://raw.githubusercontent.com/layasync/LayaSync.github.io/refs/heads/main/Nuvio%20collection%20type%201.json" }
     ]
   },
   {
