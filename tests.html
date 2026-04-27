@@ -3,78 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Premium</title>
+<title>LayaSync Open</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
     --bg:#ffffff;
-    --text:#0f0f10;
+    --text:#111;
     --sub:#6e6e73;
-    --accent:#007aff;
     --card:#ffffff;
     --border:#e5e5ea;
+    --accent:#007aff;
+}
+.dark{
+    --bg:#000;
+    --text:#fff;
+    --sub:#aaa;
+    --card:#111;
+    --border:#222;
 }
 
 /* BASE */
-*{
-    box-sizing:border-box;
-    margin:0;
-    font-family:-apple-system, Inter, system-ui;
-}
-body{
-    background:var(--bg);
-    color:var(--text);
-    display:flex;
-}
-
-/* SIDEBAR */
-.sidebar{
-    width:260px;
-    height:100vh;
-    background:#fafafa;
-    border-right:1px solid var(--border);
-    padding:25px 15px;
-    position:fixed;
-    left:0;
-    top:0;
-}
-.logo{
-    font-size:20px;
-    font-weight:800;
-    margin-bottom:25px;
-}
-.group{
-    padding:10px 12px;
-    border-radius:10px;
-    margin-bottom:6px;
-    cursor:pointer;
-    font-weight:600;
-    color:var(--sub);
-}
-.group.active{
-    background:var(--accent);
-    color:#fff;
-}
-
-/* MAIN */
-main{
-    margin-left:260px;
-    width:100%;
-}
+*{box-sizing:border-box;font-family:-apple-system,Inter;}
+body{margin:0;background:var(--bg);color:var(--text);}
 
 /* HEADER */
 header{
-    position:sticky;
-    top:0;
-    padding:15px;
-    background:rgba(255,255,255,0.8);
+    position:sticky;top:0;
     backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.7);
+    padding:12px;
+    display:flex;gap:10px;
     border-bottom:1px solid var(--border);
-    display:flex;
-    gap:10px;
 }
+.dark header{background:rgba(0,0,0,0.7);}
+
 .search{
     flex:1;
     padding:12px;
@@ -85,115 +49,181 @@ header{
 
 /* GRID */
 .grid{
-    padding:20px;
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:18px;
+    gap:16px;
+    padding:16px;
 }
 
 /* CARD */
 .card{
     background:var(--card);
-    border-radius:18px;
-    padding:15px;
-    text-align:center;
+    border-radius:16px;
+    padding:12px;
     border:1px solid var(--border);
-    transition:0.25s;
+    text-align:center;
+    transition:.2s;
 }
 .card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.05);
 }
 
-/* IMAGE */
 .img{
     height:90px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display:flex;align-items:center;justify-content:center;
+}
+.img img{max-width:80%;max-height:80%;}
+
+/* BUTTON */
+.btn{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* SUBMIT MODAL */
+.modal{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.4);
+    display:none;align-items:center;justify-content:center;
+}
+.modal.active{display:flex;}
+
+.modal-box{
+    background:var(--card);
+    padding:20px;
+    border-radius:16px;
+    width:90%;max-width:400px;
+}
+
+.input{
+    width:100%;
     margin-bottom:10px;
-}
-.img img{
-    max-width:80%;
-    max-height:80%;
-}
-
-/* TEXT */
-.name{
-    font-size:12px;
-    font-weight:700;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid var(--border);
 }
 
-/* MOBILE NAV */
-.bottom-nav{
-    display:none;
+/* ADMIN */
+.admin{
+    padding:15px;
 }
 
-@media(max-width:700px){
-    .sidebar{display:none;}
-    main{margin-left:0;}
-
-    .bottom-nav{
-        display:flex;
-        position:fixed;
-        bottom:0;
-        width:100%;
-        background:#fff;
-        border-top:1px solid var(--border);
-        justify-content:space-around;
-        padding:10px;
-    }
+.submission{
+    border:1px solid var(--border);
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="logo">LayaSync</div>
-
-    <div class="group active">All Logos</div>
-    <div class="group">Technology</div>
-    <div class="group">Brands</div>
-    <div class="group">Social</div>
-</div>
-
-<!-- MAIN -->
-<main>
-
 <header>
-    <input class="search" placeholder="Search logos...">
+<input class="search" placeholder="Search logos..." id="search">
+<button onclick="toggleTheme()">🌗</button>
+<button onclick="openModal()">➕</button>
 </header>
 
-<div class="grid">
+<div class="grid" id="grid"></div>
 
-    <!-- CARD -->
-    <div class="card">
-        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"></div>
-        <div class="name">Nike</div>
-    </div>
+<!-- SUBMIT MODAL -->
+<div class="modal" id="modal">
+<div class="modal-box">
+<h3>Submit Logos</h3>
 
-    <div class="card">
-        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"></div>
-        <div class="name">Adidas</div>
-    </div>
+<input class="input" placeholder="Image URL 1">
+<input class="input" placeholder="Image URL 2">
+<input class="input" placeholder="Image URL 3">
+<input class="input" placeholder="Image URL 4">
+<input class="input" placeholder="Image URL 5">
 
-    <div class="card">
-        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"></div>
-        <div class="name">Apple</div>
-    </div>
-
+<button class="btn" onclick="submit()">Submit</button>
+</div>
 </div>
 
-</main>
-
-<!-- MOBILE NAV -->
-<div class="bottom-nav">
-    <div>🏠</div>
-    <div>📂</div>
-    <div>⚙️</div>
+<!-- ADMIN PANEL -->
+<div class="admin" id="admin" style="display:none;">
+<h2>Admin Panel</h2>
+<div id="submissions"></div>
 </div>
+
+<script>
+let db = [];
+let submissions = [];
+
+/* LOAD SAMPLE */
+for(let i=0;i<50;i++){
+    db.push({name:"Logo "+i, url:"https://via.placeholder.com/150"});
+}
+
+function render(){
+    const grid=document.getElementById("grid");
+    const q=document.getElementById("search").value?.toLowerCase()||"";
+
+    const list=db.filter(i=>i.name.toLowerCase().includes(q));
+
+    grid.innerHTML=list.map(i=>`
+        <div class="card">
+            <div class="img"><img src="${i.url}" loading="lazy"></div>
+            <div>${i.name}</div>
+        </div>
+    `).join("");
+}
+
+render();
+
+/* MODAL */
+function openModal(){document.getElementById("modal").classList.add("active");}
+function submit(){
+    const inputs=document.querySelectorAll(".input");
+    const urls=[...inputs].map(i=>i.value).filter(Boolean);
+
+    if(urls.length===0) return alert("Add at least 1");
+
+    submissions.push({urls});
+    renderAdmin();
+
+    document.getElementById("modal").classList.remove("active");
+}
+
+/* ADMIN */
+function renderAdmin(){
+    const box=document.getElementById("submissions");
+
+    box.innerHTML=submissions.map((s,i)=>`
+        <div class="submission">
+            ${s.urls.map(u=>`<img src="${u}" width="40">`).join("")}
+            <br>
+            <button onclick="approve(${i})">✅</button>
+            <button onclick="reject(${i})">❌</button>
+        </div>
+    `).join("");
+}
+
+function approve(i){
+    submissions[i].urls.forEach(u=>{
+        db.push({name:"User Upload", url:u});
+    });
+    submissions.splice(i,1);
+    render(); renderAdmin();
+}
+
+function reject(i){
+    submissions.splice(i,1);
+    renderAdmin();
+}
+
+/* THEME */
+function toggleTheme(){
+    document.body.classList.toggle("dark");
+}
+</script>
 
 </body>
 </html>
