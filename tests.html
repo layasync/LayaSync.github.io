@@ -5,226 +5,252 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LayaSync</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root{
-    --bg:#f5f5f7;
-    --card:#ffffff;
-    --text:#111;
-    --sub:#6e6e73;
-    --accent:#007aff;
-    --border:#e5e5ea;
-}
-.dark{
-    --bg:#0b0b0c;
-    --card:#1c1c1e;
-    --text:#fff;
-    --sub:#aaa;
-    --border:#2c2c2e;
+:root {
+  --bg: #f4f6f8;
+  --text: #111;
+  --accent: #2563eb;
+  --card: #ffffff;
+  --muted: #6b7280;
 }
 
-*{
-    box-sizing:border-box;
-    font-family:-apple-system,Inter;
+/* Base */
+* { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
+body { margin:0; background: var(--bg); color: var(--text); }
+
+/* Layout */
+.app { display:flex; height:100vh; }
+
+/* Sidebar */
+.sidebar {
+  width:260px;
+  background:#fff;
+  border-right:1px solid #eee;
+  padding:20px;
+  position:fixed;
+  left:-260px;
+  top:0;
+  height:100%;
+  transition:.3s;
+  z-index:1000;
+}
+.sidebar.active { left:0; }
+
+.sidebar-header {
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:20px;
 }
 
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    display:flex;
+.group-item {
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:5px;
+  display:flex;
+  justify-content:space-between;
+  cursor:pointer;
+}
+.group-item.active { background: var(--accent); color:white; }
+
+/* Overlay */
+.overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.3);
+  display:none;
+}
+.overlay.active { display:block; }
+
+/* Main */
+main { flex:1; margin-left:0; }
+
+/* Header */
+header {
+  display:flex;
+  gap:10px;
+  padding:12px;
+  background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #eee;
+  position:sticky;
+  top:0;
 }
 
-/* SIDEBAR */
-.sidebar{
-    width:260px;
-    height:100vh;
-    padding:20px;
-    border-right:1px solid var(--border);
-    background:var(--card);
+.search-box {
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:none;
+  background:#f1f3f5;
 }
 
-.logo{
-    font-size:18px;
-    font-weight:700;
-    margin-bottom:20px;
+.btn-icon {
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:10px;
+  background:#f1f3f5;
 }
 
-.group{
-    padding:10px 12px;
-    border-radius:10px;
-    margin-bottom:6px;
-    font-size:13px;
-    cursor:pointer;
-    display:flex;
-    justify-content:space-between;
-}
-.group.active{
-    background:var(--accent);
-    color:#fff;
+/* Grid */
+.grid {
+  padding:15px;
+  display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+  gap:15px;
 }
 
-/* MAIN */
-main{
-    flex:1;
+/* Cards */
+.asset-card {
+  background:var(--card);
+  border-radius:16px;
+  padding:15px;
+  text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+  transition:.2s;
+}
+.asset-card:hover { transform: translateY(-5px); }
+
+.img-container {
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.img-container img { max-width:70px; }
+
+.name-field {
+  border:none;
+  text-align:center;
+  font-weight:700;
+  margin-top:10px;
 }
 
-/* HEADER */
-header{
-    display:flex;
-    gap:10px;
-    padding:15px;
-    position:sticky;
-    top:0;
-    backdrop-filter:blur(20px);
-    background:rgba(255,255,255,0.7);
-    border-bottom:1px solid var(--border);
-}
-.dark header{background:rgba(0,0,0,0.7);}
-
-.search{
-    flex:1;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#e5e5ea;
+.copy-btn {
+  margin-top:10px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:var(--accent);
+  color:white;
+  font-size:11px;
 }
 
-/* GRID */
-.grid{
-    padding:20px;
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-    gap:18px;
-}
-
-/* CARD */
-.card{
-    background:var(--card);
-    border-radius:18px;
-    padding:14px;
-    border:1px solid var(--border);
-    text-align:center;
-    transition:0.2s;
-}
-.card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-.img{
-    height:90px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.img img{
-    max-width:80%;
-    max-height:80%;
-}
-
-.name{
-    font-size:12px;
-    font-weight:600;
-}
-
-/* MOBILE NAV */
-.bottom{
-    display:none;
-}
-
-@media(max-width:700px){
-    .sidebar{display:none;}
-    .bottom{
-        display:flex;
-        position:fixed;
-        bottom:0;
-        width:100%;
-        background:var(--card);
-        border-top:1px solid var(--border);
-        justify-content:space-around;
-        padding:10px;
-    }
-}
-
-/* BUTTON */
-.btn{
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:10px 14px;
-    border-radius:10px;
-    cursor:pointer;
+/* Mobile */
+@media(max-width:768px){
+  .grid { grid-template-columns: repeat(3,1fr); }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="logo">LayaSync</div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <div class="group active">All Logos <span>24</span></div>
-    <div class="group">Technology</div>
-    <div class="group">Brands</div>
+<div class="app">
 
-    <br>
-    <button class="btn" onclick="toggleTheme()">🌗 Toggle</button>
-</div>
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">LayaSync</div>
 
-<!-- MAIN -->
+  <div id="groupList"></div>
+
+  <input id="newGrp" placeholder="New group" style="width:100%;margin-top:10px;padding:10px;">
+  <button onclick="addGroup()">+</button>
+
+  <input id="ghToken" placeholder="GitHub Token" style="margin-top:20px;width:100%;padding:10px;">
+  <button onclick="cloudSync()">SYNC</button>
+</nav>
+
+<!-- Main -->
 <main>
 
 <header>
-<input class="search" id="search" placeholder="Search logos...">
-<button class="btn">＋</button>
+  <button class="btn-icon" onclick="toggleSidebar()">☰</button>
+  <input id="search" class="search-box" onkeyup="renderUI()" placeholder="Search...">
+  <button id="multiBtn" class="btn-icon" onclick="toggleMultiSelect()">🔘</button>
 </header>
 
-<div class="grid" id="grid"></div>
+<div class="grid" id="mainGrid"></div>
 
 </main>
-
-<!-- MOBILE NAV -->
-<div class="bottom">
-<div>🏠</div>
-<div>📂</div>
-<div>⚙️</div>
 </div>
 
 <script>
+
+/* ===== ORIGINAL LOGIC KEPT ===== */
+
 let db = [];
+let activeG = 'All';
+let selectedSet = new Set();
+let isMulti = false;
 
-// generate demo (fast even for 2000)
-for(let i=0;i<200;i++){
-    db.push({
-        name:"Logo "+i,
-        url:"https://via.placeholder.com/150"
-    });
+function toggleSidebar(){
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
 }
 
-function render(){
-    const q=document.getElementById("search").value.toLowerCase();
-    const grid=document.getElementById("grid");
+function renderGroups(){
+  const list = document.getElementById('groupList');
+  const cats = [...new Set(db.map(i=>i.group))];
 
-    const list=db.filter(i=>i.name.toLowerCase().includes(q));
+  list.innerHTML = `<div class="group-item ${activeG==='All'?'active':''}" onclick="setG('All')">All</div>`;
 
-    grid.innerHTML=list.map(i=>`
-        <div class="card">
-            <div class="img"><img src="${i.url}" loading="lazy"></div>
-            <div class="name">${i.name}</div>
-        </div>
-    `).join("");
+  cats.forEach(g=>{
+    list.innerHTML += `<div class="group-item ${activeG===g?'active':''}" onclick="setG('${g}')">${g}</div>`;
+  });
 }
 
-document.getElementById("search").addEventListener("input",render);
+function setG(g){ activeG=g; renderGroups(); renderUI(); }
 
-function toggleTheme(){
-    document.body.classList.toggle("dark");
+function addGroup(){
+  const val = newGrp.value;
+  if(val){
+    db.push({name:"Dummy",url:"",group:val});
+    newGrp.value="";
+    renderGroups();
+  }
 }
 
-render();
+function renderUI(){
+  const q = search.value.toLowerCase();
+  const grid = document.getElementById('mainGrid');
+
+  const filtered = db.filter(i =>
+    i.url &&
+    i.name.toLowerCase().includes(q) &&
+    (activeG==='All'||i.group===activeG)
+  );
+
+  grid.innerHTML = filtered.map(i=>`
+    <div class="asset-card">
+      <div class="img-container"><img src="${i.url}"></div>
+      <input class="name-field" value="${i.name}">
+      <button class="copy-btn" onclick="copyLink('${i.url}')">Copy</button>
+    </div>
+  `).join('');
+}
+
+function toggleMultiSelect(){
+  isMulti=!isMulti;
+}
+
+function copyLink(url){
+  navigator.clipboard.writeText(url);
+}
+
+/* Demo Data */
+db = [
+  {name:"Nike",url:"https://cdn.simpleicons.org/nike",group:"Sports"},
+  {name:"Adidas",url:"https://cdn.simpleicons.org/adidas",group:"Sports"},
+  {name:"Apple",url:"https://cdn.simpleicons.org/apple",group:"Tech"},
+  {name:"Google",url:"https://cdn.simpleicons.org/google",group:"Tech"},
+  {name:"BMW",url:"https://cdn.simpleicons.org/bmw",group:"Auto"},
+];
+
+renderGroups();
+renderUI();
+
 </script>
 
 </body>
