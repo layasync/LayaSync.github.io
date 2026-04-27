@@ -3,38 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LayaSync Open</title>
+<title>LayaSync</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-    --bg:#ffffff;
+    --bg:#f5f5f7;
+    --card:#ffffff;
     --text:#111;
     --sub:#6e6e73;
-    --card:#ffffff;
-    --border:#e5e5ea;
     --accent:#007aff;
+    --border:#e5e5ea;
 }
 .dark{
-    --bg:#000;
+    --bg:#0b0b0c;
+    --card:#1c1c1e;
     --text:#fff;
     --sub:#aaa;
-    --card:#111;
-    --border:#222;
+    --border:#2c2c2e;
 }
 
-/* BASE */
-*{box-sizing:border-box;font-family:-apple-system,Inter;}
-body{margin:0;background:var(--bg);color:var(--text);}
+*{
+    box-sizing:border-box;
+    font-family:-apple-system,Inter;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    height:100vh;
+    padding:20px;
+    border-right:1px solid var(--border);
+    background:var(--card);
+}
+
+.logo{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.group{
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:6px;
+    font-size:13px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+}
+.group.active{
+    background:var(--accent);
+    color:#fff;
+}
+
+/* MAIN */
+main{
+    flex:1;
+}
 
 /* HEADER */
 header{
-    position:sticky;top:0;
+    display:flex;
+    gap:10px;
+    padding:15px;
+    position:sticky;
+    top:0;
     backdrop-filter:blur(20px);
     background:rgba(255,255,255,0.7);
-    padding:12px;
-    display:flex;gap:10px;
     border-bottom:1px solid var(--border);
 }
 .dark header{background:rgba(0,0,0,0.7);}
@@ -42,187 +86,145 @@ header{
 .search{
     flex:1;
     padding:12px;
-    border-radius:10px;
     border:none;
-    background:#f2f2f7;
+    border-radius:10px;
+    background:#e5e5ea;
 }
 
 /* GRID */
 .grid{
+    padding:20px;
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:16px;
-    padding:16px;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:18px;
 }
 
 /* CARD */
 .card{
     background:var(--card);
-    border-radius:16px;
-    padding:12px;
+    border-radius:18px;
+    padding:14px;
     border:1px solid var(--border);
     text-align:center;
-    transition:.2s;
+    transition:0.2s;
 }
 .card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.05);
+    transform:translateY(-4px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
 }
 
 .img{
     height:90px;
-    display:flex;align-items:center;justify-content:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
-.img img{max-width:80%;max-height:80%;}
+.img img{
+    max-width:80%;
+    max-height:80%;
+}
+
+.name{
+    font-size:12px;
+    font-weight:600;
+}
+
+/* MOBILE NAV */
+.bottom{
+    display:none;
+}
+
+@media(max-width:700px){
+    .sidebar{display:none;}
+    .bottom{
+        display:flex;
+        position:fixed;
+        bottom:0;
+        width:100%;
+        background:var(--card);
+        border-top:1px solid var(--border);
+        justify-content:space-around;
+        padding:10px;
+    }
+}
 
 /* BUTTON */
 .btn{
     background:var(--accent);
     color:#fff;
     border:none;
-    padding:10px;
+    padding:10px 14px;
     border-radius:10px;
     cursor:pointer;
-}
-
-/* SUBMIT MODAL */
-.modal{
-    position:fixed;inset:0;
-    background:rgba(0,0,0,0.4);
-    display:none;align-items:center;justify-content:center;
-}
-.modal.active{display:flex;}
-
-.modal-box{
-    background:var(--card);
-    padding:20px;
-    border-radius:16px;
-    width:90%;max-width:400px;
-}
-
-.input{
-    width:100%;
-    margin-bottom:10px;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid var(--border);
-}
-
-/* ADMIN */
-.admin{
-    padding:15px;
-}
-
-.submission{
-    border:1px solid var(--border);
-    padding:10px;
-    border-radius:12px;
-    margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="logo">LayaSync</div>
+
+    <div class="group active">All Logos <span>24</span></div>
+    <div class="group">Technology</div>
+    <div class="group">Brands</div>
+
+    <br>
+    <button class="btn" onclick="toggleTheme()">🌗 Toggle</button>
+</div>
+
+<!-- MAIN -->
+<main>
+
 <header>
-<input class="search" placeholder="Search logos..." id="search">
-<button onclick="toggleTheme()">🌗</button>
-<button onclick="openModal()">➕</button>
+<input class="search" id="search" placeholder="Search logos...">
+<button class="btn">＋</button>
 </header>
 
 <div class="grid" id="grid"></div>
 
-<!-- SUBMIT MODAL -->
-<div class="modal" id="modal">
-<div class="modal-box">
-<h3>Submit Logos</h3>
+</main>
 
-<input class="input" placeholder="Image URL 1">
-<input class="input" placeholder="Image URL 2">
-<input class="input" placeholder="Image URL 3">
-<input class="input" placeholder="Image URL 4">
-<input class="input" placeholder="Image URL 5">
-
-<button class="btn" onclick="submit()">Submit</button>
-</div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div class="admin" id="admin" style="display:none;">
-<h2>Admin Panel</h2>
-<div id="submissions"></div>
+<!-- MOBILE NAV -->
+<div class="bottom">
+<div>🏠</div>
+<div>📂</div>
+<div>⚙️</div>
 </div>
 
 <script>
 let db = [];
-let submissions = [];
 
-/* LOAD SAMPLE */
-for(let i=0;i<50;i++){
-    db.push({name:"Logo "+i, url:"https://via.placeholder.com/150"});
+// generate demo (fast even for 2000)
+for(let i=0;i<200;i++){
+    db.push({
+        name:"Logo "+i,
+        url:"https://via.placeholder.com/150"
+    });
 }
 
 function render(){
+    const q=document.getElementById("search").value.toLowerCase();
     const grid=document.getElementById("grid");
-    const q=document.getElementById("search").value?.toLowerCase()||"";
 
     const list=db.filter(i=>i.name.toLowerCase().includes(q));
 
     grid.innerHTML=list.map(i=>`
         <div class="card">
             <div class="img"><img src="${i.url}" loading="lazy"></div>
-            <div>${i.name}</div>
+            <div class="name">${i.name}</div>
         </div>
     `).join("");
 }
 
-render();
+document.getElementById("search").addEventListener("input",render);
 
-/* MODAL */
-function openModal(){document.getElementById("modal").classList.add("active");}
-function submit(){
-    const inputs=document.querySelectorAll(".input");
-    const urls=[...inputs].map(i=>i.value).filter(Boolean);
-
-    if(urls.length===0) return alert("Add at least 1");
-
-    submissions.push({urls});
-    renderAdmin();
-
-    document.getElementById("modal").classList.remove("active");
-}
-
-/* ADMIN */
-function renderAdmin(){
-    const box=document.getElementById("submissions");
-
-    box.innerHTML=submissions.map((s,i)=>`
-        <div class="submission">
-            ${s.urls.map(u=>`<img src="${u}" width="40">`).join("")}
-            <br>
-            <button onclick="approve(${i})">✅</button>
-            <button onclick="reject(${i})">❌</button>
-        </div>
-    `).join("");
-}
-
-function approve(i){
-    submissions[i].urls.forEach(u=>{
-        db.push({name:"User Upload", url:u});
-    });
-    submissions.splice(i,1);
-    render(); renderAdmin();
-}
-
-function reject(i){
-    submissions.splice(i,1);
-    renderAdmin();
-}
-
-/* THEME */
 function toggleTheme(){
     document.body.classList.toggle("dark");
 }
+
+render();
 </script>
 
 </body>
