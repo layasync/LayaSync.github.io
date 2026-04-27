@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#ffffff;
+    --text:#0f0f10;
+    --sub:#6e6e73;
+    --accent:#007aff;
+    --card:#ffffff;
+    --border:#e5e5ea;
+}
+
+/* BASE */
+*{
+    box-sizing:border-box;
+    margin:0;
+    font-family:-apple-system, Inter, system-ui;
+}
+body{
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    height:100vh;
+    background:#fafafa;
+    border-right:1px solid var(--border);
+    padding:25px 15px;
+    position:fixed;
+    left:0;
+    top:0;
+}
+.logo{
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:25px;
+}
+.group{
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:6px;
+    cursor:pointer;
+    font-weight:600;
+    color:var(--sub);
+}
+.group.active{
+    background:var(--accent);
+    color:#fff;
+}
+
+/* MAIN */
+main{
+    margin-left:260px;
+    width:100%;
+}
+
+/* HEADER */
+header{
+    position:sticky;
+    top:0;
+    padding:15px;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    gap:10px;
+}
+.search{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    background:#f2f2f7;
+}
+
+/* GRID */
+.grid{
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:18px;
+}
+
+/* CARD */
+.card{
+    background:var(--card);
+    border-radius:18px;
+    padding:15px;
+    text-align:center;
+    border:1px solid var(--border);
+    transition:0.25s;
+}
+.card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* IMAGE */
+.img{
+    height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+}
+.img img{
+    max-width:80%;
+    max-height:80%;
+}
+
+/* TEXT */
+.name{
+    font-size:12px;
+    font-weight:700;
+}
+
+/* MOBILE NAV */
+.bottom-nav{
+    display:none;
+}
+
+@media(max-width:700px){
+    .sidebar{display:none;}
+    main{margin-left:0;}
+
+    .bottom-nav{
+        display:flex;
+        position:fixed;
+        bottom:0;
+        width:100%;
+        background:#fff;
+        border-top:1px solid var(--border);
+        justify-content:space-around;
+        padding:10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="logo">LayaSync</div>
+
+    <div class="group active">All Logos</div>
+    <div class="group">Technology</div>
+    <div class="group">Brands</div>
+    <div class="group">Social</div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+<header>
+    <input class="search" placeholder="Search logos...">
+</header>
+
+<div class="grid">
+
+    <!-- CARD -->
+    <div class="card">
+        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg"></div>
+        <div class="name">Nike</div>
+    </div>
+
+    <div class="card">
+        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg"></div>
+        <div class="name">Adidas</div>
+    </div>
+
+    <div class="card">
+        <div class="img"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"></div>
+        <div class="name">Apple</div>
+    </div>
+
+</div>
+
+</main>
+
+<!-- MOBILE NAV -->
+<div class="bottom-nav">
+    <div>🏠</div>
+    <div>📂</div>
+    <div>⚙️</div>
+</div>
+
+</body>
+</html>
