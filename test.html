@@ -219,47 +219,67 @@
 
     // --- REENGINEERED CLOUD SYNC (ULTIMATE) ---
     async function cloudSync() {
-        const token = document.getElementById('ghToken').value;
-        if (!token) return alert("Enter Token First");
-        localStorage.setItem('ls_token', token);
+    const token = document.getElementById('ghToken').value;
+    if (!token) return alert("Enter Token First");
+    localStorage.setItem('ls_token', token);
 
-        const btn = document.getElementById('syncBtn');
-        const filename = currentTab === 'logos' ? 'logo.json' : 'setups.json';
-        const dataToSave = currentTab === 'logos' ? db.filter(i => i.url !== "") : setups;
+    const btn = document.getElementById('syncBtn');
+    const filename = currentTab === 'logos' ? 'logo.json' : 'setups.json';
+    const dataToSave = currentTab === 'logos'
+        ? db.filter(i => i.url !== "")
+        : setups;
 
-        btn.innerText = "Syncing...";
-        btn.disabled = true;
+    btn.innerText = "Syncing...";
+    btn.disabled = true;
 
-        try {
-            const apiUrl = `https://api.github.com/repos/${G_USER}/${G_REPO}/contents/${filename}`;
+    try {
+        const apiUrl = `https://api.github.com/repos/${G_USER}/${G_REPO}/contents/${filename}`;
 
-            // Step 1: Force get latest SHA from GitHub directly
-            const getRes = await fetch(apiUrl, {
-                headers: { 'Authorization': `token ${token}`, 'Cache-Control': 'no-cache' }
-            });
+        // 🔥 STEP 1: Get latest SHA (with cache bypass)
+        let sha = null;
+        const getRes = await fetch(apiUrl + "?t=" + Date.now(), {
+            headers: { Authorization: `token ${token}` }
+        });
+
+        if (getRes.ok) {
             const meta = await getRes.json();
-            if (!getRes.ok) throw new Error(meta.message);
+            sha = meta.sha;
+        }
 
-            // Step 2: Push
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataToSave, null, 2))));
-            const putRes = await fetch(apiUrl, {
-                method: 'PUT',
-                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: `LayaSync Cloud Update: ${filename}`,
-                    content: content,
-                    sha: meta.sha
-                })
-            });
+        // 🔥 STEP 2: Encode safely
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(dataToSave, null, 2))));
 
-            if (putRes.ok) showToast("✅ Global Cloud Updated!");
-            else {
-                const err = await putRes.json();
-                throw new Error(err.message);
-            }
-        } catch (e) { alert("GitHub Error: " + e.message); }
-        finally { btn.innerText = "☁️ SYNC TO CLOUD"; btn.disabled = false; }
+        // 🔥 STEP 3: Build body (works for both create + update)
+        const body = {
+            message: `LayaSync Cloud Update: ${filename}`,
+            content: content
+        };
+
+        if (sha) body.sha = sha; // only include if exists
+
+        // 🔥 STEP 4: Push
+        const putRes = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                Authorization: `token ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        const result = await putRes.json();
+
+        if (!putRes.ok) throw new Error(result.message);
+
+        showToast("✅ Global Cloud Updated!");
+
+    } catch (e) {
+        alert("GitHub Error: " + e.message);
+    } finally {
+        btn.innerText = "☁️ SYNC TO CLOUD";
+        btn.disabled = false;
     }
+
 
     function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
