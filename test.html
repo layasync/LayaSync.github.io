@@ -279,7 +279,7 @@
         btn.innerText = "☁️ SYNC TO CLOUD";
         btn.disabled = false;
     }
-
+}
 
     function copyLink(url) { navigator.clipboard.writeText(url); showToast("Link Copied!"); }
     function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 2000); }
