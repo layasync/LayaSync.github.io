@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync Pro</title>
+
+<style>
+:root {
+    --bg:#fff; --text:#111; --accent:#007aff; --pill:#f2f2f7;
+}
+@media (prefers-color-scheme:dark){
+    :root { --bg:#000; --text:#fff; --pill:#1c1c1e; }
+}
+
+*{box-sizing:border-box;font-family:system-ui;}
+body{margin:0;background:var(--bg);color:var(--text);display:flex;}
+
+.sidebar{
+    width:260px;height:100vh;background:#ddd;
+    position:fixed;left:-260px;transition:.3s;padding:20px;z-index:1000;
+}
+.sidebar.active{left:0;}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;padding:15px;
+}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.grid{grid-template-columns:1fr;}}
+
+.asset{
+    text-align:center;
+}
+.img{
+    height:200px;border-radius:15px;
+    display:flex;align-items:center;justify-content:center;
+    background:#eee;cursor:pointer;
+}
+.img img{max-width:80%;max-height:80%;}
+.asset.selected .img{border:3px solid var(--accent);}
+
+input{
+    width:100%;border:none;background:transparent;
+    text-align:center;font-weight:bold;
+}
+
+button{
+    background:var(--accent);color:#fff;
+    border:none;padding:8px;border-radius:10px;cursor:pointer;
+}
+
+header{
+    position:sticky;top:0;background:var(--bg);
+    display:flex;gap:10px;padding:10px;
+}
+
+.search{flex:1;padding:10px;border-radius:10px;border:none;background:var(--pill);}
+.btn{width:40px;height:40px;border-radius:10px;background:var(--pill);}
+
+#toast{
+    position:fixed;bottom:20px;left:50%;
+    transform:translateX(-50%) translateY(100px);
+    background:#111;color:#fff;padding:10px 20px;border-radius:30px;
+    transition:.3s;
+}
+#toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar" id="sidebar">
+    <h3>Groups</h3>
+    <div id="groups"></div>
+
+    <input id="newGroup" placeholder="New group">
+    <button onclick="addGroup()">Add</button>
+</div>
+
+<main style="flex:1;">
+<header>
+    <button class="btn" onclick="toggleSidebar()">☰</button>
+    <input class="search" id="search" placeholder="Search...">
+    <button class="btn" id="multiBtn" onclick="toggleMulti()">🔘</button>
+</header>
+
+<div class="grid" id="grid"></div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+let db=[];
+let selected=new Set();
+let multi=false;
+let active="All";
+let groups=new Set();
+
+const API="https://raw.githubusercontent.com/layasync/LayaSync.github.io/main/logo.json";
+
+async function init(){
+    try{
+        const r=await fetch(API+"?v="+Date.now());
+        if(!r.ok) throw "Load failed";
+        db=await r.json();
+    }catch{
+        db=[];
+        alert("Failed loading data");
+    }
+    buildGroups();
+    render();
+}
+
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("active");
+}
+
+function toggleMulti(){
+    multi=!multi;
+    selected.clear();
+    toast(multi?"Multi ON":"Multi OFF");
+    render();
+}
+
+function buildGroups(){
+    groups=new Set(db.map(i=>i.group).filter(Boolean));
+    const g=document.getElementById("groups");
+
+    g.innerHTML=`<div onclick="setGroup('All')">📂 All</div>`;
+    groups.forEach(x=>{
+        g.innerHTML+=`<div onclick="setGroup('${x}')">🏷 ${x}</div>`;
+    });
+}
+
+function setGroup(g){
+    active=g;
+    render();
+}
+
+function addGroup(){
+    const val=document.getElementById("newGroup").value.trim();
+    if(!val) return;
+    groups.add(val);
+    document.getElementById("newGroup").value="";
+    buildGroups();
+}
+
+function render(){
+    const grid=document.getElementById("grid");
+    const q=document.getElementById("search").value?.toLowerCase()||"";
+
+    const list=db.filter(i=>{
+        if(!i.url) return false;
+        return (
+            (active==="All"||i.group===active) &&
+            (i.name.toLowerCase().includes(q)|| (i.group||"").toLowerCase().includes(q))
+        );
+    });
+
+    grid.innerHTML=list.map(i=>`
+        <div class="asset ${selected.has(i.url)?"selected":""}" onclick="clickItem('${i.url}')">
+            <div class="img">
+                <img src="${i.url}" loading="lazy">
+            </div>
+            <input value="${i.name}" onchange="rename('${i.url}',this.value)" onclick="event.stopPropagation()">
+            <button onclick="event.stopPropagation();copy('${i.url}')">Copy</button>
+        </div>
+    `).join("");
+}
+
+function clickItem(url){
+    if(!multi) return;
+    selected.has(url)?selected.delete(url):selected.add(url);
+    render();
+}
+
+function rename(url,val){
+    const i=db.find(x=>x.url===url);
+    if(i) i.name=val;
+}
+
+function copy(url){
+    navigator.clipboard.writeText(url);
+    toast("Copied!");
+}
+
+function toast(msg){
+    const t=document.getElementById("toast");
+    t.innerText=msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),2000);
+}
+
+let debounce;
+document.getElementById("search").addEventListener("input",()=>{
+    clearTimeout(debounce);
+    debounce=setTimeout(render,200);
+});
+
+init();
+</script>
+
+</body>
+</html>
