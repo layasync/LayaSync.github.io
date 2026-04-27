@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LayaSync</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">LayaSync</div>
+
+    <input class="search" placeholder="Search logos or groups..." />
+
+    <div class="menu">
+      <h4>GROUPS</h4>
+
+      <div class="item active">All Logos <span>24</span></div>
+      <div class="item">Technology <span>6</span></div>
+      <div class="item">Automotive <span>5</span></div>
+      <div class="item">Sports <span>7</span></div>
+      <div class="item">Social Media <span>4</span></div>
+      <div class="item">Brands <span>2</span></div>
+
+      <button class="new-group">+ New Group</button>
+
+      <h4>ADMIN</h4>
+      <button class="sync">SYNC TO CLOUD</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <input placeholder="Search logos or groups..." />
+      <div class="actions">
+        <button>☰</button>
+        <button>⬛</button>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="header">
+      <h2>All Logos</h2>
+      <p>24 Items</p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid" id="grid"></div>
+
+  </main>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
