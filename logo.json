@@ -2,27 +2,32 @@
   {
     "name": "Search",
     "category": "Logos",
-    "url": "https://i.ibb.co/qh7C4wZ/Search.png"
+    "url": "https://i.ibb.co/qh7C4wZ/Search.png",
+    "group": "Genre"
   },
   {
     "name": "Movie",
     "category": "Logos",
-    "url": "https://i.ibb.co/6RL06YCd/Movie.png"
+    "url": "https://i.ibb.co/6RL06YCd/Movie.png",
+    "group": "Genre"
   },
   {
     "name": "Anime",
     "category": "Logos",
-    "url": "https://i.ibb.co/kgw8qmBF/Anime.png"
+    "url": "https://i.ibb.co/kgw8qmBF/Anime.png",
+    "group": "Genre"
   },
   {
     "name": "Watchlist",
     "category": "Logos",
-    "url": "https://i.ibb.co/NgpT0bmQ/Watchlist.png"
+    "url": "https://i.ibb.co/NgpT0bmQ/Watchlist.png",
+    "group": "Genre"
   },
   {
     "name": "Recommendations",
     "category": "Logos",
-    "url": "https://i.ibb.co/Pv15Kqzd/Recommendations.png"
+    "url": "https://i.ibb.co/Pv15Kqzd/Recommendations.png",
+    "group": "Genre"
   },
   {
     "name": "Watch-Later",
