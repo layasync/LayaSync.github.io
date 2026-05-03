@@ -1,6 +1,12 @@
 {
-  "current": "2026-04-11",
+  "current": "2026-05-03",
   "history": [
+    {
+      "date": "2026-05-03",
+      "changes": [
+        "Nuvio users can now install to select profiles"
+      ]
+    },
     {
       "date": "2026-04-11",
       "changes": [

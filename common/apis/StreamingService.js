@@ -49,18 +49,23 @@ class StreamingService {
     }
 
     // Get list of installed addons.
-    async getAddons() {
+    async getAddons(profileId = null) {
         throw new Error("Method 'getAddons()' must be implemented.");
     }
 
     // Set the entire list of addons (full replace).
-    async setAddons(addons) {
+    async setAddons(addons, profileId = null) {
         throw new Error("Method 'setAddons()' must be implemented.");
     }
 
     // Install a single addon via manifest URL.
     async installAddon(manifestUrl) {
         throw new Error("Method 'installAddon()' must be implemented.");
+    }
+
+    // Get profiles for the current service.
+    async getProfiles() {
+        return [{ id: 'default' }];
     }
 
     // Get current session data.

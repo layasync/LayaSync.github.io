@@ -8,7 +8,6 @@ class NuvioAPIProvider extends StreamingService {
         this.publishableKey = "sb_publishable_zcNkgqGJjBtj8GoRlMvl9A_zkdmXhf5";
         this.authUrl = "https://dpyhjjcoabcglfmgecug.supabase.co/auth/v1";
         this.restUrl = "https://dpyhjjcoabcglfmgecug.supabase.co/rest/v1";
-        this.defaultProfileId = null; // Dynamically determined after login
     }
 
     // Override to specifically handle Nuvio's (Supabase) error on existing accounts.
@@ -94,10 +93,6 @@ class NuvioAPIProvider extends StreamingService {
             password = null; // Security
             Logger.debug('NuvioAPI', 'User logged in successfully', { email });
 
-            // Initialize profile after login
-            this.defaultProfileId = 1;
-            Logger.debug('NuvioAPI', 'Profile initialized with ID: 1');
-
             // Return session
             return this.getSession();
         } catch (error) {
@@ -133,11 +128,34 @@ class NuvioAPIProvider extends StreamingService {
         Logger.debug('NuvioAPI', 'Account registered successfully', { email });
     }
 
-    // Get list of installed addons.
-    async getAddons() {
-        if (!this.defaultProfileId) return [];
+    // Fetch all profiles for the account.
+    async getProfiles() {
+        try {
+            const data = await this._call(this.restUrl, "/rpc/sync_pull_profiles", "POST");
+            const profiles = Array.isArray(data) ? data : [];
+            // Map profile_index to id to ensure we use the integer ID expected by the database/API
+            const mappedProfiles = profiles.map(p => ({
+                ...p,
+                id: p.profile_index
+            }));
+            
+            // Brand new Nuvio accounts don't return profiles from sync_pull_profiles 
+            // but implicitly have profile_index 1 containing default addons.
+            if (mappedProfiles.length === 0) {
+                return [{ id: 1, name: 'Default', profile_index: 1 }];
+            }
+            return mappedProfiles;
+        } catch (error) {
+            Logger.warn('NuvioAPI', 'Failed to pull profiles', error);
+            return [{ id: 1, name: 'Default', profile_index: 1 }];
+        }
+    }
 
-        const endpoint = `/addons?select=*&profile_id=eq.${this.defaultProfileId}&order=sort_order`;
+    // Get list of installed addons for a specific profile.
+    async getAddons(profileId) {
+        if (!profileId) throw new Error("profileId is required to fetch Nuvio addons");
+
+        const endpoint = `/addons?select=*&profile_id=eq.${profileId}&order=sort_order`;
         const data = await this._call(this.restUrl, endpoint, "GET");
 
         // Normalize: Standardize 'url' field to 'transportUrl' to match Stremio/QuickStart conventions
@@ -149,9 +167,9 @@ class NuvioAPIProvider extends StreamingService {
         }));
     }
 
-    // Set the entire list of addons (full replace).
-    async setAddons(addons) {
-        if (!this.defaultProfileId) return;
+    // Set the entire list of addons (full replace) for a specific profile.
+    async setAddons(addons, profileId) {
+        if (!profileId) throw new Error("profileId is required to set Nuvio addons");
 
         const formattedAddons = Array.isArray(addons) ? addons.map((addon, index) => ({
             url: addon.url || addon.transportUrl,
@@ -161,17 +179,21 @@ class NuvioAPIProvider extends StreamingService {
         })) : [];
 
         const body = {
-            p_profile_id: this.defaultProfileId,
+            p_profile_id: parseInt(profileId, 10),
             p_addons: formattedAddons
         };
-
-        // Sync with Nuvio
         await this._call(this.restUrl, "/rpc/sync_push_addons", "POST", body);
     }
 
-    // Install a single addon via manifest URL.
-    async installAddon(manifestUrl) {
-        const currentAddons = await this.getAddons();
+    // Install a single addon via manifest URL to specific profiles (or all if none provided).
+    async installAddon(manifestUrl, profileIds = null) {
+        let targetProfileIds = profileIds;
+
+        if (!targetProfileIds) {
+            const profiles = await this.getProfiles();
+            if (profiles.length === 0) return;
+            targetProfileIds = profiles.map(p => p.id);
+        }
 
         // Fetch manifest to get the name
         const manifestJson = await Network.request(manifestUrl, { retries: 1 });
@@ -183,17 +205,23 @@ class NuvioAPIProvider extends StreamingService {
 
         const newAddon = {
             url: manifestUrl,
+            transportUrl: manifestUrl,
             name: manifestJson.name,
+            manifest: manifestJson,
             enabled: true
         };
 
-        // Standard deduplication
-        let newList = currentAddons.filter(a => a.url !== manifestUrl);
-        newList.push(newAddon);
+        for (const profileId of targetProfileIds) {
+            const currentAddons = await this.getAddons(profileId);
 
-        // Save
-        await this.setAddons(newList);
-        Logger.debug('NuvioAPI', 'Addon installed successfully', { manifestUrl });
+            // Standard deduplication
+            let newList = currentAddons.filter(a => a.url !== manifestUrl);
+            newList.push(newAddon);
+
+            // Save for this profile
+            await this.setAddons(newList, profileId);
+        }
+        Logger.debug('NuvioAPI', 'Addon installed successfully to targeted profiles', { manifestUrl });
         return true;
     }
 }

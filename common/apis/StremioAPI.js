@@ -124,7 +124,7 @@ class StremioAPIProvider extends StreamingService {
     }
 
     // Get the addons for the account.
-    async getAddons() {
+    async getAddons(profileId = null) {
         // If no session is found, throw an error.
         const session = this.getSession();
         if (!session) {
@@ -142,7 +142,7 @@ class StremioAPIProvider extends StreamingService {
     }
 
     // Set the addons for the account.
-    async setAddons(addons) {
+    async setAddons(addons, profileId = null) {
         // If no session is found, throw an error.
         const session = this.getSession();
         if (!session) {

@@ -37,6 +37,7 @@ class QuickStart {
         this.customFormatterDefinition = null; // Will hold user-uploaded custom formatter
         this.formatterLoadedFromCache = false; // Track if formatter was loaded from localStorage
         this.formatterFilename = null; // Store the filename of the loaded formatter
+        this.selectedProfileIds = null; // Store selected streaming service profile IDs
 
         // UI References
         this.ui = {
@@ -805,31 +806,39 @@ class QuickStart {
         return isStremio || isChilllink;
     }
 
-    async cleanUpDuckStreams(keepUuid = null) {
+    async cleanUpDuckStreams(keepUuid = null, targetProfileIds = null) {
         Logger.debug('QuickStart', "Cleaning up Duck Streams addons...");
-        const currentAddons = await this.api.getAddons();
-        const filteredAddons = currentAddons.filter(a => {
-            if (this.isRecognizedDuckStreams(a)) {
-                // It is one of ours.
 
-                // FORCE DELETE STALE ARTIFACTS
-                // We never want to keep "Restoring Addon..." as it means the install/update failed to complete
-                // or the server returned a temporary placeholder.
-                if (a.manifest?.id === 'synth-0' || a.manifest?.name === 'Restoring Addon...') {
-                    return false; // Always delete
-                }
+        let profiles = await this.api.getProfiles();
+        if (targetProfileIds) {
+            profiles = profiles.filter(p => targetProfileIds.some(tid => tid.toString() === p.id.toString()));
+        }
 
-                // Keep ONLY if it matches keepUuid
-                if (keepUuid && a.transportUrl?.includes(keepUuid)) {
-                    return true;
+        for (const profile of profiles) {
+            const currentAddons = await this.api.getAddons(profile.id);
+            const filteredAddons = currentAddons.filter(a => {
+                if (this.isRecognizedDuckStreams(a)) {
+                    // It is one of ours.
+
+                    // FORCE DELETE STALE ARTIFACTS
+                    // We never want to keep "Restoring Addon..." as it means the install/update failed to complete
+                    // or the server returned a temporary placeholder.
+                    if (a.manifest?.id === 'synth-0' || a.manifest?.name === 'Restoring Addon...') {
+                        return false; // Always delete
+                    }
+
+                    // Keep ONLY if it matches keepUuid
+                    if (keepUuid && a.transportUrl?.includes(keepUuid)) {
+                        return true;
+                    }
+                    return false; // Delete
                 }
-                return false; // Delete
+                return true; // Keep unrelated
+            });
+
+            if (filteredAddons.length !== currentAddons.length) {
+                await this.api.setAddons(filteredAddons, profile.id);
             }
-            return true; // Keep unrelated
-        });
-
-        if (filteredAddons.length !== currentAddons.length) {
-            await this.api.setAddons(filteredAddons);
         }
     }
 
@@ -964,69 +973,75 @@ class QuickStart {
         return manifestUrl;
     }
 
-    // Log into the user's account
-    async setupServiceAccount(email, password, cleanupOldInstalls) {
-        // Login to service (registering a new account if needed)
-        const isNewAccount = await this.api.ensureAccount(email, password);
+    // Log into the user's account and prepare profiles
+    async setupServiceAccount(isNewAccount, cleanupOldInstalls, targetProfileIds = null) {
         let existingAddon = null;
 
         // Configure Account
         if (isNewAccount) {
-            // Erase all default addons if the account is new
-            const currentAddons = await this.api.getAddons();
-            const ALLOWED = ["Cinemeta"];
-            const filteredAddons = currentAddons.filter(a => a.manifest?.name && ALLOWED.includes(a.manifest.name));
-            await this.api.setAddons(filteredAddons);
+            // Erase all default addons if the account is new (per-profile)
+            const profiles = await this.api.getProfiles();
+            for (const profile of profiles) {
+                const currentAddons = await this.api.getAddons(profile.id);
+                const ALLOWED = ["Cinemeta"];
+                const filteredAddons = currentAddons.filter(a => a.manifest?.name && ALLOWED.includes(a.manifest.name));
+                await this.api.setAddons(filteredAddons, profile.id);
+            }
         }
 
         if (!isNewAccount && cleanupOldInstalls) {
             // User requested to clean up existing "Duck Streams" addons.
             // This is a bit more complex than just deleting them all, as we need to be careful not to delete unrelated addons.
             // Also we will try to reuse an existing Duck Streams addon if possible.
-            const currentAddons = await this.api.getAddons();
+            let profiles = await this.api.getProfiles();
+            if (targetProfileIds) {
+                profiles = profiles.filter(p => targetProfileIds.some(tid => tid.toString() === p.id.toString()));
+            }
 
-            // Find valid existing Duck Streams addon to reuse (primarily for UUID extraction)
-            const existingIndex = currentAddons.findIndex(a => this.isRecognizedDuckStreams(a));
+            for (const profile of profiles) {
+                if (existingAddon) break; // Found one to reuse, stop searching
 
-            if (existingIndex !== -1) {
-                const addon = currentAddons[existingIndex];
-                // Extract UUID and Host
-                // Format Stremio: https://host/stremio/uuid/encryptedPassword/manifest.json
-                // Format ChillLink: https://host/chilllink/uuid/encryptedPassword
+                const currentAddons = await this.api.getAddons(profile.id);
+                // Find valid existing Duck Streams addon to reuse (primarily for UUID extraction)
+                const existingIndex = currentAddons.findIndex(a => this.isRecognizedDuckStreams(a));
 
-                if (addon.transportUrl) {
-                    try {
-                        const url = new URL(addon.transportUrl);
-                        const segments = url.pathname.split('/').filter(Boolean); // ["stremio", "uuid", "password", "manifest.json"]
+                if (existingIndex !== -1) {
+                    const addon = currentAddons[existingIndex];
+                    // Extract UUID and Host
+                    // Format Stremio: https://host/stremio/uuid/encryptedPassword/manifest.json
+                    // Format ChillLink: https://host/chilllink/uuid/encryptedPassword
 
-                        // Support both /stremio/uuid/password/manifest.json and /chilllink/uuid/password
-                        const type = segments[0]; // "stremio" or "chilllink"
-                        const uuid = segments[1];
-                        const pass = segments[2];
+                    if (addon.transportUrl) {
+                        try {
+                            const url = new URL(addon.transportUrl);
+                            const segments = url.pathname.split('/').filter(Boolean); // ["stremio", "uuid", "password", "manifest.json"]
 
-                        if (uuid && pass && (type === 'stremio' || type === 'chilllink')) {
-                            existingAddon = {
-                                host: url.origin,
-                                uuid: uuid,
-                                encryptedPassword: pass,
-                                transportUrl: addon.transportUrl
-                            };
-                            Logger.debug('QuickStart', `Found existing addon to reuse. Host: ${existingAddon.host}, UUID: ${uuid}`);
+                            // Support both /stremio/uuid/password/manifest.json and /chilllink/uuid/password
+                            const type = segments[0]; // "stremio" or "chilllink"
+                            const uuid = segments[1];
+                            const pass = segments[2];
+
+                            if (uuid && pass && (type === 'stremio' || type === 'chilllink')) {
+                                existingAddon = {
+                                    host: url.origin,
+                                    uuid: uuid,
+                                    encryptedPassword: pass,
+                                    transportUrl: addon.transportUrl
+                                };
+                                Logger.debug('QuickStart', `Found existing addon to reuse in profile ${profile.id}. Host: ${existingAddon.host}, UUID: ${uuid}`);
+                            }
+                        } catch (e) {
+                            Logger.warn('QuickStart', "Failed to parse transportUrl for reuse:", { url: addon.transportUrl, error: e.message });
                         }
-                    } catch (e) {
-                        Logger.warn('QuickStart', "Failed to parse transportUrl for reuse:", { url: addon.transportUrl, error: e.message });
                     }
                 }
-
-                // Clean up other Duck Streams addons, keeping our reused one
-                await this.cleanUpDuckStreams(existingAddon?.uuid);
-            } else {
-                // Fallback: Regex failed. Clean up all recognized Duck Streams addons.
-                await this.cleanUpDuckStreams();
             }
+
+            // Clean up Duck Streams addons across all profiles, keeping our reused one
+            await this.cleanUpDuckStreams(existingAddon?.uuid, targetProfileIds);
         }
 
-        return { isNewAccount, existingAddon };
+        return existingAddon;
     }
 
     // Get the user inputs from the form
@@ -1089,8 +1104,56 @@ class QuickStart {
         return { email, password, debridioKey, providersMap, cleanupOldInstalls, selectedFormatterId, compatibilityMode, prioritizeQuality };
     }
 
+    async promptNuvioProfiles(profiles) {
+        return new Promise((resolve) => {
+            let html = `
+                <p class="mb-2">Select profiles to install Duck Streams:</p>
+                <div class="provider-grid" id="modalProfileList">
+            `;
+
+            profiles.forEach(profile => {
+                html += `
+                    <label class="provider-card">
+                        <input type="checkbox" value="${profile.id}" class="modal-profile-checkbox" checked hidden>
+                        <div class="card-content">
+                            <span class="provider-name">${profile.name}</span>
+                        </div>
+                        <div class="card-indicator">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </label>
+                `;
+            });
+
+            html += `</div>`;
+
+            Modal.show({
+                title: 'Target Profiles',
+                message: html,
+                iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
+                iconColor: '#3b82f6',
+                buttons: [
+                    { text: 'Cancel', type: 'secondary', onClick: () => { resolve(null); return true; } },
+                    {
+                        text: 'Confirm',
+                        type: 'primary',
+                        onClick: () => {
+                            const checkboxes = document.querySelectorAll('.modal-profile-checkbox:checked');
+                            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+                            resolve(selectedIds);
+                            return true;
+                        }
+                    }
+                ]
+            });
+        });
+    }
+
     async handleSubmit(e) {
         e.preventDefault();
+
         this.ui.submitBtn.disabled = true;
         this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Working...';
 
@@ -1102,8 +1165,8 @@ class QuickStart {
             let isNewAccount = false;
             let existingAddon = null;
 
-            const stremioEmail = formData.email;
-            const password = formData.password;
+            const streamingAppEmail = formData.email;
+            const streamingAppPassword = formData.password;
             const providersMap = formData.providersMap;
             const debridioKey = formData.debridioKey;
             const cleanupOldInstalls = formData.cleanupOldInstalls;
@@ -1111,18 +1174,49 @@ class QuickStart {
             const compatibilityMode = formData.compatibilityMode;
             const prioritizeQuality = formData.prioritizeQuality;
 
-            // 2. Setup Stremio Account (Only if mode is account)
+            // 2. Setup Service Account (Only if mode is account)
             if (this.mode === 'account') {
-                const result = await this.setupServiceAccount(stremioEmail, password, cleanupOldInstalls);
-                isNewAccount = result.isNewAccount;
-                existingAddon = result.existingAddon;
+                // Ensure account exists and session is valid early
+                isNewAccount = await this.api.ensureAccount(streamingAppEmail, streamingAppPassword);
+
+                // Handle Nuvio Multi-Profile Selection
+                if (this.service === 'nuvio') {
+                    Logger.debug('QuickStart', "Nuvio selected, checking profiles before install...");
+
+                    // We are logged in now, safe to get profiles
+                    const profiles = await this.api.getProfiles();
+
+                    if (profiles.length > 1) {
+                        this.ui.submitBtn.disabled = false;
+                        this.ui.submitBtn.textContent = "Start Setup"; // Reset UI temporarily
+
+                        const selectedIds = await this.promptNuvioProfiles(profiles);
+                        if (!selectedIds) {
+                            return; // User cancelled
+                        }
+                        if (selectedIds.length === 0) {
+                            Modal.error("Please select at least one profile.");
+                            return;
+                        }
+                        this.selectedProfileIds = selectedIds;
+
+                        // Re-disable and show loading again to proceed
+                        this.ui.submitBtn.disabled = true;
+                        this.ui.submitBtn.innerHTML = '<span class="loading-spinner"></span> Working...';
+                    } else {
+                        // If only 1 profile, just proceed
+                        this.selectedProfileIds = profiles.map(p => p.id.toString());
+                    }
+                }
+
+                existingAddon = await this.setupServiceAccount(isNewAccount, cleanupOldInstalls, this.selectedProfileIds);
             } else {
-                // Manifest-only mode: password is already retrieved from form data
+                // Manifest-only mode: streamingAppPassword is already retrieved from form data
                 // No action needed here
             }
 
             // 3. Create AIOStreams Manifest
-            const manifestUrl = await this.createAIOStreamsManifest(password, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon, prioritizeQuality);
+            const manifestUrl = await this.createAIOStreamsManifest(streamingAppPassword, providersMap, debridioKey, selectedFormatterId, compatibilityMode, existingAddon, prioritizeQuality);
 
             if (this.mode === 'account') {
                 // 4. Install Manifest
@@ -1131,22 +1225,23 @@ class QuickStart {
 
                 if (shouldInstall) {
                     Logger.debug('QuickStart', "Installing new addon manifest...");
-                    await this.api.installAddon(manifestUrl);
+                    await this.api.installAddon(manifestUrl, this.selectedProfileIds);
                 } else {
                     Logger.debug('QuickStart', "Manifest URL is unchanged, skipping Stremio installation.");
                 }
 
                 // 5. Show Success
-                await this.showSuccessModal(isNewAccount, stremioEmail, password);
+                await this.showSuccessModal(isNewAccount, streamingAppEmail, streamingAppPassword);
             } else {
                 // 4. Show Manifest Result
-                this.showManifestResult(manifestUrl, password);
+                this.showManifestResult(manifestUrl, streamingAppPassword);
             }
 
         } catch (err) {
             Logger.error('QuickStart', "Error in handleSubmit:", err);
             ErrorHandler.handle(err, { method: "handleSubmit" }, "Setup Failed");
         } finally {
+            this.selectedProfileIds = null; // Reset for next run
             this.ui.submitBtn.disabled = false;
             this.ui.submitBtn.textContent = this.mode === 'account' ? "Start Setup" : "Generate Manifest";
         }
