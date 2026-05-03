@@ -4,7 +4,8 @@
     {
       "date": "2026-05-03",
       "changes": [
-        "Nuvio users can now install to select profiles"
+        "Nuvio users can now install to select profiles",
+        "Added PikPak as a debrid option"
       ]
     },
     {

@@ -201,7 +201,12 @@ class AIOStreamsAPI {
                     if (service) {
                         service.enabled = true;
                         service.credentials = service.credentials || {};
-                        service.credentials.apiKey = apiKey;
+                        if (providerId === 'pikpak') {
+                            service.credentials.email = apiKey.email;
+                            service.credentials.password = apiKey.password;
+                        } else {
+                            service.credentials.apiKey = apiKey;
+                        }
                     }
                 });
             }

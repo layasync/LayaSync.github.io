@@ -28,6 +28,10 @@ class QuickStart {
                 signup: "https://alldebrid.com/?uid=3n8qa&lang=en",
                 api: "https://alldebrid.com/apikeys",
             },
+            pikpak: {
+                name: "PikPak",
+                signup: "https://mypikpak.com/",
+            },
         };
 
         // State
@@ -766,30 +770,71 @@ class QuickStart {
             linksDiv.style.fontSize = "0.75rem";
             linksDiv.style.color = "var(--text-secondary)";
 
-            linksDiv.innerHTML = `
-                <a href="${config.api}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Get Key</a>
-                <span style="margin: 0 6px; opacity: 0.3;">|</span>
-                <a href="${config.signup}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Sign Up</a>
-            `;
+            if (providerId === 'pikpak') {
+                linksDiv.innerHTML = `
+                    <a href="${config.signup}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Sign Up</a>
+                `;
+                label.textContent = `${config.name} Credentials`;
+            } else {
+                linksDiv.innerHTML = `
+                    <a href="${config.api}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Get Key</a>
+                    <span style="margin: 0 6px; opacity: 0.3;">|</span>
+                    <a href="${config.signup}" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none;">Sign Up</a>
+                `;
+            }
 
             // Append to header
             header.appendChild(label);
             header.appendChild(linksDiv);
 
-            // Create input field for API key
-            const input = document.createElement("input");
-            input.type = "text";
-            input.id = `apiKey_${providerId}`;
-            input.style.marginTop = "0.5rem"; // Add spacing between header and input
-            input.name = `apiKey_${providerId}`; // beneficial for form data handling
-            input.placeholder = `Enter your ${config.name} API Key`;
-            input.required = true;
-            input.autocomplete = "off";
-            input.spellcheck = false;
+            if (providerId === 'pikpak') {
+                // Create container for two inputs
+                const inputContainer = document.createElement("div");
+                inputContainer.style.display = "flex";
+                inputContainer.style.gap = "0.5rem";
+                inputContainer.style.marginTop = "0.5rem";
 
-            // Add the new fields to the UI
-            field.appendChild(header);
-            field.appendChild(input);
+                const emailInput = document.createElement("input");
+                emailInput.type = "text";
+                emailInput.id = `apiKey_${providerId}_email`;
+                emailInput.name = `apiKey_${providerId}_email`;
+                emailInput.placeholder = "Email";
+                emailInput.required = true;
+                emailInput.autocomplete = "off";
+                emailInput.spellcheck = false;
+                emailInput.style.flex = "1";
+
+                const passwordInput = document.createElement("input");
+                passwordInput.type = "password";
+                passwordInput.id = `apiKey_${providerId}_password`;
+                passwordInput.name = `apiKey_${providerId}_password`;
+                passwordInput.placeholder = "Password";
+                passwordInput.required = true;
+                passwordInput.autocomplete = "off";
+                passwordInput.spellcheck = false;
+                passwordInput.style.flex = "1";
+
+                inputContainer.appendChild(emailInput);
+                inputContainer.appendChild(passwordInput);
+
+                field.appendChild(header);
+                field.appendChild(inputContainer);
+            } else {
+                // Create input field for API key
+                const input = document.createElement("input");
+                input.type = "text";
+                input.id = `apiKey_${providerId}`;
+                input.style.marginTop = "0.5rem"; // Add spacing between header and input
+                input.name = `apiKey_${providerId}`; // beneficial for form data handling
+                input.placeholder = `Enter your ${config.name} API Key`;
+                input.required = true;
+                input.autocomplete = "off";
+                input.spellcheck = false;
+
+                // Add the new fields to the UI
+                field.appendChild(header);
+                field.appendChild(input);
+            }
             this.ui.apiKeysContainer.appendChild(field);
         });
     }
@@ -1090,9 +1135,20 @@ class QuickStart {
         const selectedDebridProviders = this.getSelectedDebridProviders();
 
         selectedDebridProviders.forEach(providerId => {
-            const input = document.getElementById(`apiKey_${providerId}`);
-            if (input && input.value.trim()) {
-                providersMap[providerId] = input.value.trim();
+            if (providerId === 'pikpak') {
+                const emailInput = document.getElementById(`apiKey_${providerId}_email`);
+                const passwordInput = document.getElementById(`apiKey_${providerId}_password`);
+                if (emailInput && emailInput.value.trim() && passwordInput && passwordInput.value.trim()) {
+                    providersMap[providerId] = {
+                        email: emailInput.value.trim(),
+                        password: passwordInput.value.trim()
+                    };
+                }
+            } else {
+                const input = document.getElementById(`apiKey_${providerId}`);
+                if (input && input.value.trim()) {
+                    providersMap[providerId] = input.value.trim();
+                }
             }
         });
 
