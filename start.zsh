@@ -30,7 +30,7 @@ then
     exit 1
 fi
 
-echo "🚀 Starting Stremio Tools..."
+echo "🚀 Starting Duck Tools..."
 echo "👉 Opening $URL"
 
 # Open the browser in the background after 1 second

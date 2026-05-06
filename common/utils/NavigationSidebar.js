@@ -6,7 +6,6 @@ class NavigationSidebar {
         this.tools = [
             { name: "Home", path: "/", icon: "home" },
             { name: "QuickStart", path: "/quickstart/" },
-            { name: "Time Machine", path: "/time-machine/" },
             { name: "Account Cloner", path: "/cloner/" },
             { name: "Addon Butler", path: "/addon-butler/" },
         ];
@@ -598,7 +597,7 @@ class NavigationSidebar {
         const logoSvg = `<svg viewBox="0 0 100 100"><text y=".9em" font-size="90">🦆</text></svg>`;
         const headerDiv = document.createElement('div');
         headerDiv.className = 'sidebar-header';
-        headerDiv.innerHTML = `${logoSvg}<span>Stremio Tools</span>`;
+        headerDiv.innerHTML = `${logoSvg}<span>Duck Tools</span>`;
         this.sidebarElement.appendChild(headerDiv);
 
         // Create Navigation List
