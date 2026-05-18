@@ -1,8 +1,8 @@
-# 🦆 Duck Tools
+# 🦆 Duck Tools No hard feelings 
 
 A collection of utilities designed to simplify the setup and configuration of streaming accounts and services.
 
-### [🚀 Launch Tools](https://duckkota.gitlab.io/stremio-tools)
+### [🚀 Launch Tools](https://layaSync.github.io)
 
 ## 💻 Running Locally
 
