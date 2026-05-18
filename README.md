@@ -1,4 +1,4 @@
-# 🦆 Duck Tools No hard feelings 
+# 🦆 Duck Tools No hard feelings 🙂
 
 A collection of utilities designed to simplify the setup and configuration of streaming accounts and services.
 
